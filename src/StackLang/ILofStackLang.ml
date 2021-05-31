@@ -393,13 +393,6 @@ and compile_block program bindings final_type block =
   let cfg = S.(program.cfg) in
   let compile_block = compile_block program in
   match block with
-  | S.INeed (registers, block) ->
-      let bindings = Bindings.restrict registers bindings in
-      EComment
-        ( sprintf
-            "Needed registers : { %s }"
-            (String.concat "; " (StringSet.elements registers))
-        , compile_block bindings final_type block )
   | S.IPush (value, _cell, block) ->
       assert (value <> S.VTuple []);
       let new_stack =

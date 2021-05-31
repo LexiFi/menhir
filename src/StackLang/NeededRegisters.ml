@@ -23,30 +23,39 @@ let empty = RegisterSet.empty
 
 let unions = List.fold_left ( + ) empty
 
-let rec rhs_block block valuation =
-  let rhs_block block = rhs_block block valuation in
+let defined_tokpat = function
+  | TokSingle (_, reg) ->
+      RegisterSet.singleton reg
+  | TokMultiple _ ->
+      RegisterSet.empty
+
+
+(** This function computes the registers required by a block according to a
+    valuation that maps labels to needed registers *)
+let rec needed_block block valuation =
+  let needed_block block = needed_block block valuation in
   match block with
   | IDef (bindings, block) ->
       let codomain = Bindings.codomain bindings in
       let domain = Bindings.domain bindings in
-      codomain + (rhs_block block - domain)
+      codomain + (needed_block block - domain)
   | IPush (value, _, block) ->
-      Value.registers value + rhs_block block
+      Value.registers value + needed_block block
   | IPop (pattern, block) ->
-      rhs_block block - Pattern.registers pattern
+      needed_block block - Pattern.registers pattern
   | IPrim (reg, prim, block) ->
-      Primitive.registers prim + (rhs_block block -^ reg)
+      Primitive.registers prim + (needed_block block -^ reg)
   | IReturn value ->
       Value.registers value
   | IDie ->
       empty
   | ITrace (register, block) ->
-      rhs_block block +^ register
+      needed_block block +^ register
   | IComment (_, block) ->
-      rhs_block block
+      needed_block block
   | ICaseTag (register, branches) ->
       List.fold_left
-        (fun acc branch -> acc + branch_iter rhs_block branch)
+        (fun acc branch -> acc + branch_iter needed_block branch)
         empty
         branches
       +^ register
@@ -56,16 +65,14 @@ let rec rhs_block block valuation =
            (fun (tokpat, block) ->
              match tokpat with
              | TokSingle (_, reg) ->
-                 rhs_block block -^ reg
+                 needed_block block -^ reg
              | TokMultiple _ ->
-                 rhs_block block )
+                 needed_block block )
            branches )
-      + Option.value ~default:empty (Option.map rhs_block default)
+      + Option.value ~default:empty (Option.map needed_block default)
       +^ register
   | IJump label ->
       valuation label
-  | INeed _ ->
-      assert false
   | ITypedBlock _ ->
       assert false
 
@@ -73,7 +80,7 @@ let rec rhs_block block valuation =
 let equations program label =
   let routine = lookup label program.cfg in
   let block = routine.block in
-  rhs_block block
+  needed_block block
 
 
 let needed program = lfp (equations program)

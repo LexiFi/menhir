@@ -177,8 +177,6 @@ and partial_tblock culprit tb =
 
 and instruction b =
   match b with
-  | INeed (rs, _) ->
-      nl ^^ string "NEED " ^^ registers rs
   | IPush (v, c, _) ->
       nl ^^ string "PUSH " ^^ value v ^^ cell_info c
   | IPop (p, _) ->
@@ -209,7 +207,6 @@ and block b =
   instruction b
   ^^
   match b with
-  | INeed (_, b)
   | IPush (_, _, b)
   | IPop (_, b)
   | IDef (_, b)
@@ -240,7 +237,6 @@ and partial_block culprit b =
   then nl ^^ string "(...)"
   else
     match b with
-    | INeed (_, b)
     | IPush (_, _, b)
     | IPop (_, b)
     | IDef (_, b)
@@ -299,6 +295,7 @@ let labeled_block entry_labels (label, tb) =
   ^^ nest 2 (typed_block tb)
   ^^ nl
   ^^ nl
+
 
 let program program =
   states program.states
