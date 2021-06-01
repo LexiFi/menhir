@@ -155,11 +155,10 @@ let rec wf_block program label rs block =
           List.iter (wf_tag label block program.states) tags )
         branches;
       List.iter (branch_iter (wf_block program label rs)) branches
-  | ITypedBlock { block; needed_registers = rs' } ->
-      wf_regs rs';
+  | ITypedBlock { block; needed_registers = rs } ->
+      wf_regs rs;
       (* A [need] instruction undefines the registers that it does not
-         mention, so we continue with [rs']. *)
-      let rs = rs' in
+         mention, so we continue with [rs]. *)
       wf_block program label rs block
 
 
