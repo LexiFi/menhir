@@ -61,7 +61,7 @@ let rec inline_block cfg degree labels block =
       ITypedBlock
         { typed_block with
           block = inline_block cfg degree labels typed_block.block
-        ; name = Some ("inlined_" ^ label)
+        ; name = Some ("inlined" ^ label)
         }
   | block ->
       Block.map (inline_block cfg degree labels) block
