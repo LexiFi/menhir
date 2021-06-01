@@ -137,9 +137,9 @@ let () =
       StackLangPrinter.print file program;
       StackLangTraverse.(print (measure program));
       close_out file );
+    if Settings.stacklang_graph then StackLangGraph.print program;
     StackLangTraverse.wf program;
     StackLangTraverse.wt program;
-    if Settings.stacklang_graph then StackLangGraph.print program;
     if Settings.stacklang_test then StackLangTester.test program;
     let program = ILofStackLang.compile program in
     write program;

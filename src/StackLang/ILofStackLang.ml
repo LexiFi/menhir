@@ -404,6 +404,7 @@ and compile_block program bindings final_type block =
       blet ([ (PVar stack, new_stack) ], compile_block bindings final_type block)
   | S.IPop (pattern, block) ->
       assert (pattern <> S.PTuple []);
+      let bindings = Bindings.remove bindings pattern in
       let pattern = add_to_ptuple (PVar stack) (compile_pattern pattern) in
       blet ([ (pattern, EVar stack) ], compile_block bindings final_type block)
   | S.IDef (bindings', block) ->
@@ -412,9 +413,10 @@ and compile_block program bindings final_type block =
         ( StackLangPrinter.bindings_to_string bindings
         , compile_block bindings final_type block )
   | S.IPrim (register, primitive, block) ->
-      blet
-        ( [ (PVar register, compile_primitive bindings primitive) ]
-        , compile_block bindings final_type block )
+      let body = compile_primitive bindings primitive in
+      let bindings = Bindings.remove bindings (S.PReg register) in
+      let block = compile_block bindings final_type block in
+      blet ([ (PVar register, body) ], block)
   | S.ITrace (message, block) ->
       blet (trace message [], compile_block bindings final_type block)
   | S.IComment (comment, block) ->
@@ -459,6 +461,7 @@ and bind_unit_for_empty_tokens register terminal e =
 and compile_case_token_branch program bindings final_type (tokpat, block) =
   match tokpat with
   | S.TokSingle (terminal, register) ->
+      let bindings = Bindings.remove bindings (S.PReg register) in
       { branchpat = CodePieces.tokpat terminal (PVar register)
       ; branchbody =
           bind_unit_for_empty_tokens
@@ -579,12 +582,13 @@ and compile_ITypedBlock program bindings = function
       let regs = StringSet.elements needed_registers in
       let sargs = List.map (fun reg -> S.VReg reg) regs in
       let args = e_common_args @ List.map (compile_value bindings) sargs in
+      let body = compile_function t_block program in
       blet
         ~local:true
-        ( [ (PVar block_name, compile_function t_block program) ]
+        ( [ (PVar block_name, body) ]
         , EComment ("Not inlined because of case tag", EApp (func, args)) )
-  | S.{ block; needed_registers; final_type } ->
-      let bindings = Bindings.restrict bindings needed_registers in
+  | S.{ block; final_type } ->
+      (* let bindings = Bindings.restrict bindings needed_registers in *)
       let final_type = compile_final_type_name final_type in
       compile_block program bindings final_type block
 

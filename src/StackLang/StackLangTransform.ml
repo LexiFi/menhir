@@ -24,14 +24,14 @@ let pop_n_cells stack_type n =
   Array.sub stack_type 0 new_length
 
 
-let restore_pushes push_list block =
+let restore_pushes pushes block =
   List.fold_left
     (fun block (value, cell, id) ->
       let comment = sprintf "Restoring push_%i" id in
       let block = IPush (value, cell, block) in
       IComment (comment, block) )
     block
-    push_list
+    pushes
 
 
 let find_tagpat_branch branches tag =
@@ -40,7 +40,7 @@ let find_tagpat_branch branches tag =
     branches
 
 
-let _pushcell_apply binds (value, cell, id) =
+let pushcell_apply binds (value, cell, id) =
   (Bindings.apply binds value, cell, id)
 
 
@@ -67,7 +67,7 @@ let cancelled_pop = ref 0
 
 let eliminated_branches = ref 0
 
-let rec commute_pushes_block program pushes bindings final_type known_cells =
+let rec commute_pushes_block program pushes bindings final_type cells =
   (* [pushes] is the list of pushes that we need to restore, or cancel out with
      a pop if we are lucky.
      Every definition is inlined in order to make it impossible that a commuted
@@ -102,10 +102,10 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
       let id = fresh_int () in
       let pushes = (Bindings.apply bindings value, cell, id) :: pushes in
       let block' =
-        commute_pushes_block pushes bindings final_type known_cells block
+        commute_pushes_block pushes bindings final_type cells block
       in
-      if current_cancelled_pop < !cancelled_pop
-      then
+      (* if current_cancelled_pop < !cancelled_pop
+      then *)
         let comment =
           sprintf
             "Commuting push_%i %s"
@@ -113,65 +113,20 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
             (StackLangPrinter.value_to_string value)
         in
         IComment (comment, block')
-      else restore_pushes pushes (IDef (bindings, block))
+      (* else restore_pushes pushes (IDef (bindings, block)) *)
   | IPop (pattern, block) ->
-    (* A pop is a special kind of definition, so you may think that we need
-       to generate new substition rules from it, but there is no need
-       because we only keep the pop if there is no push that can conflict
-       with it. The pattern we pop into is authoritative and we remove it
-       from the substitution. *)
-    ( match pushes with
-    | [] ->
-        assert (known_cells <> [||]);
-        (* We lose a known cell here *)
-        let known_cells = pop_n_cells known_cells 1 in
-        (* However, since we popped the state from the stack, it is now in
-           sync with the stack. Therefore, no information we have was
-           discovered by inspecting the stack *)
-        let block' =
-          commute_pushes_block
-            []
-            (Bindings.remove bindings pattern)
-            final_type
-            known_cells
-            block
-        in
-        IPop (pattern, block')
-    | (value, _cell, id) :: push_list ->
-        (* We remove every register refered in the value from the
-           substitution, because we need to access the value as it was when
-           pushed, and add that to the substitution. *)
-        let bindings = Bindings.remove_value bindings value in
-        let bindings = Bindings.extend_pattern bindings pattern value in
-        (* We have cancelled a pop ! *)
-        cancelled_pop += 1;
-        let block =
-          commute_pushes_block push_list bindings final_type known_cells block
-        in
-        let comment =
-          sprintf
-            "Cancelled push_%i %s with pop %s"
-            id
-            (StackLangPrinter.value_to_string value)
-            (StackLangPrinter.pattern_to_string pattern)
-        in
-        IComment (comment, block) )
+      commute_pushes_pop program pushes bindings final_type cells pattern block
   | IDef (bindings', block) ->
       (* As explained above, for every conflict between the definition and a
          push currently commuting, we add a new substitution rule
          We do not want to shadow definition useful for the push train *)
       let bindings = Bindings.compose bindings bindings' in
-      let block =
-        commute_pushes_block pushes bindings final_type known_cells block
-      in
-      if bindings' <> Bindings.empty
-      then
-        IComment
-          ( sprintf
-              "Inlining def : %s"
-              (StackLangPrinter.bindings_to_string bindings')
-          , block )
-      else block
+      let block = commute_pushes_block pushes bindings final_type cells block in
+      IComment
+        ( sprintf
+            "Propagating def : %s"
+            (StackLangPrinter.bindings_to_string bindings')
+        , block )
   | IPrim (reg, prim, block) ->
       (* A primitive is a like def except it has a simple register instead of a
          pattern *)
@@ -180,11 +135,9 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
         then suffix reg (fresh_int ())
         else reg
       in
-      let subst' =
-        Bindings.extend (Bindings.remove bindings (PReg reg')) reg (VReg reg')
-      in
+      let bindings' = Bindings.extend bindings reg (VReg reg') in
       let block =
-        commute_pushes_block pushes subst' final_type known_cells block
+        commute_pushes_block pushes bindings' final_type cells block
       in
       let prim =
         match prim with
@@ -193,19 +146,18 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
             PrimOCamlCall (f, args)
         | PrimOCamlAction (bindings', action) ->
             PrimOCamlAction (Bindings.compose bindings bindings', action)
-        | prim ->
-            prim
+        | PrimOCamlFieldAccess (value, field) ->
+            PrimOCamlFieldAccess (Bindings.apply bindings value, field)
+        | PrimOCamlDummyPos ->
+            PrimOCamlDummyPos
       in
+
       IPrim (reg', prim, block)
   | ITrace (register, block) ->
-      let block' =
-        commute_pushes_block pushes bindings final_type known_cells block
-      in
-      ITrace (register, block')
+      let block = commute_pushes_block pushes bindings final_type cells block in
+      ITrace (register, block)
   | IComment (comment, block) ->
-      let block =
-        commute_pushes_block pushes bindings final_type known_cells block
-      in
+      let block = commute_pushes_block pushes bindings final_type cells block in
       IComment (comment, block)
   | IDie ->
       cancelled_pop += List.length pushes;
@@ -214,9 +166,9 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
       cancelled_pop += List.length pushes;
       IReturn (Bindings.apply bindings v)
   | IJump label ->
-      aux_jump pushes bindings label
+      restore_pushes pushes (Block.def bindings @@ Block.jump label)
   | ICaseToken (reg, branches, odefault) ->
-      aux_case_token
+      commute_pushes_token
         program
         pushes
         bindings
@@ -224,31 +176,68 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
         branches
         odefault
         final_type
-        known_cells
+        cells
   | ICaseTag (reg, branches) ->
       commute_pushes_icase_tag
         program
         pushes
         bindings
         final_type
-        known_cells
+        cells
         reg
         branches
-  | ITypedBlock ({ needed_registers } as t_block) ->
-      let bindings = Bindings.restrict bindings needed_registers in
-      commute_pushes_itblock
-        program
-        pushes
-        bindings
-        final_type
-        known_cells
-        t_block
+  | ITypedBlock t_block ->
+      commute_pushes_itblock program pushes bindings final_type cells t_block
+
+
+and commute_pushes_pop program pushes bindings final_type cells pattern block =
+  (* A pop is a special kind of definition, so you may think that we need
+     to generate new substition rules from it, but there is no need
+     because we only keep the pop if there is no push that can conflict
+     with it. The pattern we pop into is authoritative and we remove it
+     from the substitution. *)
+  match pushes with
+  | [] ->
+      assert (cells <> [||]);
+      (* We lose a known cell here *)
+      let cells = pop_n_cells cells 1 in
+      let bindings = Bindings.remove bindings pattern in
+      let block' =
+        commute_pushes_block program [] bindings final_type cells block
+      in
+      IPop (pattern, block')
+  | (value, _cell, id) :: push_list ->
+      (* We remove every register refered in the value from the
+         bindings, because we need to access the value as it was when
+         pushed, and add that to the substitution. *)
+      let bindings =
+        Bindings.compose (Bindings.singleton_pattern pattern value) bindings
+      in
+      (* We have cancelled a pop ! *)
+      cancelled_pop += 1;
+      let block =
+        commute_pushes_block program push_list bindings final_type cells block
+      in
+      let comment =
+        sprintf
+          "Cancelled push_%i %s with pop %s"
+          id
+          (StackLangPrinter.value_to_string value)
+          (StackLangPrinter.pattern_to_string pattern)
+      in
+      IComment (comment, block)
 
 
 and commute_pushes_icase_tag
     program pushes bindings final_type known_cells reg branches =
   let branch_aux =
-    branch_aux program pushes bindings final_type known_cells reg
+    commute_pushes_tagpat_branch
+      program
+      pushes
+      bindings
+      final_type
+      known_cells
+      reg
   in
   match Bindings.apply bindings (VReg reg) with
   | VTag tag ->
@@ -274,21 +263,21 @@ and commute_pushes_icase_tag
       assert false
 
 
-and branch_aux program pushes bindings final_type known_cells reg branch =
+and commute_pushes_tagpat_branch
+    program pushes bindings final_type known_cells reg branch =
   let TagMultiple taglist, block = branch in
   let state_info = state_info_intersection program.states taglist in
   let known_cells =
     longest_known_cells [ state_info.known_cells; known_cells ]
   in
-  (* TODO EMILE : understand why this fails, and restore *)
   let bindings, pushes =
     match taglist with
     | [ tag ] ->
         (* In this case, we can inline the state value inside the
            pushes. *)
-        let bindings = Bindings.extend bindings reg (VTag tag) in
-        let tmp_subst = Bindings.singleton reg (VTag tag) in
-        let pushes = List.map (_pushcell_apply tmp_subst) pushes in
+        let tmp_bindings = Bindings.singleton reg (VTag tag) in
+        let pushes = List.map (pushcell_apply tmp_bindings) pushes in
+        let bindings = Bindings.compose bindings tmp_bindings in
         (bindings, pushes)
     | _ ->
         (bindings, pushes)
@@ -306,6 +295,7 @@ and commute_pushes_itblock
     t_block
   in
   let stack_type = pop_n_cells stack_type (List.length pushes) in
+  let bindings = Bindings.restrict bindings needed_registers in
   (* First, we will not need the registers we are defining in the binding,
      since they are shadowed by said binding. *)
   let needed_registers =
@@ -336,35 +326,25 @@ and commute_pushes_itblock
     }
 
 
-and aux_jump pushes bindings label =
-  restore_pushes pushes (Block.def bindings @@ Block.jump label)
-
-
-and aux_case_token
-    program pushes bindings reg branches odefault final_type known_cells =
+and commute_pushes_token
+    program pushes bindings reg branches odefault final_type cells =
   let aux_branch = function
     (* Every [TokSingle] introduces a definition of a register. *)
-    | TokSingle (tok, reg'), (block : block) ->
+    | TokSingle (tok, reg'), block ->
         let reg'' =
           if pushes_conflit_with_reg (List.map fstt pushes) reg'
           then suffix reg' (fresh_int ())
           else reg'
         in
-        let subst = Bindings.extend bindings reg' (VReg reg'') in
+        let bindings = Bindings.extend bindings reg' (VReg reg'') in
         let block' =
-          commute_pushes_block program pushes subst final_type known_cells block
+          commute_pushes_block program pushes bindings final_type cells block
         in
         (TokSingle (tok, reg''), block')
     (* [TokMultiple] does not introduce new definitions *)
     | TokMultiple terminals, block ->
         let block' =
-          commute_pushes_block
-            program
-            pushes
-            bindings
-            final_type
-            known_cells
-            block
+          commute_pushes_block program pushes bindings final_type cells block
         in
         (TokMultiple terminals, block')
   in
@@ -373,23 +353,21 @@ and aux_case_token
     ( reg
     , branches
     , Option.map
-        (commute_pushes_block program pushes bindings final_type known_cells)
+        (commute_pushes_block program pushes bindings final_type cells)
         odefault )
 
 
-and commute_pushes_t_block program t_block =
+and commute_pushes_routine program t_block =
   cancelled_pop := 0;
   eliminated_branches := 0;
   let { block; stack_type; final_type } = t_block in
   let candidate =
     commute_pushes_block program [] Bindings.empty final_type stack_type block
   in
-  { t_block with
-    block =
-      ( if !cancelled_pop > 0 || !eliminated_branches > 0
-      then candidate
-      else block )
-  }
+  let block =
+    if !cancelled_pop > 0 || !eliminated_branches > 0 then candidate else block
+  in
+  { t_block with block }
 
 
 let represented_states program =
@@ -482,14 +460,14 @@ let remove_dead_branches program =
 
 
 let commute_pushes program =
-  remove_dead_branches (Program.map (commute_pushes_t_block program) program)
+  remove_dead_branches (Program.map (commute_pushes_routine program) program)
 
 
 (** remove definitions of shape [x = x], or shape [_ = x] *)
 let remove_useless_defs program =
   let rec aux block =
     match block with
-    | IDef (binds, block) when binds = Bindings.empty ->
+    | IDef (binds, block) when Bindings.is_empty binds ->
         aux block
     | _ ->
         Block.map aux block
@@ -557,11 +535,12 @@ let compute_has_case_tag program =
 
 
 let optimize program =
-  remove_useless_defs
+  compute_has_case_tag
+  @@ remove_useless_defs
   @@ remove_dead_branches
        ( if Settings.commute_pushes
        then
-         let program = compute_has_case_tag @@ commute_pushes program in
+         let program = commute_pushes program in
          program
        else program )
 
