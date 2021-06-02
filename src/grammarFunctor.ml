@@ -102,6 +102,7 @@ module Nonterminal = struct
   type t = int
 
   let n2i i = i
+  let i2n i = i
 
   let equal (nt1 : t) (nt2 : t) =
     nt1 = nt2
