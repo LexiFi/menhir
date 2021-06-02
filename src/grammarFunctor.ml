@@ -102,6 +102,7 @@ module Nonterminal = struct
   type t = int
 
   let n2i i = i
+  let i2n i = i
 
   let compare = (-)
 
