@@ -57,5 +57,11 @@ end) : sig
 
   val iter: (node -> node list -> unit) -> unit
 
+  (* [rev_topological_iter action] allows iterating over all strongly connected
+     components in a reverse topological ordering (starting from leaves first).
+     For each component, the [action] function is applied to the representative
+     element and to a (non-empty) list of all elements. *)
+
+  val rev_topological_iter: (node -> node list -> unit) -> unit
 end
 

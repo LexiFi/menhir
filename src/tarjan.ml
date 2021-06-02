@@ -215,13 +215,24 @@ end) = struct
   let scc x =
     (table x).scc
 
+  let representatives = Array.of_list !representatives
+
   let iter action =
-    List.iter (fun x ->
+    Array.iter (fun x ->
       let data = table x in
       assert (data.representative == x); (* a sanity check *)
       assert (data.scc <> []); (* a sanity check *)
       action x data.scc
-    ) !representatives
+    ) representatives
+
+  let rev_topological_iter action =
+    for i = Array.length representatives - 1 downto 0 do
+      let x = representatives.(i) in
+      let data = table x in
+      assert (data.representative == x); (* a sanity check *)
+      assert (data.scc <> []); (* a sanity check *)
+      action x data.scc
+    done
 
 end
 
