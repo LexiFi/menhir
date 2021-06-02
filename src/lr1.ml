@@ -466,6 +466,10 @@ let () =
 let number node =
   node
 
+let of_number node =
+  assert (node < n);
+  node
+
 let print node =
   Printf.sprintf "%d" (number node)
 
