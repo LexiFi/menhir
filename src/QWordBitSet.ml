@@ -264,3 +264,96 @@ let disjoint s1 s2 =
   | Q (hhi1, hlo1, lhi1, llo1), Q (hhi2, hlo2, lhi2, llo2) ->
       A.disjoint hhi1 hhi2 && A.disjoint hlo1 hlo2 &&
       A.disjoint lhi1 lhi2 && A.disjoint llo1 llo2
+
+let quick_subset s1 s2 =
+  match s1, s2 with
+  | E, _ | _, E -> false
+  | Q (hh1, hl1, lh1, ll1), Q (hh2, hl2, lh2, ll2) ->
+    A.quick_subset ll1 ll2 ||
+    A.quick_subset lh1 lh2 ||
+    A.quick_subset hl1 hl2 ||
+    A.quick_subset hh1 hh2
+
+let compare_minimum s1 s2 =
+  match s1, s2 with
+  | E, E -> 0
+  | E, _ -> -1
+  | _, E -> 1
+  | Q (hh1, hl1, lh1, ll1), Q (hh2, hl2, lh2, ll2) ->
+    match A.is_empty ll1, A.is_empty ll2 with
+    | false, false -> A.compare_minimum ll1 ll2
+    | true , false -> 1
+    | false, true  -> -1
+    | true , true  ->
+      match A.is_empty lh1, A.is_empty lh2 with
+      | false, false -> A.compare_minimum lh1 lh2
+      | true , false -> 1
+      | false, true  -> -1
+      | true , true  ->
+        match A.is_empty hl1, A.is_empty hl2 with
+        | false, false -> A.compare_minimum hl1 hl2
+        | true , false -> 1
+        | false, true  -> -1
+        | true , true  ->
+          A.compare_minimum hh1 hh2
+
+let interval_union xs =
+  List.fold_left union empty xs
+
+let extract_prefix s1 s2 =
+  match s1, s2 with
+  | E, _ -> E, E
+  | _, E -> invalid_arg "extract_prefix: r < l"
+  | Q (hh1, hl1, lh1, ll1), Q (hh2, hl2, lh2, ll2) ->
+    if not (A.is_empty ll2) then (
+      if A.is_empty ll1 then invalid_arg "extract_prefix: r < l";
+      let p, r = A.extract_prefix ll1 ll2 in
+      construct A.empty A.empty A.empty p,
+      construct hh1 hl1 lh1 r
+    ) else if not (A.is_empty lh2) then (
+      if A.is_empty ll1 && A.is_empty lh1 then
+        invalid_arg "extract_prefix: r < l";
+      let p, r = A.extract_prefix lh1 lh2 in
+      construct A.empty A.empty p ll1,
+      construct hh1 hl1 r A.empty
+    ) else if not (A.is_empty hl2) then (
+      if A.is_empty ll1 && A.is_empty lh1 && A.is_empty hl1 then
+        invalid_arg "extract_prefix: r < l";
+      let p, r = A.extract_prefix hl1 hl2 in
+      construct A.empty p lh1 ll1,
+      construct hh1 r A.empty A.empty
+    ) else (
+      if A.is_empty ll1 && A.is_empty lh1 &&
+         A.is_empty hl1 && A.is_empty hh1 then
+        invalid_arg "extract_prefix: r < l";
+      let p, r = A.extract_prefix hh1 hh2 in
+      construct p hl1 lh1 ll1,
+      construct r A.empty A.empty A.empty
+    )
+
+let extract_common s1 s2 =
+  match s1, s2 with
+  | _, E | E, _ -> E, (s1, s2)
+  | Q (hh1, hl1, lh1, ll1), Q (hh2, hl2, lh2, ll2) ->
+    if not (A.equal ll1 ll2) then
+      let ll, (ll1, ll2) = A.extract_common ll1 ll2 in
+      construct A.empty A.empty A.empty ll,
+      (construct hh1 hl1 lh1 ll1,
+       construct hh2 hl2 lh2 ll2)
+    else if not (A.equal lh1 lh2) then
+      let lh, (lh1, lh2) = A.extract_common lh1 lh2 in
+      construct A.empty A.empty lh ll1,
+      (construct hh1 hl1 lh1 A.empty,
+       construct hh2 hl2 lh2 A.empty)
+    else if not (A.equal hl1 hl2) then
+      let hl, (hl1, hl2) = A.extract_common hl1 hl2 in
+      construct A.empty hl lh1 ll1,
+      (construct hh1 hl1 A.empty A.empty,
+       construct hh2 hl2 A.empty A.empty)
+    else if not (A.equal hh1 hh2) then
+      let hh, (hh1, hh2) = A.extract_common hh1 hh2 in
+      construct hh hl1 lh1 ll1,
+      (construct hh1 A.empty A.empty A.empty,
+       construct hh2 A.empty A.empty A.empty)
+    else
+      s1, (E, E)

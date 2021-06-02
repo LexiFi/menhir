@@ -1001,6 +1001,15 @@ module Domain = struct
     with NotSubset ->
       false
 
+    let quick_subset _ = failwith "Patricia.quick_subset: not implemented"
+
+    let compare_minimum _ = failwith "Patricia.compare_minimum: not implemented"
+
+    let extract_prefix _ = failwith "Patricia.extract_prefix: not implemented"
+
+    let extract_common _ = failwith "Patricia.extract_common: not implemented"
+
+    let interval_union _ = failwith "Patricia.interval_union: not implemented"
 end
 
 (*i --------------------------------------------------------------------------------------------------------------- i*)
@@ -1077,7 +1086,6 @@ end
           else
 
             s
-
 end
 
 (*i --------------------------------------------------------------------------------------------------------------- i*)

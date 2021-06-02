@@ -109,6 +109,42 @@ module type S = sig
 
   (* [subset] implements the subset predicate over sets. *)
 
-  val subset: (t -> t -> bool)
+  val subset: t -> t -> bool
 
+  (* TODO: find a better name.
+     [quick_subset a b] is a faster test for set inclusion if it is known that
+     either [a] is a subset of [b] or they are disjoint (a ⊆ b ⋁ a ∩ b = ∅).
+
+     This is the case when [a] belongs to partition refined from a set
+     containing [b]. This test happens many times during lookahead classes
+     computation and the specialized [quick_subset] can be significantly faster
+     (an order of magnitude in practice for large alphabets).
+  *)
+  val quick_subset: t -> t -> bool
+
+  (** {1 Decomposing sets}
+
+      These functions implements the [Refine.DECOMPOSABLE] interface.
+      We cannot reference it here as [Refine] is implemented using bitsets,
+      that would create a reference cycle.
+  *)
+
+  (* [compare_minimum l r] order two sets by comparing their least element *)
+  val compare_minimum : t -> t -> int
+
+  (* [extract_prefix l r] split l in two sets (l_min, l_rest) such that:
+     - l_min contains elements strictly smaller than the all elements of [r]
+     - l_rest contains other elements
+  *)
+  val extract_prefix : t -> t -> t * t
+
+  (* [extract_common l r] decomposes l and r in (min, l', r') such that :
+     - [min] is the set of minimal elements that are part of both [l] and [r]
+     - [l = min U l'] and [r = min U r']
+  *)
+  val extract_common : t -> t -> t * (t * t)
+
+  (* [interval_union l] computes the union of an ordered list of intervals.
+     This is an optimized special case of union *)
+  val interval_union : t list -> t
 end
