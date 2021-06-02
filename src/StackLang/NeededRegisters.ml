@@ -49,8 +49,8 @@ let rec needed_block block valuation =
       Value.registers value
   | IDie ->
       empty
-  | ITrace (register, block) ->
-      needed_block block +^ register
+  | ITrace (_message, block) ->
+      needed_block block
   | IComment (_, block) ->
       needed_block block
   | ICaseTag (register, branches) ->
