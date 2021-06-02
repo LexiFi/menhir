@@ -225,11 +225,36 @@ let choose s =
       else
         A.choose hhi + quarter3
 
-let compare =
-  compare (* this is [Generic.compare] *)
+let compare s1 s2 =
+  if s1 == s2 then 0
+  else match s1, s2 with
+  | E  , E   -> 0
+  | Q _, E   -> 1
+  | E  , Q _ -> -1
+  | Q (hhi1, hlo1, lhi1, llo1), Q (hhi2, hlo2, lhi2, llo2) ->
+    begin match A.compare hhi1 hhi2 with
+      | 0 ->
+        begin match A.compare hlo1 hlo2 with
+          | 0 ->
+            begin match A.compare lhi1 lhi2 with
+              | 0 -> A.compare llo1 llo2
+              | n -> n
+            end
+          | n -> n
+        end
+      | n -> n
+    end
 
 let equal s1 s2 =
-  s1 = s2
+  (s1 == s2) ||
+  match s1, s2 with
+  | E , E -> true
+  | Q _, E | E , Q _ -> false
+  | Q (hhi1, hlo1, lhi1, llo1), Q (hhi2, hlo2, lhi2, llo2) ->
+    A.equal hhi1 hhi2 &&
+    A.equal hlo1 hlo2 &&
+    A.equal lhi1 lhi2 &&
+    A.equal llo1 llo2
 
 let disjoint s1 s2 =
   match s1, s2 with

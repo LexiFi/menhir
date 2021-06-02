@@ -166,11 +166,26 @@ let choose s =
       else
         A.choose lo
 
-let compare =
-  compare (* this is [Generic.compare] *)
+let compare s1 s2 =
+  if s1 == s2 then 0
+  else match s1, s2 with
+  | E  , E   -> 0
+  | D _, E   -> 1
+  | E  , D _ -> -1
+  | D (hi1, lo1), D (hi2, lo2) ->
+    begin match A.compare hi1 hi2 with
+      | 0 -> A.compare lo1 lo2
+      | n -> n
+    end
 
 let equal s1 s2 =
-  s1 = s2
+  (s1 == s2) ||
+  match s1, s2 with
+  | E , E -> true
+  | D _, E | E , D _ -> false
+  | D (hi1, lo1), D (hi2, lo2) ->
+    A.equal hi1 hi2 &&
+    A.equal lo1 lo2
 
 let disjoint s1 s2 =
   match s1, s2 with
