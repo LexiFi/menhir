@@ -32,7 +32,7 @@ module Run (X : sig
      a file to which one line of statistics is appended. *)
   val statistics: string option
 
-end) : sig
+end)() : sig
 
   (* The result of this analysis is a [.messages] file. It is written to the
      standard output channel. No result is returned. *)
