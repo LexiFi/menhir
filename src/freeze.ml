@@ -39,7 +39,7 @@ let () =
       let verbose = Settings.logA >= 2
       (* For my own purposes, LRijkstra can print one line of statistics to a .csv file. *)
       let statistics = if false then Some "lr.csv" else None
-    end) in
+    end)() in
     exit 0
   end
 

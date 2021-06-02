@@ -46,7 +46,7 @@ module Run (X : sig
      a file to which one line of statistics is appended. *)
   val statistics: string option
 
-end) = struct
+end)() = struct
 
 open Grammar
 open Default
