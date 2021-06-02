@@ -236,6 +236,12 @@
 
 ## Documentation
 
+* Document the `.messages` workflow by publishing a tutorial (perhaps a blog
+  post). Add build system support (examples of `dune` rules). Try to make
+  maintenance easy by offering one command to auto-update a `.messages` file
+  and one command to lint a `.messages` file (check for correctness,
+  irredundancy, completeness).
+
 * Explain how to simulate inherited attributes
   (cf. post by David Chemouil on the mailing list).
 
