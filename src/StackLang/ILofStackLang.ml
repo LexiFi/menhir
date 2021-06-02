@@ -35,9 +35,7 @@ let pstatecon s = PData (statecon s, [])
 let pstatescon ss = POr (List.map pstatecon ss)
 
 let eprintf format args =
-  EApp
-    ( EVar "Printf.fprintf"
-    , EVar "stderr" :: EStringConst (format ^ "\n%!") :: args )
+  EApp (EVar "Printf.eprintf", EStringConst (format ^ "\n%!") :: args)
 
 
 let trace (format : string) (args : expr list) : (pattern * expr) list =
@@ -49,6 +47,8 @@ let printtokendef =
   destructuretokendef print_token tstring false (fun tok ->
       EStringConst (Grammar.Terminal.print tok) )
 
+
+(* This is [print_token], used to print tokens in [--trace] mode. *)
 
 (* This is [discard], used to take a token off the input stream and
      query the lexer for a new one. The code queries the lexer for a new
@@ -74,17 +74,19 @@ let discardbody =
   EFun
     ( [ PVar lexer; PVar lexbuf ]
     , blet
-        ( trace
-            "Lookahead token is now %s (%d-%d)"
-            [ EApp (EVar print_token, [ EVar token ])
-            ; ERecordAccess
-                ( ERecordAccess (EVar lexbuf, "Lexing.lex_start_p")
-                , "Lexing.pos_cnum" )
-            ; ERecordAccess
-                ( ERecordAccess (EVar lexbuf, "Lexing.lex_curr_p")
-                , "Lexing.pos_cnum" )
-            ]
-        , EApp (EVar lexer, [ EVar lexbuf ]) ) )
+        ( [ (PVar token, EApp (EVar lexer, [ EVar lexbuf ])) ]
+        , blet
+            ( trace
+                "Lookahead token is now %s (%d-%d)"
+                [ EApp (EVar print_token, [ EVar token ])
+                ; ERecordAccess
+                    ( ERecordAccess (EVar lexbuf, "Lexing.lex_start_p")
+                    , "Lexing.pos_cnum" )
+                ; ERecordAccess
+                    ( ERecordAccess (EVar lexbuf, "Lexing.lex_curr_p")
+                    , "Lexing.pos_cnum" )
+                ]
+            , EVar token ) ) )
 
 
 let discarddef =
@@ -598,7 +600,8 @@ let compile (S.({ cfg; entry; states } as program) : S.program) =
       , mbasics Front.grammar
         @ [ SIStretch Front.grammar.preludes
           ; SITypeDefs (statetypedef states :: stacktypeabbrevdefs)
-          ; SIValDefs (false, [ printtokendef; discarddef ])
+          ; SIValDefs (false, [ printtokendef ])
+          ; SIValDefs (false, [ discarddef ])
           ; SIValDefs
               ( true
               , List.map
