@@ -3482,6 +3482,36 @@
   (action
     (diff dolmen.0.2-parseTptp.conflicts.exp dolmen.0.2-parseTptp.conflicts)))
 
+(rule (target dolmen_ae.opp.out) (deps dolmen_ae.mly dolmen_ae01.mly)
+  (action
+    (with-outputs-to dolmen_ae.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --base dolmen_ae --only-preprocess %{deps})))))
+
+(rule (alias dolmen_ae) (action (diff dolmen_ae.opp.exp dolmen_ae.opp.out)))
+
+(rule
+  (targets dolmen_ae.out dolmen_ae.automaton dolmen_ae.automaton.resolved
+    dolmen_ae.conflicts dolmen_ae.timings)
+  (deps dolmen_ae.mly dolmen_ae01.mly)
+  (action
+    (with-outputs-to dolmen_ae.out
+      (with-accepted-exit-codes 0
+        (run menhir --base dolmen_ae --dump --dump-resolved --explain -lg 2
+          -la 2 -lc 2 --timings-to dolmen_ae.timings %{deps})))))
+
+(rule (alias dolmen_ae) (action (diff dolmen_ae.exp dolmen_ae.out)))
+
+(rule (alias dolmen_ae)
+  (action (diff dolmen_ae.automaton.exp dolmen_ae.automaton)))
+
+(rule (alias dolmen_ae)
+  (action
+    (diff dolmen_ae.automaton.resolved.exp dolmen_ae.automaton.resolved)))
+
+(rule (alias dolmen_ae)
+  (action (diff dolmen_ae.conflicts.exp dolmen_ae.conflicts)))
+
 (rule (target dule.opp.out) (deps dule.mly)
   (action
     (with-outputs-to dule.opp.out
@@ -12546,6 +12576,7 @@
     (alias docOckXmlParser)
     (alias dolmen.0.2-parseDimacs)
     (alias dolmen.0.2-parseTptp)
+    (alias dolmen_ae)
     (alias dule)
     (alias dune.1.4.0-opamBaseParser)
     (alias duplicated_prec)
