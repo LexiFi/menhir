@@ -29,3 +29,14 @@ val ifnlazy : bool -> (unit -> 'a list) -> 'a list
 
 (** The sum of a list of integers. *)
 val sum : int list -> int
+
+(** Group equivalent elements of a list.
+    [group_by ~compare ~group xs] sorts the list [xs] using [compare] and then
+    groups runs of equivalent elements using [group] *)
+val group_by :
+  compare:('a -> 'a -> int) -> group:('a -> 'a list -> 'b) ->
+  'a list -> 'b list
+
+(** [find_map f xs] applies [f] to elements of [xs] in order and the returns
+    the first result of the form [Some y], or [None]. *)
+val find_map : ('a -> 'b option) -> 'a list -> 'b option

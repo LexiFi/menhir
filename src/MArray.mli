@@ -77,5 +77,9 @@ val fold_left2 : ('a -> 'b1 -> 'b2 -> 'a) -> 'a -> 'b1 array -> 'b2 array -> 'a
    [Fix.MINIMAL_SEMI_LATTICE]. *)
 val leq_join : ('a -> 'b -> 'b) -> 'a array -> 'b array -> 'b array
 
+(** Return the index of the first element that satisfies a predicate, or
+    raise [Not_found]. *)
+val findi : (int -> 'a -> bool) -> 'a array -> int
+
 (** Unit tests. *)
 val test : unit -> unit
