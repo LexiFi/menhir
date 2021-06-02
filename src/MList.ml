@@ -80,3 +80,30 @@ let leq_join leq_join xs1 xs2 =
   with Invalid_argument _ ->
     (* The lists have different lengths. *)
     assert false
+
+(** Group equivalent elements of a list. *)
+let group_by
+    ~(compare:'a -> 'a -> int)
+    ~(group:'a -> 'a list -> 'b)
+    (list : 'a list) : 'b list
+  =
+  match List.sort compare list with
+  | [] -> []
+  | key :: rest ->
+    let rec loop acc ks key = function
+      | [] -> group key ks :: acc
+      | key' :: rest ->
+        if compare key key' = 0
+        then loop acc (key' :: ks) key rest
+        else loop (group key ks :: acc) [] key' rest
+    in
+    loop [] [] key rest
+
+(** [find_map f xs] applies [f] to elements of [xs] in order and the returns
+    the first result of the form [Some y], or [None]. *)
+let rec find_map f = function
+  | [] -> None
+  | x :: xs ->
+    match f x with
+    | Some _ as result -> result
+    | None -> find_map f xs

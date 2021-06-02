@@ -47,3 +47,14 @@ val take : int -> 'a list -> 'a list
    specification of a [leq_join] is defined by the signature
    [Fix.MINIMAL_SEMI_LATTICE]. *)
 val leq_join : ('a -> 'b -> 'b) -> 'a list -> 'b list -> 'b list
+
+(** Group equivalent elements of a list.
+    [group_by ~compare ~group xs] sorts the list [xs] using [compare] and then
+    groups runs of equivalent elements using [group] *)
+val group_by :
+  compare:('a -> 'a -> int) -> group:('a -> 'a list -> 'b) ->
+  'a list -> 'b list
+
+(** [find_map f xs] applies [f] to elements of [xs] in order and the returns
+    the first result of the form [Some y], or [None]. *)
+val find_map : ('a -> 'b option) -> 'a list -> 'b option
