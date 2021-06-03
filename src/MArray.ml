@@ -80,6 +80,11 @@ let rev_of_list xs =
 let rev_to_list a =
   fold_left (fun xs x -> x :: xs) [] a
 
+let iter_rev f a =
+  for i = length a - 1 downto 0 do
+    f a.(i)
+  done
+
 (* To keep compatibility with OCaml 4.02, we copy [Array.for_all],
    which appeared in 4.03. *)
 
