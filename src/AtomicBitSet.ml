@@ -201,11 +201,11 @@ let minimum s =
 let choose =
   minimum
 
-let compare =
+let compare : t -> t -> int =
   compare (* this is [Generic.compare] *)
 
-let equal s1 s2 =
-  s1 = s2
+let equal : t -> t -> bool =
+  (=)
 
 let disjoint s1 s2 =
   is_empty (inter s1 s2)
