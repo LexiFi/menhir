@@ -41,16 +41,19 @@ val is_suffix : ('a -> 'a -> bool) -> 'a array -> 'a array -> bool
    whose elements satisfy the predicate [p]. *)
 val greatest_suffix_forall : ('a -> bool) -> 'a array -> 'a array
 
-(** Array reversal.
+(**[rev a] is a new array whose elements are the elements of the array [a],
+   in reverse order.
    [rev [|1; 2; 3; 4|] = [|4; 3; 2; 1|]]*)
 val rev : 'a array -> 'a array
 
-(** Convert a list to an array. The list's head becomes the end of the array.
-    [rev_of_list [1; 2; 3; 4; 5] = [|5; 4; 3; 2; 1|]] *)
+(**[rev_of_list] converts a list to an array.
+   The list's head becomes the end of the array.
+   [rev_of_list [1; 2; 3; 4; 5] = [|5; 4; 3; 2; 1|]] *)
 val rev_of_list : 'a list -> 'a array
 
-(** Convert an array to a list. The end of the array becomes the list's head.
-    [rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1]] *)
+(**[rev_to_list] converts an array to a list.
+   The end of the array becomes the list's head.
+   [rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1]] *)
 val rev_to_list : 'a array -> 'a list
 
 (**[for_all] is identical to the function by the same name in the OCaml
