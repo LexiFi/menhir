@@ -126,6 +126,18 @@ let primitive p =
       spaced_braces (align (bindings bs ^/^ utf8format "<semantic action>"))
 
 
+let trace t =
+  match t with
+  | TraceMessage s ->
+      OCaml.string s
+  | TracePositions (s, startp, endp) ->
+      OCaml.string s
+      ^^ string " startp="
+      ^^ (match startp with Some startp -> value startp | None -> string " - ")
+      ^^ string " endp="
+      ^^ (match endp with Some endp -> value endp | None -> string " - ")
+
+
 let tokpat pat =
   match pat with
   | TokSingle (tok, r) ->
@@ -185,8 +197,8 @@ and instruction b =
       nl ^^ string "DEF " ^^ bindings bs
   | IPrim (r, p, _) ->
       nl ^^ string "PRIM " ^^ register r ^^ string " = " ^^ primitive p
-  | ITrace (s, _) ->
-      nl ^^ string "TRACE " ^^ OCaml.string s
+  | ITrace (t, _) ->
+      nl ^^ string "TRACE " ^^ trace t
   | IComment (s, _) ->
       nl ^^ string "#### " ^^ align (arbitrary_string s)
   | IDie ->

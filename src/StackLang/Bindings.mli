@@ -13,10 +13,16 @@ val empty : t
 val assign : pattern -> value -> t
 (**[assign p v] represents the assignment [p := v]. *)
 
-val compose : t -> t -> t
-(**[compose bs1 bs2] returns a set of bindings that is equivalent to the
+val let_in : t -> t -> t
+(**[let_in bs1 bs2] returns a set of bindings that is equivalent to the
    sequential composition of the bindings [bs1] and [bs2]. Thus, [IDef (bs1,
-   IDef (bs2, block))] is equivalent to [IDef (compose bs1 bs2, block)]. *)
+   IDef (bs2, block))] is equivalent to [IDef (let_in bs1 bs2, block)]. *)
+
+val let_and : t -> t -> t
+(**[let_and bs1 bs2] returns a set of bindings that is equivalent to the
+   parallel composition of the bindings [bs1] and [bs2]. [bs1]'s and [bs2]'s
+   domains must be disjoint. *)
+
 
 val remove : t -> registers -> t
 (**[remove bs rs] is the set of bindings [bs], deprived of the bindings that
@@ -50,3 +56,8 @@ val apply : t -> value -> value
 (**[apply bs v] applies the bindings [bs], viewed as a substitution of values
    for registers, to the value [v]. The instruction [IReturn (apply bs v)] is
    equivalent to the instruction [IDef (bs, IReturn v)]. *)
+
+val partition : t -> registers -> (t * t)
+(**[partition bs rs] is [bs1, bs2] where [bs1] is the set of bindings from [bs]
+   whose right hand side do not refer registers in [regs], and [bs2] the set of
+   bindings from [bs] that do. *)

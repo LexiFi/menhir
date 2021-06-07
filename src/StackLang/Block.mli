@@ -7,18 +7,18 @@ val map :
   -> ?push:(value -> cell_info -> t -> value * cell_info * t)
   -> ?pop:(pattern -> t -> pattern * t)
   -> ?def:(bindings -> t -> bindings * t)
-  -> ?prim:(field -> primitive -> t -> field * primitive * t)
-  -> ?trace:(field -> t -> field * t)
-  -> ?comment:(field -> t -> field * t)
+  -> ?prim:(register -> primitive -> t -> register * primitive * t)
+  -> ?trace:(trace -> t -> trace * t)
+  -> ?comment:(string -> t -> string * t)
   -> ?die:(unit -> unit)
   -> ?return:(value -> value)
-  -> ?jump:(field -> field)
+  -> ?jump:(label -> label)
   -> ?case_token:
-       (   field
+       (   register
         -> (tokpat * t) list
         -> t option
-        -> field * (tokpat * t) list * t option )
-  -> ?case_tag:(field -> (tagpat * t) list -> field * (tagpat * t) list)
+        -> register * (tokpat * t) list * t option )
+  -> ?case_tag:(register -> (tagpat * t) list -> register * (tagpat * t) list)
   -> ?typed_block:(typed_block -> typed_block)
   -> t
   -> t
@@ -33,14 +33,14 @@ val iter :
   -> ?push:(value -> cell_info -> t -> unit)
   -> ?pop:(pattern -> t -> unit)
   -> ?def:(bindings -> t -> unit)
-  -> ?prim:(field -> primitive -> t -> unit)
-  -> ?trace:(field -> t -> unit)
-  -> ?comment:(field -> t -> unit)
+  -> ?prim:(register -> primitive -> t -> unit)
+  -> ?trace:(trace -> t -> unit)
+  -> ?comment:(string -> t -> unit)
   -> ?die:(unit -> unit)
   -> ?return:(value -> unit)
-  -> ?jump:(field -> unit)
-  -> ?case_token:(field -> (tokpat * t) list -> t option -> unit)
-  -> ?case_tag:(field -> (tagpat * t) list -> unit)
+  -> ?jump:(label -> unit)
+  -> ?case_token:(register -> (tokpat * t) list -> t option -> unit)
+  -> ?case_tag:(register -> (tagpat * t) list -> unit)
   -> ?typed_block:(typed_block -> unit)
   -> t
   -> unit

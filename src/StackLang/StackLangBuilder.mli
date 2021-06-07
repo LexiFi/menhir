@@ -73,7 +73,7 @@ val def : pattern -> value -> unit
 
 val prim : register -> primitive -> unit
 
-val trace : string -> unit
+val trace : trace -> unit
 
 val comment : string -> unit
 

@@ -22,3 +22,5 @@ val hash: ('a -> int) -> 'a option -> int
 val value: 'a option -> default:'a -> 'a
 val first_value: 'a option list -> 'a option
 val simplify: 'a option option -> 'a option
+val to_list: 'a option -> 'a list
+val split: ('a * 'b) option -> 'a option * 'b option
