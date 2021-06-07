@@ -154,7 +154,7 @@ let def bindings block =
   else
     match block with
     | IDef (bindings', block) ->
-        IDef (Bindings.compose bindings bindings', block)
+        IDef (Bindings.let_in bindings bindings', block)
     | _ ->
         IDef (bindings, block)
 

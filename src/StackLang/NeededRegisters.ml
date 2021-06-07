@@ -23,6 +23,8 @@ let empty = RegisterSet.empty
 
 let unions = List.fold_left ( + ) empty
 
+let set_of_option = function Some s -> s | None -> empty
+
 let defined_tokpat = function
   | TokSingle (_, reg) ->
       RegisterSet.singleton reg
@@ -45,20 +47,27 @@ let rec needed_block block valuation =
       needed_block block - Pattern.registers pattern
   | IPrim (reg, prim, block) ->
       Primitive.registers prim + (needed_block block -^ reg)
+  | IJump label ->
+      valuation label
   | IReturn value ->
       Value.registers value
   | IDie ->
       empty
-  | ITrace (_message, block) ->
-      needed_block block
+  | ITrace (trace, block) ->
+      let needed_trace =
+        match trace with
+        | TraceMessage _ ->
+            empty
+        | TracePositions (_, v1, v2) ->
+            let s1 = set_of_option @@ Option.map Value.registers v1 in
+            let s2 = set_of_option @@ Option.map Value.registers v2 in
+            s1 + s2
+      in
+      needed_trace + needed_block block
   | IComment (_, block) ->
       needed_block block
   | ICaseTag (register, branches) ->
-      List.fold_left
-        (fun acc branch -> acc + branch_iter needed_block branch)
-        empty
-        branches
-      +^ register
+      unions (List.map (branch_iter needed_block) branches) +^ register
   | ICaseToken (register, branches, default) ->
       unions
         (List.map
@@ -71,8 +80,6 @@ let rec needed_block block valuation =
            branches )
       + Option.value ~default:empty (Option.map needed_block default)
       +^ register
-  | IJump label ->
-      valuation label
   | ITypedBlock _ ->
       assert false
 

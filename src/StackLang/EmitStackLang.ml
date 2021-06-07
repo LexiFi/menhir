@@ -32,11 +32,15 @@ let tags = List.map tag
 (* [log] emits either an [ITrace] instruction or an [IComment]
    instruction, depending on [--trace]. *)
 
-let log format =
-  Printf.ksprintf
-    (fun s -> if Settings.trace then trace (s ^ "\n") else comment s)
-    format
+let log (t : trace) =
+  if Settings.trace
+  then trace t
+  else
+    let (TraceMessage s | TracePositions (s, _, _)) = t in
+    comment s
 
+
+let log_message format = ksprintf (fun s -> log (TraceMessage s)) format
 
 (* -------------------------------------------------------------------------- *)
 
@@ -322,7 +326,7 @@ module L = struct
     (* Determine whether the lexer should be queried for the next token. *)
     let must_query_lexer = must_query_lexer_upon_entering s in
     (* Log that we are entering state [s]. *)
-    log "State %d:" (Lr1.number s);
+    log_message "State %d:" (Lr1.number s);
     (* If necessary, read the positions of the current token from [lexbuf]. *)
     if must_read_positions
     then (
@@ -382,7 +386,7 @@ module L = struct
                          begin
                            fun () ->
                            (* Log that we are shifting. *)
-                           log
+                           log_message
                              "Shifting (%s) to state %d"
                              (Terminal.print tok)
                              (Lr1.number s');
@@ -449,28 +453,28 @@ module L = struct
     if Production.is_start prod
     then (
       assert (n = 1);
-      log "Accepting";
+      log_message "Accepting";
       return (VReg ids.(0))
       (* If this is not a start production, then it has a semantic action. *) )
     else
       let action = Production.action prod in
-
-      (* Log that we are reducing production [prod]. *)
-      log "Reducing production %s" (Production.print prod);
       (* Define [beforeendp], if needed by the semantic action. Define
          [startp] and [endp], which may be needed by the semantic action,
          and are later needed by [goto]. *)
       if Action.has_beforeend action then move beforeendp endp;
-      let need_startpos =
-         is_epsilon || stack_type.(0).holds_startp
-      in
-      let need_endpos =
-         is_epsilon || stack_type.(n - 1).holds_endp
-      in
-      if need_startpos
+      let has_startp = is_epsilon || stack_type.(0).holds_startp in
+      let has_endp = is_epsilon || stack_type.(n - 1).holds_endp in
+      if has_startp
       then move startp (if is_epsilon then endp else startpos ids 0);
-      if need_endpos
+      if has_endp
       then move endp (if is_epsilon then endp else endpos ids (n - 1));
+      (* Log that we are reducing production [prod]. *)
+      (* TODO Emile : make the new and old code backend have the same trace. *)
+      log
+        (TracePositions
+           ( sprintf "Reducing production %s" (Production.print prod)
+           , (if has_startp then Some (VReg startp) else None)
+           , if has_endp then Some (VReg endp) else None ) );
       (* Execute the semantic action. Store its result in [semv]. *)
       prim semv (Primitive.action action);
       (* Execute a goto transition. *)
