@@ -83,3 +83,6 @@ let rec first_value = function
 
 let simplify = function None -> None | Some o -> o
 
+let to_list = function None -> [] | Some v -> [v]
+
+let split = function None -> (None, None) | Some (v, v') -> (Some v, Some v')

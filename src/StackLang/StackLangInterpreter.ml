@@ -114,10 +114,7 @@ let binds bindings env =
   (* All values in the codomain of [bindings] are evaluated in [env].
      The accumulator, which also has type [env], contains [env] and
      is extended with the new bindings. *)
-  Bindings.fold
-    (fun r v accu -> bind (PReg r) (eval env v) accu)
-    bindings
-    env
+  Bindings.fold (fun r v accu -> bind (PReg r) (eval env v) accu) bindings env
 
 
 (* -------------------------------------------------------------------------- *)
@@ -204,8 +201,11 @@ let rec exec state block =
       let gv = exec_prim state p in
       state.env <- bind (PReg r) gv state.env;
       exec state block
-  | ITrace (s, block) ->
-      if state.trace then prerr_string s;
+  | ITrace (trace, block) ->
+      ( if state.trace
+      then
+        let (TraceMessage s | TracePositions (s, _, _)) = trace in
+        prerr_string s );
       exec state block
   | IComment (_, block) ->
       exec state block
