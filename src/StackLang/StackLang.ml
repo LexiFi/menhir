@@ -25,8 +25,7 @@
 
 include StackLangBasics
 
-type bindings =
-  Bindings.t
+type bindings = Bindings.t
 
 (* -------------------------------------------------------------------------- *)
 
@@ -50,6 +49,10 @@ type primitive =
 and field = string
 
 and action = Action.t
+
+type trace =
+  | TraceMessage of string
+  | TracePositions of string * value option * value option
 
 (* -------------------------------------------------------------------------- *)
 
@@ -104,7 +107,7 @@ type block =
   | IPrim of register * primitive * block
       (** [IPrim] invokes a primitive operation and stores its result in a
           register. *)
-  | ITrace of string * block  (** [ITrace] logs a message on [stderr]. *)
+  | ITrace of trace * block  (** [ITrace] logs a message on [stderr]. *)
   | IComment of string * block  (** [IComment] is a comment. *)
   (* Group 2: Instructions with zero successor. *)
   | IDie

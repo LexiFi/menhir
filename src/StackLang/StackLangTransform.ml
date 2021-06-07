@@ -120,25 +120,39 @@ let rec commute_pushes_block program pushes bindings final_type cells =
       (* As explained above, for every conflict between the definition and a
          push currently commuting, we add a new substitution rule
          We do not want to shadow definition useful for the push train *)
-      let bindings = Bindings.compose bindings bindings' in
+      let comment1 =
+        sprintf
+          "Going in with defs : %s"
+          (StackLangPrinter.bindings_to_string bindings)
+      in
+      let comment2 =
+        sprintf
+          "Propagating def : %s"
+          (StackLangPrinter.bindings_to_string bindings')
+      in
+      let bindings = Bindings.let_in bindings bindings' in
+      let comment3 =
+        sprintf
+          "Going out with def : %s"
+          (StackLangPrinter.bindings_to_string bindings)
+      in
       let block = commute_pushes_block pushes bindings final_type cells block in
-      IComment
-        ( sprintf
-            "Propagating def : %s"
-            (StackLangPrinter.bindings_to_string bindings')
-        , block )
+      IComment (comment1, IComment (comment2, IComment (comment3, block)))
   | IPrim (reg, prim, block) ->
       (* A primitive is a like def except it has a simple register instead of a
          pattern *)
       let reg' =
         if pushes_conflit_with_reg (List.map fstt pushes) reg
-        then suffix reg (fresh_int ())
+        then suffix (reg ^ "fresh") (fresh_int ())
         else reg
       in
       let bindings' =
         Bindings.(
-          compose
-            (remove bindings (RegisterSet.singleton reg'))
+          let_in
+            (remove
+               bindings
+               (RegisterSet.singleton reg')
+               (* It should be impossible that this changes anything *) )
             (assign (PReg reg) (VReg reg')))
       in
       let block =
@@ -150,7 +164,7 @@ let rec commute_pushes_block program pushes bindings final_type cells =
             let args = List.map (Bindings.apply bindings) args in
             PrimOCamlCall (f, args)
         | PrimOCamlAction (bindings', action) ->
-            PrimOCamlAction (Bindings.compose bindings bindings', action)
+            PrimOCamlAction (Bindings.let_in bindings bindings', action)
         | PrimOCamlFieldAccess (value, field) ->
             PrimOCamlFieldAccess (Bindings.apply bindings value, field)
         | PrimOCamlDummyPos ->
@@ -158,9 +172,19 @@ let rec commute_pushes_block program pushes bindings final_type cells =
       in
 
       IPrim (reg', prim, block)
-  | ITrace (register, block) ->
+  | ITrace (trace, block) ->
+      let trace =
+        match trace with
+        | TraceMessage s ->
+            TraceMessage s
+        | TracePositions (s, startp, endp) ->
+            TracePositions
+              ( s
+              , Option.map (Bindings.apply bindings) startp
+              , Option.map (Bindings.apply bindings) endp )
+      in
       let block = commute_pushes_block pushes bindings final_type cells block in
-      ITrace (register, block)
+      ITrace (trace, block)
   | IComment (comment, block) ->
       let block = commute_pushes_block pushes bindings final_type cells block in
       IComment (comment, block)
@@ -206,31 +230,52 @@ and commute_pushes_pop program pushes bindings final_type cells pattern block =
       assert (cells <> [||]);
       (* We lose a known cell here *)
       let cells = pop_n_cells cells 1 in
-      let bindings = Bindings.remove bindings (Pattern.registers pattern) in
       let block' =
-        commute_pushes_block program [] bindings final_type cells block
+        commute_pushes_block program [] Bindings.empty final_type cells block
       in
-      IPop (pattern, block')
+      IDef (bindings, IPop (pattern, block'))
   | (value, _cell, id) :: push_list ->
-      (* We remove every register refered in the value from thesingleton_pattern
-         bindings, because we need to access the value as it was when
-         pushed, and add that to the substitution. *)
-      let bindings =
-        Bindings.compose (Bindings.assign pattern value) bindings
+      let comment1 =
+        sprintf
+          "Going in with defs : %s"
+          (StackLangPrinter.bindings_to_string bindings)
       in
-      (* We have cancelled a pop ! *)
-      cancelled_pop += 1;
-      let block =
-        commute_pushes_block program push_list bindings final_type cells block
-      in
-      let comment =
+      let comment2 =
         sprintf
           "Cancelled push_%i %s with pop %s"
           id
           (StackLangPrinter.value_to_string value)
           (StackLangPrinter.pattern_to_string pattern)
       in
-      IComment (comment, block)
+      (*
+      We have
+      ```
+      push value ;
+      def bindings ;
+      pop pattern ;
+      ( ... )
+      ```
+      and we want to get a single bindings.
+      If there is a register bound both in the pop and in the def, it is going
+      to have the value to which it is bound by the pop, since it is last.
+      Appart from that, the value pushed are not affected by the def, which
+      means that this is equivalent to a let-and binding.
+      *)
+      let bindings = Bindings.remove bindings (Pattern.registers pattern) in
+      let bindings = Bindings.(let_and (assign pattern value) bindings) in
+      (* We have cancelled a pop ! *)
+      cancelled_pop += 1;
+      let block =
+        commute_pushes_block program push_list bindings final_type cells block
+      in
+
+      let comment3 =
+        sprintf
+          "Going out with def : %s"
+          (StackLangPrinter.bindings_to_string bindings)
+      in
+
+      IComment (comment1, IComment (comment2, IComment (comment3, block)))
 
 
 and commute_pushes_icase_tag
@@ -282,7 +327,7 @@ and commute_pushes_tagpat_branch
            pushes. *)
         let tmp_bindings = Bindings.assign (PReg reg) (VTag tag) in
         let pushes = List.map (pushcell_apply tmp_bindings) pushes in
-        let bindings = Bindings.compose bindings tmp_bindings in
+        let bindings = Bindings.let_in bindings tmp_bindings in
         (bindings, pushes)
     | _ ->
         (bindings, pushes)
@@ -342,7 +387,7 @@ and commute_pushes_token
           else reg'
         in
         let bindings =
-          Bindings.(compose bindings (assign (PReg reg') (VReg reg'')))
+          Bindings.(let_in bindings (assign (PReg reg') (VReg reg'')))
         in
         let block' =
           commute_pushes_block program pushes bindings final_type cells block
@@ -484,6 +529,137 @@ let remove_useless_defs program =
     program
 
 
+let ( + ) = RegisterSet.union
+
+let ( - ) = RegisterSet.diff
+
+let ( -^ ) regs reg = RegisterSet.remove reg regs
+
+let ( +^ ) regs reg = RegisterSet.add reg regs
+
+let empty = RegisterSet.empty
+
+let set_of_option = function Some s -> s | None -> empty
+
+let unions = List.fold_left ( + ) empty
+
+let rec rud_block program block =
+  let cfg = program.cfg in
+  let rud_block = rud_block program in
+  match block with
+  | IDef (binds, block) ->
+      let used, block = rud_block block in
+      let binds = Bindings.restrict used binds in
+      let used = used - Bindings.domain binds in
+      let used = used + Bindings.codomain binds in
+      (used, Block.def binds block)
+  | IPop (pattern, block) ->
+      let used, block = rud_block block in
+      let pattern = Pattern.restrict used pattern in
+      let used = used - Pattern.registers pattern in
+      (used, IPop (pattern, block))
+  | IPush (value, cell, block) ->
+      let used, block = rud_block block in
+      let used = used + Value.registers value in
+      (used, IPush (value, cell, block))
+  | IPrim (register, prim, block) ->
+      let used, block = rud_block block in
+      let comment1 =
+        sprintf
+          "used before prim : %s"
+          (String.concat " " (RegisterSet.elements used))
+      in
+      let prim =
+        match prim with
+        | PrimOCamlAction (bds, action) ->
+            let bds = Bindings.restrict (Action.vars action) bds in
+            PrimOCamlAction (bds, action)
+        | _ ->
+            prim
+      in
+      let used = used -^ register in
+      let used = used + Primitive.registers prim in
+      let comment2 =
+        sprintf
+          "used after prim : %s"
+          (String.concat " " (RegisterSet.elements used))
+      in
+      ( used
+      , IComment (comment1, IComment (comment2, IPrim (register, prim, block)))
+      )
+  | ITrace (trace, block) ->
+      let used, block = rud_block block in
+      let used_trace =
+        match trace with
+        | TraceMessage _ ->
+            empty
+        | TracePositions (_, v1, v2) ->
+            let s1 = set_of_option @@ Option.map Value.registers v1 in
+            let s2 = set_of_option @@ Option.map Value.registers v2 in
+            s1 + s2
+      in
+      let used = used + used_trace in
+      (used, ITrace (trace, block))
+  | IComment (comment, block) ->
+      let used, block = rud_block block in
+      (used, IComment (comment, block))
+  | IDie ->
+      (empty, IDie)
+  | IReturn v ->
+      (Value.registers v, IReturn v)
+  | IJump label ->
+      let used = needed (lookup label cfg) in
+      (used, IJump label)
+  | ICaseToken (register, branches, default) ->
+      let used_li, branches =
+        List.split @@ List.map (rud_case_tok_branch program) branches
+      in
+      let used_default, default =
+        Option.split @@ Option.map rud_block default
+      in
+      let used_default = set_of_option used_default in
+      let used = used_default + unions used_li +^ register in
+      (used, ICaseToken (register, branches, default))
+  | ICaseTag (register, branches) ->
+      let used_li, branches =
+        List.split @@ List.map (rud_case_tag_branch program) branches
+      in
+      let used = unions used_li +^ register in
+      (used, ICaseTag (register, branches))
+  | ITypedBlock tblock ->
+      let { block; needed_registers } = tblock in
+      let used, block = rud_block block in
+      assert (RegisterSet.subset used needed_registers);
+      (used, ITypedBlock { tblock with block; needed_registers = used })
+
+
+and rud_case_tok_branch program (tokpat, block) =
+  let used, block = rud_block program block in
+  match tokpat with
+  | TokSingle (tok, register) ->
+      let used = used -^ register in
+      (used, (TokSingle (tok, register), block))
+  | TokMultiple toks ->
+      (used, (TokMultiple toks, block))
+
+
+and rud_case_tag_branch program (tags, block) =
+  let used, block = rud_block program block in
+  (used, (tags, block))
+
+
+(** remove definitions of register that are not used.
+    This not guaranteed to delete every unused register : some become unused
+    across jump, and a more complicated fixed-point computation that is absent
+    here would required to delete them. *)
+let remove_unused_defs program =
+  Program.map
+    (fun t_block ->
+      let needed_registers, block = rud_block program t_block.block in
+      { t_block with block; needed_registers } )
+    program
+
+
 let rec compute_has_case_tag_block = function
   | IPush (value, cell, block) ->
       let block', hct = compute_has_case_tag_block block in
@@ -543,6 +719,7 @@ let compute_has_case_tag program =
 
 let optimize program =
   compute_has_case_tag
+  @@ remove_unused_defs
   @@ remove_useless_defs
   @@ remove_dead_branches
        ( if Settings.commute_pushes

@@ -134,7 +134,15 @@ let rec wf_block program label rs block =
       wf_prim p;
       let rs = RegisterSet.add r rs in
       wf_block program label rs block
-  | ITrace (_, block) | IComment (_, block) ->
+  | ITrace (trace, block) ->
+      ( match trace with
+      | TraceMessage _ ->
+          ()
+      | TracePositions (_, startp, endp) ->
+          Option.iter wf_value startp;
+          Option.iter wf_value endp );
+      wf_block program label rs block
+  | IComment (_, block) ->
       wf_block program label rs block
   | IDie ->
       ()
@@ -291,10 +299,6 @@ let measure program =
   let m = zero () in
   Program.iter (fun _ -> measure_t_block m) program;
   m
-
-
-(* -------------------------------------------------------------------------- *)
-(* Utility functions used below. *)
 
 
 (* -------------------------------------------------------------------------- *)

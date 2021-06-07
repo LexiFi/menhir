@@ -346,35 +346,59 @@ let rec compile_value = function
       EUnit
 
 
-(** The compilation of StackLang to IL is parameterized by a set of bindings that
-    permit to avoid most [let] constructs. This means that when compiling a
-    value, we need to first apply the bindings to it. *)
-let compile_value bindings value = compile_value (Bindings.apply bindings value)
-
 let compile_bindings bindings expr =
   bindings
   |> Bindings.to_list
-  |> List.map (fun (r, v) -> (PVar r, compile_value Bindings.empty v))
+  |> List.map (fun (r, v) -> (PVar r, compile_value v))
   |> fun pes -> eletand (pes, expr)
 
 
-let compile_primitive bindings = function
+let compile_primitive = function
   | S.PrimOCamlCall (f, args) ->
-      EApp (EVar f, List.map (fun arg -> compile_value bindings arg) args)
+      EApp (EVar f, List.map (fun arg -> compile_value arg) args)
   | S.PrimOCamlFieldAccess (record, field) ->
-      ERecordAccess (compile_value bindings record, field)
+      ERecordAccess (compile_value record, field)
   | S.PrimOCamlDummyPos ->
       EVar "Lexing.dummy_pos"
-  | S.PrimOCamlAction (bindings', action) ->
+  | S.PrimOCamlAction (bindings, action) ->
       (* action have a local binding associated to them, because we cannot
          rename the variables in the semantic action. *)
-      let needed =
-        S.RegisterSet.union (Action.semvars action) (Action.posvars action)
-      in
-      let bindings = Bindings.compose bindings bindings' in
+      let needed = Action.vars action in
       (* We restrict the binding to the needed values. *)
       let bindings = Bindings.restrict needed bindings in
-      compile_bindings bindings (Action.to_il_expr action)
+      compile_bindings
+        bindings
+        (EComment ("Action proper :", Action.to_il_expr action))
+
+
+let compile_trace t expr =
+  let trace =
+    match t with
+    | S.TraceMessage message ->
+        trace message []
+    | S.TracePositions (message, startp, endp) ->
+        let format =
+          "%s ("
+          ^ (match startp with Some _ -> "%d" | None -> " - ")
+          ^ "; "
+          ^ (match endp with Some _ -> "%d" | None -> "- ")
+          ^ ")"
+        in
+        let startp = Option.map compile_value startp in
+        let endp = Option.map compile_value endp in
+        let startp =
+          Option.map
+            (fun startp -> ERecordAccess (startp, "Lexing.pos_cnum"))
+            startp
+        in
+        let endp =
+          Option.map (fun endp -> ERecordAccess (endp, "Lexing.pos_cnum")) endp
+        in
+        trace
+          format
+          (EStringConst message :: Option.to_list startp @ Option.to_list endp)
+  in
+  blet (trace, expr)
 
 
 let add_to_etuple e tuple =
@@ -388,100 +412,95 @@ let add_to_ptuple p tuple =
 let rec compile_routine (program : S.program) t_block =
   let final_type = compile_final_type_name S.(t_block.final_type) in
   let S.{ block } = t_block in
-  compile_block program Bindings.empty final_type block
+  compile_block program final_type block
 
 
-and compile_block program bindings final_type block =
+and compile_block program final_type (block : S.block) =
   let cfg = S.(program.cfg) in
   let compile_block = compile_block program in
   match block with
   | S.IPush (value, _cell, block) ->
       assert (value <> S.VTuple []);
-      let new_stack =
-        add_to_etuple (EVar stack) (compile_value bindings value)
-      in
-      blet ([ (PVar stack, new_stack) ], compile_block bindings final_type block)
+      let new_stack = add_to_etuple (EVar stack) (compile_value value) in
+      blet ([ (PVar stack, new_stack) ], compile_block final_type block)
   | S.IPop (pattern, block) ->
       assert (pattern <> S.PTuple []);
-      let bindings = Bindings.remove bindings (Pattern.registers pattern) in
       let pattern = add_to_ptuple (PVar stack) (compile_pattern pattern) in
-      blet ([ (pattern, EVar stack) ], compile_block bindings final_type block)
-  | S.IDef (bindings', block) ->
-      let bindings = Bindings.compose bindings bindings' in
-      compile_block bindings final_type block
-  | S.IPrim (register, primitive, block) ->
-      let body = compile_primitive bindings primitive in
-      let bindings =
-        Bindings.remove bindings (S.RegisterSet.singleton register)
+      blet ([ (pattern, EVar stack) ], compile_block final_type block)
+  | S.IDef (bindings, S.IJump label) ->
+      let needed_registers = needed (StringMap.find label cfg) in
+      let needed_list = S.RegisterSet.elements needed_registers in
+      let args =
+        List.map
+          (fun s -> compile_value (Bindings.apply bindings (S.VReg s)))
+          needed_list
       in
-      let block = compile_block bindings final_type block in
+      let args = e_common_args @ args in
+      EApp (EVar label, args)
+  | S.IJump label ->
+      let needed_registers = needed (StringMap.find label cfg) in
+      let needed_list = S.RegisterSet.elements needed_registers in
+      let args = List.map (fun s -> EVar s) needed_list in
+      let args = e_common_args @ args in
+      EApp (EVar label, args)
+  | S.IDef (bindings', block) ->
+      compile_bindings bindings' @@ compile_block final_type block
+  | S.IPrim (register, primitive, block) ->
+      let body = compile_primitive primitive in
+      let block = compile_block final_type block in
       blet ([ (PVar register, body) ], block)
-  | S.ITrace (message, block) ->
-      blet (trace message [], compile_block bindings final_type block)
+  | S.ITrace (trace, block) ->
+      compile_trace trace @@ compile_block final_type block
   | S.IComment (comment, block) ->
-      EComment (comment, compile_block bindings final_type block)
+      EComment (comment, compile_block final_type block)
   | S.IDie ->
       ERaise (EVar "_eRR")
   | S.IReturn value ->
       (* If there is a known final type, we need to annotate the return value
          with it. It is unclear why, but if we dont, the program will fail to
          type. *)
-      EAnnot (compile_value bindings value, type2scheme final_type)
-  | S.IJump label ->
-      let needed_registers = needed (StringMap.find label cfg) in
-      let needed_list = S.RegisterSet.elements needed_registers in
-      let args =
-        List.map (fun s -> compile_value bindings (S.VReg s)) needed_list
-      in
-      let args = e_common_args @ args in
-      EApp (EVar label, args)
+      EAnnot (compile_value value, type2scheme final_type)
   | S.ICaseToken (register, tokpat_block_list, block_option) ->
       compile_ICaseToken
         program
-        bindings
         final_type
         register
         tokpat_block_list
         block_option
   | S.ICaseTag (register, tagpat_block_list) ->
-      compile_ICaseTag program bindings final_type register tagpat_block_list
+      compile_ICaseTag program final_type register tagpat_block_list
   | S.ITypedBlock t_block ->
-      compile_ITypedBlock program bindings t_block
+      compile_ITypedBlock program t_block
 
 
-and compile_case_token_branch program bindings final_type (tokpat, block) =
+and compile_case_token_branch program final_type (tokpat, block) =
   match tokpat with
   | S.TokSingle (terminal, register) ->
-      let bindings =
-        Bindings.remove bindings (S.RegisterSet.singleton register)
-      in
       { branchpat = CodePieces.tokpat terminal (PVar register)
       ; branchbody =
           tok_bind_unit
             terminal
             (PVar register)
-            (compile_block program bindings final_type block)
+            (compile_block program final_type block)
       }
   | S.TokMultiple terminals ->
       { branchpat = tokspat terminals
-      ; branchbody = compile_block program bindings final_type block
+      ; branchbody = compile_block program final_type block
       }
 
 
 and compile_ICaseToken
-    program bindings final_type register tokpat_block_list block_option =
+    program final_type register tokpat_block_list block_option =
   EMatch
     ( EVar register
-    , List.map
-        (compile_case_token_branch program bindings final_type)
-        tokpat_block_list
+    , List.map (compile_case_token_branch program final_type) tokpat_block_list
       @
       match block_option with
       | None ->
           []
       | Some block ->
           [ { branchpat = PWildcard
-            ; branchbody = compile_block program bindings final_type block
+            ; branchbody = compile_block program final_type block
             }
           ] )
 
@@ -492,8 +511,7 @@ and compile_ICaseToken
   very short (a function call), or replace it by a call to a function defined
   just before the match. This is why this function returns an optional prelude,
   in addition to a list of branches with duplicated code. *)
-and compile_case_tag_branch
-    program bindings final_type (S.TagMultiple tag_list, block) =
+and compile_case_tag_branch program final_type (S.TagMultiple tag_list, block) =
   match tag_list with
   (* Or-pattern cannot be empty *)
   | [] ->
@@ -502,7 +520,7 @@ and compile_case_tag_branch
   | [ tag ] ->
       ( None
       , [ { branchpat = pstatescon [ tag ]
-          ; branchbody = compile_block program bindings final_type block
+          ; branchbody = compile_block program final_type block
           }
         ] )
   (* if  *)
@@ -515,7 +533,7 @@ and compile_case_tag_branch
         let f = compile_function t_block program in
         let regs = StringSet.elements needed_registers in
         let regs = List.map (fun reg -> S.VReg reg) regs in
-        let vargs = e_common_args @ List.map (compile_value bindings) regs in
+        let vargs = e_common_args @ List.map compile_value regs in
         let call_f = EApp (EVar name, vargs) in
         (* We do not duplicate the code, and instead use the same local
            function for every subroutine. *)
@@ -525,7 +543,7 @@ and compile_case_tag_branch
         (Some (PVar name, f), List.map tag_aux tag_list)
     | S.IJump _ as block ->
         (* We duplicate this code that is very short. *)
-        let expr = compile_block program bindings final_type block in
+        let expr = compile_block program final_type block in
         ( None
         , List.map
             (fun tag -> { branchpat = pstatescon [ tag ]; branchbody = expr })
@@ -535,12 +553,10 @@ and compile_case_tag_branch
         failwith "cannot find t_block or jump" )
 
 
-and compile_ICaseTag program bindings final_type register tagpat_block_list =
+and compile_ICaseTag program final_type register tagpat_block_list =
   let S.{ states } = program in
   let branches =
-    List.map
-      (compile_case_tag_branch program bindings final_type)
-      tagpat_block_list
+    List.map (compile_case_tag_branch program final_type) tagpat_block_list
   in
   let preludes, branches = List.split branches in
   (* Only keep preludes that exists *)
@@ -563,7 +579,7 @@ and compile_ICaseTag program bindings final_type register tagpat_block_list =
   blet ~local:true (preludes, EMatch (EVar register, branches))
 
 
-and compile_ITypedBlock program bindings = function
+and compile_ITypedBlock program = function
   | S.({ has_case_tag = true; name; needed_registers } as t_block) ->
       (* If a typed block contains a match on tags, then we need to make it
          an inlined function call : it is not possible to inline it
@@ -574,16 +590,20 @@ and compile_ITypedBlock program bindings = function
       let func = EVar block_name in
       let regs = StringSet.elements needed_registers in
       let sargs = List.map (fun reg -> S.VReg reg) regs in
-      let args = e_common_args @ List.map (compile_value bindings) sargs in
+      let args = e_common_args @ List.map compile_value sargs in
       let body = compile_function t_block program in
       blet
         ~local:true
         ( [ (PVar block_name, body) ]
         , EComment ("Not inlined because of case tag", EApp (func, args)) )
-  | S.{ block; final_type } ->
-      (* let bindings = Bindings.restrict bindings needed_registers in *)
+  | S.{ block; final_type; name } ->
       let final_type = compile_final_type_name final_type in
-      compile_block program bindings final_type block
+      let body = compile_block program final_type block in
+      ( match name with
+      | Some name ->
+          EComment (sprintf "Inlined %s" name, body)
+      | None ->
+          body )
 
 
 and compile_function t_block (program : S.program) =

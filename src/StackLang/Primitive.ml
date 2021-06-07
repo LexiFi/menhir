@@ -8,11 +8,9 @@ let action ?(bindings = Bindings.empty) action =
 
 let registers = function
   | PrimOCamlAction (bindings, action) ->
-      RegisterSet.union
-        (RegisterSet.diff
-           (RegisterSet.union (Action.posvars action) (Action.semvars action))
-           (Bindings.codomain bindings) )
-        (Bindings.domain bindings)
+      RegisterSet.(
+        let registers = diff (Action.vars action) (Bindings.domain bindings) in
+        union registers (Bindings.codomain bindings))
   | PrimOCamlCall (_f, values) ->
       Value.registers_of_list values
   | PrimOCamlDummyPos ->
