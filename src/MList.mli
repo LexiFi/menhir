@@ -40,3 +40,12 @@ val group_by :
 (** [find_map f xs] applies [f] to elements of [xs] in order and the returns
     the first result of the form [Some y], or [None]. *)
 val find_map : ('a -> 'b option) -> 'a list -> 'b option
+
+(** [partition_map f xs] classifies elements of list [xs] in a left and a right
+    lists according to the result of [f] *)
+val partition_map :
+  ('a -> [< `L of 'l | `R of 'r ]) -> 'a list -> 'l list * 'r list
+
+(** [compare f l1 l2] compares two list according to the lexicographic
+    ordering. Elements are compared using the [f] argument. *)
+val compare : ('a -> 'a -> int) -> 'a list -> 'a list -> int

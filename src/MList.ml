@@ -66,3 +66,24 @@ let rec find_map f = function
     match f x with
     | Some _ as result -> result
     | None -> find_map f xs
+
+(** Classify elements of a list in a left and a right list *)
+let rec partition_map f = function
+  | [] -> ([], [])
+  | x :: xs ->
+    let y = f x in
+    let (ls, rs) = partition_map f xs in
+    match y with
+    | `L l -> (l :: ls, rs)
+    | `R r -> (ls, r :: rs)
+
+(** Compare two lists *)
+let rec compare cmp l1 l2 =
+  match l1, l2 with
+  | [], [] -> 0
+  | (_ :: _), [] -> 1
+  | [], (_ :: _) -> -1
+  | (x1 :: xs1), (x2 :: xs2) ->
+    match cmp x1 x2 with
+    | 0 -> compare cmp xs1 xs2
+    | n -> n
