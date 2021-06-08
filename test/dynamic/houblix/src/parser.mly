@@ -3,17 +3,17 @@
   open AST
   open Position
   open ParserTokens
-  
+
   let list_of_list_option o =
-    match o with 
+    match o with
     | Some l -> l
     | None -> []
 
-  let add_backtick s = 
+  let add_backtick s =
     "`" ^ s ^ "`"
 
   let binop_name binop =
-    Id(add_backtick 
+    Id(add_backtick
         (match binop with
         | PLUS                -> "+"
         | MINUS               -> "-"
@@ -44,13 +44,13 @@ definition_eof:
 definition:
 | val_def = value_definition          { val_def              }
 | type_def = define_type              { type_def             }
-| EXTERN id=located(identifier) COLON 
+| EXTERN id=located(identifier) COLON
          s=located(type_scheme)       { DeclareExtern(id, s) }
 
 %public identifier:
 | id=LOWERCASE_ID { Id(id) }
 
-%public %inline located(X): 
+%public %inline located(X):
   x=X { Position.with_poss $startpos $endpos x }
 
 %public separated_twolong_list(SEP, ELE):
