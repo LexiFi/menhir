@@ -96,7 +96,7 @@ val leq_join : ('a -> 'b -> 'b) -> 'a array -> 'b array -> 'b array
 
 (** Return the index of the first element that satisfies a predicate, or
     raise [Not_found]. *)
-val findi : (int -> 'a -> bool) -> 'a array -> int
+val findi : (int -> 'a -> bool) -> int -> 'a array -> int
 
 (** Unit tests. *)
 val test : unit -> unit
