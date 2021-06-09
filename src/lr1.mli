@@ -83,6 +83,7 @@ val nt_of_entry: node -> Nonterminal.t
 
 val n: int
 val number: node -> int
+val of_number : int -> node
 
 (* A state is printed simply as its number. *)
 

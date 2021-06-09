@@ -124,6 +124,14 @@ let leq_join leq_join a1 a2 =
   let a = init n (fun i -> leq_join (unsafe_get a1 i) (unsafe_get a2 i)) in
   if for_all2 (==) a2 a then a2 else a
 
+let rec findi f i arr =
+  if i >= Array.length arr then
+    raise Not_found
+  else if f i arr.(i) then
+    i
+  else
+    findi f (i + 1) arr
+
 let test () =
   assert (pop [|1; 2; 3; 4|] = [|1; 2; 3|]) ;
   assert (push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]) ;

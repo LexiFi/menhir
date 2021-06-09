@@ -57,6 +57,8 @@ module Nonterminal : sig
 
   val n2i: t -> int
 
+  val i2n: int -> t (* unsafe! *)
+
   (* This produces a string representation of a nonterminal. It should
      in principle never be applied to one of the internally generated
      nonterminals, as we do not wish users to become aware of the
