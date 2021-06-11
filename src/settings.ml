@@ -318,6 +318,24 @@ let dollars =
 let require_aliases =
   ref false
 
+let random_sentence_symbol =
+  ref None
+
+let random_sentence_goal =
+  ref 0
+
+let random_sentence_style =
+  ref `Abstract
+
+let random_sentence_abstract symbol =
+  random_sentence_symbol := Some symbol;
+  random_sentence_style := `Abstract
+
+let random_sentence_concrete symbol =
+  random_sentence_symbol := Some symbol;
+  random_sentence_style := `Concrete;
+  require_aliases := true
+
 let strategy =
   ref `Legacy
 
@@ -392,6 +410,9 @@ let options = Arg.align [
   "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
   "--random-seed", Arg.Int Random.init, "<seed> Set the random seed";
   "--random-self-init", Arg.Unit Random.self_init, " Pick a random seed in a system-dependent way";
+  "--random-sentence-length", Arg.Set_int random_sentence_goal, "<length> Set the goal length for a random sentence";
+  "--random-sentence", Arg.String random_sentence_abstract, "<sym> Generate a random valid sentence";
+  "--random-sentence-concrete", Arg.String random_sentence_concrete, "<sym> Generate a random valid sentence";
   "--raw-depend", Arg.Unit enable_raw_depend, " Invoke ocamldep and echo its raw output";
   "--reference-graph", Arg.Set reference_graph, " (undocumented)";
   "--represent-states", Arg.Set represent_states, " (undocumented)";
@@ -668,6 +689,15 @@ let dollars =
 
 let require_aliases =
   !require_aliases
+
+let random_sentence =
+  match !random_sentence_symbol with
+  | None ->
+      None
+  | Some nt ->
+      let goal = !random_sentence_goal
+      and style = !random_sentence_style in
+      Some (nt, goal, style)
 
 let strategy =
   !strategy
