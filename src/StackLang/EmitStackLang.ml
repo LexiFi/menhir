@@ -16,6 +16,7 @@ open Grammar
 open Infix
 open Invariant (* only to access [cell] fields *)
 
+(* module Invariant = Invariant.Long () *)
 module SSymbols = StackSymbols.Run ()
 
 open StackLang
@@ -303,7 +304,7 @@ module L = struct
      represent_state tell whether to gener*)
 
   let run s =
-    let represent_state = Invariant.represented s in
+    let represent_state = represented s in
     (* Determine whether this is an initial state. *)
     let is_start = Lr1.is_start s in
 
