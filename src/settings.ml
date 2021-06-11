@@ -390,6 +390,8 @@ let options = Arg.align [
   "--only-preprocess-uu", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess (PrintUnitActions true)),
                           " Print grammar with unit actions & tokens";
   "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
+  "--random-seed", Arg.Int Random.init, "<seed> Set the random seed";
+  "--random-self-init", Arg.Unit Random.self_init, " Pick a random seed in a system-dependent way";
   "--raw-depend", Arg.Unit enable_raw_depend, " Invoke ocamldep and echo its raw output";
   "--reference-graph", Arg.Set reference_graph, " (undocumented)";
   "--represent-states", Arg.Set represent_states, " (undocumented)";
