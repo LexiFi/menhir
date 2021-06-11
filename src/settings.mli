@@ -273,7 +273,7 @@ val stacklang_test: bool
    example of a sequence of tokens that is accepted by the grammar (not
    necessarily by the automaton) to the file [output]. Nothing else is done if
    set. *)
-val provide_example: string option
+val provide_example: bool
 
 (** The undocumented flag [--provide-example-seed] sets the seed used for random
    generation of the example. *)

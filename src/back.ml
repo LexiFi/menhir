@@ -17,30 +17,23 @@
    time to dump a new description of it, if requested by the user. *)
 
 let () =
-  match Settings.provide_example with
-  | None ->
-      ()
-  | Some name ->
+  if Settings.provide_example
+  then (
     ( match Settings.provide_example_seed with
     | None ->
         Random.self_init ()
     | Some s ->
-        Random.init s;
-        let budget = Settings.example_size in
-        let nt =
-          let _, node = Grammar.ProductionMap.choose Lr1.entry in
-          Lr1.nt_of_entry node
-        in
-        let s =
-          SentenceGenerator.sentence ~log:Settings.example_log nt budget
-        in
-        let file = open_out name in
-        Array.iter
-          (fun terminal ->
-            Printf.fprintf file "%s\n" (Grammar.Terminal.print terminal) )
-          s;
-        close_out file;
-        exit 0 )
+        Random.init s );
+    let budget = Settings.example_size in
+    let nt =
+      let _, node = Grammar.ProductionMap.choose Lr1.entry in
+      Lr1.nt_of_entry node
+    in
+    let s = SentenceGenerator.sentence ~log:Settings.example_log nt budget in
+    Array.iter
+      (fun terminal -> Printf.printf "%s\n" (Grammar.Terminal.print terminal))
+      s;
+    exit 0 )
 
 
 let () =

@@ -12,6 +12,7 @@
 (******************************************************************************)
 
 open Grammar
+open Infix
 
 let minimal_symbol = function
   | Symbol.N nt ->
@@ -156,9 +157,10 @@ let sentence ?(log = false) nt budget : Terminal.t array =
       let budget_allocation = Array.copy minimal_costs in
       let rspendable = ref spendable in
       let count_maxed_out = ref 0 in
-      (* maxed_out is a bool array that tells, for every symbol, whether we can still allocate more budget to it.
-         We can never allocate more budget than 1 to a nonterminal.
-         For a terminal, we cannot allocate more budget than the minimum. *)
+      (* maxed_out is a bool array that tells, for every symbol, whether we can
+         still allocate more budget to it. We can never allocate more budget
+         than 1 to a nonterminal. For a terminal, we cannot allocate more
+         budget than the minimum. *)
       let maxed_out =
         Array.mapi
           (fun i symbol ->
@@ -200,7 +202,7 @@ let sentence ?(log = false) nt budget : Terminal.t array =
                  it means it is maxed-out *)
               if actual_increase < desired_increase || actual_increase = 0 then (
                 maxed_out.(i) <- true ;
-                count_maxed_out := !count_maxed_out + 1 ) ;
+                count_maxed_out += 1 ) ;
               (* Increase the budget. *)
               budget_allocation.(i) <- current_cost + actual_increase ;
               (* Decrease the budget *)
@@ -224,7 +226,7 @@ let sentence ?(log = false) nt budget : Terminal.t array =
         (fun allocation -> function Symbol.T t ->
               if !ri < global_budget then (
                 array.(!ri) <- t ;
-                ri := !ri + 1 )
+                ri += 1 )
               else over_budget := true | Symbol.N nt ->
               log
               @@ Printf.sprintf "Nonterminal %S starting on line %i\n"

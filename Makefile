@@ -100,16 +100,13 @@ clean::
 
 # [make speed] runs the speed test in test/dynamic/speed.
 
-.PHONY: speed_calc
-speed_calc:
-	@ dune build --force --no-buffer @speed
-
-.PHONY: speed_houblix
-speed_houblix:
-	@ dune build --force --no-buffer @speed_houblix
+.PHONY: benchmark
+benchmark:
+	@ cd benchmarks && sh build.sh && cd .. && \
+	dune build --force --no-buffer @benchmark
 
 .PHONY: speed
-speed: speed_calc speed_houblix
+speed: benchmark
 
 # [make houblix] runs just the tests in test/dynamic/houblix.
 

@@ -346,7 +346,7 @@ let stacklang_test =
   ref false
 
 let provide_example =
-  ref ""
+  ref false
 
 let example_size =
   ref 1000
@@ -438,7 +438,7 @@ let options = Arg.align [
   "--only-preprocess-uu", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess (PrintUnitActions true)),
                           " Print grammar with unit actions & tokens";
   "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
-  "--provide-example", Arg.Set_string provide_example, " (undocumented)";
+  "--provide-example", Arg.Set provide_example, " (undocumented)";
   "--provide-example-seed", Arg.Int (set_option provide_example_seed), " (undocumented)";
   "--raw-depend", Arg.Unit enable_raw_depend, " Invoke ocamldep and echo its raw output";
   "--reference-graph", Arg.Set reference_graph, " (undocumented)";
@@ -771,11 +771,7 @@ let stacklang_graph =
 let stacklang_test =
   !stacklang_test
 
-let provide_example =
-  let s = !provide_example in
-  if String.equal "" s then
-    None
-  else Some s
+let provide_example = !provide_example
 
 let provide_example_seed =
   !provide_example_seed
