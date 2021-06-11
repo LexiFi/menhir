@@ -27,11 +27,10 @@ val value_refers_to_register : register -> value -> bool
 
 val is_suffix : Invariant.cell array -> Invariant.cell array -> bool
 
-val state_info_intersection : state_info TagMap.t -> tag list -> state_info
-(** [state_info_intersection states tags] d *)
-
 val filter_stack : cell_info array -> cell_info array
 (** Remove empty cells from an array of cell information. *)
+
+val final_type_intersection : states -> tag list -> Stretch.ocamltype option
 
 val longest_known_cells : cell_info array list -> cell_info array
 (** [longest_known_cells li] Returns the longest array from [li]. *)
