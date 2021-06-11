@@ -59,7 +59,7 @@ type run = {
 
 (* Display and debugging. *)
 
-let print_sentence (nto, terminals) : string =
+let print_sentence_abstract (nto, terminals) : string =
   Misc.with_buffer 128 (fun b ->
     Option.iter (fun nt ->
       bprintf b "%s: " (Nonterminal.print false nt)
@@ -71,13 +71,29 @@ let print_sentence (nto, terminals) : string =
     bprintf b "\n";
   )
 
-let print_concrete_sentence (_nto, terminals) : string =
+let print_terminal_concrete t =
+  match Terminal.unquoted_alias t with
+  | Some alias ->
+      alias
+  | None ->
+      (* An alias is missing. Use the abstract name of the terminal
+         instead. This is a best effort. *)
+      Terminal.print t
+
+let print_sentence_concrete (_nto, terminals) : string =
   Misc.with_buffer 128 (fun b ->
     let separator = Misc.once "" " " in
     List.iter (fun t ->
-      bprintf b "%s%s" (separator()) (Option.force (Terminal.unquoted_alias t))
+      bprintf b "%s%s" (separator()) (print_terminal_concrete t)
     ) terminals
   )
+
+let print_sentence style sentence =
+  match style with
+  | `Abstract ->
+      print_sentence_abstract sentence
+  | `Concrete ->
+      print_sentence_concrete sentence
 
 (* --------------------------------------------------------------------------- *)
 
@@ -236,7 +252,7 @@ module SS = StackSymbols.Run()
 let print_messages_auto (nt, sentence, target) : unit =
 
   (* Print the sentence. *)
-  print_string (print_sentence (Some nt, sentence));
+  print_string (print_sentence_abstract (Some nt, sentence));
 
   (* If a token alias has been defined for every terminal symbol, then
      we can convert this sentence into concrete syntax. Do so. We make
@@ -250,7 +266,7 @@ let print_messages_auto (nt, sentence, target) : unit =
     printf
       "##\n\
        ## Concrete syntax: %s\n"
-      (print_concrete_sentence (Some nt, sentence))
+      (print_sentence_concrete (Some nt, sentence))
   ;
 
   (* Show which state this sentence leads to. *)
@@ -1195,7 +1211,7 @@ let () =
     (* Echo. *)
     List.iter (or_comment_iter (fun run ->
       List.iter (or_comment_iter (fun ((_, sentence), _target) ->
-        print_string (print_sentence sentence)
+        print_string (print_sentence_abstract sentence)
       )) run.elements
     )) runs;
 
@@ -1215,11 +1231,11 @@ let () =
     (* Echo. *)
     List.iter (or_comment_iter (fun run ->
       List.iter (or_comment_iter (fun ((_, sentence), _target) ->
-        print_string (print_sentence sentence);
+        print_string (print_sentence_abstract sentence);
         if Terminal.every_token_has_an_alias then
           printf
             "## Concrete syntax: %s\n"
-            (print_concrete_sentence sentence)
+            (print_sentence_concrete sentence)
       )) run.elements
     )) runs;
 
