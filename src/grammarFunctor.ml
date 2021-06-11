@@ -1025,6 +1025,10 @@ module GenericAnalysis
 
     (* An analysis is specified by the following functions. *)
 
+    (* [shortcut] can be used to map a nonterminal symbol to a property.
+       In that case, the definition of this nonterminal symbol is ignored. *)
+    val shortcut: Nonterminal.t -> property option
+
     (* [terminal] maps a terminal symbol to a property. *)
     val terminal: Terminal.t -> property
 
@@ -1108,12 +1112,16 @@ end = struct
      as a disjunction of conjunctions of symbols. *)
 
   let nonterminal nt get : property =
-    (* Disjunction over all productions for this nonterminal symbol. *)
-    Production.foldnt_lazy nt (fun prod rest ->
-      S.disjunction
-        (production prod 0 get)
-        rest
-    ) P.bottom
+    match S.shortcut nt with
+    | Some p ->
+        p
+    | None ->
+        (* Disjunction over all productions for this nonterminal symbol. *)
+        Production.foldnt_lazy nt (fun prod rest ->
+          S.disjunction
+            (production prod 0 get)
+            rest
+        ) P.bottom
 
   (* The least fixed point is taken as follows. Note that it is computed
      on demand, as [lfp] is called by the user. *)
@@ -1147,6 +1155,7 @@ module NONEMPTY =
   GenericAnalysis
     (Fix.Prop.Boolean)
     (struct
+      let shortcut _nt = None
       (* A terminal symbol is nonempty. *)
       let terminal _ = true
       (* An alternative is nonempty if at least one branch is nonempty. *)
@@ -1162,6 +1171,7 @@ module NULLABLE =
   GenericAnalysis
     (Fix.Prop.Boolean)
     (struct
+      let shortcut _nt = None
       (* A terminal symbol is not nullable. *)
       let terminal _ = false
       (* An alternative is nullable if at least one branch is nullable. *)
@@ -1179,6 +1189,7 @@ module FIRST =
   GenericAnalysis
     (TerminalSet)
     (struct
+      let shortcut _nt = None
       (* A terminal symbol has a singleton FIRST set. *)
       let terminal = TerminalSet.singleton
       (* The FIRST set of an alternative is the union of the FIRST sets. *)
@@ -1213,6 +1224,7 @@ module MINIMAL =
       type property = Terminal.t t
      end)
     (struct
+      let shortcut _nt = None
       open CompletedNatWitness
       (* A terminal symbol has length 1. *)
       let terminal = singleton
