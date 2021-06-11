@@ -59,6 +59,10 @@ val rev_to_list : 'a array -> 'a list
 (**[iter_rev f a] is equivalent to [iter f (rev a)]. *)
 val iter_rev : ('a -> unit) -> 'a array -> unit
 
+(**[existsi p a] tests whether there exists an index [i] such that
+   [p i a.(i)] holds. *)
+val existsi : (int -> 'a -> bool) -> 'a array -> bool
+
 (**[for_all] is identical to the function by the same name in the OCaml
    standard library. *)
 val for_all : ('a -> bool) -> 'a array -> bool

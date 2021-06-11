@@ -85,6 +85,14 @@ let iter_rev f a =
     f a.(i)
   done
 
+let existsi p a =
+  let n = length a in
+  let rec loop i =
+    if i = n then false
+    else if p i (unsafe_get a i) then true
+    else loop (succ i) in
+  loop 0
+
 (* To keep compatibility with OCaml 4.02, we copy [Array.for_all],
    which appeared in 4.03. *)
 
