@@ -469,32 +469,6 @@ let cell symbol states =
   { symbol; states; holds_semv; holds_state; holds_startp; holds_endp }
 
 
-let cell_intersection c c' =
-  let { symbol; states; holds_semv; holds_state; holds_startp; holds_endp } = c
-  and { symbol = symbol'
-      ; states = states'
-      ; holds_semv = hold_semv'
-      ; holds_state = holds_state'
-      ; holds_startp = holds_startp'
-      ; holds_endp = holds_endp'
-      } =
-    c'
-  in
-  assert (
-    symbol = symbol'
-    && holds_semv = hold_semv'
-    && holds_state = holds_state'
-    && holds_startp = holds_startp'
-    && holds_endp = holds_endp' );
-  { symbol
-  ; states = Lr1.NodeSet.inter states states'
-  ; holds_semv
-  ; holds_state
-  ; holds_startp
-  ; holds_endp
-  }
-
-
 (* Accessors. *)
 
 let similar cell1 cell2 =

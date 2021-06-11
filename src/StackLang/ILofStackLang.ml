@@ -428,6 +428,8 @@ and compile_block program final_type (block : S.block) =
       let pattern = add_to_ptuple (PVar stack) (compile_pattern pattern) in
       blet ([ (pattern, EVar stack) ], compile_block final_type block)
   | S.IDef (bindings, S.IJump label) ->
+      (* This is to get nicer code : the function will still be correct if this
+         case is deleted. *)
       let needed_registers = needed (StringMap.find label cfg) in
       let needed_list = S.RegisterSet.elements needed_registers in
       let args =

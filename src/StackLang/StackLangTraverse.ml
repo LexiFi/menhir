@@ -445,19 +445,35 @@ let wt_knowncells_routine program label tblock =
         match sync with
         | Synced n ->
             let branches_info = Annotate.case_tag cells sync reg branches in
-            let branch_aux (TagMultiple tags, block) (cells', sync) =
-              if not @@ is_suffix cells cells' (* If the branch is not dead *)
-              then
-                fail
-                  ~state_relevance:true
-                  (sprintf
-                     "Discovered info is not a suffix of n=%d, Known : %s, \
-                      From match : %s, in branch %s"
-                     n
-                     (StackLangPrinter.known_cells_to_string cells)
-                     (StackLangPrinter.known_cells_to_string cells')
-                     (String.concat " | " (List.map string_of_tag tags)) );
-              let cells = longest_known_cells [ cells; cells' ] in
+            let branch_aux (TagMultiple tags, block) (cells, sync) =
+              let tag_aux tag =
+                let cells' = (lookup_tag tag states).known_cells in
+                let cells' = MArray.append cells' (MArray.suffix cells n) in
+                (* If the branch is not dead *)
+                if not @@ is_suffix cells cells'
+                then
+                  let cells_str =
+                    StackLangPrinter.known_cells_to_string cells
+                  in
+                  let cells_str' =
+                    StackLangPrinter.known_cells_to_string cells'
+                  in
+                  let branch_str =
+                    String.concat " | " (List.map string_of_tag tags)
+                  in
+                  let message =
+                    sprintf
+                      "Discovered info is not a suffix of n=%d, Known : %s, \
+                       From match : %s, in branch %s, because of tag %s"
+                      n
+                      cells_str
+                      cells_str'
+                      branch_str
+                      (string_of_tag tag)
+                  in
+                  fail ~state_relevance:true message
+              in
+              List.iter tag_aux tags;
               wtkc_block cells sync block
             in
             List.iter2 branch_aux branches branches_info
@@ -533,7 +549,10 @@ let rec wft_block program label final_type block =
       let branch_aux (TagMultiple taglist, block) =
         (* By matching on the state, we discover state information.
            We can enrich the known cells with theses. *)
-        let final_type = (state_info_intersection states taglist).sfinal_type in
+        let final_type =
+          Option.first_value
+            (List.map (fun tag -> (lookup_tag tag states).sfinal_type) taglist)
+        in
         (* We are matching on a state, therefore state is always needed,
            and we can discard these values. *)
         wft_block program label final_type block
@@ -575,6 +594,12 @@ let ( := ) pat value = Block.sdef pat value
 
 open Block
 
+let typed_block cells =
+  typed_block cells (RegisterSet.singleton state_reg) false
+
+
+let ( <: ) cells block = typed_block cells block
+
 let t0 = tag_of_int 0
 
 let t1 = tag_of_int 1
@@ -587,11 +612,14 @@ let good1 =
   let c_cell = cell true true false false in
   let b_cell = cell true true false false in
   let a_cell = cell false true false false in
+  let t0_cells = [| a_cell; b_cell |] in
+  let t1_cells = [| c_cell |] in
+  let t2_cells = [||] in
   let states =
     TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = t0_cells })
+      ; (t1, { sfinal_type = None; known_cells = t1_cells })
+      ; (t2, { sfinal_type = None; known_cells = t2_cells })
       ]
   in
   let cfg =
@@ -606,11 +634,12 @@ let good1 =
               case_tag
                 state_reg
                 [ [ t0 ]
-                  => pop (PTuple [ PReg "b"; PReg state_reg ])
-                     @@ pop (PReg "a")
-                     @@ die
-                ; [ t1 ] => pop (PReg "c") @@ die
-                ; [ t2 ] => die
+                  => ( t0_cells
+                     <: pop (PTuple [ PReg "b"; PReg state_reg ])
+                        @@ pop (PReg "a")
+                        @@ die )
+                ; [ t1 ] => (t1_cells <: pop (PReg "c") @@ die)
+                ; [ t2 ] => (t2_cells <: die)
                 ]
           } )
       ; ( "g"
@@ -634,11 +663,14 @@ let good2 =
   let c_cell = cell true true false false in
   let b_cell = cell true true false false in
   let a_cell = cell false true false false in
+  let t0_cells = [| a_cell; b_cell |] in
+  let t1_cells = [| c_cell; b_cell |] in
+  let t2_cells = [||] in
   let states =
     TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell; b_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = t0_cells })
+      ; (t1, { sfinal_type = None; known_cells = t1_cells })
+      ; (t2, { sfinal_type = None; known_cells = t2_cells })
       ]
   in
   let cfg =
@@ -668,11 +700,14 @@ let good_sync =
   let c_cell = cell true true false false in
   let b_cell = cell true true false false in
   let a_cell = cell false true false false in
+  let t0_cells = [| a_cell; b_cell |] in
+  let t1_cells = [| c_cell |] in
+  let t2_cells = [||] in
   let states =
     TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = t0_cells })
+      ; (t1, { sfinal_type = None; known_cells = t1_cells })
+      ; (t2, { sfinal_type = None; known_cells = t2_cells })
       ]
   in
   let cfg =
@@ -687,11 +722,12 @@ let good_sync =
               case_tag
                 state_reg
                 [ [ t0 ]
-                  => pop (PTuple [ PReg "b"; PReg state_reg ])
-                     @@ pop (PReg "a")
-                     @@ die
-                ; [ t1 ] => pop (PReg "c") @@ die
-                ; [ t2 ] => die
+                  => ( t0_cells
+                     <: pop (PTuple [ PReg "b"; PReg state_reg ])
+                        @@ pop (PReg "a")
+                        @@ die )
+                ; [ t1 ] => (t1_cells <: pop (PReg "c") @@ die)
+                ; [ t2 ] => (t2_cells <: die)
                 ]
           } )
       ; ( "g"
@@ -705,11 +741,7 @@ let good_sync =
               @@ (PReg "b" := VUnit)
               @@ push VUnit a_cell
               @@ push (VReg "b") b_cell
-              @@ typed_block
-                   [||]
-                   (RegisterSet.singleton state_reg)
-                   false
-                   (jump "f")
+              @@ ([||] <: jump "f")
           } )
       ]
   in
@@ -723,11 +755,14 @@ let bad_shadow_state =
   let c_cell = cell true true false false in
   let b_cell = cell true true false false in
   let a_cell = cell false true false false in
+  let t0_cells = [| a_cell; b_cell |] in
+  let t1_cells = [| c_cell |] in
+  let t2_cells = [||] in
   let states =
     TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = t0_cells })
+      ; (t1, { sfinal_type = None; known_cells = t1_cells })
+      ; (t2, { sfinal_type = None; known_cells = t2_cells })
       ]
   in
   let cfg =
@@ -743,10 +778,11 @@ let bad_shadow_state =
               @@ case_tag
                    state_reg
                    [ [ t0 ]
-                     => pop (PTuple [ PReg "b"; PReg state_reg ])
-                        @@ pop (PReg "a")
-                        @@ die
-                   ; [ t1 ] => pop (PReg "c") @@ die
+                     => ( t0_cells
+                        <: pop (PTuple [ PReg "b"; PReg state_reg ])
+                           @@ pop (PReg "a")
+                           @@ die )
+                   ; [ t1 ] => (t1_cells <: pop (PReg "c") @@ die)
                    ; [ t2 ] => die
                    ]
           } )
@@ -773,11 +809,14 @@ let bad_sync =
   let c_cell = cell true true false false in
   let b_cell = cell true true false false in
   let a_cell = cell false true false false in
+  let t0_cells = [| a_cell; b_cell |] in
+  let t1_cells = [| c_cell |] in
+  let t2_cells = [||] in
   let states =
     TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = t0_cells })
+      ; (t1, { sfinal_type = None; known_cells = t1_cells })
+      ; (t2, { sfinal_type = None; known_cells = t2_cells })
       ]
   in
   let cfg =
@@ -792,11 +831,12 @@ let bad_sync =
               case_tag
                 state_reg
                 [ [ t0 ]
-                  => pop (PTuple [ PReg "b"; PReg state_reg ])
-                     @@ pop (PReg "a")
-                     @@ die
-                ; [ t1 ] => pop (PReg "c") @@ die
-                ; [ t2 ] => die
+                  => ( t0_cells
+                     <: pop (PTuple [ PReg "b"; PReg state_reg ])
+                        @@ pop (PReg "a")
+                        @@ die )
+                ; [ t1 ] => (t1_cells <: pop (PReg "c") @@ die)
+                ; [ t2 ] => (t2_cells <: die)
                 ]
           } )
       ; ( "g"
@@ -821,11 +861,14 @@ let bad_pop =
   let c_cell = cell true true false false in
   let b_cell = cell true true false false in
   let a_cell = cell false true false false in
+  let t0_cells = [| a_cell; b_cell |] in
+  let t1_cells = [| c_cell |] in
+  let t2_cells = [||] in
   let states =
     TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = t0_cells })
+      ; (t1, { sfinal_type = None; known_cells = t1_cells })
+      ; (t2, { sfinal_type = None; known_cells = t2_cells })
       ]
   in
   let cfg =
@@ -840,12 +883,13 @@ let bad_pop =
               case_tag
                 state_reg
                 [ [ t0 ]
-                  => pop (PTuple [ PReg "b"; PReg state_reg ])
-                     @@ pop (PReg "a")
-                     @@ pop (PReg "c")
-                     @@ die
-                ; [ t1 ] => pop (PReg "c") die
-                ; [ t2 ] => die
+                  => ( t0_cells
+                     <: pop (PTuple [ PReg "b"; PReg state_reg ])
+                        @@ pop (PReg "a")
+                        @@ pop (PReg "c")
+                        @@ die )
+                ; [ t1 ] => (t1_cells <: pop (PReg "c") die)
+                ; [ t2 ] => (t2_cells <: die)
                 ]
           } )
       ; ( "g"
@@ -869,11 +913,14 @@ let bad_push =
   let c_cell = cell true true false false in
   let b_cell = cell true true false false in
   let a_cell = cell false true false false in
+  let t0_cells = [| a_cell; b_cell |] in
+  let t1_cells = [| c_cell |] in
+  let t2_cells = [||] in
   let states =
     TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = t0_cells })
+      ; (t1, { sfinal_type = None; known_cells = t1_cells })
+      ; (t2, { sfinal_type = None; known_cells = t2_cells })
       ]
   in
   let cfg =
@@ -898,11 +945,14 @@ let bad_final =
   let c_cell = cell true true false false in
   let b_cell = cell true true false false in
   let a_cell = cell false true false false in
+  let t0_cells = [| a_cell; b_cell |] in
+  let t1_cells = [| c_cell |] in
+  let t2_cells = [||] in
   let states =
     TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = t0_cells })
+      ; (t1, { sfinal_type = None; known_cells = t1_cells })
+      ; (t2, { sfinal_type = None; known_cells = t2_cells })
       ]
   in
   let cfg =
@@ -917,18 +967,16 @@ let bad_final =
               (PReg state_reg := VTag t0)
               @@ (PReg "b" := VUnit)
               @@ push (VReg "b") b_cell
-              @@ typed_block
-                   [||]
-                   (RegisterSet.of_list [ state_reg ])
-                   true
-                   (case_tag
+              @@ ( [||]
+                 <: case_tag
                       state_reg
                       [ [ t0 ]
-                        => pop (PTuple [ PReg "b"; PReg state_reg ])
-                           @@ pop (PReg "a")
-                           @@ return (VReg "a")
-                      ; [ t1 ] => pop (PReg "c") die
-                      ; [ t2 ] => die
+                        => ( t0_cells
+                           <: pop (PTuple [ PReg "b"; PReg state_reg ])
+                              @@ pop (PReg "a")
+                              @@ return (VReg "a") )
+                      ; [ t1 ] => (t1_cells <: pop (PReg "c") die)
+                      ; [ t2 ] => (t2_cells <: die)
                       ] )
           } )
       ]
@@ -944,11 +992,14 @@ let bad_final_2 =
   let c_cell = cell true true false false in
   let b_cell = cell true true false false in
   let a_cell = cell false true false false in
+  let t0_cells = [| a_cell; b_cell |] in
+  let t1_cells = [| c_cell |] in
+  let t2_cells = [||] in
   let states =
     TagMap.of_list
-      [ (t0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = t0_cells })
+      ; (t1, { sfinal_type = None; known_cells = t1_cells })
+      ; (t2, { sfinal_type = None; known_cells = t2_cells })
       ]
   in
   let cfg =
@@ -962,13 +1013,7 @@ let bad_final_2 =
           ; block =
               case_tag
                 state_reg
-                [ [ t0 ]
-                  => typed_block
-                       [||]
-                       (RegisterSet.of_list [ state_reg ])
-                       false
-                       ((PReg "r" := VUnit) @@ return (VReg "r"))
-                ]
+                [ [ t0 ] => ([||] <: (PReg "r" := VUnit) @@ return (VReg "r")) ]
           } )
       ]
   in
@@ -983,6 +1028,16 @@ let bad_final_3 =
   let c_cell = cell true true false false in
   let b_cell = cell true true false false in
   let a_cell = cell false true false false in
+  let t0_cells = [| a_cell; b_cell |] in
+  let t1_cells = [| c_cell |] in
+  let t2_cells = [||] in
+  let states =
+    TagMap.of_list
+      [ (t0, { sfinal_type = None; known_cells = t0_cells })
+      ; (t1, { sfinal_type = None; known_cells = t1_cells })
+      ; (t2, { sfinal_type = None; known_cells = t2_cells })
+      ]
+  in
   let cfg =
     LabelMap.of_list
       [ ( "f"
@@ -999,24 +1054,8 @@ let bad_final_3 =
           ; has_case_tag = false
           ; name = None
           ; needed_registers = RegisterSet.empty
-          ; block =
-              case_tag
-                state_reg
-                [ [ t0 ]
-                  => typed_block
-                       [||]
-                       (RegisterSet.of_list [ state_reg ])
-                       false
-                       (jump "f")
-                ]
+          ; block = case_tag state_reg [ [ t0 ] => jump "f" ]
           } )
-      ]
-  in
-  let states =
-    TagMap.of_list
-      [ (t0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
       ]
   in
   { cfg; entry = StringMap.empty; states }
@@ -1027,6 +1066,16 @@ let bad_final_4 =
   let c_cell = cell true true false false in
   let b_cell = cell true true false false in
   let a_cell = cell false true false false in
+  let t0_cells = [| a_cell; b_cell |] in
+  let t1_cells = [| c_cell |] in
+  let t2_cells = [||] in
+  let states =
+    TagMap.of_list
+      [ (t0, { sfinal_type = None; known_cells = t0_cells })
+      ; (t1, { sfinal_type = None; known_cells = t1_cells })
+      ; (t2, { sfinal_type = None; known_cells = t2_cells })
+      ]
+  in
   let cfg =
     LabelMap.of_list
       [ ( "f"
@@ -1045,13 +1094,6 @@ let bad_final_4 =
           ; needed_registers = RegisterSet.empty
           ; block = jump "f"
           } )
-      ]
-  in
-  let states =
-    TagMap.of_list
-      [ (t0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
       ]
   in
   { cfg; entry = StringMap.empty; states }
