@@ -71,10 +71,6 @@ type cell = private {
 
 }
 
-(** [cell_intersection c c'] is the cell whose state field is the itersection of
-    [c.states] and [c'.states]. Every other cell must be equal. *)
-val cell_intersection : cell -> cell -> cell
-
 (** [dummy_cell holds_state holds_semv holds_startp holds_endp] is a cell with
     the passed boolean fields, an empty [states] field, and the error token as a
     symbol. For testing purposes. *)

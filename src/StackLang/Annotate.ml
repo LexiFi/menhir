@@ -39,18 +39,22 @@ let def _program cells sync bindings =
   (cells, sync)
 
 
-let case_tag program cells sync _reg branches =
+let case_tag program _cells sync _reg branches =
   match sync with
-  | Synced n ->
-      let branch_aux (TagMultiple taglist, _block) =
+  | Synced _n ->
+      let branch_aux (TagMultiple _taglist, block) =
         (* By matching on the state, we discover state information.
            We can enrich the known cells with this information. *)
-        let cells_state =
-          (state_info_intersection program.states taglist).known_cells
+        let cells =
+          match block with
+          | ITypedBlock { stack_type } ->
+              stack_type
+          | IJump label ->
+              (lookup label program.cfg).stack_type
+          | b ->
+              StackLangPrinter.print_block stderr b;
+              failwith "cannot find t_block or jump"
         in
-        let cells = Array.append cells_state (MArray.suffix cells n) in
-        (* With the long invariant activated, we may loose information in this
-           case. *)
         (* We are matching on a state, therefore state is always needed,
            and we can discard these values. *)
         (cells, sync)

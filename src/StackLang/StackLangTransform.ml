@@ -314,27 +314,26 @@ and commute_pushes_icase_tag
 
 
 and commute_pushes_tagpat_branch
-    program pushes bindings final_type known_cells reg branch =
+    program pushes bindings final_type cells reg branch =
   let TagMultiple taglist, block = branch in
-  let state_info = state_info_intersection program.states taglist in
-  let known_cells =
-    longest_known_cells [ state_info.known_cells; known_cells ]
-  in
-  let bindings, pushes =
+  let final_type' = final_type_intersection program.states taglist in
+  let bindings, pushes, cells =
     match taglist with
     | [ tag ] ->
         (* In this case, we can inline the state value inside the
-           pushes. *)
+           pushes. We also need more information to be able to push the litteral
+           state *)
         let tmp_bindings = Bindings.assign (PReg reg) (VTag tag) in
         let pushes = List.map (pushcell_apply tmp_bindings) pushes in
         let bindings = Bindings.let_in bindings tmp_bindings in
-        (bindings, pushes)
+        let cells = (lookup_tag tag program.states).known_cells in
+        (bindings, pushes, cells)
     | _ ->
-        (bindings, pushes)
+        (bindings, pushes, cells)
   in
-  let final_type = Option.first_value [ state_info.sfinal_type; final_type ] in
+  let final_type = Option.first_value [ final_type'; final_type ] in
   let block =
-    commute_pushes_block program pushes bindings final_type known_cells block
+    commute_pushes_block program pushes bindings final_type cells block
   in
   (TagMultiple taglist, block)
 

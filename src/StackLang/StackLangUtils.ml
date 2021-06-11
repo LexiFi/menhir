@@ -1,5 +1,4 @@
 open StackLang
-open Infix
 
 (* -------------------------------------------------------------------------- *)
 
@@ -40,6 +39,7 @@ let rec value_refers_to_register register value =
   | _ ->
       false
 
+
 let cells_similar cs1 cs2 =
   assert (Array.(length cs1 = length cs2));
   Array.for_all2 Invariant.similar cs1 cs2
@@ -55,47 +55,21 @@ let is_suffix cs1 cs2 =
     cells_similar short new_long)
 
 
-let cells_intersection cells1 cells2 =
-  let len1 = Array.length cells1 in
-  let len2 = Array.length cells2 in
-  (* let cells1 = Array.rev cells1 in
-     let cells2 = Array.rev cells2 in *)
-  let i = ref 0 in
-  while
-    let i = !i in
-    i < len1
-    && i < len2
-    && Invariant.similar cells1.(len1 - i - 1) cells2.(len2 - i - 1)
-  do
-    i += 1
-  done;
-  let i = !i in
-  let cells1 = MArray.suffix cells1 i in
-  let cells2 = MArray.suffix cells2 i in
-  Array.map2 Invariant.cell_intersection cells1 cells2
+let final_type_intersection f1 f2 =
+  match (f1, f2) with Some f1, Some f2 when f1 = f2 -> Some f1 | _ -> None
 
 
-let state_info_intersection s1 s2 =
-  let { known_cells = cells1; sfinal_type = f1 } = s1 in
-  let { known_cells = cells2; sfinal_type = f2 } = s2 in
-  let sfinal_type =
-    match (f1, f2) with Some f1, Some f2 when f1 = f2 -> Some f1 | _ -> None
-  in
-  let known_cells = cells_intersection cells1 cells2 in
-  { known_cells; sfinal_type }
-
-
-let state_info_list_intersection state_infos =
-  match state_infos with
-  | state_info :: state_infos ->
-      List.fold_left state_info_intersection state_info state_infos
+let final_type_intersection infos =
+  match infos with
+  | info :: infos ->
+      List.fold_left final_type_intersection info infos
   | [] ->
       assert false
 
 
-let state_info_intersection states taglist =
-  state_info_list_intersection
-    (List.map (fun tag -> lookup_tag tag states) taglist)
+let final_type_intersection states taglist =
+  final_type_intersection
+    (List.map (fun tag -> (lookup_tag tag states).sfinal_type) taglist)
 
 
 let filter_stack stack =
@@ -163,54 +137,6 @@ let cell = Invariant.dummy_cell
 
 let empty_cell = Invariant.empty_cell
 
-let test_cells_intersection () =
-  (* check that [cells_intersection a a = a] *)
-  assert (
-    cells_intersection
-      [| cell true false false false
-       ; cell false false true false
-       ; empty_cell
-       ; cell false false true true
-      |]
-      [| cell true false false false
-       ; cell false false true false
-       ; empty_cell
-       ; cell false false true true
-      |]
-    = [| cell true false false false
-       ; cell false false true false
-       ; empty_cell
-       ; cell false false true true
-      |] );
-  (* check that if [a] is a suffix of [b] then [cells_intersection a b = a]*)
-  assert (
-    cells_intersection
-      [| cell true false false false
-       ; cell false false true false
-       ; empty_cell
-       ; cell false false true true
-      |]
-      [| empty_cell; cell false false true true |]
-    = [| empty_cell; cell false false true true |] );
-  (* check that if the biggest common suffix of [a] and [b] is [ [||] ] then,
-     [cells_intersection a b = [||]]*)
-  assert (
-    cells_intersection
-      [| cell true false false false
-       ; cell false false true false
-       ; empty_cell
-       ; cell false false true true
-       ; cell false false true true
-      |]
-      [| cell true false false false
-       ; cell false false true false
-       ; empty_cell
-       ; cell false false true true
-       ; cell true true false false
-      |]
-    = [||] )
-
-
 let test_filter_stack () =
   assert (filter_stack [| empty_cell |] = [||]);
   assert (filter_stack [| empty_cell; empty_cell; empty_cell |] = [||]);
@@ -229,5 +155,4 @@ let test_filter_stack () =
 
 let test () =
   test_is_pattern_equivalent_to_value ();
-  test_filter_stack ();
-  test_cells_intersection ()
+  test_filter_stack ()
