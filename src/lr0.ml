@@ -18,6 +18,14 @@ module InfiniteArray =
 
 (* ------------------------------------------------------------------------ *)
 
+(* Make sure that the middle-end runs before the automaton is constructed. *)
+
+let () =
+  let module M = Middle.Run() in
+  ()
+
+(* ------------------------------------------------------------------------ *)
+
 (* Perform loop detection before attempting to build the LR(0) automaton. *)
 
 let () =
