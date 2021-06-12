@@ -165,6 +165,13 @@
 
 ## Minor bugs
 
+* If the minimum or maximum lengths computed by Menhir can be reached only via
+  a production that involves the `error` token, then the random sentence
+  generator could fail. Fix this. The analyses `Minimal` and `Maximal` should
+  ignore the productions that involve the `error` token. This implies that
+  they should not rely on the FIRST sets, which do take these productions
+  into account.
+
 * A drawback of point-free semantic actions: if the application of the OCaml
   identifier to the tuple is ill-typed, then we get a type error in the mock
   file. Can this be fixed? Generate `#` directives around the application node.
