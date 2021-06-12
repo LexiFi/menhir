@@ -71,20 +71,11 @@ let print_sentence_abstract (nto, terminals) : string =
     bprintf b "\n";
   )
 
-let print_terminal_concrete t =
-  match Terminal.unquoted_alias t with
-  | Some alias ->
-      alias
-  | None ->
-      (* An alias is missing. Use the abstract name of the terminal
-         instead. This is a best effort. *)
-      Terminal.print t
-
 let print_sentence_concrete (_nto, terminals) : string =
   Misc.with_buffer 128 (fun b ->
     let separator = Misc.once "" " " in
     List.iter (fun t ->
-      bprintf b "%s%s" (separator()) (print_terminal_concrete t)
+      bprintf b "%s%s" (separator()) (Terminal.print_concrete t)
     ) terminals
   )
 

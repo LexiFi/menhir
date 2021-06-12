@@ -359,6 +359,15 @@ module Terminal = struct
       Misc.with_buffer 8 (fun b -> Lexer.decode_string b lexbuf)
   )
 
+  let print_concrete t =
+  match unquoted_alias t with
+  | Some alias ->
+      alias
+  | None ->
+      (* An alias is missing. Use the abstract name of the terminal
+         instead. This is a best effort. *)
+      print t
+
   (* If a token named [EOF] exists, then it is assumed to represent
      ocamllex's [eof] pattern. *)
 

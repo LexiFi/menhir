@@ -169,6 +169,10 @@ module Terminal : sig
 
   val print: t -> string
 
+  (**[print_concrete t] prints the terminal symbol [t] under a concrete form,
+     by relying on the token alias that has been declared for this symbol. *)
+  val print_concrete: t -> string
+
   (* This is the OCaml type associated with a terminal
      symbol. It is known only if the %token declaration was
      accompanied with a type. *)
