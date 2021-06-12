@@ -28,17 +28,6 @@ open Grammar
 val print_messages_item:
   Nonterminal.t * Terminal.t list * ReferenceInterpreter.target -> unit
 
-(* [print_sentence style (nto, terminals)] prints a sentence (given by an
-   optional start symbol and a sequence of terminal symbols) as a
-   space-separated list of symbolic token names. The [style] parameter
-   indicates whether the sentence should be displayed in concrete syntax; if
-   it is [`Concrete], then every token must have a token alias. *)
-
-val print_sentence:
-  [`Abstract | `Concrete] ->
-  Nonterminal.t option * Terminal.t list ->
-  string
-
 (* [stream] turns a finite list of terminals into a stream of terminals,
    represented as a pair of a lexer and a lexing buffer, so as to be usable
    with Menhir's traditional API. This lexer can raise [EndOfStream]. *)

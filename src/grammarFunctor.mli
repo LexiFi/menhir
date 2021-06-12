@@ -670,6 +670,26 @@ module OnErrorReduce : sig
 end
 
 (* ------------------------------------------------------------------------ *)
+(* Sentences. *)
+
+module Sentence : sig
+
+  (**A sentence is a pair of an optional start symbol and a sequence of
+     terminal symbols. Our convention is the start symbol can be omitted if
+     this is unambiguous, that is, if the grammar has exactly one start
+     symbol. *)
+  type sentence =
+    Nonterminal.t option * Terminal.t list
+
+  (**[print style sentence] prints a sentence as a space-separated list of
+     symbolic token names. The [style] parameter indicates whether the
+     sentence should be displayed in concrete syntax; if it is [`Concrete],
+     then every token must have a token alias. *)
+  val print: [`Abstract | `Concrete] -> sentence -> string
+
+end
+
+(* ------------------------------------------------------------------------ *)
 (* Diagnostics. *)
 
 (* This function prints warnings about useless precedence declarations for

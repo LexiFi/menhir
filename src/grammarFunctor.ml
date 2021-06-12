@@ -1905,5 +1905,44 @@ module OnErrorReduce = struct
 end
 
 (* ------------------------------------------------------------------------ *)
+(* Facilities for printing sentences. *)
+
+module Sentence = struct
+
+  type sentence =
+    Nonterminal.t option * Terminal.t list
+
+  open Printf
+
+  let print_abstract (nto, terminals) : string =
+    Misc.with_buffer 128 (fun b ->
+      Option.iter (fun nt ->
+        bprintf b "%s: " (Nonterminal.print false nt)
+      ) nto;
+      let separator = Misc.once "" " " in
+      List.iter (fun t ->
+        bprintf b "%s%s" (separator()) (Terminal.print t)
+      ) terminals;
+      bprintf b "\n";
+    )
+
+  let print_concrete (_nto, terminals) : string =
+    Misc.with_buffer 128 (fun b ->
+      let separator = Misc.once "" " " in
+      List.iter (fun t ->
+        bprintf b "%s%s" (separator()) (Terminal.print_concrete t)
+      ) terminals
+    )
+
+  let print style sentence =
+    match style with
+    | `Abstract ->
+        print_abstract sentence
+    | `Concrete ->
+        print_concrete sentence
+
+end
+
+(* ------------------------------------------------------------------------ *)
 
 end (* module Make *)

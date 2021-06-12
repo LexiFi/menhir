@@ -57,37 +57,6 @@ type run = {
 
 (* --------------------------------------------------------------------------- *)
 
-(* Display and debugging. *)
-
-let print_sentence_abstract (nto, terminals) : string =
-  Misc.with_buffer 128 (fun b ->
-    Option.iter (fun nt ->
-      bprintf b "%s: " (Nonterminal.print false nt)
-    ) nto;
-    let separator = Misc.once "" " " in
-    List.iter (fun t ->
-      bprintf b "%s%s" (separator()) (Terminal.print t)
-    ) terminals;
-    bprintf b "\n";
-  )
-
-let print_sentence_concrete (_nto, terminals) : string =
-  Misc.with_buffer 128 (fun b ->
-    let separator = Misc.once "" " " in
-    List.iter (fun t ->
-      bprintf b "%s%s" (separator()) (Terminal.print_concrete t)
-    ) terminals
-  )
-
-let print_sentence style sentence =
-  match style with
-  | `Abstract ->
-      print_sentence_abstract sentence
-  | `Concrete ->
-      print_sentence_concrete sentence
-
-(* --------------------------------------------------------------------------- *)
-
 (* [stream] turns a finite list of terminals into a stream of terminals,
    represented as a pair of a lexer and a lexing buffer, so as to be usable
    with Menhir's traditional API. *)
@@ -243,7 +212,7 @@ module SS = StackSymbols.Run()
 let print_messages_auto (nt, sentence, target) : unit =
 
   (* Print the sentence. *)
-  print_string (print_sentence_abstract (Some nt, sentence));
+  print_string (Sentence.print `Abstract (Some nt, sentence));
 
   (* If a token alias has been defined for every terminal symbol, then
      we can convert this sentence into concrete syntax. Do so. We make
@@ -257,7 +226,7 @@ let print_messages_auto (nt, sentence, target) : unit =
     printf
       "##\n\
        ## Concrete syntax: %s\n"
-      (print_sentence_concrete (Some nt, sentence))
+      (Sentence.print `Concrete (Some nt, sentence))
   ;
 
   (* Show which state this sentence leads to. *)
@@ -1202,7 +1171,7 @@ let () =
     (* Echo. *)
     List.iter (or_comment_iter (fun run ->
       List.iter (or_comment_iter (fun ((_, sentence), _target) ->
-        print_string (print_sentence_abstract sentence)
+        print_string (Sentence.print `Abstract sentence)
       )) run.elements
     )) runs;
 
@@ -1222,11 +1191,11 @@ let () =
     (* Echo. *)
     List.iter (or_comment_iter (fun run ->
       List.iter (or_comment_iter (fun ((_, sentence), _target) ->
-        print_string (print_sentence_abstract sentence);
+        print_string (Sentence.print `Abstract sentence);
         if Terminal.every_token_has_an_alias then
           printf
             "## Concrete syntax: %s\n"
-            (print_sentence_concrete sentence)
+            (Sentence.print `Concrete sentence)
       )) run.elements
     )) runs;
 
@@ -1244,7 +1213,7 @@ let () =
         Error.error [] "the nonterminal symbol %s does not exist." nt
     | nt ->
         let sentence = RandomSentenceGenerator.nonterminal nt goal in
-        print_endline (print_sentence style (Some nt, sentence));
+        print_endline (Sentence.print style (Some nt, sentence));
         exit 0
   end
 
