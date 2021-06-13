@@ -208,7 +208,7 @@ let rec compare x y =
   if x == y then 0 else
     match x, y with
     | C (a1, ss1, qs1), C (a2, ss2, qs2) ->
-      begin match Int.compare a1 a2 with
+      begin match Generic.compare a1 a2 with
         | 0 -> begin match A.compare ss1 ss2 with
             | 0 -> compare qs1 qs2
             | n -> n
@@ -223,7 +223,7 @@ let rec equal x y =
   (x == y) ||
   match x, y with
   | C (a1, ss1, qs1), C (a2, ss2, qs2) ->
-    Int.equal a1 a2 &&
+    a1 = a2 &&
     A.equal ss1 ss2 &&
     equal qs1 qs2
   | N, N -> true
