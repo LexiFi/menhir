@@ -3,16 +3,16 @@
 ;; [foo.flags]. The template for this dune file is stored in [TEMPLATE].
 
 (copy_files# ../../src/*.ml)
+(copy_files# ../../src/*.mli)
 
-(copy_files ../../src/*.mll)
-
-(copy_files ../../src/*.mly)
+(copy_files ../../src/simple_lexer.mll)
+(copy_files ../../src/parser.mly)
 
 (ocamllex simple_lexer)
 
 (menhir
  (modules parser)
- (flags -lg 1 -la 2 -lc 2 --comment FLAGS))
+ (flags -lg 1 -la 2 -lc 2 --comment --stacklang-dump --stacklang-summary-dump FLAGS))
 
 (executable
  (name main)
