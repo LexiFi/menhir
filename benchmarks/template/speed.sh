@@ -23,11 +23,11 @@ for file in sentences/*.tokens ; do
   base2=${file%.tokens};
   base=${base2:10};
   for backend_folder in backends/*.backend ; do
-    backend2=${backend_folder%.backend}&&
-    backend=${backend2:9}&&
-    echo -n "running [test file: $file] [backend: $backend] ..."&&
-    $backend_folder/main.exe --input $file > times/$base.$backend.out 2> times/$base.$backend.time&&
-    tput rc&&
+    backend2=${backend_folder%.backend};
+    backend=${backend2:9} ;
+    echo -n "running [test file: $file] [backend: $backend] ..." ;
+    $backend_folder/main.exe --input $file > times/$base.$backend.out 2> times/$base.$backend.time ;
+    tput rc ;
     tput el
   done
 done

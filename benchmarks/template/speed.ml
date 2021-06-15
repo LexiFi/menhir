@@ -57,7 +57,16 @@ let read f =
         { tokens; time; minor; major; promoted; ast } )
   with
   | Scanf.Scan_failure _ ->
-      eprintf "File %s does not conform to expected format." f;
+      eprintf "File %s does not conform to expected format.\n" f;
+      eprintf "%s :" f;
+      let c = open_in f in
+      ( try
+          while true do
+            eprintf "%s\n" (input_line c)
+          done
+        with
+      | End_of_file ->
+          () );
       exit 1
 
 
@@ -108,7 +117,6 @@ let m backend =
     (List.map
        (fun base -> read (sprintf "times/%s.%s.time" base backend))
        bases )
-
 
 
 (* Display a comparison. *)
