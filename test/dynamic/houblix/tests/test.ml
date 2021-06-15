@@ -107,10 +107,3 @@ let () =
                 |> List.iter (fun test ->
                        let test = Filename.concat dir test in
                        rule_diff global_dune_file backend test ) ) )
-
-(* backends
-   |> List.iter (fun backend ->
-          tests
-          |> List.iter (fun { kind; name } ->
-                 rule_result kind backend name;
-                 rule_diff backend name ) ) *)
