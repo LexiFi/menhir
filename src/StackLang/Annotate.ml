@@ -39,29 +39,20 @@ let def _program cells sync bindings =
   (cells, sync)
 
 
-let case_tag program _cells sync _reg branches =
-  match sync with
-  | Synced _n ->
-      let branch_aux (TagMultiple _taglist, block) =
-        (* By matching on the state, we discover state information.
-           We can enrich the known cells with this information. *)
-        let cells =
-          match block with
-          | ITypedBlock { stack_type } ->
-              stack_type
-          | IJump label ->
-              (lookup label program.cfg).stack_type
-          | b ->
-              StackLangPrinter.print_block stderr b;
-              failwith "cannot find t_block or jump"
-        in
-        (* We are matching on a state, therefore state is always needed,
-           and we can discard these values. *)
-        (cells, sync)
-      in
-      List.map branch_aux branches
-  | Unsynced _tag ->
-      assert false
+let case_tag_branch program _cells sync (TagMultiple _taglist) block =
+  let cells =
+    match block with
+    | ITypedBlock { stack_type } ->
+        stack_type
+    | IJump label ->
+        (lookup label program.cfg).stack_type
+    | b ->
+        StackLangPrinter.print_block stderr b;
+        failwith "cannot find t_block or jump"
+  in
+  (* We are matching on a state, therefore state is always needed,
+     and we can discard these values. *)
+  (cells, sync)
 
 
 let typed_block _program _known_cells _sync { stack_type } =
@@ -77,19 +68,23 @@ let jump program _known_cells _sync label =
 
 module Curry (P : sig
   val program : program
+
+  val cells : cells
+
+  val sync : sync
 end) =
 struct
-  let program = P.program
+  let program, cells, sync = P.(program, cells, sync)
 
-  let push = push program
+  let push = push program cells sync
 
-  let pop = pop program
+  let pop = pop program cells sync
 
-  let def = def program
+  let def = def program cells sync
 
-  let case_tag = case_tag program
+  let case_tag_branch = case_tag_branch program cells sync
 
-  let typed_block = typed_block program
+  let typed_block = typed_block program cells sync
 
-  let jump = jump program
+  let jump = jump program cells sync
 end

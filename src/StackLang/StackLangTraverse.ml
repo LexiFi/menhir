@@ -403,6 +403,10 @@ let wt_knowncells_routine program label tblock =
     let module Annotate =
       Annotate.Curry (struct
         let program = program
+
+        let cells = cells
+
+        let sync = sync
       end)
     in
     let check_state_sync = check_state_sync program label culprit in
@@ -420,17 +424,17 @@ let wt_knowncells_routine program label tblock =
           | Some tag ->
               let tag_cells = (lookup_tag tag states).known_cells in
               check_cells_geq "push" cells tag_cells );
-        let cells, sync = Annotate.push cells sync value cell in
+        let cells, sync = Annotate.push value cell in
         wtkc_block cells sync block )
       ~pop:(fun pattern block ->
         if Array.length cells = 0 then fail "tried to pop unknown cell";
-        let cells, sync = Annotate.pop cells sync pattern in
+        let cells, sync = Annotate.pop pattern in
         wtkc_block cells sync block )
       ~def:(fun bindings block ->
-        let cells, sync = Annotate.def cells sync bindings in
+        let cells, sync = Annotate.def bindings in
         wtkc_block cells sync block )
       ~jump:(fun label ->
-        let cells', _sync' = Annotate.jump cells sync label in
+        let cells', _sync' = Annotate.jump label in
         let target = lookup label cfg in
         if RegisterSet.mem state_reg target.needed_registers
         then
@@ -441,11 +445,13 @@ let wt_knowncells_routine program label tblock =
         (* We check that the stack has at least the amount of cells the target
            routine expects. *)
         check_cells_geq "jump" cells cells' )
-      ~case_tag:(fun reg branches ->
+      ~case_tag:(fun _reg branches ->
         match sync with
         | Synced n ->
-            let branches_info = Annotate.case_tag cells sync reg branches in
-            let branch_aux (TagMultiple tags, block) (cells, sync) =
+            let branch_aux (TagMultiple tags, block) =
+              let cells, sync =
+                Annotate.case_tag_branch (TagMultiple tags) block
+              in
               let tag_aux tag =
                 let cells' = (lookup_tag tag states).known_cells in
                 let cells' = MArray.append cells' (MArray.suffix cells n) in
@@ -476,14 +482,14 @@ let wt_knowncells_routine program label tblock =
               List.iter tag_aux tags;
               wtkc_block cells sync block
             in
-            List.iter2 branch_aux branches branches_info
+            List.iter branch_aux branches
         | Unsynced _tag ->
             fail_sync () )
       ~typed_block:(fun tblock ->
         let { block; needed_registers } = tblock in
         (* We check that the stack has at least the number of known cells that
            the type annotation requires. *)
-        let cells', sync' = Annotate.typed_block cells sync tblock in
+        let cells', sync' = Annotate.typed_block tblock in
         check_cells_geq "typed block" cells cells';
         if RegisterSet.mem state_reg needed_registers
         then check_state_sync cells cells' sync;

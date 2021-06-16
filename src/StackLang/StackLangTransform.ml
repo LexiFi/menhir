@@ -432,26 +432,30 @@ let rec remove_dead_branches_block program possible_states cells sync block =
   let module Annotate =
     Annotate.Curry (struct
       let program = program
+
+      let cells = cells
+
+      let sync = sync
     end)
   in
   Block.map
     (remove_dead_branches_block possible_states cells sync)
     ~push:(fun value cell block ->
-      let cells, sync = Annotate.push cells sync value cell in
+      let cells, sync = Annotate.push value cell in
       let block = remove_dead_branches_block possible_states cells sync block in
       (value, cell, block) )
     ~typed_block:(fun tblock ->
       let { block } = tblock in
-      let cells, sync = Annotate.typed_block cells sync tblock in
+      let cells, sync = Annotate.typed_block tblock in
       let block = remove_dead_branches_block possible_states cells sync block in
       { tblock with block } )
     ~pop:(fun pattern block ->
       let possible_states = represented_states program in
-      let cells, sync = Annotate.pop cells sync pattern in
+      let cells, sync = Annotate.pop pattern in
       let block = remove_dead_branches_block possible_states cells sync block in
       (pattern, block) )
     ~def:(fun bindings block ->
-      let cells, sync = Annotate.def cells sync bindings in
+      let cells, sync = Annotate.def bindings in
       let possible_states =
         match Bindings.apply bindings (VReg state_reg) with
         | VTag tag ->
@@ -465,7 +469,10 @@ let rec remove_dead_branches_block program possible_states cells sync block =
       (bindings, block) )
     ~case_tag:(fun reg branches ->
       let n = match sync with Sync.Synced n -> n | _ -> assert false in
-      let branch_aux (TagMultiple taglist, block) (cells', sync) =
+      let branch_aux (TagMultiple taglist, block) =
+        let cells', sync =
+          Annotate.case_tag_branch (TagMultiple taglist) block
+        in
         let taglist' =
           List.filter
             (fun tag ->
@@ -489,10 +496,7 @@ let rec remove_dead_branches_block program possible_states cells sync block =
               in
               Some (TagMultiple taglist', block)
       in
-      let branches_info = Annotate.case_tag cells sync reg branches in
-      let branches =
-        List.filter_map Fun.id (List.map2 branch_aux branches branches_info)
-      in
+      let branches = List.filter_map branch_aux branches in
       (reg, branches) )
     block
 
@@ -512,20 +516,6 @@ let remove_dead_branches program =
 
 let commute_pushes program =
   remove_dead_branches (Program.map (commute_pushes_routine program) program)
-
-
-(** remove definitions of shape [x = x], or shape [_ = x] *)
-let remove_useless_defs program =
-  let rec aux block =
-    match block with
-    | IDef (binds, block) when Bindings.is_empty binds ->
-        aux block
-    | _ ->
-        Block.map aux block
-  in
-  Program.map
-    (fun t_block -> { t_block with block = aux t_block.block })
-    program
 
 
 let ( + ) = RegisterSet.union
@@ -706,6 +696,82 @@ let rec compute_has_case_tag_block = function
       (ITypedBlock { t_block with block; has_case_tag }, false)
 
 
+let rec rsbct_block program cells sync final_type block =
+  let module Annotate =
+    Annotate.Curry (struct
+      let program = program
+
+      let cells = cells
+
+      let sync = sync
+    end)
+  in
+  match block with
+  | IPush (value, cell, block) ->
+      let cells, sync = Annotate.push value cell in
+      let block = rsbct_block program cells sync final_type block in
+      IPush (value, cell, block)
+  | IPop (pattern, block) ->
+      let cells, sync = Annotate.pop pattern in
+      let block = rsbct_block program cells sync final_type block in
+      IPop (pattern, block)
+  | ICaseTag (reg, branches) ->
+    begin
+      match branches with
+      | _ :: _ :: _ ->
+          let branches =
+            List.map
+              (fun (tagpat, block) ->
+                let cells, sync = Annotate.case_tag_branch tagpat block in
+                let block = rsbct_block program cells sync final_type block in
+                (tagpat, block) )
+              branches
+          in
+          ICaseTag (reg, branches)
+      | [ (tagpat, block) ] ->
+          let (TagMultiple taglist) = tagpat in
+          let final_type' = final_type_intersection program.states taglist in
+          let cells', sync' = Annotate.case_tag_branch tagpat block in
+          let block = rsbct_block program cells' sync' final_type' block in
+          if Array.length cells >= Array.length cells'
+             && final_type = final_type'
+          then
+            let comment =
+              sprintf
+                "Removed case tag on %s"
+                (String.concat " | " (List.map string_of_tag taglist))
+            in
+            IComment (comment, block)
+          else ICaseTag (reg, [ (tagpat, block) ])
+      | [] ->
+          assert false
+    end
+  | ITypedBlock t_block ->
+      let cells, sync = Annotate.typed_block t_block in
+      let block =
+        rsbct_block program cells sync t_block.final_type t_block.block
+      in
+      ITypedBlock { t_block with block }
+  | block ->
+      Block.map (rsbct_block program cells sync final_type) block
+
+
+let remove_single_branch_casetag_routine program routine =
+  { routine with
+    block =
+      rsbct_block
+        program
+        routine.stack_type
+        (Sync.Synced 0)
+        routine.final_type
+        routine.block
+  }
+
+
+let remove_single_branch_casetag program =
+  Program.map (remove_single_branch_casetag_routine program) program
+
+
 let compute_has_case_tag_t_block t_block =
   let { block } = t_block in
   let block, has_case_tag = compute_has_case_tag_block block in
@@ -717,15 +783,12 @@ let compute_has_case_tag program =
 
 
 let optimize program =
-  compute_has_case_tag
-  @@ remove_unused_defs
-  @@ remove_useless_defs
-  @@ remove_dead_branches
-       ( if Settings.commute_pushes
-       then
-         let program = commute_pushes program in
-         program
-       else program )
+  program
+  |> (if Settings.commute_pushes then commute_pushes else Fun.id)
+  |> remove_dead_branches
+  |> remove_single_branch_casetag
+  |> remove_unused_defs
+  |> compute_has_case_tag
 
 
 let test () =
