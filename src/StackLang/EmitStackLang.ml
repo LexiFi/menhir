@@ -16,7 +16,10 @@ open Grammar
 open Infix
 open Invariant (* only to access [cell] fields *)
 
-(* module Invariant = Invariant.Long () *)
+module Invariant = ( val if Settings.short_invariant
+                         then (module Invariant)
+                         else (module Invariant.Long ()) : Invariant.STACK )
+
 module SSymbols = StackSymbols.Run ()
 
 open StackLang
@@ -225,15 +228,6 @@ let run_pushtuple s : string list * cell_info =
 (** The known stack cells when entering the goto routine associated to
     nonterminal [_nt] *)
 let stack_type_goto _nt = [||]
-
-(** The known stack cells when entering the reduce routine associated to
-    production [prod] *)
-let stack_type_reduce prod =
-  let symbols = Grammar.Production.rhs prod in
-  let r = Invariant.prodstack prod in
-  assert (Array.length r = Array.length symbols);
-  r
-
 
 (** The known stack cells after popping state [state] *)
 let stack_type_state state = Invariant.stack state
@@ -529,7 +523,7 @@ module L = struct
             routine_final_type
               (Nonterminal.ocamltype_of_start_symbol nonterminal) )
           (Grammar.Production.classify prod);
-        let stack_type = stack_type_reduce prod in
+        let stack_type = Invariant.prodstack prod in
         routine_stack_type @@ filter_stack stack_type;
         reduce stack_type prod
     | Goto nt ->

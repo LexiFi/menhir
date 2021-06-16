@@ -291,3 +291,5 @@ val unit_test: bool
 (** The undocumented flag [--inlining-max-degree n] sets the value of the maximum
     degree at which a stakclang routine will be inlined to [n]. Default is [2]. *)
 val inlining_max_degree: int
+
+val short_invariant: bool

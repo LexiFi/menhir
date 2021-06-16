@@ -375,6 +375,8 @@ let unit_test =
 let inlining_max_degree =
   ref 2
 
+let short_invariant = ref false
+
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
@@ -418,6 +420,7 @@ let options = Arg.align [
   "--log-automaton", Arg.Set_int logA, "<level> Log information about the automaton";
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
+  "--long-invariant", Arg.Set short_invariant, "  (undocumented)";
   "--merge-errors", Arg.String add_merge_errors, "<filename> (used twice) Merge two .messages files";
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
   "--no-dollars", Arg.Unit (fun () -> dollars := DollarsDisallowed), " Disallow $i in semantic actions";
@@ -792,3 +795,6 @@ let commute_pushes =
 
 let inlining_max_degree =
   !inlining_max_degree
+
+let short_invariant =
+  !short_invariant

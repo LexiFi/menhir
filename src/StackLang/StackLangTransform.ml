@@ -738,11 +738,18 @@ let rec rsbct_block program cells sync final_type block =
           then
             let comment =
               sprintf
-                "Removed case tag on %s"
+                "Removed single branch casetag on %s"
                 (String.concat " | " (List.map string_of_tag taglist))
             in
             IComment (comment, block)
-          else ICaseTag (reg, [ (tagpat, block) ])
+          else
+            let block = ICaseTag (reg, [ (tagpat, block) ]) in
+            if final_type = final_type'
+            then
+              IComment
+                ( "Not enough cells were discovered to remove this case tag"
+                , block )
+            else block
       | [] ->
           assert false
     end
