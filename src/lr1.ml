@@ -179,7 +179,7 @@ let silently_solved =
    [Raw.transitions]. This means that, once an edge has been removed, it can
    no longer be followed. *)
 
-module ForwardEdges = struct
+module RawForwardEdges = struct
   type node = Raw.node
   type label = Symbol.t
   let foreach_outgoing_edge node f =
@@ -385,7 +385,7 @@ let () =
     let traverse = traverse
     let discover = discover
   end in
-  let module R = DFS.Run(ForwardEdges)(M)(D) in
+  let module R = DFS.Run(RawForwardEdges)(M)(D) in
   ()
 
 let () =
