@@ -762,10 +762,10 @@ let sources : sources array Lazy.t =
       end in
       let module R = DFS.Run(G)(M)(D) in
       if debug then begin
-        let nt = (Production.rhs prod).(0) in
+        let symbol = (Production.rhs prod).(0) in
         Printf.eprintf
           "The start symbol %s reaches %d out of %d states.\n"
-            (Symbol.print nt)
+            (Symbol.print symbol)
             !c Lr1.n
       end
     end;
