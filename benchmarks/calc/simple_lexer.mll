@@ -4,6 +4,8 @@
   let next_line_and f lexbuf =
     Lexing.new_line lexbuf;
     f lexbuf
+
+  exception ExnEOF
 }
 
 let newline = ('\010' | '\013' | "\013\010")
@@ -24,5 +26,6 @@ rule token = parse
   | "DIV"    { DIV    }
   | "EOL"    { EOL    }
   (* Error *)
-  | _ { assert false }
+  | eof { raise ExnEOF  }
+  | _   { assert false }
 

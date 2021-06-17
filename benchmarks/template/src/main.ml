@@ -68,12 +68,21 @@ open Lexing
 
 type token = Parser.token
 
-let tokens : token array =
+let tokens =
   let lexfun = Simple_lexer.token in
   let lexbuf = Lexing.from_channel (open_in input_file) in
-  let len = count_newlines input_file in
-  Array.init len (fun _ -> lexfun lexbuf)
+  let stack = ref [] in
+  try
+    while true do
+      stack := lexfun lexbuf :: !stack
+    done;
+    failwith "Loop did not end"
+  with
+  | Simple_lexer.ExnEOF ->
+      !stack
 
+
+let tokens : token array = Array.of_list @@ List.rev tokens
 
 let () = Gc.full_major ()
 
