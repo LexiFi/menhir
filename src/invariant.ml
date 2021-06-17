@@ -781,13 +781,29 @@ let sources : sources array Lazy.t =
     sources
   end
 
+(* As an optimization, if there is a single start symbol, then we do not
+   need to run any of the above code. *)
+
+let single_start_symbol : Nonterminal.t option =
+  if ProductionMap.cardinal Lr1.entry = 1 then
+    let prod, _node = ProductionMap.choose Lr1.entry in
+    Production.classify prod (* must return [Some _] *)
+  else
+    None
+
+(* The public entry point. *)
+
 let reachable_from_single_start_symbol : Lr1.node -> Nonterminal.t option =
   fun node ->
-    let sources = Lazy.force sources in
-    match sources.(Lr1.number node) with
-    | Zero ->
-        assert false
-    | One source ->
-        Some (Lr1.nt_of_entry source)
-    | MoreThanOne ->
-        None
+    match single_start_symbol with
+    | Some _ ->
+        single_start_symbol
+    | None ->
+        let sources = Lazy.force sources in
+        match sources.(Lr1.number node) with
+        | Zero ->
+            assert false
+        | One source ->
+            Some (Lr1.nt_of_entry source)
+        | MoreThanOne ->
+            None
