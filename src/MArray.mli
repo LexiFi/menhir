@@ -63,6 +63,10 @@ val iter_rev : ('a -> unit) -> 'a array -> unit
    [p i a.(i)] holds. *)
 val existsi : (int -> 'a -> bool) -> 'a array -> bool
 
+(**[count p a] counts how many elements of the array [a] satisfy the
+   predicate [p]. *)
+val count: ('a -> bool) -> 'a array -> int
+
 (**[for_all] is identical to the function by the same name in the OCaml
    standard library. *)
 val for_all : ('a -> bool) -> 'a array -> bool
