@@ -488,13 +488,6 @@ let reductions node =
 let predecessors node =
   predecessors.(raw node)
 
-module BackwardEdges = struct
-  type nonrec node = node
-  type label = unit
-  let foreach_outgoing_edge node f =
-    List.iter (fun node -> f () node) (predecessors node)
-end
-
 let conflict_tokens node =
   _conflict_tokens.(raw node)
 
@@ -523,6 +516,24 @@ let is_start node =
       true
   | Some _ ->
       false
+
+(* -------------------------------------------------------------------------- *)
+
+(* Graph views. *)
+
+module ForwardEdges = struct
+  type nonrec node = node
+  type label = Symbol.t
+  let foreach_outgoing_edge node f =
+    SymbolMap.iter f (transitions node)
+end
+
+module BackwardEdges = struct
+  type nonrec node = node
+  type label = unit (* could be changed to [Symbol.t option] if needed *)
+  let foreach_outgoing_edge node f =
+    List.iter (fun node -> f () node) (predecessors node)
+end
 
 (* -------------------------------------------------------------------------- *)
 
