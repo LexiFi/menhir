@@ -288,6 +288,11 @@
 
 ## Bugs
 
+* When a parameterized symbol in the standard library has the same name
+  as an unparameterized symbol in the user's file, sort inference fails
+  (in spite of the renaming that is announced by Menhir).
+  See the symbol `pair` in `leap_ExprParser.mly`.
+
 * Confirm the following bug reports and turn them into gitlab issues.
 
 * Message from Valentin Gatien-Baron (2010/01/09). Is this a known bug with
