@@ -22,11 +22,7 @@ for file in sentences/*.tokens ; do
     backend2=${backend_folder%.backend};
     backend=${backend2:9} ;
     echo -n "running [test file: $file] [backend: $backend] ..." ;
-<<<<<<< HEAD
-    $backend_folder/main.exe --input $file > times/$base.$backend.out 2> times/$base.$backend.time ;
-=======
     "$backend_folder"/main.exe --input "$file" > times/"$base"."$backend".out 2> times/"$base"."$backend".time ;
->>>>>>> new-code-backend-benchmark
     tput rc ;
     tput el
   done

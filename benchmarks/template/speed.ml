@@ -119,13 +119,6 @@ let m backend =
        bases )
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
->>>>>>> new-code-backend
-=======
->>>>>>> new-code-backend-benchmark
 (* Display a comparison. *)
 
 let () =
