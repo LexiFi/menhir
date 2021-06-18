@@ -45,7 +45,7 @@ let cells_similar cs1 cs2 =
   Array.for_all2 Invariant.similar cs1 cs2
 
 
-let is_suffix cs1 cs2 =
+let is_compatible cs1 cs2 =
   MArray.(
     let n1 = length cs1
     and n2 = length cs2 in

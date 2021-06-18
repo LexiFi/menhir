@@ -479,15 +479,15 @@ let rec remove_dead_branches_block program possible_states cells sync block =
               TagSet.mem tag possible_states
               &&
               let cells_state = (lookup_tag tag states).known_cells in
-              let cells' = Array.append cells_state (MArray.suffix cells n) in
-              is_suffix cells' cells )
+              let cells'' = Array.append cells_state (MArray.suffix cells n) in
+              is_compatible cells' cells'' )
             taglist
         in
         match taglist' with
         | [] ->
             None
         | _ :: _ ->
-            if not @@ is_suffix cells cells'
+            if not @@ is_compatible cells cells'
             then None
             else
               let possible_states = TagSet.of_list taglist' in
@@ -497,11 +497,18 @@ let rec remove_dead_branches_block program possible_states cells sync block =
               Some (TagMultiple taglist', block)
       in
       let branches = List.filter_map branch_aux branches in
+      (*if branches = []
+        then begin
+          StackLangPrinter.print_block stderr block;
+          output_string stderr "\n";
+          StackLangPrinter.print_states stderr program.states;
+          exit 1
+        end;*)
       (reg, branches) )
     block
 
 
-let remove_dead_branches_t_block program t_block =
+let remove_dead_branches_routine program t_block =
   let { block; stack_type } = t_block in
   let all = represented_states program in
   { t_block with
@@ -511,7 +518,7 @@ let remove_dead_branches_t_block program t_block =
 
 
 let remove_dead_branches program =
-  Program.map (remove_dead_branches_t_block program) program
+  Program.map (remove_dead_branches_routine program) program
 
 
 let commute_pushes program =
@@ -735,23 +742,25 @@ let rec rsbct_block program cells sync final_type block =
           let block = rsbct_block program cells' sync' final_type' block in
           if Array.length cells >= Array.length cells'
              && final_type = final_type'
+             (* TODO : *)
           then
             let comment =
               sprintf
-                "Removed single branch casetag on %s"
+                "Single branch optim : performed Removed single branch casetag \
+                 on %s"
                 (String.concat " | " (List.map string_of_tag taglist))
             in
             IComment (comment, block)
           else
             let block = ICaseTag (reg, [ (tagpat, block) ]) in
-            if final_type = final_type'
-            then
-              IComment
-                ( "Not enough cells were discovered to remove this case tag"
-                , block )
-            else block
+            let comment =
+              if final_type = final_type'
+              then "Single branch optim : not performed, because of cells."
+              else "Single branch optim : not performed, because of final type."
+            in
+            IComment (comment, block)
       | [] ->
-          assert false
+          IDie
     end
   | ITypedBlock t_block ->
       let cells, sync = Annotate.typed_block t_block in
@@ -763,7 +772,8 @@ let rec rsbct_block program cells sync final_type block =
       Block.map (rsbct_block program cells sync final_type) block
 
 
-let remove_single_branch_casetag_routine program routine =
+let remove_single_branch_casetag_routine program _label routine =
+  (* try *)
   { routine with
     block =
       rsbct_block
@@ -775,8 +785,14 @@ let remove_single_branch_casetag_routine program routine =
   }
 
 
+(* with
+   | Assert_failure _e ->
+       StackLangPrinter.print_tblock stderr routine;
+       output_string stderr "\n";
+       failwith label *)
+
 let remove_single_branch_casetag program =
-  Program.map (remove_single_branch_casetag_routine program) program
+  Program.mapi (remove_single_branch_casetag_routine program) program
 
 
 let compute_has_case_tag_t_block t_block =

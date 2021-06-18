@@ -129,7 +129,7 @@ let must_query_lexer_upon_entering s =
    ensures that the [run] subroutine for every such state contains a POP
    instruction. *)
 
-let every_run_pops nt =
+let _every_run_pops nt =
   Lr1.targets
     (fun accu _ target ->
       accu
@@ -148,9 +148,9 @@ let every_run_pops nt =
    no penalty. Otherwise, we choose "run pushes" everywhere. *)
 
 let gotopushes : Nonterminal.t -> bool =
-  if Settings.optimize_for_code_size
+  (*if Settings.optimize_for_code_size
   then Nonterminal.tabulate (fun nt -> not (every_run_pops nt))
-  else fun _nt -> false
+  else*) fun _nt -> false
 
 
 let runpushes s =
@@ -225,10 +225,6 @@ let run_pushtuple s : string list * cell_info =
   (pushlist, cell)
 
 
-(** The known stack cells when entering the goto routine associated to
-    nonterminal [_nt] *)
-let stack_type_goto _nt = [||]
-
 (** The known stack cells after popping state [state] *)
 let stack_type_state state = Invariant.stack state
 
@@ -239,6 +235,13 @@ let stack_type_run state =
   let n_pushes = if runpushes state then 1 else 0 in
   let len = Array.length st in
   if len = 0 then [||] else Array.sub st 0 (len - n_pushes)
+
+
+let stack_type_goto nt =
+  let st = Invariant.gotostack nt in
+  let n_pushes = 1 + if gotopushes nt then 1 else 0 in
+  let len = Array.length st in
+  if len - n_pushes <= 0 then [||] else Array.sub st 0 (len - n_pushes)
 
 
 module L = struct
@@ -515,7 +518,8 @@ module L = struct
             routine_final_type
               (Nonterminal.ocamltype_of_start_symbol nonterminal) )
           (Lr1.is_start_or_exit s);
-        routine_stack_type @@ filter_stack @@ stack_type_run s;
+        let stack_type = stack_type_run s in
+        routine_stack_type @@ filter_stack stack_type;
         run s
     | Reduce prod ->
         Option.iter
@@ -527,7 +531,8 @@ module L = struct
         routine_stack_type @@ filter_stack stack_type;
         reduce stack_type prod
     | Goto nt ->
-        routine_stack_type @@ filter_stack @@ stack_type_goto nt;
+        let stack_type = stack_type_goto nt in
+        routine_stack_type @@ filter_stack stack_type;
         goto nt
 
 

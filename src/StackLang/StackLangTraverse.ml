@@ -456,7 +456,7 @@ let wt_knowncells_routine program label tblock =
                 let cells' = (lookup_tag tag states).known_cells in
                 let cells' = MArray.append cells' (MArray.suffix cells n) in
                 (* If the branch is not dead *)
-                if not @@ is_suffix cells cells'
+                if not @@ is_compatible cells cells'
                 then
                   let cells_str =
                     StackLangPrinter.known_cells_to_string cells

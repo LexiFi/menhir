@@ -166,7 +166,7 @@ let registers rs =
 
 
 let rec typed_block_instruction
-    { stack_type; needed_registers = rs; final_type = ft } =
+    { stack_type; needed_registers = rs; final_type = ft; name } =
   nl
   ^^ spaced_braces
   @@ align
@@ -178,7 +178,14 @@ let rec typed_block_instruction
        ^^ cells stack_type
        ^^ break 1
        ^^ string "Needed registers :"
-       ^^ registers rs )
+       ^^ registers rs
+       ^^ break 1
+       ^^
+       match name with
+       | None ->
+           empty
+       | Some name ->
+           string "Name : " ^^ string name )
 
 
 and typed_block tb = typed_block_instruction tb ^^ block tb.block

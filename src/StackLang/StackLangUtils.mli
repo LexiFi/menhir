@@ -25,7 +25,7 @@ val branch_map : ('a -> 'b) -> 'c * 'a -> 'c * 'b
 
 val value_refers_to_register : register -> value -> bool
 
-val is_suffix : Invariant.cell array -> Invariant.cell array -> bool
+val is_compatible : Invariant.cell array -> Invariant.cell array -> bool
 
 val filter_stack : cell_info array -> cell_info array
 (** Remove empty cells from an array of cell information. *)
