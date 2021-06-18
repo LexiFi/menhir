@@ -2991,6 +2991,39 @@
     (diff cppo_ocamlbuild.1.6.0-cppo_parser.conflicts.exp
       cppo_ocamlbuild.1.6.0-cppo_parser.conflicts)))
 
+(rule (target cryptolineParser.opp.out) (deps cryptolineParser.mly)
+  (action
+    (with-outputs-to cryptolineParser.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias cryptolineParser)
+  (action (diff cryptolineParser.opp.exp cryptolineParser.opp.out)))
+
+(rule
+  (targets cryptolineParser.out cryptolineParser.automaton
+    cryptolineParser.automaton.resolved cryptolineParser.conflicts
+    cryptolineParser.timings)
+  (deps cryptolineParser.mly)
+  (action
+    (with-outputs-to cryptolineParser.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to cryptolineParser.timings %{deps})))))
+
+(rule (alias cryptolineParser)
+  (action (diff cryptolineParser.exp cryptolineParser.out)))
+
+(rule (alias cryptolineParser)
+  (action (diff cryptolineParser.automaton.exp cryptolineParser.automaton)))
+
+(rule (alias cryptolineParser)
+  (action
+    (diff cryptolineParser.automaton.resolved.exp
+      cryptolineParser.automaton.resolved)))
+
+(rule (alias cryptolineParser)
+  (action (diff cryptolineParser.conflicts.exp cryptolineParser.conflicts)))
+
 (rule (target cubicle.1.1.2-parser.opp.out) (deps cubicle.1.1.2-parser.mly)
   (action
     (with-outputs-to cubicle.1.1.2-parser.opp.out
@@ -12914,6 +12947,7 @@
     (alias confluence-psl)
     (alias couac)
     (alias cppo_ocamlbuild.1.6.0-cppo_parser)
+    (alias cryptolineParser)
     (alias cubicle.1.1.2-parser)
     (alias cudf.0.9-cudf_type_parser)
     (alias cutdown)

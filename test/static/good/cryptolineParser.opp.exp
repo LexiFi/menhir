@@ -1,0 +1,3327 @@
+File "cryptolineParser.mly", line 1304, characters 16-23:
+Warning: the token COMMENT is unused.
+File "cryptolineParser.mly", line 1318, characters 19-22:
+Warning: the token EXT is unused.
+File "cryptolineParser.mly", line 1322, characters 90-95:
+Warning: the token MODOP is unused.
+File "cryptolineParser.mly", line 1339, characters 10-13:
+Warning: the token VAR is unused.
+%{
+
+(*
+ * Use raise_at to raise an exception if the line number can be determined.
+ * Raise ParseError otherwise.
+ *)
+
+
+  open Ast.Cryptoline
+  open Typecheck.Std
+  open Common
+
+  exception ParseError of string
+
+  let main = "main"
+  let vars_expansion_infix = "_"
+
+  type func =
+    { fname : string;
+      fargs : var list;
+      fouts : var list;
+      fvm : Ast.Cryptoline.var SM.t; (* a map from a name to a variable (including carry variables) *)
+      fym : Ast.Cryptoline.var SM.t; (* a map from a name to a carry variable *)
+      fgm : Ast.Cryptoline.var SM.t; (* a map from a name to a ghost variable *)
+      fbody : lined_program;
+      fpre : bexp;
+      fpost : bexp;
+      fepwss : prove_with_spec list;
+      frpwss : prove_with_spec list }
+
+  let (--) i j =
+    let rec aux n acc =
+      if n < i then acc else aux (n-1) (n :: acc)
+    in aux j []
+
+  let raise_at lno msg = raise (ParseError ("Parse failure at line " ^ string_of_int lno ^ ". " ^ msg))
+
+  let vm_of_list (vs : var list) = List.fold_left (fun m v -> SM.add v.vname v m) SM.empty vs
+  let vm_of_vs (vs : VS.t) = vm_of_list (VS.elements vs)
+  let vs_of_vm vm = SM.fold (fun _ v vs -> VS.add v vs) vm VS.empty
+
+  let _some_pass reasons =
+    let rec helper r reasons =
+      match reasons with
+      | [] -> r
+      | None::_ -> None
+      | hd::tl -> helper hd tl in
+    helper None reasons
+
+  let to_uint ty = Tuint (size_of_typ ty)
+  let to_double_size ty =
+    match ty with
+    | Tuint w -> Tuint (w * 2)
+    | Tsint w -> Tsint (w * 2)
+
+  (*
+  let check_at lno reasons =
+    match chain_reasons reasons with
+    | None -> ()
+    | Some r -> raise_at lno r
+   *)
+
+  (*
+  type lv_token_t = Z.t SM.t -> var SM.t -> var SM.t -> var SM.t -> typ option -> (var SM.t * var SM.t * var SM.t * var)
+   *)
+(*   type atomic_token_t = Z.t SM.t -> var SM.t -> var SM.t -> var SM.t -> atomic *)
+
+  type lv_prim_t = {
+    lvtyphint: typ option;
+    lvname: string;
+  }
+
+  type avar_prim_t = {
+    atmtyphint: typ option;
+    atmname: string;
+  }
+
+  type aconst_prim_t = {
+    atmtyp: typ;
+    (* FIXME *)
+    atmvalue: Z.t SM.t -> Z.t;
+  }
+
+  (*
+  type lv_resolved_t = {
+    lvcxt: var SM.t * var SM.t * var SM.t;
+    lvvar: var;
+  }
+  *)
+
+  (*
+  type lv_token_t = [
+    | `LVPLAIN of lv_prim_t
+    | `LVCARRY of lv_prim_t
+    | `LV of lv_prim_t
+  ]
+   *)
+
+  type atomic_t = [
+    | `AVAR of avar_prim_t
+    | `ACONST of aconst_prim_t
+  ]
+
+  let num_two = Z.of_int 2
+
+  let num_of_bit b =
+    if b = '0'
+    then Z.zero
+    else if b = '1'
+         then Z.one
+         else failwith ("Unrecognized bit " ^ Char.escaped b)
+
+  let num_of_bits bits =
+    let rec helper res bits =
+      match bits with
+      | [] -> res
+      | hd::tl -> helper (Z.add (Z.mul res num_two) (num_of_bit hd)) tl in
+    helper Z.zero bits
+
+  let parse_typed_const lno ty n_token =
+    fun cm _vm _ym _gm ->
+    let n = n_token cm in
+    let size = size_of_typ ty in
+    (* Normalize the number: convert to non-negative integer *)
+    let n =
+      match ty with
+      | Tuint _ -> if Z.lt n Z.zero
+                   then raise_at lno ("The number " ^ Z.to_string n ^ " is expected to be non-negative")
+                   else n
+      | Tsint w -> if Z.lt n Z.zero
+                   then let n = Z.add n (Z.pow num_two w) in
+                        if Z.lt n Z.zero
+                        then raise_at lno ("The number " ^ Z.to_string n ^ " does not fit into " ^ string_of_typ ty)
+                        else n
+                   else n in
+    (* Normalize the number: convert to bit vector *)
+    let bits = List.of_seq (String.to_seq (Z.format ("%0" ^ string_of_int size ^ "b") n)) in
+    let _ = if List.length bits > size then raise_at lno ("The number " ^ Z.to_string n ^ " does not fit into " ^ string_of_typ ty) in
+    (* Normalize the number: convert back to integer *)
+    let n =
+      match ty with
+      | Tuint _ -> num_of_bits bits
+      | Tsint w ->
+         if w = 0 then Z.zero
+         else
+           begin
+             match bits with
+             | [] -> Z.zero
+             | sign::rest -> let n = num_of_bits rest in
+                             if sign = '1' then Z.sub n (Z.pow num_two (w - 1))
+                             else n
+           end
+    in
+    Aconst (ty, n)
+
+  let resolve_var_with lno (`AVAR {atmtyphint; atmname}) _cm vm _ym gm =
+    let v =
+      try
+        SM.find atmname vm
+      with Not_found ->
+        begin
+          try
+            SM.find atmname gm
+          with Not_found ->
+            raise_at lno ("Variable " ^ atmname ^ " is undefined.")
+        end in
+    let _ = match atmtyphint with
+    | None -> ()
+    | Some hinted_ty ->
+        if v.vtyp <> hinted_ty then
+          raise_at lno ("The type of variable " ^ atmname ^ " is inconsistent")
+        else () in
+    v
+
+  let resolve_atomic_with lno (a: atomic_t) cm vm ym gm =
+    match a with
+    (* FIXME *)
+    | `ACONST c -> parse_typed_const lno c.atmtyp c.atmvalue cm vm ym gm
+    | `AVAR v -> Avar (resolve_var_with lno (`AVAR v) cm vm ym gm)
+
+  let resolve_lv_with lno {lvname; lvtyphint} _cm vm ym gm ty_opt =
+    if SM.mem lvname gm then
+      raise_at lno ("The program variable " ^ lvname ^
+                    " has been defined as a ghost variable.")
+    else
+      let ty = (match (ty_opt, lvtyphint) with
+      | (None, None) ->
+         raise_at lno ("Failed to determine the type of " ^ lvname)
+      | (None, Some hinted_ty) -> hinted_ty
+      | (Some determined_ty, None) -> determined_ty
+      | (Some determined_ty, Some hinted_ty) ->
+        if determined_ty <> hinted_ty then
+          raise_at lno (Printf.sprintf "The specified type %s is not equal to the determined type %s."
+                          (string_of_typ hinted_ty)
+                          (string_of_typ determined_ty))
+        else determined_ty) in
+      let v = mkvar lvname ty in
+      (* It is possible that the lval is actually a bit variable *)
+      (if var_is_bit v then
+        (SM.add lvname v vm, SM.add lvname v ym, gm, v)
+      else
+        (SM.add lvname v vm, SM.remove lvname ym, gm, v))
+
+  let resolve_lcarry_with lno {lvname; lvtyphint} _cm vm ym gm =
+    if SM.mem lvname gm then
+      raise_at lno ("The carry variable " ^ lvname ^ " has been defined as a ghost variable.")
+    else
+      let _ = (match lvtyphint with
+      | None -> ()
+      | Some hinted_ty ->
+        if hinted_ty <> bit_t then
+          raise_at lno ("The type of a carry variable should be \""
+                        ^ string_of_typ bit_t
+                        ^ "\", specified "
+                        ^ string_of_typ hinted_ty)
+        else ()) in
+      let v = mkvar lvname bit_t in
+      (SM.add lvname v vm, SM.add lvname v ym, gm, v)
+
+  let resolve_lv_or_lcarry_with lno {lvname; lvtyphint} _cm vm ym gm =
+    if SM.mem lvname gm then
+      raise_at lno ("The program variable " ^ lvname ^
+                    " has been defined as a ghost variable.")
+    else
+      match lvtyphint with
+      | None -> raise_at lno ("Failed to determine the type of " ^ lvname)
+      | Some ty ->
+         let v = mkvar lvname ty in
+         if var_is_bit v then (SM.add lvname v vm, SM.add lvname v ym, gm, v)
+         else (SM.add lvname v vm, SM.remove lvname ym, gm, v)
+
+  let parse_imov_at lno dest src =
+    fun _fm cm vm ym gm ->
+      let a = resolve_atomic_with lno src cm vm ym gm in
+      let ty = typ_of_atomic a in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Imov (v, a)])
+
+  let parse_ishl_at lno dest src num =
+    fun _fm cm vm ym gm ->
+      let a = resolve_atomic_with lno src cm vm ym gm in
+      let ty = typ_of_atomic a in
+      let n = num cm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      let _ =
+        let w = size_of_var v in
+        if Z.leq n Z.zero || Z.geq n (Z.of_int w) then
+          raise_at lno ("An shl instruction expects an offset between 0 and the " ^ string_of_int w ^ " (both excluding)."
+                        ^ " An offset not in the range is found: " ^ Z.to_string n ^ ".")
+      in
+      (vm, ym, gm, [lno, Ishl (v, a, n)])
+
+  let parse_cshl_at lno destH destL src1 src2 num =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let n = num cm in
+      let (vm, ym, gm, vh) =
+        resolve_lv_with lno destH cm vm ym gm (Some ty) in
+      let (vm, ym, gm, vl) =
+        resolve_lv_with lno destL cm vm ym gm (Some (to_uint ty)) in
+      (vm, ym, gm, [lno, Icshl (vh, vl, a1, a2, n)])
+
+  let parse_set_at lno dest =
+    fun _fm cm vm ym gm ->
+      let (vm, ym, gm, c) = resolve_lcarry_with lno dest cm vm ym gm in
+      (vm, ym, gm, [lno, Imov (c, Aconst (bit_t, Z.one)) ])
+
+  let parse_clear_at lno dest =
+    fun _fm cm vm ym gm ->
+      let (vm, ym, gm, c) = resolve_lcarry_with lno dest cm vm ym gm in
+      (vm, ym, gm, [lno, Imov (c, Aconst (bit_t, Z.zero))])
+
+  let parse_nondet_at lno dest =
+    fun _fm cm vm ym gm ->
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm None in
+      (vm, ym, gm, [lno, Inondet v])
+
+  let parse_cmov_at lno dest carry src1 src2 =
+    fun _fm cm vm ym gm ->
+      let c = resolve_atomic_with lno carry cm vm ym gm in
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Icmov (v, c, a1, a2)])
+
+  let parse_add_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadd (v, a1, a2)])
+
+  let parse_adds_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadds (c, v, a1, a2)])
+
+  let parse_addr_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iaddr (c, v, a1, a2)])
+
+  let parse_adc_at lno dest src1 src2 (carry : atomic_t) =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadc (v, a1, a2, y)])
+
+  let parse_adcs_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadcs (c, v, a1, a2, y)])
+
+  let parse_adcr_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadcr (c, v, a1, a2, y)])
+
+  let parse_sub_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isub (v, a1, a2)])
+
+  let parse_subc_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isubc (c, v, a1, a2)])
+
+  let parse_subb_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isubb (c, v, a1, a2)])
+
+  let parse_subr_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isubr (c, v, a1, a2)])
+
+  let parse_sbc_at lno dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbc (v, a1, a2, y)])
+
+  let parse_sbcs_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbcs (c, v, a1, a2, y)])
+
+  let parse_sbcr_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbcr (c, v, a1, a2, y)])
+
+  let parse_sbb_at lno dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbb (v, a1, a2, y)])
+
+  let parse_sbbs_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbbs (c, v, a1, a2, y)])
+
+  let parse_sbbr_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbbr (c, v, a1, a2, y)])
+
+  let parse_mul_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Imul (v, a1, a2)])
+
+  let parse_muls_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Imuls (c, v, a1, a2)])
+
+  let parse_mulr_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Imulr (c, v, a1, a2)])
+
+  let parse_mull_at lno destH destL src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, vh) = resolve_lv_with lno destH cm vm ym gm (Some ty) in
+      let (vm, ym, gm, vl) =
+        resolve_lv_with lno destL cm vm ym gm (Some (to_uint ty)) in
+      (vm, ym, gm, [lno, Imull (vh, vl, a1, a2)])
+
+  let parse_mulj_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) =
+        resolve_lv_with lno dest cm vm ym gm (Some (to_double_size ty)) in
+      (vm, ym, gm, [lno, Imulj (v, a1, a2)])
+
+  let parse_split_at lno destH destL src num =
+    fun _fm cm vm ym gm ->
+      let a = resolve_atomic_with lno src cm vm ym gm in
+      let n = num cm in
+      let ty = typ_of_atomic a in
+      let (vm, ym, gm, vh) = resolve_lv_with lno destH cm vm ym gm (Some ty) in
+      let (vm, ym, gm, vl) =
+        resolve_lv_with lno destL cm vm ym gm (Some (to_uint ty)) in
+      let _ =
+        let w = size_of_var vl in
+        if Z.leq n Z.zero || Z.geq n (Z.of_int w) then
+          raise_at lno ("The position of a split should be in between 0 and " ^ string_of_int w ^ " (both excluded)")
+      in
+      (vm, ym, gm, [lno, Isplit (vh, vl, a, n)])
+
+  let parse_uadd_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadd (v, a1, a2)])
+
+  let parse_uadds_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadds (c, v, a1, a2)])
+
+  let parse_uaddr_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iaddr (c, v, a1, a2)])
+
+  let parse_uadc_at lno dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadc (v, a1, a2, y)])
+
+  let parse_uadcs_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadcs (c, v, a1, a2, y)])
+
+  let parse_uadcr_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadcr (c, v, a1, a2, y)])
+
+  let parse_usub_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isub (v, a1, a2)])
+
+  let parse_usubc_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isubc (c, v, a1, a2)])
+
+  let parse_usubb_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isubb (c, v, a1, a2)])
+
+  let parse_usubr_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isubr (c, v, a1, a2)])
+
+  let parse_usbc_at lno dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbc (v, a1, a2, y)])
+
+  let parse_usbcs_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbcs (c, v, a1, a2, y)])
+
+  let parse_usbcr_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbcr (c, v, a1, a2, y)])
+
+  let parse_usbb_at lno dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbb (v, a1, a2, y)])
+
+  let parse_usbbs_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbbs (c, v, a1, a2, y)])
+
+  let parse_usbbr_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbbr (c, v, a1, a2, y)])
+
+  let parse_umul_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Imul (v, a1, a2)])
+
+  let parse_umuls_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Imuls (c, v, a1, a2)])
+
+  let parse_umulr_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Imulr (c, v, a1, a2)])
+
+  let parse_umull_at lno destH destL src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, vh) = resolve_lv_with lno destH cm vm ym gm (Some ty) in
+      let (vm, ym, gm, vl) = resolve_lv_with lno destL cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Imull (vh, vl, a1, a2)])
+
+  let parse_umulj_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) =
+        resolve_lv_with lno dest cm vm ym gm (Some (to_double_size ty)) in
+      (vm, ym, gm, [lno, Imulj (v, a1, a2)])
+
+  let parse_usplit_at lno destH destL src num =
+    fun _fm cm vm ym gm ->
+      let a = resolve_atomic_with lno src cm vm ym gm in
+      let n = num cm in
+      let ty = typ_of_atomic a in
+      let (vm, ym, gm, vh) = resolve_lv_with lno destH cm vm ym gm (Some ty) in
+      let (vm, ym, gm, vl) = resolve_lv_with lno destL cm vm ym gm (Some ty) in
+      let _ =
+        let w = size_of_var vl in
+        if Z.leq n Z.zero || Z.geq n (Z.of_int w) then
+          raise_at lno ("The position of a split should be in between 0 and " ^ string_of_int w ^ " (both excluded)")
+      in
+      (vm, ym, gm, [lno, Isplit (vh, vl, a, n)])
+
+  let parse_sadd_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadd (v, a1, a2)])
+
+  let parse_sadds_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadds (c, v, a1, a2)])
+
+  let parse_saddr_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iaddr (c, v, a1, a2)])
+
+  let parse_sadc_at lno dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadc (v, a1, a2, y)])
+
+  let parse_sadcs_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadcs (c, v, a1, a2, y)])
+
+  let parse_sadcr_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Iadcr (c, v, a1, a2, y)])
+
+  let parse_ssub_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isub (v, a1, a2)])
+
+  let parse_ssubc_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isubc (c, v, a1, a2)])
+
+  let parse_ssubb_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isubb (c, v, a1, a2)])
+
+  let parse_ssubr_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isubr (c, v, a1, a2)])
+
+  let parse_ssbc_at lno dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbc (v, a1, a2, y)])
+
+  let parse_ssbcs_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbcs (c, v, a1, a2, y)])
+
+  let parse_ssbcr_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbcr (c, v, a1, a2, y)])
+
+  let parse_ssbb_at lno dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbb (v, a1, a2, y)])
+
+  let parse_ssbbs_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbbs (c, v, a1, a2, y)])
+
+  let parse_ssbbr_at lno flag dest src1 src2 carry =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let y = resolve_atomic_with lno carry cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Isbbr (c, v, a1, a2, y)])
+
+  let parse_smul_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Imul (v, a1, a2)])
+
+  let parse_smuls_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Imuls (c, v, a1, a2)])
+
+  let parse_smulr_at lno flag dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, c) = resolve_lcarry_with lno flag cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm (Some ty) in
+      (vm, ym, gm, [lno, Imulr (c, v, a1, a2)])
+
+  let parse_smull_at lno destH destL src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, vh) = resolve_lv_with lno destH cm vm ym gm (Some ty) in
+      let (vm, ym, gm, vl) =
+        resolve_lv_with lno destL cm vm ym gm (Some (to_uint ty)) in
+      (vm, ym, gm, [lno, Imull (vh, vl, a1, a2)])
+
+  let parse_smulj_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let ty = typ_of_atomic a1 in
+      let (vm, ym, gm, v) =
+        resolve_lv_with lno dest cm vm ym gm (Some (to_double_size ty)) in
+      (vm, ym, gm, [lno, Imulj (v, a1, a2)])
+
+  let parse_ssplit_at lno destH destL src num =
+    fun _fm cm vm ym gm ->
+      let a = resolve_atomic_with lno src cm vm ym gm in
+      let n = num cm in
+      let ty = typ_of_atomic a in
+      let (vm, ym, gm, vh) = resolve_lv_with lno destH cm vm ym gm (Some ty) in
+      let (vm, ym, gm, vl) =
+        resolve_lv_with lno destL cm vm ym gm (Some (to_uint ty)) in
+      let _ =
+        let w = size_of_var vl in
+        if Z.leq n Z.zero || Z.geq n (Z.of_int w) then
+          raise_at lno ("The position of a split should be in between 0 and " ^ string_of_int w ^ " (both excluded)")
+      in
+      (vm, ym, gm, [lno, Isplit (vh, vl, a, n)])
+
+  let parse_and_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm None in
+      (vm, ym, gm, [lno, Iand (v, a1, a2)])
+
+  let parse_or_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm None in
+      (vm, ym, gm, [lno, Ior (v, a1, a2)])
+
+  let parse_xor_at lno dest src1 src2 =
+    fun _fm cm vm ym gm ->
+      let a1 = resolve_atomic_with lno src1 cm vm ym gm in
+      let a2 = resolve_atomic_with lno src2 cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm None in
+      (vm, ym, gm, [lno, Ixor (v, a1, a2)])
+
+  let parse_not_at lno dest src =
+    fun _fm cm vm ym gm ->
+      let a = resolve_atomic_with lno src cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_with lno dest cm vm ym gm None in
+      (vm, ym, gm, [lno, Inot (v, a)])
+
+  let parse_cast_at lno optlv dest src =
+    fun _fm cm vm ym gm ->
+      let a = resolve_atomic_with lno src cm vm ym gm in
+      let (vm, ym, gm, v) =
+        resolve_lv_or_lcarry_with lno dest cm vm ym gm in
+	  (* determine the type of the discarded part *)
+      let od_typ =
+	match typ_of_var v, typ_of_atomic a with
+	| Tuint wv, Tuint wa -> Some (Tuint (abs (wa - wv)))
+	| Tuint wv, Tsint wa -> if wv >= wa then Some (Tuint 1)
+                                else Some (Tsint (wa - wv))
+	| Tsint wv, Tuint wa -> if wv > wa then Some (Tsint (wv - wa))
+                                else if wv = wa then Some bit_t
+                                else Some (Tuint (wa - wv))
+	| Tsint wv, Tsint wa -> if wv >= wa then Some (Tsint (wv - wa))
+                                else Some (Tsint (wa - wv + 1)) in
+      let (vm, ym, gm, od) =
+		match optlv with
+		| None -> (vm, ym, gm, None)
+		| Some (`LV od) ->
+		   let (vm, ym, gm, d) =
+                     resolve_lv_with lno od cm vm ym gm od_typ in
+		   (vm, ym, gm, Some d) in
+	  (* the discarded part must be a ghost variable *)
+	  let gm = apply_to_option (fun d -> SM.add d.vname d gm) gm od in
+      (vm, ym, gm, [lno, Icast (od, v, a)])
+
+  let parse_vpc_at lno dest src =
+    fun _fm cm vm ym gm ->
+      let a = resolve_atomic_with lno src cm vm ym gm in
+      let (vm, ym, gm, v) = resolve_lv_or_lcarry_with lno dest cm vm ym gm in
+      (vm, ym, gm, [lno, Ivpc (v, a)])
+
+  let parse_join_at lno dest srcH srcL =
+    fun _fm cm vm ym gm ->
+      let ah = resolve_atomic_with lno srcH cm vm ym gm in
+      let al = resolve_atomic_with lno srcL cm vm ym gm in
+      let ty = typ_of_atomic ah in
+      let (vm, ym, gm, v) =
+        resolve_lv_with lno dest cm vm ym gm (Some (to_double_size ty)) in
+      (vm, ym, gm, [lno, Ijoin (v, ah, al)])
+
+  let parse_assert_at lno bexp_token =
+    fun _fm cm vm ym gm ->
+      (vm, ym, gm, [lno, Iassert (bexp_token cm vm ym gm)])
+
+  let parse_assume_at lno bexp_token =
+    fun _fm cm vm ym gm ->
+      (vm, ym, gm, [lno, Iassume (bexp_token cm vm ym gm)])
+
+  let parse_cut_at lno bexp_prove_with_token =
+    fun _fm cm vm ym gm ->
+      let ((e, r), epwss, rpwss) = bexp_prove_with_token cm vm ym gm in
+      (vm, ym, gm, [lno, Iecut (e, epwss); lno, Ircut (r, rpwss)])
+
+  let parse_ecut_at lno ebexp_prove_with_token =
+    fun _fm cm vm ym gm ->
+    let (e, epwss) = ebexp_prove_with_token cm vm ym gm in
+    (vm, ym, gm, [lno, Iecut (e, epwss)])
+
+  let parse_rcut_at lno rbexp_prove_with_token =
+    fun _fm cm vm ym gm ->
+      let (r, rpwss) = rbexp_prove_with_token cm vm ym gm in
+      (vm, ym, gm, [lno, Ircut (r, rpwss)])
+
+  let parse_ghost_at lno gvars_token bexp_token =
+    fun _fm cm vm ym gm ->
+      let gvars = gvars_token cm vm ym gm in
+      let gm = vm_of_vs (VS.union gvars (vs_of_vm gm)) in
+      let e = bexp_token cm vm ym gm in
+      let bad_ebexps = List.filter (fun e -> not (eq_ebexp e etrue) && VS.is_empty (VS.inter gvars (vars_ebexp e))) (split_eand (eqn_bexp e)) in
+      let bad_rbexps = List.filter (fun e -> not (eq_rbexp e rtrue) && VS.is_empty (VS.inter gvars (vars_rbexp e))) (split_rand (rng_bexp e)) in
+      if List.length bad_ebexps > 0 then raise_at lno ("The algebraic expression " ^ string_of_ebexp (List.hd bad_ebexps) ^ " is defined without using any ghost variable.")
+      else if List.length bad_rbexps > 0 then raise_at lno ("The range expression " ^ string_of_rbexp (List.hd bad_rbexps) ^ " is defined without using any ghost variable.")
+      else (vm, ym, gm, [lno, Ighost (gvars, e)])
+
+  let is_type_compatible formal actual =
+    match actual with
+    | Avar v -> formal.vtyp = v.vtyp
+    | Aconst (ty, _n) -> formal.vtyp = ty
+
+  let parse_call_at lno fname_token actuals_token =
+    fun fm cm vm ym gm ->
+      (* The function name *)
+      let fname = fname_token in
+      (* The function definition *)
+      let f =
+        try
+          SM.find fname fm
+        with Not_found ->
+          raise_at lno ("Call an undefined function '" ^ fname ^ "'.") in
+      (* The actual paramaters, the types of formal arguments are requried to parse actual parameters *)
+      let actuals = actuals_token (List.map typ_of_var f.fargs, List.map typ_of_var f.fouts) cm vm ym gm in
+      (* Rename local variables *)
+      let (fbody, fargs, fouts, fvs, fys, fgs) =
+        if !Options.Std.rename_local then
+          let rename_var v = mkvar (fname ^ "_local_" ^ v.vname) v.vtyp in
+          let fargs = List.map rename_var f.fargs in
+          let fouts = List.map rename_var f.fouts in
+          let fvs = VS.map rename_var (vs_of_vm f.fvm) in
+          let fys = VS.map rename_var (vs_of_vm f.fym) in
+          let fgs = VS.map rename_var (vs_of_vm f.fgm) in
+          let local_renamer = object (* (self) *)
+                                inherit nop_visitor
+                                method! vvar v = ChangeTo (rename_var v)
+                              end in
+          let fbody = visit_lined_program local_renamer f.fbody in
+          (fbody, fargs, fouts, fvs, fys, fgs)
+        else
+          (f.fbody, f.fargs, f.fouts, vs_of_vm f.fvm, vs_of_vm f.fym, vs_of_vm f.fgm) in
+      (* Formal parameters after renaming *)
+      let inputs = fargs in
+      let outputs = fouts in
+      let formals = inputs@outputs in
+      (* Check the number of actual parameters *)
+      let _ =
+        if List.length actuals != List.length formals then
+          raise_at lno ("Failed to call the function " ^ fname ^ ": numbers of arguments mismatch.") in
+      (* Check types of actual parameters, this should be done in parsing actual parameters *)
+      let _ =
+        List.iter2 (fun formal actual ->
+                     if not (is_type_compatible formal actual) then
+                       raise_at lno ("The type of the actual parameter " ^ string_of_atomic actual
+                                     ^ " is not compatible with the type of the formal parameter " ^ string_of_var formal))
+                   formals actuals in
+      (* Check naming conflicts *)
+      let _ =
+        let (vsclash, ysclash, gsclash) =
+          let actvars = List.fold_left (fun res a -> VS.union res (vars_atomic a)) VS.empty actuals in
+          (* variables not replaced by formal parameters cannot have the same name as the name of any actual parameter *)
+          let unrenamed_vs = VS.diff fvs (VS.of_list formals) in
+          let unrenamed_ys = VS.diff fys (VS.of_list formals) in
+          let unrenamed_gs = VS.diff fgs (VS.of_list formals) in
+          let vsclash = VS.inter actvars unrenamed_vs in
+          let ysclash = VS.inter actvars unrenamed_ys in
+          let gsclash = VS.inter actvars unrenamed_gs in
+          (vsclash, ysclash, gsclash) in
+        if not (VS.is_empty gsclash) then
+          let v = VS.choose gsclash in
+          raise_at lno ("Naming conflict: the actual argument " ^ string_of_var v ^ " is already defined as a ghost variable in function " ^ fname ^ ".")
+        else if not (VS.is_empty ysclash) then
+          let v = VS.choose ysclash in
+          raise_at lno ("Naming conflict: the actual argument " ^ string_of_var v ^ " is already defined as a carry in function " ^ fname ^ ".")
+        else if not (VS.is_empty vsclash) then
+          let v = VS.choose vsclash in
+          raise_at lno ("Naming conflict: the actual argument " ^ string_of_var v ^ " is already defined in function " ^ fname ^ ".")
+      in
+      let pats = List.combine formals actuals in
+      let vs = vs_of_vm vm in
+      let ys = vs_of_vm ym in
+      let gs = vs_of_vm gm in
+      (* Check undefined variables *)
+      let _ =
+        let undefined =
+          List.flatten (List.map (fun (formal, actual) ->
+                                   match actual with
+                                   | Avar v -> if mem_var formal inputs && not (VS.mem v vs) then [v] else []
+                                   | _ -> []
+                                 ) pats) in
+        if List.length undefined > 0 then
+          raise_at lno ("Undefined variable: " ^ string_of_var (List.hd undefined))
+      in
+      let p = subst_lined_program pats fbody in
+      (* Update variable types *)
+      let subst_varmap vm =
+        (*
+         * subst_lval fails if the corresponding actual parameter of a formal parameter is a constant.
+         * In this case, no variable type will be updated.
+         *)
+        VS.of_list (List.flatten (List.map (fun v -> try [subst_lval pats v] with _ -> []) (VS.elements vm))) in
+      let update_varset vs vsp =
+        (* To update variable types, we need to remove variables with new types first. *)
+        VS.union (VS.diff vs vsp) vsp in
+      let vsp = subst_varmap fvs in
+      let ysp = subst_varmap fys in
+      let gsp = subst_varmap fgs in
+      (vm_of_vs (update_varset vs vsp), vm_of_vs (update_varset ys ysp), vm_of_vs (update_varset gs gsp), p)
+
+  let recognize_instr_at lno instr fm cm vm ym gm =
+      match instr with
+      | `MOV (`LVPLAIN dest, src) ->
+         parse_imov_at lno dest src fm cm vm ym gm
+      | `SHL (`LVPLAIN dest, src, num) ->
+         parse_ishl_at lno dest src num fm cm vm ym gm
+      | `CSHL (`LVPLAIN destH, `LVPLAIN destL, src1, src2, num) ->
+         parse_cshl_at lno destH destL src1 src2 num fm cm vm ym gm
+      | `SET (`LVCARRY dest) ->
+         parse_set_at lno dest fm cm vm ym gm
+      | `CLEAR (`LVCARRY dest) ->
+         parse_clear_at lno dest fm cm vm ym gm
+      | `NONDET (`LVPLAIN dest) ->
+         parse_nondet_at lno dest fm cm vm ym gm
+      | `CMOV (`LVPLAIN dest, carry, src1, src2) ->
+         parse_cmov_at lno dest carry src1 src2 fm cm vm ym gm
+      | `ADD (`LVPLAIN dest, src1, src2) ->
+         parse_add_at lno dest src1 src2 fm cm vm ym gm
+      | `ADDS (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_adds_at lno flag dest src1 src2 fm cm vm ym gm
+      | `ADDR (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_addr_at lno flag dest src1 src2 fm cm vm ym gm
+      | `ADC (`LVPLAIN dest, src1, src2, carry) ->
+         parse_adc_at lno dest src1 src2 carry fm cm vm ym gm
+      | `ADCS (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_adcs_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `ADCR (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_adcr_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `SUB (`LVPLAIN dest, src1, src2) ->
+         parse_sub_at lno dest src1 src2 fm cm vm ym gm
+      | `SUBC (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_subc_at lno flag dest src1 src2 fm cm vm ym gm
+      | `SUBB (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_subb_at lno flag dest src1 src2 fm cm vm ym gm
+      | `SUBR (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_subr_at lno flag dest src1 src2 fm cm vm ym gm
+      | `SBC (`LVPLAIN dest, src1, src2, carry) ->
+         parse_sbc_at lno dest src1 src2 carry fm cm vm ym gm
+      | `SBCS (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_sbcs_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `SBCR (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_sbcr_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `SBB (`LVPLAIN dest, src1, src2, carry) ->
+         parse_sbb_at lno dest src1 src2 carry fm cm vm ym gm
+      | `SBBS (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_sbbs_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `SBBR (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_sbbr_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `MUL (`LVPLAIN dest, src1, src2) ->
+         parse_mul_at lno dest src1 src2 fm cm vm ym gm
+      | `MULS (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_muls_at lno flag dest src1 src2 fm cm vm ym gm
+      | `MULR (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_mulr_at lno flag dest src1 src2 fm cm vm ym gm
+      | `MULL (`LVPLAIN destH, `LVPLAIN destL, src1, src2) ->
+         parse_mull_at lno destH destL src1 src2 fm cm vm ym gm
+      | `MULJ (`LVPLAIN dest, src1, src2) ->
+         parse_mulj_at lno dest src1 src2 fm cm vm ym gm
+      | `SPLIT (`LVPLAIN destH, `LVPLAIN destL, src, num) ->
+         parse_split_at lno destH destL src num fm cm vm ym gm
+      | `UADD (`LVPLAIN dest, src1, src2) ->
+         parse_uadd_at lno dest src1 src2 fm cm vm ym gm
+      | `UADDS (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_uadds_at lno flag dest src1 src2 fm cm vm ym gm
+      | `UADDR (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_uaddr_at lno flag dest src1 src2 fm cm vm ym gm
+      | `UADC (`LVPLAIN dest, src1, src2, carry) ->
+         parse_uadc_at lno dest src1 src2 carry fm cm vm ym gm
+      | `UADCS (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_uadcs_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `UADCR (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_uadcr_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `USUB (`LVPLAIN dest, src1, src2) ->
+         parse_usub_at lno dest src1 src2 fm cm vm ym gm
+      | `USUBC (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_usubc_at lno flag dest src1 src2 fm cm vm ym gm
+      | `USUBB (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_usubb_at lno flag dest src1 src2 fm cm vm ym gm
+      | `USUBR (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_usubr_at lno flag dest src1 src2 fm cm vm ym gm
+      | `USBC (`LVPLAIN dest, src1, src2, carry) ->
+         parse_usbc_at lno dest src1 src2 carry fm cm vm ym gm
+      | `USBCS (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_usbcs_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `USBCR (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_usbcr_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `USBB (`LVPLAIN dest, src1, src2, carry) ->
+         parse_usbb_at lno dest src1 src2 carry fm cm vm ym gm
+      | `USBBS (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_usbbs_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `USBBR (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_usbbr_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `UMUL (`LVPLAIN dest, src1, src2) ->
+         parse_umul_at lno dest src1 src2 fm cm vm ym gm
+      | `UMULS (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_umuls_at lno flag dest src1 src2 fm cm vm ym gm
+      | `UMULR (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_umulr_at lno flag dest src1 src2 fm cm vm ym gm
+      | `UMULL (`LVPLAIN destH, `LVPLAIN destL, src1, src2) ->
+         parse_umull_at lno destH destL src1 src2 fm cm vm ym gm
+      | `UMULJ (`LVPLAIN dest, src1, src2) ->
+         parse_umulj_at lno dest src1 src2 fm cm vm ym gm
+      | `USPLIT (`LVPLAIN destH, `LVPLAIN destL, src, num) ->
+         parse_usplit_at lno destH destL src num fm cm vm ym gm
+      | `SADD (`LVPLAIN dest, src1, src2) ->
+         parse_sadd_at lno dest src1 src2 fm cm vm ym gm
+      | `SADDS (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_sadds_at lno flag dest src1 src2 fm cm vm ym gm
+      | `SADDR (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_saddr_at lno flag dest src1 src2 fm cm vm ym gm
+      | `SADC (`LVPLAIN dest, src1, src2, carry) ->
+         parse_sadc_at lno dest src1 src2 carry fm cm vm ym gm
+      | `SADCS (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_sadcs_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `SADCR (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_sadcr_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `SSUB (`LVPLAIN dest, src1, src2) ->
+         parse_ssub_at lno dest src1 src2 fm cm vm ym gm
+      | `SSUBC (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_ssubc_at lno flag dest src1 src2 fm cm vm ym gm
+      | `SSUBB (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_ssubb_at lno flag dest src1 src2 fm cm vm ym gm
+      | `SSUBR (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_ssubr_at lno flag dest src1 src2 fm cm vm ym gm
+      | `SSBC (`LVPLAIN dest, src1, src2, carry) ->
+         parse_ssbc_at lno dest src1 src2 carry fm cm vm ym gm
+      | `SSBCS (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_ssbcs_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `SSBCR (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_ssbcr_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `SSBB (`LVPLAIN dest, src1, src2, carry) ->
+         parse_ssbb_at lno dest src1 src2 carry fm cm vm ym gm
+      | `SSBBS (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_ssbbs_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `SSBBR (`LVCARRY flag, `LVPLAIN dest, src1, src2, carry) ->
+         parse_ssbbr_at lno flag dest src1 src2 carry fm cm vm ym gm
+      | `SMUL (`LVPLAIN dest, src1, src2) ->
+         parse_smul_at lno dest src1 src2 fm cm vm ym gm
+      | `SMULS (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_smuls_at lno flag dest src1 src2 fm cm vm ym gm
+      | `SMULR (`LVCARRY flag, `LVPLAIN dest, src1, src2) ->
+         parse_smulr_at lno flag dest src1 src2 fm cm vm ym gm
+      | `SMULL (`LVPLAIN destH, `LVPLAIN destL, src1, src2) ->
+         parse_smull_at lno destH destL src1 src2 fm cm vm ym gm
+      | `SMULJ (`LVPLAIN dest, src1, src2) ->
+         parse_smulj_at lno dest src1 src2 fm cm vm ym gm
+      | `SSPLIT (`LVPLAIN destH, `LVPLAIN destL, src, num) ->
+         parse_ssplit_at lno destH destL src num fm cm vm ym gm
+      | `AND (`LVPLAIN dest, src1, src2) ->
+         parse_and_at lno dest src1 src2 fm cm vm ym gm
+      | `OR (`LVPLAIN dest, src1, src2) ->
+         parse_or_at lno dest src1 src2 fm cm vm ym gm
+      | `XOR (`LVPLAIN dest, src1, src2) ->
+         parse_xor_at lno dest src1 src2 fm cm vm ym gm
+      | `NOT (`LVPLAIN dest, src) ->
+         parse_not_at lno dest src fm cm vm ym gm
+      | `CAST (optlv, `LV dest, src) ->
+         parse_cast_at lno optlv dest src fm cm vm ym gm
+      | `VPC (`LV dest, src) ->
+         parse_vpc_at lno dest src fm cm vm ym gm
+      | `JOIN (`LVPLAIN dest, srcH, srcL) ->
+         parse_join_at lno dest srcH srcL fm cm vm ym gm
+      | `ASSERT bexp ->
+         parse_assert_at lno bexp fm cm vm ym gm
+      | `ASSUME bexp ->
+         parse_assume_at lno bexp fm cm vm ym gm
+      | `CUT bexp_prove_with ->
+         parse_cut_at lno bexp_prove_with fm cm vm ym gm
+      | `ECUT ebexp_prove_with ->
+         parse_ecut_at lno ebexp_prove_with fm cm vm ym gm
+      | `RCUT rbexp_prove_with ->
+         parse_rcut_at lno rbexp_prove_with fm cm vm ym gm
+      | `GHOST (gvars, bexp) ->
+         parse_ghost_at lno gvars bexp fm cm vm ym gm
+      | `CALL (id, actuals) ->
+         parse_call_at lno id actuals fm cm vm ym gm
+      | `NOP -> (vm, ym, gm, [])
+
+  let parse_instrs instrs fm cm vm ym gm =
+    let helper (vm0, ym0, gm0, prog_rev) (lno, instr0) =
+      let (vm1, ym1, gm1, prog) =
+        recognize_instr_at lno instr0 fm cm vm0 ym0 gm0 in
+      (vm1, ym1, gm1, List.rev_append prog prog_rev) in
+    let (vm, ym, gm, p') = List.fold_left helper (vm, ym, gm, []) instrs in
+    (vm, ym, gm, List.rev p')
+
+%}
+%start prog
+%start spec
+%token ADC
+%token ADCR
+%token ADCS
+%token ADD
+%token ADDOP
+%token ADDR
+%token ADDS
+%token ALL
+%token AND
+%token ANDOP
+%token ASSERT
+%token ASSUME
+%token ASSUMES
+%token AT
+%token BIT
+%token CALL
+%token CAST
+%token CLEAR
+%token CMOV
+%token COLON
+%token COMMA
+%token <string> COMMENT
+%token CONST
+%token CSHL
+%token CUT
+%token CUTS
+%token DEREFOP
+%token DOT
+%token DOTDOT
+%token ECUT
+%token EOF
+%token EQ
+%token EQMOD
+%token EQOP
+%token EQSMOD
+%token EQSREM
+%token EQUMOD
+%token EXT
+%token GHOST
+%token GHOSTS
+%token <string> ID
+%token JOIN
+%token LANDOP
+%token LBRAC
+%token LOROP
+%token LPAR
+%token LSQUARE
+%token MOD
+%token MODOP
+%token MOV
+%token MUL
+%token MULJ
+%token MULL
+%token MULOP
+%token MULR
+%token MULS
+%token NEG
+%token NEGOP
+%token NONDET
+%token NOP
+%token NOT
+%token NOTOP
+%token <Z.t> NUM
+%token OR
+%token OROP
+%token POWOP
+%token PRECONDITION
+%token PROC
+%token PROVE
+%token RBRAC
+%token RCUT
+%token RPAR
+%token RSQUARE
+%token SADC
+%token SADCR
+%token SADCS
+%token SADD
+%token SADDR
+%token SADDS
+%token SAR
+%token SAROP
+%token SBB
+%token SBBR
+%token SBBS
+%token SBC
+%token SBCR
+%token SBCS
+%token SEMICOLON
+%token SET
+%token SEXT
+%token SGE
+%token SGEOP
+%token SGT
+%token SGTOP
+%token SHL
+%token SHLOP
+%token SHR
+%token SHROP
+%token <int> SINT
+%token SLE
+%token SLEOP
+%token SLIMBS
+%token SLT
+%token SLTOP
+%token SMOD
+%token SMUL
+%token SMULJ
+%token SMULL
+%token SMULR
+%token SMULS
+%token SPLIT
+%token SQ
+%token SREM
+%token SSBB
+%token SSBBR
+%token SSBBS
+%token SSBC
+%token SSBCR
+%token SSBCS
+%token SSPLIT
+%token SSUB
+%token SSUBB
+%token SSUBC
+%token SSUBR
+%token SUB
+%token SUBB
+%token SUBC
+%token SUBOP
+%token SUBR
+%token TRUE
+%token UADC
+%token UADCR
+%token UADCS
+%token UADD
+%token UADDR
+%token UADDS
+%token UEXT
+%token UGE
+%token UGEOP
+%token UGT
+%token UGTOP
+%token <int> UINT
+%token ULE
+%token ULEOP
+%token ULIMBS
+%token ULT
+%token ULTOP
+%token UMOD
+%token UMUL
+%token UMULJ
+%token UMULL
+%token UMULR
+%token UMULS
+%token USBB
+%token USBBR
+%token USBBS
+%token USBC
+%token USBCR
+%token USBCS
+%token USPLIT
+%token USUB
+%token USUBB
+%token USUBC
+%token USUBR
+%token VARS
+%token VBAR
+%token VPC
+%token WITH
+%token XOR
+%token XOROP
+%left LOROP
+%left LANDOP
+%nonassoc EQOP SGEOP SGTOP SLEOP SLTOP UGEOP UGTOP ULEOP ULTOP
+%left OROP
+%left XOROP
+%left ANDOP
+%left SAROP SHLOP SHROP
+%left ADDOP SUBOP
+%left MULOP
+%left POWOP
+%right NEGOP NOTOP
+%left MODOP
+%nonassoc ADD AND CONST MUL NEG NOT OR SAR SGE SGT SHL SHR SLE SLT SMOD SQ SREM SUB UGE UGT ULE ULT UMOD VAR XOR
+%nonassoc EQ EQMOD
+%nonassoc UMINUS
+%type <Ast.Cryptoline.lined_program> prog
+%type <(Ast.Cryptoline.VS.t * Typecheck.Std.spec)> spec
+%%
+
+spec:
+  _1 = procs _2 = EOF
+    {  (
+    (*
+     * fm: a map from a name to a function
+     * cm: a map from a name to a constant
+     *)
+    let (fm, _cm) = _1 SM.empty SM.empty in
+    try
+      let m = SM.find main fm in
+      (VS.of_list m.fargs, { spre = m.fpre; sprog = m.fbody; spost = m.fpost; sepwss = m.fepwss; srpwss = m.frpwss })
+    with Not_found ->
+      raise (ParseError "A main function is required.")
+  )}
+
+procs:
+  _1 = proc _2 = procs
+    {  (
+    fun fm cm ->
+      let (fm, cm) = _1 fm cm in
+      let (fm, cm) = _2 fm cm in
+      (fm, cm)
+  )}
+| 
+    {    ( fun fm cm -> (fm, cm) )}
+
+proc:
+  _1 = PROC _2 = ID _3 = LPAR _4 = formals _5 = RPAR _6 = EQOP _7 = pre _8 = program _9 = post
+    {  (
+    let lno = !lnum in
+    fun fm cm ->
+      let fname = _2 in
+      if SM.mem fname fm then raise_at lno ("The procedure " ^ fname ^ " is redefined.")
+      else
+        (* A map of defined variables *)
+        let (args, outs) = _4 lno in
+        let vm = vm_of_list args in
+        (* A map of carry variables *)
+        let ym = SM.empty in
+        (* A map of ghost variables *)
+        let gm = SM.empty in
+        let f =
+          match _7 cm vm ym gm with
+          | None -> btrue
+          | Some e -> e in
+        let (vm, ym, gm, p) = parse_instrs _8 fm cm vm ym gm in
+        let (g, epwss, rpwss) =
+          match _9 cm vm ym gm with
+          | None -> (btrue, [], [])
+          | Some e -> e in
+        (SM.add fname { fname = fname;
+                        fargs = args;
+                        fouts = outs;
+                        fvm = vm;
+                        fym = ym;
+                        fgm = gm;
+                        fbody = p;
+                        fpre = f;
+                        fpost = g;
+                        fepwss = epwss;
+                        frpwss = rpwss } fm, cm)
+  )}
+| _1 = CONST _2 = ID _3 = EQOP _4 = const
+    {  (
+    let lno = !lnum in
+    fun fm cm ->
+      let v = _2 in
+      let n = _4 cm in
+      if SM.mem v cm
+      then raise_at lno ("Redefined constant: " ^ v)
+      else
+        let _ = if v = "wordsize" then Options.Std.wordsize := Z.to_int n in
+        (fm, SM.add v n cm)
+  )}
+
+pre:
+  _1 = LBRAC _2 = bexp _3 = RBRAC
+    {                                                  ( fun cm vm ym gm -> Some (_2 cm vm ym gm) )}
+| 
+    {                                                  ( fun _cm _vm _ym _gm -> None )}
+
+post:
+  _1 = LBRAC _2 = bexp_prove_with _3 = RBRAC
+    {                                                  ( fun cm vm ym gm -> Some (_2 cm vm ym gm) )}
+| 
+    {                                                  ( fun _cm _vm _ym _gm -> None )}
+
+formals:
+  _1 = fvars
+    {                                                  ( fun lno -> (_1 lno, []) )}
+| _1 = fvars _2 = SEMICOLON _3 = fvars
+    {                                                  ( fun lno -> (_1 lno, _3 lno) )}
+| 
+    {                                                  ( fun _lno -> ([], []) )}
+
+fvars:
+  _1 = fvar
+    {                                                  ( fun _lno -> _1 )}
+| _1 = fvar _2 = COMMA _3 = fvars
+    {  (
+    fun lno ->
+      let fvs1 = _1 in
+      let fvs2 = _3 lno in
+      let duplicates = List.filter (fun v -> mem_var v fvs2) fvs1 in
+      if List.length duplicates > 0
+      then raise_at lno ("Duplicate argument: " ^ string_of_var (List.hd duplicates))
+      else fvs1@fvs2
+  )}
+
+fvar:
+  _1 = typ _2 = ID
+    {                                                  ( [mkvar _2 _1] )}
+| _1 = ID _2 = AT _3 = typ
+    {                                                  ( [mkvar _1 _3] )}
+| _1 = typ _2 = ID _3 = OROP _4 = NUM _5 = DOTDOT _6 = NUM
+    {  (
+    let ty = _1 in
+    let prefix = _2 in
+    let st = _4 in
+    let ed = _6 in
+    List.map (fun i -> mkvar (prefix ^ vars_expansion_infix ^ string_of_int i) ty) ((Z.to_int st)--(Z.to_int ed))
+  )}
+| _1 = ID _2 = AT _3 = typ _4 = OROP _5 = NUM _6 = DOTDOT _7 = NUM
+    {  (
+    let ty = _3 in
+    let prefix = _1 in
+    let st = _5 in
+    let ed = _7 in
+    List.map (fun i -> mkvar (prefix ^ vars_expansion_infix ^ string_of_int i) ty) ((Z.to_int st)--(Z.to_int ed))
+  )}
+
+prog:
+  _1 = program _2 = EOF
+    {  (
+    let fm = SM.empty in
+    let cm = SM.empty in
+    (* A map of defined variables *)
+    let vm = SM.empty in
+    (* A map of carry variables *)
+    let ym = SM.empty in
+    (* A map of ghost variables *)
+    let gm = SM.empty in
+    let (_vm, _ym, _gm, p) = parse_instrs _1 fm cm vm ym gm in
+    p
+  )}
+
+program:
+  _1 = instrs
+    {                                                  ( _1 )}
+
+instrs:
+  _1 = instr _2 = SEMICOLON _3 = instrs
+    {                                                  ( _1 :: _3 )}
+| _1 = instr _2 = SEMICOLON
+    {                                                  ( [_1] )}
+| _1 = instr _2 = SEMICOLON _3 = error
+    {                                                  ( raise_at !lnum ("Unrecognized instruction.") )}
+
+instr:
+  _1 = MOV _2 = lval _3 = atomic
+    {                                              ( (!lnum, `MOV (_2, _3)) )}
+| _1 = lhs _2 = EQOP _3 = atomic
+    {                                              ( (!lnum, `MOV  (`LVPLAIN _1, _3)) )}
+| _1 = SHL _2 = lval _3 = atomic _4 = const
+    {                                              ( (!lnum, `SHL (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = SHL _4 = atomic _5 = const
+    {                                              ( (!lnum, `SHL (`LVPLAIN _1, _4, _5)) )}
+| _1 = CSHL _2 = lval _3 = lval _4 = atomic _5 = atomic _6 = const
+    {                                              ( (!lnum, `CSHL (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = CSHL _6 = atomic _7 = atomic _8 = const
+    {                                              ( (!lnum, `CSHL (`LVPLAIN _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = SET _2 = lcarry
+    {                                              ( (!lnum, `SET _2) )}
+| _1 = CLEAR _2 = lcarry
+    {                                              ( (!lnum, `CLEAR _2) )}
+| _1 = NONDET _2 = lval
+    {                                              ( (!lnum, `NONDET _2) )}
+| _1 = CMOV _2 = lval _3 = carry _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `CMOV (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = EQOP _3 = CMOV _4 = carry _5 = atomic _6 = atomic
+    {                                              ( (!lnum, `CMOV (`LVPLAIN _1, _4, _5, _6)) )}
+| _1 = ADD _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `ADD (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = ADD _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `ADD (`LVPLAIN _1, _4, _5)) )}
+| _1 = ADDS _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `ADDS (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = ADDS _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `ADDS (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = ADDR _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `ADDR (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = ADDR _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `ADDR (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = ADC _2 = lval _3 = atomic _4 = atomic _5 = carry
+    {                                              ( (!lnum, `ADC (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = EQOP _3 = ADC _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `ADC (`LVPLAIN _1, _4, _5, _6)) )}
+| _1 = ADCS _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `ADCS (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = ADCS _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `ADCS (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = ADCR _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `ADCR (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = ADCR _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `ADCR (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = SUB _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `SUB (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = SUB _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SUB (`LVPLAIN _1, _4, _5)) )}
+| _1 = SUBC _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SUBC (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SUBC _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `SUBC (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = SUBB _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SUBB (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SUBB _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `SUBB (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = SUBR _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SUBR (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SUBR _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `SUBR (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = SBC _2 = lval _3 = atomic _4 = atomic _5 = carry
+    {                                              ( (!lnum, `SBC (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = EQOP _3 = SBC _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SBC (`LVPLAIN _1, _4, _5, _6)) )}
+| _1 = SBCS _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SBCS (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SBCS _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `SBCS (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = SBCR _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SBCR (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SBCR _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `SBCR (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = SBB _2 = lval _3 = atomic _4 = atomic _5 = carry
+    {                                              ( (!lnum, `SBB (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = EQOP _3 = SBB _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SBB (`LVPLAIN _1, _4, _5, _6)) )}
+| _1 = SBBS _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SBBS (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SBBS _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `SBBS (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = SBBR _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SBBR (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SBBR _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `SBBR (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = MUL _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `MUL (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = MUL _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `MUL (`LVPLAIN _1, _4, _5)) )}
+| _1 = MULS _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `MULS (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = MULS _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `MULS (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = MULR _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `MULR (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = MULR _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `MULR (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = MULL _2 = lval _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `MULL (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = MULL _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `MULL (`LVPLAIN _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = MULJ _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `MULJ (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = MULJ _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `MULJ (`LVPLAIN _1, _4, _5)) )}
+| _1 = SPLIT _2 = lval _3 = lval _4 = atomic _5 = const
+    {                                              ( (!lnum, `SPLIT (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SPLIT _6 = atomic _7 = const
+    {                                              ( (!lnum, `SPLIT (`LVPLAIN _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = UADD _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `UADD (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = UADD _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `UADD (`LVPLAIN _1, _4, _5)) )}
+| _1 = UADDS _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `UADDS (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = UADDS _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `UADDS (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = UADDR _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `UADDR (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = UADDR _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `UADDR (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = UADC _2 = lval _3 = atomic _4 = atomic _5 = carry
+    {                                              ( (!lnum, `UADC (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = EQOP _3 = UADC _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `UADC (`LVPLAIN _1, _4, _5, _6)) )}
+| _1 = UADCS _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `UADCS (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = UADCS _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `UADCS (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = UADCR _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `UADCR (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = UADCR _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `UADCR (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = USUB _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `USUB (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = USUB _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `USUB (`LVPLAIN _1, _4, _5)) )}
+| _1 = USUBC _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `USUBC (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = USUBC _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `USUBC (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = USUBB _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `USUBB (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = USUBB _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `USUBB (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = USUBR _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `USUBR (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = USUBR _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `USUBR (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = USBC _2 = lval _3 = atomic _4 = atomic _5 = carry
+    {                                              ( (!lnum, `USBC (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = EQOP _3 = USBC _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `USBC (`LVPLAIN _1, _4, _5, _6)) )}
+| _1 = USBCS _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `USBCS (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = USBCS _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `USBCS (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = USBCR _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `USBCR (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = USBCR _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `USBCR (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = USBB _2 = lval _3 = atomic _4 = atomic _5 = carry
+    {                                              ( (!lnum, `USBB (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = EQOP _3 = USBB _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `USBB (`LVPLAIN _1, _4, _5, _6)) )}
+| _1 = USBBS _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `USBBS (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = USBBS _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `USBBS (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = USBBR _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `USBBR (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = USBBR _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `USBBR (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = UMUL _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `UMUL (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = UMUL _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `UMUL (`LVPLAIN _1, _4, _5)) )}
+| _1 = UMULS _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `UMULS (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = UMULS _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `UMULS (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = UMULR _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `UMULR (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = UMULR _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `UMULR (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = UMULL _2 = lval _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `UMULL (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = UMULL _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `UMULL (`LVPLAIN _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = UMULJ _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `UMULJ (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = UMULJ _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `UMULJ (`LVPLAIN _1, _4, _5)) )}
+| _1 = USPLIT _2 = lval _3 = lval _4 = atomic _5 = const
+    {                                              ( (!lnum, `USPLIT (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = USPLIT _6 = atomic _7 = const
+    {                                              ( (!lnum, `USPLIT (`LVPLAIN _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = SADD _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `SADD (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = SADD _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SADD (`LVPLAIN _1, _4, _5)) )}
+| _1 = SADDS _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SADDS (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SADDS _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `SADDS (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = SADDR _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SADDR (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SADDR _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `SADDR (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = SADC _2 = lval _3 = atomic _4 = atomic _5 = carry
+    {                                              ( (!lnum, `SADC (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = EQOP _3 = SADC _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SADC (`LVPLAIN _1, _4, _5, _6)) )}
+| _1 = SADCS _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SADCS (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SADCS _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `SADCS (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = SADCR _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SADCR (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SADCR _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `SADCR (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = SSUB _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `SSUB (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = SSUB _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SSUB (`LVPLAIN _1, _4, _5)) )}
+| _1 = SSUBC _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SSUBC (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SSUBC _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `SSUBC (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = SSUBB _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SSUBB (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SSUBB _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `SSUBB (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = SSUBR _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SSUBR (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SSUBR _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `SSUBR (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = SSBC _2 = lval _3 = atomic _4 = atomic _5 = carry
+    {                                              ( (!lnum, `SSBC (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = EQOP _3 = SSBC _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SSBC (`LVPLAIN _1, _4, _5, _6)) )}
+| _1 = SSBCS _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SSBCS (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SSBCS _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `SSBCS (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = SSBCR _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SSBCR (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SSBCR _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `SSBCR (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = SSBB _2 = lval _3 = atomic _4 = atomic _5 = carry
+    {                                              ( (!lnum, `SSBB (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = EQOP _3 = SSBB _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SSBB (`LVPLAIN _1, _4, _5, _6)) )}
+| _1 = SSBBS _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SSBBS (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SSBBS _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `SSBBS (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = SSBBR _2 = lcarry _3 = lval _4 = atomic _5 = atomic _6 = carry
+    {                                              ( (!lnum, `SSBBR (_2, _3, _4, _5, _6)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SSBBR _6 = atomic _7 = atomic _8 = carry
+    {                                              ( (!lnum, `SSBBR (`LVCARRY _1, `LVPLAIN _3, _6, _7, _8)) )}
+| _1 = SMUL _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `SMUL (_2, _3, _4) ))}
+| _1 = lhs _2 = EQOP _3 = SMUL _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SMUL (`LVPLAIN _1, _4, _5) ))}
+| _1 = SMULS _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SMULS (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SMULS _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `SMULS (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = SMULR _2 = lcarry _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SMULR (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SMULR _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `SMULR (`LVCARRY _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = SMULL _2 = lval _3 = lval _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SMULL (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SMULL _6 = atomic _7 = atomic
+    {                                              ( (!lnum, `SMULL (`LVPLAIN _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = SMULJ _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `SMULJ (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = SMULJ _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `SMULJ (`LVPLAIN _1, _4, _5)) )}
+| _1 = SSPLIT _2 = lval _3 = lval _4 = atomic _5 = const
+    {                                              ( (!lnum, `SSPLIT (_2, _3, _4, _5)) )}
+| _1 = lhs _2 = DOT _3 = lhs _4 = EQOP _5 = SSPLIT _6 = atomic _7 = const
+    {                                              ( (!lnum, `SSPLIT (`LVPLAIN _1, `LVPLAIN _3, _6, _7)) )}
+| _1 = AND _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `AND (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = AND _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `AND (`LVPLAIN _1, _4, _5)) )}
+| _1 = OR _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `OR (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = OR _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `OR (`LVPLAIN _1, _4, _5)) )}
+| _1 = XOR _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `XOR (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = XOR _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `XOR (`LVPLAIN _1, _4, _5)) )}
+| _1 = NOT _2 = lval _3 = atomic
+    {                                              ( (!lnum, `NOT (_2, _3)) )}
+| _1 = lhs _2 = EQOP _3 = NOT _4 = atomic
+    {                                              ( (!lnum, `NOT (`LVPLAIN _1, _4)) )}
+| _1 = CAST _2 = lval_or_lcarry _3 = atomic
+    {                                              ( (!lnum, `CAST (None, _2, _3)) )}
+| _1 = CAST _2 = LSQUARE _3 = lval_or_lcarry _4 = RSQUARE _5 = lval_or_lcarry _6 = atomic
+    {                                              ( (!lnum, `CAST (Some _3, _5, _6)) )}
+| _1 = lhs _2 = EQOP _3 = CAST _4 = atomic
+    {                                              ( (!lnum, `CAST (None, `LV _1, _4)) )}
+| _1 = VPC _2 = lval_or_lcarry _3 = atomic
+    {                                              ( (!lnum, `VPC (_2, _3)) )}
+| _1 = lhs _2 = EQOP _3 = VPC _4 = atomic
+    {                                              ( (!lnum, `VPC (`LV _1, _4)) )}
+| _1 = JOIN _2 = lval _3 = atomic _4 = atomic
+    {                                              ( (!lnum, `JOIN (_2, _3, _4)) )}
+| _1 = lhs _2 = EQOP _3 = JOIN _4 = atomic _5 = atomic
+    {                                              ( (!lnum, `JOIN (`LVPLAIN _1, _4, _5)) )}
+| _1 = ASSERT _2 = bexp
+    {                                              ( (!lnum, `ASSERT _2) )}
+| _1 = ASSUME _2 = bexp
+    {                                              ( (!lnum, `ASSUME _2) )}
+| _1 = CUT _2 = bexp_prove_with
+    {                                              ( (!lnum, `CUT _2) )}
+| _1 = ECUT _2 = ebexp_prove_with
+    {                                              ( (!lnum, `ECUT _2) )}
+| _1 = RCUT _2 = rbexp_prove_with
+    {                                              ( (!lnum, `RCUT _2) )}
+| _1 = GHOST _2 = gvars _3 = COLON _4 = bexp
+    {                                              ( (!lnum, `GHOST (_2, _4)) )}
+| _1 = CALL _2 = ID _3 = LPAR _4 = actuals _5 = RPAR
+    {                                              ( (!lnum, `CALL (_2, _4)) )}
+| _1 = NOP
+    {                                              ( (!lnum, `NOP) )}
+| _1 = MOV _2 = error
+    {                                              ( raise_at !lnum ("Bad mov instruction") )}
+| _1 = ADD _2 = error
+    {                                              ( raise_at !lnum ("Bad add instruction") )}
+| _1 = ADDS _2 = error
+    {                                              ( raise_at !lnum ("Bad adds instruction") )}
+| _1 = ADC _2 = error
+    {                                              ( raise_at !lnum ("Bad adc instruction") )}
+| _1 = ADCS _2 = error
+    {                                              ( raise_at !lnum ("Bad adcs instruction") )}
+| _1 = SUB _2 = error
+    {                                              ( raise_at !lnum ("Bad sub instruction") )}
+| _1 = SUBC _2 = error
+    {                                              ( raise_at !lnum ("Bad subc instruction") )}
+| _1 = SUBB _2 = error
+    {                                              ( raise_at !lnum ("Bad subb instruction") )}
+| _1 = SUBR _2 = error
+    {                                              ( raise_at !lnum ("Bad subr instruction") )}
+| _1 = SBC _2 = error
+    {                                              ( raise_at !lnum ("Bad sbc instruction") )}
+| _1 = SBCS _2 = error
+    {                                              ( raise_at !lnum ("Bad sbcs instruction") )}
+| _1 = SBCR _2 = error
+    {                                              ( raise_at !lnum ("Bad sbcr instruction") )}
+| _1 = SBB _2 = error
+    {                                              ( raise_at !lnum ("Bad sbb instruction") )}
+| _1 = SBBS _2 = error
+    {                                              ( raise_at !lnum ("Bad sbbs instruction") )}
+| _1 = SBBR _2 = error
+    {                                              ( raise_at !lnum ("Bad sbbr instruction") )}
+| _1 = MUL _2 = error
+    {                                              ( raise_at !lnum ("Bad mul instruction") )}
+| _1 = MULL _2 = error
+    {                                              ( raise_at !lnum ("Bad mull instruction") )}
+| _1 = SPLIT _2 = error
+    {                                              ( raise_at !lnum ("Bad split instruction") )}
+| _1 = UADD _2 = error
+    {                                              ( raise_at !lnum ("Bad uadd instruction") )}
+| _1 = UADDS _2 = error
+    {                                              ( raise_at !lnum ("Bad uadds instruction") )}
+| _1 = UADC _2 = error
+    {                                              ( raise_at !lnum ("Bad uadc instruction") )}
+| _1 = UADCS _2 = error
+    {                                              ( raise_at !lnum ("Bad uadcs instruction") )}
+| _1 = USUB _2 = error
+    {                                              ( raise_at !lnum ("Bad usub instruction") )}
+| _1 = USUBC _2 = error
+    {                                              ( raise_at !lnum ("Bad usubc instruction") )}
+| _1 = USUBB _2 = error
+    {                                              ( raise_at !lnum ("Bad usubb instruction") )}
+| _1 = USUBR _2 = error
+    {                                              ( raise_at !lnum ("Bad usubr instruction") )}
+| _1 = USBC _2 = error
+    {                                              ( raise_at !lnum ("Bad usbc instruction") )}
+| _1 = USBCS _2 = error
+    {                                              ( raise_at !lnum ("Bad usbcs instruction") )}
+| _1 = USBCR _2 = error
+    {                                              ( raise_at !lnum ("Bad usbcr instruction") )}
+| _1 = USBB _2 = error
+    {                                              ( raise_at !lnum ("Bad usbb instruction") )}
+| _1 = USBBS _2 = error
+    {                                              ( raise_at !lnum ("Bad usbbs instruction") )}
+| _1 = USBBR _2 = error
+    {                                              ( raise_at !lnum ("Bad usbbr instruction") )}
+| _1 = UMUL _2 = error
+    {                                              ( raise_at !lnum ("Bad umul instruction") )}
+| _1 = UMULL _2 = error
+    {                                              ( raise_at !lnum ("Bad umull instruction") )}
+| _1 = USPLIT _2 = error
+    {                                              ( raise_at !lnum ("Bad usplit instruction") )}
+| _1 = SADD _2 = error
+    {                                              ( raise_at !lnum ("Bad sadd instruction") )}
+| _1 = SADDS _2 = error
+    {                                              ( raise_at !lnum ("Bad sadds instruction") )}
+| _1 = SADC _2 = error
+    {                                              ( raise_at !lnum ("Bad sadc instruction") )}
+| _1 = SADCS _2 = error
+    {                                              ( raise_at !lnum ("Bad sadcs instruction") )}
+| _1 = SSUB _2 = error
+    {                                              ( raise_at !lnum ("Bad ssub instruction") )}
+| _1 = SSUBC _2 = error
+    {                                              ( raise_at !lnum ("Bad ssubc instruction") )}
+| _1 = SSUBB _2 = error
+    {                                              ( raise_at !lnum ("Bad ssubb instruction") )}
+| _1 = SSUBR _2 = error
+    {                                              ( raise_at !lnum ("Bad ssubr instruction") )}
+| _1 = SSBC _2 = error
+    {                                              ( raise_at !lnum ("Bad ssbc instruction") )}
+| _1 = SSBCS _2 = error
+    {                                              ( raise_at !lnum ("Bad ssbcs instruction") )}
+| _1 = SSBCR _2 = error
+    {                                              ( raise_at !lnum ("Bad ssbcr instruction") )}
+| _1 = SSBB _2 = error
+    {                                              ( raise_at !lnum ("Bad ssbb instruction") )}
+| _1 = SSBBS _2 = error
+    {                                              ( raise_at !lnum ("Bad ssbbs instruction") )}
+| _1 = SSBBR _2 = error
+    {                                              ( raise_at !lnum ("Bad ssbbr instruction") )}
+| _1 = SMUL _2 = error
+    {                                              ( raise_at !lnum ("Bad smul instruction") )}
+| _1 = SMULL _2 = error
+    {                                              ( raise_at !lnum ("Bad smull instruction") )}
+| _1 = SSPLIT _2 = error
+    {                                              ( raise_at !lnum ("Bad ssplit instruction") )}
+| _1 = SHL _2 = error
+    {                                              ( raise_at !lnum ("Bad shl instruction") )}
+| _1 = CSHL _2 = error
+    {                                              ( raise_at !lnum ("Bad cshl instruction") )}
+| _1 = NONDET _2 = error
+    {                                              ( raise_at !lnum ("Bad nondet instruction") )}
+| _1 = CALL _2 = ID _3 = LPAR _4 = error
+    {                                              ( raise_at !lnum (("Invalid actuals in the call instruction: " ^ _2)) )}
+| _1 = CALL _2 = error
+    {                                              ( raise_at !lnum ("Bad call instruction") )}
+
+ebexp_prove_with:
+  _1 = ebexp
+    {                                                  ( fun cm vm ym gm -> (_1 cm vm ym gm, []) )}
+| _1 = ebexp _2 = PROVE _3 = WITH _4 = prove_with_specs
+    {                                                  ( fun cm vm ym gm -> (_1 cm vm ym gm, _4) )}
+
+rbexp_prove_with:
+  _1 = rbexp
+    {                                                  ( fun cm vm ym gm -> (_1 cm vm ym gm, []) )}
+| _1 = rbexp _2 = PROVE _3 = WITH _4 = prove_with_specs
+    {                                                  ( fun cm vm ym gm -> (_1 cm vm ym gm, _4) )}
+
+bexp_prove_with:
+  _1 = TRUE
+    {                                                  ( fun _cm _vm _ym _gm -> (btrue, [], []) )}
+| _1 = ebexp_prove_with _2 = VBAR _3 = rbexp_prove_with
+    {                                                  ( fun cm vm ym gm ->
+                                                      let (e, epwss) = _1 cm vm ym gm in
+                                                      let (r, rpwss) = _3 cm vm ym gm in
+                                                      ((e, r), epwss, rpwss) )}
+| _1 = ebexp_prove_with _2 = VBAR _3 = error
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      raise_at lno ("Invalid range predicate after '" ^ string_of_ebexp (fst (_1 cm vm ym gm)) ^ "'.")
+                                                  )}
+| _1 = ebexp_prove_with _2 = error
+    {                                                  ( raise_at !lnum ("Please use '&&' to separate algebraic predicates and range predicates.") )}
+
+prove_with_specs:
+  _1 = prove_with_spec
+    {                                                  ( [_1] )}
+| _1 = prove_with_spec _2 = COMMA _3 = prove_with_specs
+    {                                                  ( _1::_3 )}
+
+prove_with_spec:
+  _1 = PRECONDITION
+    {                                                  ( Precondition )}
+| _1 = ALL _2 = CUTS
+    {                                                  ( AllCuts )}
+| _1 = ALL _2 = ASSUMES
+    {                                                  ( AllAssumes )}
+| _1 = ALL _2 = GHOSTS
+    {                                                  ( AllGhosts )}
+
+bexp:
+  _1 = TRUE
+    {                                                  ( fun _cm _vm _ym _gm -> btrue )}
+| _1 = ebexp _2 = VBAR _3 = rbexp
+    {                                                  ( fun cm vm ym gm -> (_1 cm vm ym gm, _3 cm vm ym gm) )}
+| _1 = ebexp _2 = VBAR _3 = error
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      raise_at lno ("Invalid range predicate after '" ^ string_of_ebexp (_1 cm vm ym gm) ^ "'.")
+                                                  )}
+| _1 = ebexp _2 = error
+    {                                                  ( raise_at !lnum ("Please use '&&' to separate algebraic predicates and range predicates.") )}
+
+ebexp:
+  _1 = ebexp_atomic _2 = LANDOP _3 = ebexp
+    {                                                  ( fun cm vm ym gm -> Eand(_1 cm vm ym gm, _3 cm vm ym gm) )}
+| _1 = ebexp_atomic
+    {                                                  ( fun cm vm ym gm -> _1 cm vm ym gm )}
+
+ebexp_atomic:
+  _1 = TRUE
+    {                                                  ( fun _cm _vm _ym _gm -> Etrue )}
+| _1 = EQ _2 = eexp _3 = eexp_no_unary
+    {                                                  ( fun cm vm ym gm -> Eeq (_2 cm vm ym gm, _3 cm vm ym gm) )}
+| _1 = EQMOD _2 = eexp _3 = eexp_no_unary _4 = eexp_no_unary
+    {                                                  ( fun cm vm ym gm -> Eeqmod (_2 cm vm ym gm, _3 cm vm ym gm, [ _4 cm vm ym gm ]) )}
+| _1 = EQMOD _2 = eexp _3 = eexp_no_unary _4 = LSQUARE _5 = eexp_no_unarys _6 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> Eeqmod (_2 cm vm ym gm, _3 cm vm ym gm, _5 cm vm ym gm) )}
+| _1 = AND _2 = ebexp_atomic_without_eqmod _3 = ebexp_atomic
+    {                                                  ( fun cm vm ym gm -> Eand (_2 cm vm ym gm, _3 cm vm ym gm) )}
+| _1 = LPAR _2 = ebexp _3 = RPAR
+    {                                                  ( fun cm vm ym gm -> _2 cm vm ym gm )}
+| _1 = eexp _2 = EQOP _3 = eexp _4 = eq_suffix
+    {                                                  ( fun cm vm ym gm ->
+                                                      match _4 cm vm ym gm with
+                                                      | None -> Eeq (_1 cm vm ym gm, _3 cm vm ym gm)
+                                                      | Some ms -> Eeqmod (_1 cm vm ym gm, _3 cm vm ym gm, ms)
+                                                  )}
+| _1 = AND _2 = LSQUARE _3 = ebexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> eands (_3 cm vm ym gm) )}
+| _1 = LANDOP _2 = LSQUARE _3 = ebexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> eands (_3 cm vm ym gm) )}
+
+ebexp_atomic_without_eqmod:
+  _1 = TRUE
+    {                                                  ( fun _cm _vm _ym _gm -> Etrue )}
+| _1 = EQ _2 = eexp _3 = eexp_no_unary
+    {                                                  ( fun cm vm ym gm -> Eeq (_2 cm vm ym gm, _3 cm vm ym gm) )}
+| _1 = EQMOD _2 = eexp _3 = eexp_no_unary _4 = eexp_no_unary
+    {                                                  ( fun cm vm ym gm -> Eeqmod (_2 cm vm ym gm, _3 cm vm ym gm, [ _4 cm vm ym gm ]) )}
+| _1 = EQMOD _2 = eexp _3 = eexp_no_unary _4 = LSQUARE _5 = eexp_no_unarys _6 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> Eeqmod (_2 cm vm ym gm, _3 cm vm ym gm, _5 cm vm ym gm) )}
+| _1 = AND _2 = ebexp_atomic_without_eqmod _3 = ebexp_atomic_without_eqmod
+    {                                                  ( fun cm vm ym gm -> Eand (_2 cm vm ym gm, _3 cm vm ym gm) )}
+| _1 = LPAR _2 = ebexp _3 = RPAR
+    {                                                  ( fun cm vm ym gm -> _2 cm vm ym gm )}
+| _1 = eexp _2 = EQOP _3 = eexp
+    {                                                  ( fun cm vm ym gm -> Eeq (_1 cm vm ym gm, _3 cm vm ym gm) )}
+| _1 = AND _2 = LSQUARE _3 = ebexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> eands (_3 cm vm ym gm) )}
+| _1 = LANDOP _2 = LSQUARE _3 = ebexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> eands (_3 cm vm ym gm) )}
+
+eq_suffix:
+  
+    {                                                  ( fun _cm _vm _ym _gm -> None )}
+| _1 = LPAR _2 = MOD _3 = eexp _4 = RPAR
+    {                                                  ( fun cm vm ym gm -> Some [ _3 cm vm ym gm ] )}
+| _1 = LPAR _2 = MOD _3 = LSQUARE _4 = eexps _5 = RSQUARE _6 = RPAR
+    {                                                  ( fun cm vm ym gm -> Some (_4 cm vm ym gm) )}
+
+ebexps:
+  _1 = ebexp _2 = COMMA _3 = ebexps
+    {                                                  ( fun cm vm ym gm -> (_1 cm vm ym gm)::(_3 cm vm ym gm) )}
+| _1 = ebexp
+    {                                                  ( fun cm vm ym gm -> [_1 cm vm ym gm] )}
+| _1 = ebexp _2 = error
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      raise_at lno ("Failed to parse the algebra predicate after '" ^ string_of_ebexp (_1 cm vm ym gm) ^ "'.")
+                                                  )}
+
+cmpop_infix:
+  _1 = ULTOP
+    {                                                  ( Rult )}
+| _1 = ULEOP
+    {                                                  ( Rule )}
+| _1 = UGTOP
+    {                                                  ( Rugt )}
+| _1 = UGEOP
+    {                                                  ( Ruge )}
+| _1 = SLTOP
+    {                                                  ( Rslt )}
+| _1 = SLEOP
+    {                                                  ( Rsle )}
+| _1 = SGTOP
+    {                                                  ( Rsgt )}
+| _1 = SGEOP
+    {                                                  ( Rsge )}
+
+eexp:
+  _1 = defined_var
+    {                                                  ( fun cm vm ym gm -> Evar (resolve_var_with !lnum _1 cm vm ym gm) )}
+| _1 = simple_const
+    {                                                  ( fun cm _vm _ym _gm -> Econst (_1 cm) )}
+| _1 = LPAR _2 = eexp _3 = RPAR
+    {                                                  ( fun cm vm ym gm -> _2 cm vm ym gm )}
+| _1 = NEG _2 = eexp
+    {                                                  ( fun cm vm ym gm -> eneg (_2 cm vm ym gm) )}
+| _1 = ADD _2 = eexp _3 = eexp_no_unary
+    {                                                  ( fun cm vm ym gm -> eadd (_2 cm vm ym gm) (_3 cm vm ym gm) )}
+| _1 = SUB _2 = eexp _3 = eexp_no_unary
+    {                                                  ( fun cm vm ym gm -> esub (_2 cm vm ym gm) (_3 cm vm ym gm) )}
+| _1 = MUL _2 = eexp _3 = eexp_no_unary
+    {                                                  ( fun cm vm ym gm -> emul (_2 cm vm ym gm) (_3 cm vm ym gm) )}
+| _1 = SQ _2 = eexp
+    {                                                  ( fun cm vm ym gm -> esq (_2 cm vm ym gm) )}
+| _1 = ADD _2 = LSQUARE _3 = eexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> eadds (_3 cm vm ym gm) )}
+| _1 = MUL _2 = LSQUARE _3 = eexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> emuls (_3 cm vm ym gm) )}
+| _1 = SUBOP _2 = eexp %prec UMINUS
+    {                                                  ( fun cm vm ym gm -> eneg (_2 cm vm ym gm) )}
+| _1 = eexp _2 = ADDOP _3 = eexp
+    {                                                  ( fun cm vm ym gm -> eadd (_1 cm vm ym gm) (_3 cm vm ym gm) )}
+| _1 = eexp _2 = SUBOP _3 = eexp
+    {                                                  ( fun cm vm ym gm -> esub (_1 cm vm ym gm) (_3 cm vm ym gm) )}
+| _1 = eexp _2 = MULOP _3 = eexp
+    {                                                  ( fun cm vm ym gm -> emul (_1 cm vm ym gm) (_3 cm vm ym gm) )}
+| _1 = eexp _2 = POWOP _3 = const
+    {                                                  ( fun cm vm ym gm ->
+                                                      let e = _1 cm vm ym gm in
+                                                      let i = Z.to_int (_3 cm) in
+                                                      match e with
+                                                      | Econst n -> Econst (Z.pow n i)
+                                                      | _ ->
+                                                        let rec helper j =
+                                                          if j = 0 then Econst Z.one
+                                                          else if j = 1 then e
+                                                          else if j = 2 then esq e
+                                                          else emul (helper (j - 1)) e in
+                                                        helper i
+                                                  )}
+| _1 = ULIMBS _2 = const _3 = LSQUARE _4 = eexps _5 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> limbs (Z.to_int (_2 cm)) (_4 cm vm ym gm) )}
+
+eexp_no_unarys:
+  _1 = eexp_no_unary _2 = COMMA _3 = eexp_no_unarys
+    {                                                  ( fun cm vm ym gm -> (_1 cm vm ym gm)::(_3 cm vm ym gm) )}
+| _1 = eexp_no_unary
+    {                                                  ( fun cm vm ym gm -> [ _1 cm vm ym gm ] )}
+
+eexp_no_unary:
+  _1 = defined_var
+    {                                                  ( fun cm vm ym gm -> Evar (resolve_var_with !lnum _1 cm vm ym gm) )}
+| _1 = simple_const
+    {                                                  ( fun cm _vm _ym _gm -> Econst (_1 cm) )}
+| _1 = LPAR _2 = eexp _3 = RPAR
+    {                                                  ( fun cm vm ym gm -> _2 cm vm ym gm )}
+| _1 = NEG _2 = eexp
+    {                                                  ( fun cm vm ym gm -> eneg (_2 cm vm ym gm) )}
+| _1 = ADD _2 = eexp _3 = eexp_no_unary
+    {                                                  ( fun cm vm ym gm -> eadd (_2 cm vm ym gm) (_3 cm vm ym gm) )}
+| _1 = SUB _2 = eexp _3 = eexp_no_unary
+    {                                                  ( fun cm vm ym gm -> esub (_2 cm vm ym gm) (_3 cm vm ym gm) )}
+| _1 = MUL _2 = eexp _3 = eexp_no_unary
+    {                                                  ( fun cm vm ym gm -> emul (_2 cm vm ym gm) (_3 cm vm ym gm) )}
+| _1 = SQ _2 = eexp
+    {                                                  ( fun cm vm ym gm -> esq (_2 cm vm ym gm) )}
+| _1 = ADD _2 = LSQUARE _3 = eexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> eadds (_3 cm vm ym gm) )}
+| _1 = MUL _2 = LSQUARE _3 = eexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> emuls (_3 cm vm ym gm) )}
+| _1 = eexp_no_unary _2 = ADDOP _3 = eexp
+    {                                                  ( fun cm vm ym gm -> eadd (_1 cm vm ym gm) (_3 cm vm ym gm) )}
+| _1 = eexp_no_unary _2 = SUBOP _3 = eexp
+    {                                                  ( fun cm vm ym gm -> esub (_1 cm vm ym gm) (_3 cm vm ym gm) )}
+| _1 = eexp_no_unary _2 = MULOP _3 = eexp
+    {                                                  ( fun cm vm ym gm -> emul (_1 cm vm ym gm) (_3 cm vm ym gm) )}
+| _1 = eexp_no_unary _2 = POWOP _3 = const
+    {                                                  ( fun cm vm ym gm ->
+                                                      let e = _1 cm vm ym gm in
+                                                      let i = Z.to_int (_3 cm) in
+                                                      match e with
+                                                      | Econst n -> Econst (Z.pow n i)
+                                                      | _ ->
+                                                        let rec helper j =
+                                                          if j = 0 then Econst Z.one
+                                                          else if j = 1 then e
+                                                          else if j = 2 then esq e
+                                                          else emul (helper (j - 1)) e in
+                                                        helper i
+                                                  )}
+| _1 = ULIMBS _2 = const _3 = LSQUARE _4 = eexps _5 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> limbs (Z.to_int (_2 cm)) (_4 cm vm ym gm) )}
+
+eexps:
+  _1 = eexp _2 = COMMA _3 = eexps
+    {                                                  ( fun cm vm ym gm -> (_1 cm vm ym gm)::(_3 cm vm ym gm) )}
+| _1 = eexp
+    {                                                  ( fun cm vm ym gm -> [_1 cm vm ym gm] )}
+| _1 = VARS _2 = var_expansion
+    {                                                  ( fun cm vm ym gm -> List.map (fun v -> Evar v) (_2 cm vm ym gm) )}
+
+rbexp:
+  _1 = rbexp_and _2 = LOROP _3 = rbexp
+    {                                                  ( fun cm vm ym gm -> Ror (_1 cm vm ym gm, _3 cm vm ym gm) )}
+| _1 = rbexp_and
+    {                                                  ( fun cm vm ym gm -> _1 cm vm ym gm )}
+
+rbexp_and:
+  _1 = rbexp_atomic _2 = LANDOP _3 = rbexp_and
+    {                                                  ( fun cm vm ym gm -> Rand (_1 cm vm ym gm, _3 cm vm ym gm) )}
+| _1 = rbexp_atomic
+    {                                                  ( fun cm vm ym gm -> _1 cm vm ym gm )}
+
+rbexp_atomic:
+  _1 = TRUE
+    {                                                  ( fun _cm _vm _ym _gm -> Rtrue )}
+| _1 = EQ _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else Req (w1, e1, e2)
+                                                  )}
+| _1 = NEG _2 = rbexp_atomic
+    {                                                  ( fun cm vm ym gm -> Rneg (_2 cm vm ym gm) )}
+| _1 = NEGOP _2 = rbexp_atomic
+    {                                                  ( fun cm vm ym gm -> Rneg (_2 cm vm ym gm) )}
+| _1 = AND _2 = rbexp_atomic_without_eqmod _3 = rbexp_atomic
+    {                                                  ( fun cm vm ym gm -> Rand (_2 cm vm ym gm, _3 cm vm ym gm) )}
+| _1 = OR _2 = rbexp_atomic_without_eqmod _3 = rbexp_atomic
+    {                                                  ( fun cm vm ym gm -> Ror (_2 cm vm ym gm, _3 cm vm ym gm) )}
+| _1 = LPAR _2 = rbexp _3 = RPAR
+    {                                                  ( fun cm vm ym gm -> _2 cm vm ym gm )}
+| _1 = rexp _2 = EQOP _3 = rexp _4 = req_suffix
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _1 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        match _4 cm vm ym gm with
+                                                        | None -> Req (w1, e1, e2)
+                                                        | Some (f, m) ->
+                                                          let wm = size_of_rexp m in
+                                                          begin
+                                                            if w1 != wm then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                           ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                           ^ string_of_rexp m ^ " (width " ^ string_of_int wm ^ ")")
+                                                            else
+                                                              f w1 e1 e2 m
+                                                         end
+                                                  )}
+| _1 = rexp _2 = cmpop_infix _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _1 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let op = _2 in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else Rcmp(w1, op, e1, e2)
+                                                  )}
+| _1 = cmpop_prefix _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else Rcmp (w1, _1, e1, e2)
+                                                  )}
+| _1 = AND _2 = LSQUARE _3 = rbexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> rands (_3 cm vm ym gm) )}
+| _1 = LANDOP _2 = LSQUARE _3 = rbexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> rands (_3 cm vm ym gm) )}
+| _1 = OR _2 = LSQUARE _3 = rbexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> rors (_3 cm vm ym gm) )}
+| _1 = LOROP _2 = LSQUARE _3 = rbexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> rors (_3 cm vm ym gm) )}
+| _1 = EQMOD _2 = rexp _3 = rexp _4 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let m = _4 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      let wm = size_of_rexp m in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else if w1 != wm then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp m ^ " (width " ^ string_of_int wm ^ ")")
+                                                      else
+                                                        reqmod w1 e1 e2 m
+                                                  )}
+| _1 = EQUMOD _2 = rexp _3 = rexp _4 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let m = _4 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      let wm = size_of_rexp m in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else if w1 != wm then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp m ^ " (width " ^ string_of_int wm ^ ")")
+                                                      else
+                                                        reqmod w1 e1 e2 m
+                                                  )}
+| _1 = EQSMOD _2 = rexp _3 = rexp _4 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let m = _4 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      let wm = size_of_rexp m in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else if w1 != wm then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp m ^ " (width " ^ string_of_int wm ^ ")")
+                                                      else
+                                                        reqsmod w1 e1 e2 m
+                                                  )}
+| _1 = EQSREM _2 = rexp _3 = rexp _4 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let m = _4 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      let wm = size_of_rexp m in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else if w1 != wm then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp m ^ " (width " ^ string_of_int wm ^ ")")
+                                                      else
+                                                        reqsrem w1 e1 e2 m
+                                                  )}
+
+rbexp_atomic_without_eqmod:
+  _1 = TRUE
+    {                                                  ( fun _cm _vm _ym _gm -> Rtrue )}
+| _1 = EQ _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else Req (w1, e1, e2)
+                                                  )}
+| _1 = NEG _2 = rbexp_atomic_without_eqmod
+    {                                                  ( fun cm vm ym gm -> Rneg (_2 cm vm ym gm) )}
+| _1 = AND _2 = rbexp_atomic_without_eqmod _3 = rbexp_atomic_without_eqmod
+    {                                                  ( fun cm vm ym gm -> Rand (_2 cm vm ym gm, _3 cm vm ym gm) )}
+| _1 = OR _2 = rbexp_atomic_without_eqmod _3 = rbexp_atomic_without_eqmod
+    {                                                  ( fun cm vm ym gm -> Ror (_2 cm vm ym gm, _3 cm vm ym gm) )}
+| _1 = LPAR _2 = rbexp _3 = RPAR
+    {                                                  ( fun cm vm ym gm -> _2 cm vm ym gm )}
+| _1 = rexp _2 = EQOP _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _1 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else Req (w1, e1, e2)
+                                                  )}
+| _1 = rexp _2 = cmpop_infix _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _1 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let op = _2 in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else Rcmp(w1, op, e1, e2) )}
+| _1 = cmpop_prefix _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else Rcmp (w1, _1, e1, e2) )}
+| _1 = AND _2 = LSQUARE _3 = rbexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> rands (_3 cm vm ym gm) )}
+| _1 = OR _2 = LSQUARE _3 = rbexps _4 = RSQUARE
+    {                                                  ( fun cm vm ym gm -> rors (_3 cm vm ym gm) )}
+| _1 = EQMOD _2 = rexp _3 = rexp _4 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let m = _4 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      let wm = size_of_rexp m in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else if w1 != wm then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp m ^ " (width " ^ string_of_int wm ^ ")")
+                                                      else
+                                                        reqmod w1 e1 e2 m
+                                                  )}
+| _1 = EQUMOD _2 = rexp _3 = rexp _4 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let m = _4 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      let wm = size_of_rexp m in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else if w1 != wm then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp m ^ " (width " ^ string_of_int wm ^ ")")
+                                                      else
+                                                        reqmod w1 e1 e2 m
+                                                  )}
+| _1 = EQSMOD _2 = rexp _3 = rexp _4 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let m = _4 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      let wm = size_of_rexp m in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else if w1 != wm then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp m ^ " (width " ^ string_of_int wm ^ ")")
+                                                      else
+                                                        reqsmod w1 e1 e2 m
+                                                  )}
+| _1 = EQSREM _2 = rexp _3 = rexp _4 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let m = _4 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      let wm = size_of_rexp m in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else if w1 != wm then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp m ^ " (width " ^ string_of_int wm ^ ")")
+                                                      else
+                                                        reqsrem w1 e1 e2 m
+                                                  )}
+
+req_suffix:
+  
+    {                                                  ( fun _cm _vm _ym _gm -> None )}
+| _1 = LPAR _2 = MOD _3 = rexp _4 = RPAR
+    {                                                  ( fun cm vm ym gm -> Some (reqmod, _3 cm vm ym gm) )}
+| _1 = LPAR _2 = UMOD _3 = rexp _4 = RPAR
+    {                                                  ( fun cm vm ym gm -> Some (reqmod, _3 cm vm ym gm) )}
+| _1 = LPAR _2 = SMOD _3 = rexp _4 = RPAR
+    {                                                  ( fun cm vm ym gm -> Some (reqsmod, _3 cm vm ym gm) )}
+| _1 = LPAR _2 = SREM _3 = rexp _4 = RPAR
+    {                                                  ( fun cm vm ym gm -> Some (reqsrem, _3 cm vm ym gm) )}
+
+cmpop_prefix:
+  _1 = ULT
+    {                                                  ( Rult )}
+| _1 = ULE
+    {                                                  ( Rule )}
+| _1 = UGT
+    {                                                  ( Rugt )}
+| _1 = UGE
+    {                                                  ( Ruge )}
+| _1 = SLT
+    {                                                  ( Rslt )}
+| _1 = SLE
+    {                                                  ( Rsle )}
+| _1 = SGT
+    {                                                  ( Rsgt )}
+| _1 = SGE
+    {                                                  ( Rsge )}
+
+rbexps:
+  _1 = rbexp _2 = COMMA _3 = rbexps
+    {                                                  ( fun cm vm ym gm -> (_1 cm vm ym gm)::(_3 cm vm ym gm) )}
+| _1 = rbexp
+    {                                                  ( fun cm vm ym gm -> [_1 cm vm ym gm] )}
+| _1 = rbexp _2 = COMMA _3 = error
+    {                                                  ( raise_at !lnum ("Invalid range predicates.") )}
+| _1 = rbexp _2 = error
+    {                                                  ( raise_at !lnum ("A ',' is used to separate range predicates") )}
+
+rexp:
+  _1 = defined_var
+    {                                                  ( fun cm vm ym gm -> Rvar (resolve_var_with !lnum _1 cm vm ym gm) )}
+| _1 = CONST _2 = const _3 = const
+    {                                                  ( fun cm _vm _ym _gm ->
+                                                      let w = Z.to_int (_2 cm) in
+                                                      let n = _3 cm in
+                                                      Rconst (w, n) )}
+| _1 = const _2 = AT _3 = const
+    {                                                  ( fun cm _vm _ym _gm ->
+                                                      let w = Z.to_int (_3 cm) in
+                                                      let n = _1 cm in
+                                                      Rconst (w, n) )}
+| _1 = UEXT _2 = rexp _3 = const
+    {                                                  ( fun cm vm ym gm ->
+                                                      let e = _2 cm vm ym gm in
+                                                      let i = Z.to_int (_3 cm) in
+                                                      let w = size_of_rexp e in
+                                                      Ruext (w, e, i) )}
+| _1 = SEXT _2 = rexp _3 = const
+    {                                                  ( fun cm vm ym gm ->
+                                                      let e = _2 cm vm ym gm in
+                                                      let i = Z.to_int (_3 cm) in
+                                                      let w = size_of_rexp e in
+                                                      Rsext (w, e, i) )}
+| _1 = LPAR _2 = rexp _3 = RPAR
+    {                                                  ( fun cm vm ym gm -> _2 cm vm ym gm )}
+| _1 = NEG _2 = rexp
+    {                                                  ( fun cm vm ym gm ->
+                                                      let e = _2 cm vm ym gm in
+                                                      let w = size_of_rexp e in
+                                                      Runop (w, Rnegb, e) )}
+| _1 = NEGOP _2 = rexp
+    {                                                  ( fun cm vm ym gm ->
+                                                      let e = _2 cm vm ym gm in
+                                                      let w = size_of_rexp e in
+                                                      Runop (w, Rnegb, e) )}
+| _1 = NOT _2 = rexp
+    {                                                  ( fun cm vm ym gm ->
+                                                      let e = _2 cm vm ym gm in
+                                                      let w = size_of_rexp e in
+                                                      Runop (w, Rnotb, e) )}
+| _1 = NOTOP _2 = rexp
+    {                                                  ( fun cm vm ym gm ->
+                                                      let e = _2 cm vm ym gm in
+                                                      let w = size_of_rexp e in
+                                                      Runop (w, Rnotb, e) )}
+| _1 = ADD _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                       radd w1 e1 e2 )}
+| _1 = SUB _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                       rsub w1 e1 e2 )}
+| _1 = MUL _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                       rmul w1 e1 e2 )}
+| _1 = SQ _2 = rexp
+    {                                                  ( fun cm vm ym gm ->
+                                                      let e = _2 cm vm ym gm in
+                                                      rsq (size_of_rexp e) e )}
+| _1 = UMOD _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                       rumod w1 e1 e2 )}
+| _1 = SREM _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                       rsrem w1 e1 e2 )}
+| _1 = SMOD _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                       rsmod w1 e1 e2 )}
+| _1 = AND _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Randb, e1, e2) )}
+| _1 = OR _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Rorb, e1, e2) )}
+| _1 = XOR _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Rxorb, e1, e2) )}
+| _1 = SHL _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Rshl, e1, e2) )}
+| _1 = SHR _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Rlshr, e1, e2) )}
+| _1 = SAR _2 = rexp _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _2 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Rashr, e1, e2) )}
+| _1 = ADD _2 = LSQUARE _3 = rexps _4 = RSQUARE
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let es = _3 cm vm ym gm in
+                                                      match es with
+                                                      | [] -> raise_at lno ("No range expression is passed to add.")
+                                                      | hd::_tl -> radds (size_of_rexp hd) es )}
+| _1 = MUL _2 = LSQUARE _3 = rexps _4 = RSQUARE
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let es = _3 cm vm ym gm in
+                                                      match es with
+                                                      | [] -> raise_at lno ("No range expression is passed to mul.")
+                                                      | hd::_tl -> rmuls (size_of_rexp hd) es )}
+| _1 = ULIMBS _2 = const _3 = LSQUARE _4 = rexps _5 = RSQUARE
+    {                                                  ( fun cm vm ym gm ->
+                                                      let w = Z.to_int (_2 cm) in
+                                                      let es = _4 cm vm ym gm in
+                                                      let tw = List.fold_left (fun w1 w2 -> max w1 w2)
+                                                                              0
+                                                                              (List.mapi (fun i e -> size_of_rexp e + i * w) es) in
+                                                      let es = List.map (fun e ->
+                                                                          let ew = size_of_rexp e in
+                                                                          Ruext (ew, e, tw - ew)) es in
+                                                      let rec helper i es =
+                                                        match es with
+                                                        | [] -> Rconst (tw, Z.zero)
+                                                        | hd::[] -> rmul tw hd (Rconst (tw, Z.pow z_two (i*w)))
+                                                        | hd::tl -> radd tw (rmul tw hd (Rconst (tw, Z.pow z_two (i*w)))) (helper (i+1) tl) in
+                                                      let res = helper 0 es in
+                                                      res )}
+| _1 = SLIMBS _2 = const _3 = LSQUARE _4 = rexps _5 = RSQUARE
+    {                                                  ( fun cm vm ym gm ->
+                                                      let w = Z.to_int (_2 cm) in
+                                                      let es = _4 cm vm ym gm in
+                                                      let tw = List.fold_left (fun w1 w2 -> max w1 w2)
+                                                                              0
+                                                                              (List.mapi (fun i e -> size_of_rexp e + i * w) es) in
+                                                      let last = List.length es - 1 in
+                                                      let es = List.mapi (fun i e ->
+                                                                            let ew = size_of_rexp e in
+                                                                            if i == last then Rsext (ew, e, tw - ew)
+                                                                            else Ruext (ew, e, tw - ew)) es in
+                                                      let rec helper i es =
+                                                        match es with
+                                                        | [] -> Rconst (tw, Z.zero)
+                                                        | hd::[] -> rmul tw hd (Rconst (tw, Z.pow z_two (i*w)))
+                                                        | hd::tl -> radd tw (rmul tw hd (Rconst (tw, Z.pow z_two (i*w)))) (helper (i+1) tl) in
+                                                      let res = helper 0 es in
+                                                      res )}
+| _1 = rexp _2 = ADDOP _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _1 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Radd, e1, e2) )}
+| _1 = rexp _2 = SUBOP _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _1 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Rsub, e1, e2) )}
+| _1 = rexp _2 = MULOP _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _1 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Rmul, e1, e2) )}
+| _1 = rexp _2 = ANDOP _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _1 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Randb, e1, e2) )}
+| _1 = rexp _2 = OROP _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _1 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Rorb, e1, e2) )}
+| _1 = rexp _2 = XOROP _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _1 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Rxorb, e1, e2) )}
+| _1 = rexp _2 = SHLOP _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _1 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Rshl, e1, e2) )}
+| _1 = rexp _2 = SHROP _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _1 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Rlshr, e1, e2) )}
+| _1 = rexp _2 = SAROP _3 = rexp
+    {                                                  ( let lno = !lnum in
+                                                    fun cm vm ym gm ->
+                                                      let e1 = _1 cm vm ym gm in
+                                                      let e2 = _3 cm vm ym gm in
+                                                      let w1 = size_of_rexp e1 in
+                                                      let w2 = size_of_rexp e2 in
+                                                      if w1 != w2 then raise_at lno ("Widths of range expressions mismatch: "
+                                                                                     ^ string_of_rexp e1 ^ " (width " ^ string_of_int w1 ^ "), "
+                                                                                     ^ string_of_rexp e2 ^ " (width " ^ string_of_int w2 ^ ")")
+                                                      else
+                                                        Rbinop (w1, Rashr, e1, e2) )}
+| _1 = CONST _2 = const _3 = error
+    {                                                  ( raise_at !lnum "Please specify the bit-width of a constant in range predicates" )}
+| _1 = const _2 = error
+    {                                                  ( raise_at !lnum "Please specify the bit-width of a constant in range predicates" )}
+
+rexps:
+  _1 = rexp _2 = COMMA _3 = rexps
+    {  (
+    let lno = !lnum in
+    fun cm vm ym gm ->
+      let e = _1 cm vm ym gm in
+      let es = _3 cm vm ym gm in
+      if List.length es > 0 && size_of_rexp e != size_of_rexp (List.hd es) then
+        raise_at lno ("Widths of range expressions mismatch: "
+                      ^ string_of_rexp e ^ " (width " ^ string_of_int (size_of_rexp e) ^ ")"
+                      ^ ", "
+                      ^ string_of_rexp (List.hd es) ^ " (width " ^ string_of_int (size_of_rexp (List.hd es)) ^ ")")
+      else
+        e::es
+  )}
+| _1 = rexp
+    {                                                  ( fun cm vm ym gm -> [_1 cm vm ym gm] )}
+| _1 = VARS _2 = var_expansion
+    {                                                  ( fun cm vm ym gm -> List.map (fun v -> Rvar v) (_2 cm vm ym gm) )}
+
+lval:
+  _1 = ID
+    {                                                  ( `LVPLAIN { lvname = _1; lvtyphint = None; } )}
+| _1 = ID _2 = AT _3 = typ
+    {                                                  ( `LVPLAIN { lvname = _1; lvtyphint = Some _3; } )}
+| _1 = typ _2 = ID
+    {                                                  ( `LVPLAIN { lvname = _2; lvtyphint = Some _1; } )}
+| _1 = ID _2 = AT _3 = error
+    {                                                  ( raise_at !lnum ("Invalid type of variable " ^ _1) )}
+
+lcarry:
+  _1 = ID
+    {                                                  ( `LVCARRY { lvname = _1; lvtyphint = None; } )}
+| _1 = ID _2 = AT _3 = typ
+    {                                                  ( `LVCARRY { lvname = _1; lvtyphint = Some _3; } )}
+| _1 = typ _2 = ID
+    {                                                  ( `LVCARRY { lvname = _2; lvtyphint = Some _1; } )}
+
+lval_or_lcarry:
+  _1 = ID
+    {                                                  ( `LV { lvname = _1; lvtyphint = None; } )}
+| _1 = ID _2 = AT _3 = typ
+    {                                                  ( `LV { lvname = _1; lvtyphint = Some _3; } )}
+| _1 = typ _2 = ID
+    {                                                  ( `LV { lvname = _2; lvtyphint = Some _1; } )}
+
+lhs:
+  _1 = ID
+    {                                                  ( { lvname = _1; lvtyphint = None; } )}
+| _1 = ID _2 = AT _3 = typ
+    {                                                  ( { lvname = _1; lvtyphint = Some _3; } )}
+| _1 = typ _2 = ID
+    {                                                  ( { lvname = _2; lvtyphint = Some _1; } )}
+| _1 = ID _2 = AT _3 = error
+    {                                                  ( raise_at !lnum ("Invalid type of variable " ^ _1) )}
+
+actuals:
+  _1 = actual_atomics
+    {                                                  ( fun tys cm vm ym gm -> _1 tys cm vm ym gm )}
+| 
+    {                                                  ( fun _tys _cm _vm _ym _gm -> [] )}
+
+actual_atomics:
+  _1 = actual_atomic
+    {                                                  ( fun tys cm vm ym gm ->
+                                                      let (_tys, vs) = _1 tys cm vm ym gm in
+                                                      vs
+                                                  )}
+| _1 = actual_atomic _2 = COMMA _3 = actual_atomics
+    {                                                  ( fun tys cm vm ym gm ->
+                                                      let (tys, vs) = _1 tys cm vm ym gm in
+                                                      vs@(_3 tys cm vm ym gm)
+                                                  )}
+
+actual_atomic:
+  _1 = const
+    {                                                  ( let lno = !lnum in
+                                                    fun tys cm vm ym gm ->
+                                                      match tys with
+                                                      | (ty::argtys, outtys) ->
+                                                         ((argtys, outtys), [parse_typed_const lno ty _1 cm vm ym gm])
+                                                      | ([], _ty::_) -> raise_at lno ("The corresponding formal parameter is an output variable. "
+                                                                                     ^ "The actual parameter must be a variable.")
+                                                      | _ -> raise_at lno ("The number of actual parameters does not match the number of formal parameters.") )}
+| _1 = const _2 = AT _3 = typ
+    {                                                  ( let lno = !lnum in
+                                                    fun tys cm vm ym gm ->
+                                                      match tys with
+                                                      | (ty::argtys, outtys) ->
+                                                         if ty = _3 then ((argtys, outtys), [parse_typed_const lno _3 _1 cm vm ym gm])
+                                                         else raise_at lno ("The specified type is not compatible to the type of the corresponding formal parameter")
+                                                      | ([], _ty::_) -> raise_at lno ("The corresponding formal parameter is an output variable. "
+                                                                                     ^ "The actual parameter must be a variable.")
+                                                      | _ -> raise_at lno ("The number of actual parameters does not match the number of formal parameters.") )}
+| _1 = typ _2 = const
+    {                                                  ( let lno = !lnum in
+                                                    fun tys cm vm ym gm ->
+                                                      match tys with
+                                                      | (ty::argtys, outtys) ->
+                                                         if ty = _1 then ((argtys, outtys), [parse_typed_const lno _1 _2 cm vm ym gm])
+                                                         else raise_at lno ("The specified type is not compatible to the type of the corresponding formal parameter")
+                                                      | ([], _ty::_) -> raise_at lno ("The corresponding formal parameter is an output variable. "
+                                                                                     ^ "The actual parameter must be a variable.")
+                                                      | _ -> raise_at lno ("The number of actual parameters does not match the number of formal parameters.") )}
+| _1 = ID
+    {                                                  ( let lno = !lnum in
+                                                    fun tys _cm vm _ym _gm ->
+                                                      match tys with
+                                                      | (ty::argtys, outtys) ->
+                                                         (try
+                                                            let v = SM.find _1 vm in
+                                                            if v.vtyp = ty then ((argtys, outtys), [Avar v])
+                                                            else raise_at lno ("The variable type of "
+                                                                               ^ _1
+                                                                               ^ " is not compatible to the type of the corresponding formal parameter")
+                                                          with Not_found ->
+                                                            raise_at lno ("Failed to determine the type of " ^ _1)
+                                                         )
+                                                      | ([], ty::outtys) -> (([], outtys), [Avar (mkvar _1 ty)])
+                                                      | _ -> raise_at lno ("The number of actual parameters does not match the number of formal parameters.")
+                                                  )}
+| _1 = ID _2 = OROP _3 = NUM _4 = DOTDOT _5 = NUM
+    {                                                  ( let lno = !lnum in
+                                                      fun tys _cm vm _ym _gm ->
+                                                      let prefix = _1 in
+                                                      let st = _3 in
+                                                      let ed = _5 in
+                                                      let (tys, vars_rev) =
+                                                        List.fold_left (fun (tys, vars_rev) i ->
+                                                                         let vname = prefix ^ vars_expansion_infix ^ string_of_int i in
+                                                                         match tys with
+                                                                         | (ty::argtys, outtys) ->
+                                                                            (try
+                                                                               let v = SM.find vname vm in
+                                                                               if v.vtyp = ty then ((argtys, outtys), (Avar v)::vars_rev)
+                                                                               else raise_at lno ("The variable type of "
+                                                                                                  ^ vname
+                                                                                                  ^ " is not compatible to the type of the corresponding formal parameter")
+                                                                             with Not_found ->
+                                                                               raise_at lno ("Failed to determine the type of " ^ vname)
+                                                                            )
+                                                                         | ([], ty::outtys) -> (([], outtys), (Avar (mkvar vname ty))::vars_rev)
+                                                                         | _ -> raise_at lno ("The number of actual parameters does not match the number of formal parameters.")
+                                                                       )
+                                                                       (tys, [])
+                                                                       ((Z.to_int st)--(Z.to_int ed)) in
+                                                      (tys, List.rev vars_rev)
+                                                  )}
+
+atomic:
+  _1 = const _2 = AT _3 = typ
+    {                                                  ( `ACONST { atmtyp = _3; atmvalue = _1; } )}
+| _1 = typ _2 = const
+    {                                                  ( `ACONST { atmtyp = _1; atmvalue = _2; } )}
+| _1 = defined_var
+    {                                                  ( (_1 :> atomic_t) )}
+
+var_expansion:
+  _1 = ID _2 = OROP _3 = NUM _4 = DOTDOT _5 = NUM
+    {  (
+    let lno = !lnum in
+    fun _cm vm _ym gm ->
+    let prefix = _1 in
+    let st = _3 in
+    let ed = _5 in
+    let res = List.map
+                (fun i ->
+                  let vname = prefix ^ vars_expansion_infix ^ string_of_int i in
+                  try
+                    SM.find vname vm
+                  with Not_found ->
+                    raise_at lno ("Failed to determine the type of " ^ vname)
+                ) ((Z.to_int st)--(Z.to_int ed)) in
+    let _ = List.iter (fun v -> if not (SM.mem v.vname vm) && not (SM.mem v.vname gm) then raise_at lno ("Variable " ^ string_of_var v ^ " is not defined.")) res in
+    res
+  )}
+
+defined_var:
+  _1 = ID
+    {                                                  ( `AVAR { atmtyphint = None;    atmname = _1; } )}
+| _1 = ID _2 = AT _3 = typ
+    {                                                  ( `AVAR { atmtyphint = Some _3; atmname = _1; } )}
+| _1 = typ _2 = ID
+    {                                                  ( `AVAR { atmtyphint = Some _1; atmname = _2; } )}
+
+gvars:
+  _1 = gvar
+    {                                                  ( fun cm vm ym gm -> VS.singleton (_1 cm vm ym gm) )}
+| _1 = gvar _2 = COMMA _3 = gvars
+    {                                                  ( fun cm vm ym gm -> VS.add (_1 cm vm ym gm) (_3 cm vm ym gm) )}
+| _1 = gvar _2 = error
+    {                                                  (
+                                                    let lno = !lnum in
+                                                    fun _cm _vm _ym _gm ->
+                                                      raise_at lno ("A comma is used to separate ghost variables.")
+                                                  )}
+| _1 = error
+    {                                                  (
+                                                    let lno = !lnum in
+                                                    fun _cm _vm _ym _gm ->
+                                                      raise_at lno ("Invalid ghost variable.")
+                                                  )}
+
+gvar:
+  _1 = typ _2 = ID
+    {                                                  (
+                                                    let lno = !lnum in
+                                                    fun _cm vm _ym gm ->
+                                                      let ty = _1 in
+                                                      let vname = _2 in
+                                                      if SM.mem vname vm then raise_at lno ("The ghost variable " ^ vname ^ " has been defined as a program variable.")
+                                                      else if SM.mem vname gm then raise_at lno ("The ghost variable " ^ vname ^ " has been defined previously.")
+                                                      else mkvar vname ty
+                                                  )}
+| _1 = ID _2 = AT _3 = typ
+    {                                                  (
+                                                    let lno = !lnum in
+                                                    fun _cm vm _ym gm ->
+                                                      let ty = _3 in
+                                                      let vname = _1 in
+                                                      if SM.mem vname vm then raise_at lno ("The ghost variable " ^ vname ^ " has been defined as a program variable.")
+                                                      else if SM.mem vname gm then raise_at lno ("The ghost variable " ^ vname ^ " has been defined previously.")
+                                                      else mkvar vname ty
+                                                  )}
+
+const:
+  _1 = simple_const
+    {                                                  ( fun cm -> _1 cm )}
+| _1 = LPAR _2 = complex_const _3 = RPAR
+    {                                                  ( fun cm -> (_2 cm) )}
+
+simple_const:
+  _1 = NUM
+    {                                                  ( fun _cm -> _1 )}
+| _1 = DEREFOP _2 = ID
+    {                                                  ( let lno = !lnum in
+                                                    fun cm ->
+                                                      try
+                                                        SM.find _2 cm
+                                                      with Not_found ->
+                                                        raise_at lno ("Undefined constant: " ^ _2) )}
+
+complex_const:
+  _1 = const
+    {                                                  ( fun cm -> _1 cm )}
+| _1 = SUBOP _2 = complex_const %prec UMINUS
+    {                                                  ( fun cm -> Z.neg (_2 cm) )}
+| _1 = complex_const _2 = ADDOP _3 = complex_const
+    {                                                  ( fun cm -> Z.add (_1 cm) (_3 cm) )}
+| _1 = complex_const _2 = SUBOP _3 = complex_const
+    {                                                  ( fun cm -> Z.sub (_1 cm) (_3 cm) )}
+| _1 = complex_const _2 = MULOP _3 = complex_const
+    {                                                  ( fun cm -> Z.mul (_1 cm) (_3 cm) )}
+| _1 = complex_const _2 = POWOP _3 = complex_const
+    {                                                  ( fun cm -> Z.pow (_1 cm) (Z.to_int (_3 cm)) )}
+
+carry:
+  _1 = atomic
+    {                                                  ( _1 )}
+
+typ:
+  _1 = UINT
+    {                                                  ( if _1 > 0 then uint_t _1
+                                                    else raise_at !lnum ("The big-with must be positive") )}
+| _1 = SINT
+    {                                                  ( if _1 > 0 then int_t _1
+                                                    else raise_at !lnum ("The big-with must be positive") )}
+| _1 = BIT
+    {                                                  ( bit_t )}
+
+%%
+
+
