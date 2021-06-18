@@ -131,6 +131,34 @@
   (action
     (diff KaSim.4.0.0-kparser4.conflicts.exp KaSim.4.0.0-kparser4.conflicts)))
 
+(rule (target acgtk1.opp.out)
+  (deps acgtk1.mly acgtk2.mly acgtk3.mly acgtk4.mly acgtk5.mly)
+  (action
+    (with-outputs-to acgtk1.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --base acgtk1 --only-preprocess %{deps})))))
+
+(rule (alias acgtk1) (action (diff acgtk1.opp.exp acgtk1.opp.out)))
+
+(rule
+  (targets acgtk1.out acgtk1.automaton acgtk1.automaton.resolved
+    acgtk1.conflicts acgtk1.timings)
+  (deps acgtk1.mly acgtk2.mly acgtk3.mly acgtk4.mly acgtk5.mly)
+  (action
+    (with-outputs-to acgtk1.out
+      (with-accepted-exit-codes 0
+        (run menhir --base acgtk1 --dump --dump-resolved --explain -lg 2 -la
+          2 -lc 2 --timings-to acgtk1.timings %{deps})))))
+
+(rule (alias acgtk1) (action (diff acgtk1.exp acgtk1.out)))
+
+(rule (alias acgtk1) (action (diff acgtk1.automaton.exp acgtk1.automaton)))
+
+(rule (alias acgtk1)
+  (action (diff acgtk1.automaton.resolved.exp acgtk1.automaton.resolved)))
+
+(rule (alias acgtk1) (action (diff acgtk1.conflicts.exp acgtk1.conflicts)))
+
 (rule (target albatross.opp.out) (deps albatross.mly)
   (action
     (with-outputs-to albatross.opp.out
@@ -12556,6 +12584,7 @@
     (alias K3Parser)
     (alias KaSim.4.0.0-kappaParser)
     (alias KaSim.4.0.0-kparser4)
+    (alias acgtk1)
     (alias albatross)
     (alias alphaCaml)
     (alias alphaCaml-demos-interactive)
