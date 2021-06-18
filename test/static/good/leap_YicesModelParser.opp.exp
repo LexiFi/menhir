@@ -1,0 +1,256 @@
+File "leap_YicesModelParser.mly", line 102, characters 7-10:
+Warning: the token EOF is unused.
+%{
+
+(***********************************************************************)
+(*                                                                     *)
+(*                                 LEAP                                *)
+(*                                                                     *)
+(*               Alejandro Sanchez, IMDEA Software Institute           *)
+(*                                                                     *)
+(*                                                                     *)
+(*      Copyright 2011 IMDEA Software Institute                        *)
+(*                                                                     *)
+(*  Licensed under the Apache License, Version 2.0 (the "License");    *)
+(*  you may not use this file except in compliance with the License.   *)
+(*  You may obtain a copy of the License at                            *)
+(*                                                                     *)
+(*      http://www.apache.org/licenses/LICENSE-2.0                     *)
+(*                                                                     *)
+(*  Unless required by applicable law or agreed to in writing,         *)
+(*  software distributed under the License is distributed on an        *)
+(*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,       *)
+(*  either express or implied.                                         *)
+(*  See the License for the specific language governing permissions    *)
+(*  and limitations under the License.                                 *)
+(*                                                                     *)
+(***********************************************************************)
+
+(* Type rename *)
+
+module GM = GenericModel
+
+(* slow way to project: traverse one time per entry *)
+let get_name id = fst id
+let get_line id = snd id
+
+
+(* Mappings *)
+let model = GM.new_model ()
+
+
+(* ID counter *)
+let id_count : int ref = ref 0
+
+
+(* Record counter *)
+let record_count : int ref = ref 0
+
+
+(* Updates and propagates a cell id update *)
+let gen_fresh_id () : int =
+  let _ = incr id_count
+  in
+    !id_count
+
+let gen_fresh_record_id () : string =
+  incr record_count;
+  "record" ^ (string_of_int !record_count)
+
+
+let gen_record_id (i:int) : string =
+  "rec" ^ (string_of_int i)
+
+
+(* Temporary record storage *)
+let record_tbl : ((GM.id * GM.vals) list, string) Hashtbl.t = Hashtbl.create 5
+let record_synonyms : (int, string) Hashtbl.t = Hashtbl.create 5
+
+
+let record_lookup (fields:(GM.id * GM.vals) list) : string =
+  try
+    Hashtbl.find record_tbl fields
+  with
+    Not_found ->
+      begin
+        let fresh_id = gen_fresh_record_id () in
+        Hashtbl.add record_tbl fields fresh_id;
+        GM.sm_decl_const (GM.get_aux_sort_map model) fresh_id GM.pair_s;
+        fresh_id
+      end
+
+
+let record_add (fields:(GM.id * GM.vals) list) (i:int) : string =
+  let id = gen_record_id i in
+  Hashtbl.add record_tbl fields id;
+  GM.sm_decl_const (GM.get_aux_sort_map model) id GM.pair_s;
+  id
+
+
+
+
+%}
+%start generic_model
+%token <string> ADDR_ELEM
+%token <bool> BOOL
+%token CLOSE_PAREN
+%token DOUBLE_COLON
+%token <string> ELEM_ELEM
+%token EOF
+%token EQUAL
+%token ERROR
+%token <string*int> IDENT
+%token MINUS
+%token MK_RECORD
+%token NO_THREAD
+%token NULL
+%token <int> NUMBER
+%token OPEN_PAREN
+%token SELECT
+%token <string> TID_ELEM
+%type <unit> assertion
+%type <unit> assertion_list
+%type <GM.vals> constant
+%type <GM.id * GM.vals> field
+%type <(GM.id * GM.vals) list> field_list
+%type <GM.id> fun_name
+%type <GenericModel.t> generic_model
+%type <int> number
+%type <(GM.id option) list> param_list
+%type <GM.id * (GM.id * GM.vals) list> record
+%type <unit> sel
+%type <GM.value> value
+%type <GM.var> var
+%%
+
+generic_model:
+  
+    {    ( GM.new_model() )}
+| _1 = assertion_list
+    {    (
+      Hashtbl.iter (fun fields id ->
+        GM.decl_const model id (GM.Record("mk-record", fields))
+      ) record_tbl;
+      let m = GM.copy_model model in
+      let _ = GM.clear_model model
+      in
+        m
+    )}
+
+assertion_list:
+  _1 = assertion
+    {    ( () )}
+| _1 = assertion _2 = assertion_list
+    {    ( () )}
+
+assertion:
+  _1 = OPEN_PAREN _2 = EQUAL _3 = record _4 = NUMBER _5 = CLOSE_PAREN
+    {    (
+      let fields = snd _3 in
+      let _ = record_add fields _4 in
+      ()
+    )}
+| _1 = OPEN_PAREN _2 = EQUAL _3 = var _4 = var _5 = CLOSE_PAREN
+    {    (
+      GM.unify model _3 _4
+    )}
+| _1 = OPEN_PAREN _2 = EQUAL _3 = var _4 = value _5 = CLOSE_PAREN
+    {    (
+      match _3 with
+      | GM.Var v               -> GM.decl_const model v _4
+      | GM.Function (f,params) -> GM.decl_fun model f params _4
+    )}
+| _1 = OPEN_PAREN _2 = EQUAL _3 = value _4 = var _5 = CLOSE_PAREN
+    {    (
+      match _4 with
+      | GM.Var v               -> GM.decl_const model v _3
+      | GM.Function (f,params) -> GM.decl_fun model f params _3
+    )}
+| _1 = OPEN_PAREN _2 = EQUAL _3 = OPEN_PAREN _4 = SELECT _5 = NUMBER _6 = IDENT _7 = CLOSE_PAREN _8 = value _9 = CLOSE_PAREN
+    {    ( () )}
+| _1 = OPEN_PAREN _2 = EQUAL _3 = OPEN_PAREN _4 = SELECT _5 = NUMBER _6 = NUMBER _7 = CLOSE_PAREN _8 = value _9 = CLOSE_PAREN
+    {    ( () )}
+| _1 = OPEN_PAREN _2 = EQUAL _3 = OPEN_PAREN _4 = SELECT _5 = sel _6 = IDENT _7 = CLOSE_PAREN _8 = value _9 = CLOSE_PAREN
+    {    ( () )}
+| _1 = OPEN_PAREN _2 = EQUAL _3 = OPEN_PAREN _4 = SELECT _5 = sel _6 = NUMBER _7 = CLOSE_PAREN _8 = value _9 = CLOSE_PAREN
+    {    ( () )}
+
+sel:
+  _1 = var
+    {    ( () )}
+| _1 = record
+    {    ( () )}
+
+var:
+  _1 = ERROR
+    {    ( GM.Var "error" )}
+| _1 = IDENT
+    {    ( GM.Var (get_name _1) )}
+| _1 = OPEN_PAREN _2 = fun_name _3 = param_list _4 = CLOSE_PAREN
+    {    ( GM.Function (_2, _3) )}
+| _1 = OPEN_PAREN _2 = fun_name _3 = record _4 = CLOSE_PAREN
+    {    (
+      let record_id = record_lookup (snd _3) in
+      GM.Function (_2, [Some record_id])
+    )}
+
+fun_name:
+  _1 = IDENT
+    {    ( get_name _1 )}
+| _1 = constant
+    {    ( _1 )}
+
+param_list:
+  _1 = constant
+    {    ( [Some _1] )}
+| _1 = constant _2 = param_list
+    {    ( Some _1 :: _2 )}
+
+value:
+  _1 = constant
+    {    ( GM.Single _1 )}
+| _1 = record
+    {    ( GM.Record _1 )}
+
+constant:
+  _1 = BOOL
+    {    ( if _1 then "true" else "false" )}
+| _1 = TID_ELEM
+    {    ( _1 )}
+| _1 = ADDR_ELEM
+    {    ( _1 )}
+| _1 = ELEM_ELEM
+    {    ( _1 )}
+| _1 = number
+    {    ( (string_of_int _1) )}
+| _1 = NO_THREAD
+    {    ( "NoThread" )}
+| _1 = NULL
+    {    ( "null" )}
+
+number:
+  _1 = NUMBER
+    {    ( _1 )}
+| _1 = MINUS _2 = NUMBER
+    {    ( - _2 )}
+
+record:
+  _1 = OPEN_PAREN _2 = MK_RECORD _3 = field_list _4 = CLOSE_PAREN
+    {    (
+      ignore (record_lookup _3);
+      ("mk-record", _3)
+    )}
+
+field_list:
+  _1 = field
+    {    ( [_1] )}
+| _1 = field _2 = field_list
+    {    ( _1 :: _2 )}
+
+field:
+  _1 = IDENT _2 = DOUBLE_COLON _3 = constant
+    {    ( (get_name _1, _3) )}
+
+%%
+
+

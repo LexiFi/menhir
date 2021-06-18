@@ -6508,6 +6508,249 @@
     (diff ldap.2.4.0-ldap_filterparser.conflicts.exp
       ldap.2.4.0-ldap_filterparser.conflicts)))
 
+(rule (target leap_ExprParser.opp.out) (deps leap_ExprParser.mly)
+  (action
+    (with-outputs-to leap_ExprParser.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:leap_ExprParser.flags}
+          %{deps})))))
+
+(rule (alias leap_ExprParser)
+  (action (diff leap_ExprParser.opp.exp leap_ExprParser.opp.out)))
+
+(rule
+  (targets leap_ExprParser.out leap_ExprParser.automaton
+    leap_ExprParser.automaton.resolved leap_ExprParser.conflicts
+    leap_ExprParser.timings)
+  (deps leap_ExprParser.mly)
+  (action
+    (with-outputs-to leap_ExprParser.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to leap_ExprParser.timings
+          %{read-lines:leap_ExprParser.flags} %{deps})))))
+
+(rule (alias leap_ExprParser)
+  (action (diff leap_ExprParser.exp leap_ExprParser.out)))
+
+(rule (alias leap_ExprParser)
+  (action (diff leap_ExprParser.automaton.exp leap_ExprParser.automaton)))
+
+(rule (alias leap_ExprParser)
+  (action
+    (diff leap_ExprParser.automaton.resolved.exp
+      leap_ExprParser.automaton.resolved)))
+
+(rule (alias leap_ExprParser)
+  (action (diff leap_ExprParser.conflicts.exp leap_ExprParser.conflicts)))
+
+(rule (target leap_IGraphParser.opp.out) (deps leap_IGraphParser.mly)
+  (action
+    (with-outputs-to leap_IGraphParser.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias leap_IGraphParser)
+  (action (diff leap_IGraphParser.opp.exp leap_IGraphParser.opp.out)))
+
+(rule
+  (targets leap_IGraphParser.out leap_IGraphParser.automaton
+    leap_IGraphParser.automaton.resolved leap_IGraphParser.conflicts
+    leap_IGraphParser.timings)
+  (deps leap_IGraphParser.mly)
+  (action
+    (with-outputs-to leap_IGraphParser.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to leap_IGraphParser.timings %{deps})))))
+
+(rule (alias leap_IGraphParser)
+  (action (diff leap_IGraphParser.exp leap_IGraphParser.out)))
+
+(rule (alias leap_IGraphParser)
+  (action (diff leap_IGraphParser.automaton.exp leap_IGraphParser.automaton)))
+
+(rule (alias leap_IGraphParser)
+  (action
+    (diff leap_IGraphParser.automaton.resolved.exp
+      leap_IGraphParser.automaton.resolved)))
+
+(rule (alias leap_IGraphParser)
+  (action (diff leap_IGraphParser.conflicts.exp leap_IGraphParser.conflicts)))
+
+(rule (target leap_SpecParser.opp.out) (deps leap_SpecParser.mly)
+  (action
+    (with-outputs-to leap_SpecParser.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias leap_SpecParser)
+  (action (diff leap_SpecParser.opp.exp leap_SpecParser.opp.out)))
+
+(rule
+  (targets leap_SpecParser.out leap_SpecParser.automaton
+    leap_SpecParser.automaton.resolved leap_SpecParser.conflicts
+    leap_SpecParser.timings)
+  (deps leap_SpecParser.mly)
+  (action
+    (with-outputs-to leap_SpecParser.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to leap_SpecParser.timings %{deps})))))
+
+(rule (alias leap_SpecParser)
+  (action (diff leap_SpecParser.exp leap_SpecParser.out)))
+
+(rule (alias leap_SpecParser)
+  (action (diff leap_SpecParser.automaton.exp leap_SpecParser.automaton)))
+
+(rule (alias leap_SpecParser)
+  (action
+    (diff leap_SpecParser.automaton.resolved.exp
+      leap_SpecParser.automaton.resolved)))
+
+(rule (alias leap_SpecParser)
+  (action (diff leap_SpecParser.conflicts.exp leap_SpecParser.conflicts)))
+
+(rule (target leap_StmParser.opp.out) (deps leap_StmParser.mly)
+  (action
+    (with-outputs-to leap_StmParser.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:leap_StmParser.flags}
+          %{deps})))))
+
+(rule (alias leap_StmParser)
+  (action (diff leap_StmParser.opp.exp leap_StmParser.opp.out)))
+
+(rule
+  (targets leap_StmParser.out leap_StmParser.automaton
+    leap_StmParser.automaton.resolved leap_StmParser.conflicts
+    leap_StmParser.timings)
+  (deps leap_StmParser.mly)
+  (action
+    (with-outputs-to leap_StmParser.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to leap_StmParser.timings
+          %{read-lines:leap_StmParser.flags} %{deps})))))
+
+(rule (alias leap_StmParser)
+  (action (diff leap_StmParser.exp leap_StmParser.out)))
+
+(rule (alias leap_StmParser)
+  (action (diff leap_StmParser.automaton.exp leap_StmParser.automaton)))
+
+(rule (alias leap_StmParser)
+  (action
+    (diff leap_StmParser.automaton.resolved.exp
+      leap_StmParser.automaton.resolved)))
+
+(rule (alias leap_StmParser)
+  (action (diff leap_StmParser.conflicts.exp leap_StmParser.conflicts)))
+
+(rule (target leap_TrsParser.opp.out) (deps leap_TrsParser.mly)
+  (action
+    (with-outputs-to leap_TrsParser.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias leap_TrsParser)
+  (action (diff leap_TrsParser.opp.exp leap_TrsParser.opp.out)))
+
+(rule
+  (targets leap_TrsParser.out leap_TrsParser.automaton
+    leap_TrsParser.automaton.resolved leap_TrsParser.conflicts
+    leap_TrsParser.timings)
+  (deps leap_TrsParser.mly)
+  (action
+    (with-outputs-to leap_TrsParser.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to leap_TrsParser.timings %{deps})))))
+
+(rule (alias leap_TrsParser)
+  (action (diff leap_TrsParser.exp leap_TrsParser.out)))
+
+(rule (alias leap_TrsParser)
+  (action (diff leap_TrsParser.automaton.exp leap_TrsParser.automaton)))
+
+(rule (alias leap_TrsParser)
+  (action
+    (diff leap_TrsParser.automaton.resolved.exp
+      leap_TrsParser.automaton.resolved)))
+
+(rule (alias leap_TrsParser)
+  (action (diff leap_TrsParser.conflicts.exp leap_TrsParser.conflicts)))
+
+(rule (target leap_YicesModelParser.opp.out) (deps leap_YicesModelParser.mly)
+  (action
+    (with-outputs-to leap_YicesModelParser.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias leap_YicesModelParser)
+  (action (diff leap_YicesModelParser.opp.exp leap_YicesModelParser.opp.out)))
+
+(rule
+  (targets leap_YicesModelParser.out leap_YicesModelParser.automaton
+    leap_YicesModelParser.automaton.resolved leap_YicesModelParser.conflicts
+    leap_YicesModelParser.timings)
+  (deps leap_YicesModelParser.mly)
+  (action
+    (with-outputs-to leap_YicesModelParser.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to leap_YicesModelParser.timings %{deps})))))
+
+(rule (alias leap_YicesModelParser)
+  (action (diff leap_YicesModelParser.exp leap_YicesModelParser.out)))
+
+(rule (alias leap_YicesModelParser)
+  (action
+    (diff leap_YicesModelParser.automaton.exp
+      leap_YicesModelParser.automaton)))
+
+(rule (alias leap_YicesModelParser)
+  (action
+    (diff leap_YicesModelParser.automaton.resolved.exp
+      leap_YicesModelParser.automaton.resolved)))
+
+(rule (alias leap_YicesModelParser)
+  (action
+    (diff leap_YicesModelParser.conflicts.exp
+      leap_YicesModelParser.conflicts)))
+
+(rule (target leap_Z3ModelParser.opp.out) (deps leap_Z3ModelParser.mly)
+  (action
+    (with-outputs-to leap_Z3ModelParser.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias leap_Z3ModelParser)
+  (action (diff leap_Z3ModelParser.opp.exp leap_Z3ModelParser.opp.out)))
+
+(rule
+  (targets leap_Z3ModelParser.out leap_Z3ModelParser.automaton
+    leap_Z3ModelParser.automaton.resolved leap_Z3ModelParser.conflicts
+    leap_Z3ModelParser.timings)
+  (deps leap_Z3ModelParser.mly)
+  (action
+    (with-outputs-to leap_Z3ModelParser.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to leap_Z3ModelParser.timings %{deps})))))
+
+(rule (alias leap_Z3ModelParser)
+  (action (diff leap_Z3ModelParser.exp leap_Z3ModelParser.out)))
+
+(rule (alias leap_Z3ModelParser)
+  (action
+    (diff leap_Z3ModelParser.automaton.exp leap_Z3ModelParser.automaton)))
+
+(rule (alias leap_Z3ModelParser)
+  (action
+    (diff leap_Z3ModelParser.automaton.resolved.exp
+      leap_Z3ModelParser.automaton.resolved)))
+
+(rule (alias leap_Z3ModelParser)
+  (action
+    (diff leap_Z3ModelParser.conflicts.exp leap_Z3ModelParser.conflicts)))
+
 (rule (target lem.opp.out) (deps lem.mly)
   (action
     (with-outputs-to lem.opp.out
@@ -12776,6 +13019,13 @@
     (alias lambdapi.1.0-menhir_parser)
     (alias lambdoc_rlambtex_parser)
     (alias ldap.2.4.0-ldap_filterparser)
+    (alias leap_ExprParser)
+    (alias leap_IGraphParser)
+    (alias leap_SpecParser)
+    (alias leap_StmParser)
+    (alias leap_TrsParser)
+    (alias leap_YicesModelParser)
+    (alias leap_Z3ModelParser)
     (alias lem)
     (alias liberty_parser)
     (alias link)

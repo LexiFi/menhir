@@ -1,0 +1,704 @@
+State 0:
+## Known stack suffix:
+##
+## LR(1) items:
+conj_list' -> . conj_list [ # ]
+## Transitions:
+-- On TRUE shift to state 1
+-- On NUMBER shift to state 2
+-- On MATH_MINUS shift to state 3
+-- On IDENT shift to state 4
+-- On FALSE shift to state 16
+-- On literal shift to state 17
+-- On integer shift to state 19
+-- On conj_list shift to state 35
+## Reductions:
+
+State 1:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
+literal -> TRUE . [ LOGICAL_AND CLOSE_PAREN # ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production literal -> TRUE
+
+State 2:
+## Known stack suffix:
+## NUMBER
+## LR(1) items:
+integer -> NUMBER . [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production integer -> NUMBER
+
+State 3:
+## Known stack suffix:
+## MATH_MINUS
+## LR(1) items:
+integer -> MATH_MINUS . integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+-- On NUMBER shift to state 2
+-- On MATH_MINUS shift to state 3
+-- On IDENT shift to state 4
+-- On integer shift to state 15
+## Reductions:
+
+State 4:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
+integer -> IDENT . th_param primed [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> IDENT . UNDERSCORE IDENT th_param primed [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+-- On UNDERSCORE shift to state 5
+-- On DOUBLE_UNDERSCORE shift to state 7
+-- On th_param shift to state 13
+## Reductions:
+-- On PRIME MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN
+--   reduce production th_param ->
+
+State 5:
+## Known stack suffix:
+## IDENT UNDERSCORE
+## LR(1) items:
+integer -> IDENT UNDERSCORE . IDENT th_param primed [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+-- On IDENT shift to state 6
+## Reductions:
+
+State 6:
+## Known stack suffix:
+## IDENT UNDERSCORE IDENT
+## LR(1) items:
+integer -> IDENT UNDERSCORE IDENT . th_param primed [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+-- On DOUBLE_UNDERSCORE shift to state 7
+-- On th_param shift to state 10
+## Reductions:
+-- On PRIME MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN
+--   reduce production th_param ->
+
+State 7:
+## Known stack suffix:
+## DOUBLE_UNDERSCORE
+## LR(1) items:
+th_param -> DOUBLE_UNDERSCORE . NUMBER [ PRIME MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+th_param -> DOUBLE_UNDERSCORE . IDENT [ PRIME MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+-- On NUMBER shift to state 8
+-- On IDENT shift to state 9
+## Reductions:
+
+State 8:
+## Known stack suffix:
+## DOUBLE_UNDERSCORE NUMBER
+## LR(1) items:
+th_param -> DOUBLE_UNDERSCORE NUMBER . [ PRIME MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production th_param -> DOUBLE_UNDERSCORE NUMBER
+
+State 9:
+## Known stack suffix:
+## DOUBLE_UNDERSCORE IDENT
+## LR(1) items:
+th_param -> DOUBLE_UNDERSCORE IDENT . [ PRIME MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production th_param -> DOUBLE_UNDERSCORE IDENT
+
+State 10:
+## Known stack suffix:
+## IDENT UNDERSCORE IDENT th_param
+## LR(1) items:
+integer -> IDENT UNDERSCORE IDENT th_param . primed [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+-- On PRIME shift to state 11
+-- On primed shift to state 12
+## Reductions:
+-- On MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN
+--   reduce production primed ->
+
+State 11:
+## Known stack suffix:
+## PRIME
+## LR(1) items:
+primed -> PRIME . [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production primed -> PRIME
+
+State 12:
+## Known stack suffix:
+## IDENT UNDERSCORE IDENT th_param primed
+## LR(1) items:
+integer -> IDENT UNDERSCORE IDENT th_param primed . [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production integer -> IDENT UNDERSCORE IDENT th_param primed
+
+State 13:
+## Known stack suffix:
+## IDENT th_param
+## LR(1) items:
+integer -> IDENT th_param . primed [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+-- On PRIME shift to state 11
+-- On primed shift to state 14
+## Reductions:
+-- On MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN
+--   reduce production primed ->
+
+State 14:
+## Known stack suffix:
+## IDENT th_param primed
+## LR(1) items:
+integer -> IDENT th_param primed . [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production integer -> IDENT th_param primed
+
+State 15:
+## Known stack suffix:
+## MATH_MINUS integer
+## LR(1) items:
+integer -> MATH_MINUS integer . [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_PLUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_MINUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_MULT integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_DIV integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production integer -> MATH_MINUS integer
+
+State 16:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
+literal -> FALSE . [ LOGICAL_AND CLOSE_PAREN # ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production literal -> FALSE
+
+State 17:
+## Known stack suffix:
+## literal
+## LR(1) items:
+conj_list -> literal . [ # ]
+conj_list -> literal . LOGICAL_AND conj_list [ # ]
+## Transitions:
+-- On LOGICAL_AND shift to state 18
+## Reductions:
+
+State 18:
+## Known stack suffix:
+## literal LOGICAL_AND
+## LR(1) items:
+conj_list -> literal LOGICAL_AND . conj_list [ # ]
+## Transitions:
+-- On TRUE shift to state 1
+-- On NUMBER shift to state 2
+-- On MATH_MINUS shift to state 3
+-- On IDENT shift to state 4
+-- On FALSE shift to state 16
+-- On literal shift to state 17
+-- On integer shift to state 19
+-- On conj_list shift to state 34
+## Reductions:
+
+State 19:
+## Known stack suffix:
+## integer
+## LR(1) items:
+integer -> integer . MATH_PLUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LESS_EQ GREATER_EQ EQUALS ]
+integer -> integer . MATH_MINUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LESS_EQ GREATER_EQ EQUALS ]
+integer -> integer . MATH_MULT integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LESS_EQ GREATER_EQ EQUALS ]
+integer -> integer . MATH_DIV integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LESS_EQ GREATER_EQ EQUALS ]
+literal -> integer . EQUALS integer [ LOGICAL_AND CLOSE_PAREN # ]
+literal -> integer . LESS_EQ integer [ LOGICAL_AND CLOSE_PAREN # ]
+literal -> integer . GREATER_EQ integer [ LOGICAL_AND CLOSE_PAREN # ]
+## Transitions:
+-- On MATH_PLUS shift to state 20
+-- On MATH_MULT shift to state 22
+-- On MATH_MINUS shift to state 26
+-- On MATH_DIV shift to state 24
+-- On LESS_EQ shift to state 28
+-- On GREATER_EQ shift to state 30
+-- On EQUALS shift to state 32
+## Reductions:
+
+State 20:
+## Known stack suffix:
+## integer MATH_PLUS
+## LR(1) items:
+integer -> integer MATH_PLUS . integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+-- On NUMBER shift to state 2
+-- On MATH_MINUS shift to state 3
+-- On IDENT shift to state 4
+-- On integer shift to state 21
+## Reductions:
+
+State 21:
+## Known stack suffix:
+## integer MATH_PLUS integer
+## LR(1) items:
+integer -> integer . MATH_PLUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer MATH_PLUS integer . [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_MINUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_MULT integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_DIV integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+-- On MATH_MULT shift to state 22
+-- On MATH_DIV shift to state 24
+## Reductions:
+-- On MATH_PLUS MATH_MINUS LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN
+--   reduce production integer -> integer MATH_PLUS integer
+
+State 22:
+## Known stack suffix:
+## integer MATH_MULT
+## LR(1) items:
+integer -> integer MATH_MULT . integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+-- On NUMBER shift to state 2
+-- On MATH_MINUS shift to state 3
+-- On IDENT shift to state 4
+-- On integer shift to state 23
+## Reductions:
+
+State 23:
+## Known stack suffix:
+## integer MATH_MULT integer
+## LR(1) items:
+integer -> integer . MATH_PLUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_MINUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_MULT integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer MATH_MULT integer . [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_DIV integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production integer -> integer MATH_MULT integer
+
+State 24:
+## Known stack suffix:
+## integer MATH_DIV
+## LR(1) items:
+integer -> integer MATH_DIV . integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+-- On NUMBER shift to state 2
+-- On MATH_MINUS shift to state 3
+-- On IDENT shift to state 4
+-- On integer shift to state 25
+## Reductions:
+
+State 25:
+## Known stack suffix:
+## integer MATH_DIV integer
+## LR(1) items:
+integer -> integer . MATH_PLUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_MINUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_MULT integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_DIV integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer MATH_DIV integer . [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production integer -> integer MATH_DIV integer
+
+State 26:
+## Known stack suffix:
+## integer MATH_MINUS
+## LR(1) items:
+integer -> integer MATH_MINUS . integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+-- On NUMBER shift to state 2
+-- On MATH_MINUS shift to state 3
+-- On IDENT shift to state 4
+-- On integer shift to state 27
+## Reductions:
+
+State 27:
+## Known stack suffix:
+## integer MATH_MINUS integer
+## LR(1) items:
+integer -> integer . MATH_PLUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_MINUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer MATH_MINUS integer . [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_MULT integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+integer -> integer . MATH_DIV integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN # ]
+## Transitions:
+-- On MATH_MULT shift to state 22
+-- On MATH_DIV shift to state 24
+## Reductions:
+-- On MATH_PLUS MATH_MINUS LOGICAL_AND LESS_EQ GREATER_EQ EQUALS CLOSE_PAREN
+--   reduce production integer -> integer MATH_MINUS integer
+
+State 28:
+## Known stack suffix:
+## integer LESS_EQ
+## LR(1) items:
+literal -> integer LESS_EQ . integer [ LOGICAL_AND CLOSE_PAREN # ]
+## Transitions:
+-- On NUMBER shift to state 2
+-- On MATH_MINUS shift to state 3
+-- On IDENT shift to state 4
+-- On integer shift to state 29
+## Reductions:
+
+State 29:
+## Known stack suffix:
+## integer LESS_EQ integer
+## LR(1) items:
+integer -> integer . MATH_PLUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND CLOSE_PAREN # ]
+integer -> integer . MATH_MINUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND CLOSE_PAREN # ]
+integer -> integer . MATH_MULT integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND CLOSE_PAREN # ]
+integer -> integer . MATH_DIV integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND CLOSE_PAREN # ]
+literal -> integer LESS_EQ integer . [ LOGICAL_AND CLOSE_PAREN # ]
+## Transitions:
+-- On MATH_PLUS shift to state 20
+-- On MATH_MULT shift to state 22
+-- On MATH_MINUS shift to state 26
+-- On MATH_DIV shift to state 24
+## Reductions:
+-- On LOGICAL_AND CLOSE_PAREN
+--   reduce production literal -> integer LESS_EQ integer
+
+State 30:
+## Known stack suffix:
+## integer GREATER_EQ
+## LR(1) items:
+literal -> integer GREATER_EQ . integer [ LOGICAL_AND CLOSE_PAREN # ]
+## Transitions:
+-- On NUMBER shift to state 2
+-- On MATH_MINUS shift to state 3
+-- On IDENT shift to state 4
+-- On integer shift to state 31
+## Reductions:
+
+State 31:
+## Known stack suffix:
+## integer GREATER_EQ integer
+## LR(1) items:
+integer -> integer . MATH_PLUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND CLOSE_PAREN # ]
+integer -> integer . MATH_MINUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND CLOSE_PAREN # ]
+integer -> integer . MATH_MULT integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND CLOSE_PAREN # ]
+integer -> integer . MATH_DIV integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND CLOSE_PAREN # ]
+literal -> integer GREATER_EQ integer . [ LOGICAL_AND CLOSE_PAREN # ]
+## Transitions:
+-- On MATH_PLUS shift to state 20
+-- On MATH_MULT shift to state 22
+-- On MATH_MINUS shift to state 26
+-- On MATH_DIV shift to state 24
+## Reductions:
+-- On LOGICAL_AND CLOSE_PAREN
+--   reduce production literal -> integer GREATER_EQ integer
+
+State 32:
+## Known stack suffix:
+## integer EQUALS
+## LR(1) items:
+literal -> integer EQUALS . integer [ LOGICAL_AND CLOSE_PAREN # ]
+## Transitions:
+-- On NUMBER shift to state 2
+-- On MATH_MINUS shift to state 3
+-- On IDENT shift to state 4
+-- On integer shift to state 33
+## Reductions:
+
+State 33:
+## Known stack suffix:
+## integer EQUALS integer
+## LR(1) items:
+integer -> integer . MATH_PLUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND CLOSE_PAREN # ]
+integer -> integer . MATH_MINUS integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND CLOSE_PAREN # ]
+integer -> integer . MATH_MULT integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND CLOSE_PAREN # ]
+integer -> integer . MATH_DIV integer [ MATH_PLUS MATH_MULT MATH_MINUS MATH_DIV LOGICAL_AND CLOSE_PAREN # ]
+literal -> integer EQUALS integer . [ LOGICAL_AND CLOSE_PAREN # ]
+## Transitions:
+-- On MATH_PLUS shift to state 20
+-- On MATH_MULT shift to state 22
+-- On MATH_MINUS shift to state 26
+-- On MATH_DIV shift to state 24
+## Reductions:
+-- On LOGICAL_AND CLOSE_PAREN
+--   reduce production literal -> integer EQUALS integer
+
+State 34:
+## Known stack suffix:
+## literal LOGICAL_AND conj_list
+## LR(1) items:
+conj_list -> literal LOGICAL_AND conj_list . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production conj_list -> literal LOGICAL_AND conj_list
+
+State 35:
+## Known stack suffix:
+## conj_list
+## LR(1) items:
+conj_list' -> conj_list . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, accept conj_list
+
+State 36:
+## Known stack suffix:
+##
+## LR(1) items:
+exists_projector' -> . exists_projector [ # ]
+## Transitions:
+-- On ANSWER shift to state 37
+-- On exists_projector shift to state 44
+## Reductions:
+
+State 37:
+## Known stack suffix:
+## ANSWER
+## LR(1) items:
+exists_projector -> ANSWER . OPEN_PAREN conj_list CLOSE_PAREN [ # ]
+## Transitions:
+-- On OPEN_PAREN shift to state 38
+## Reductions:
+
+State 38:
+## Known stack suffix:
+## ANSWER OPEN_PAREN
+## LR(1) items:
+exists_projector -> ANSWER OPEN_PAREN . conj_list CLOSE_PAREN [ # ]
+## Transitions:
+-- On TRUE shift to state 1
+-- On NUMBER shift to state 2
+-- On MATH_MINUS shift to state 3
+-- On IDENT shift to state 4
+-- On FALSE shift to state 16
+-- On literal shift to state 39
+-- On integer shift to state 19
+-- On conj_list shift to state 42
+## Reductions:
+
+State 39:
+## Known stack suffix:
+## literal
+## LR(1) items:
+conj_list -> literal . [ CLOSE_PAREN ]
+conj_list -> literal . LOGICAL_AND conj_list [ CLOSE_PAREN ]
+## Transitions:
+-- On LOGICAL_AND shift to state 40
+## Reductions:
+-- On CLOSE_PAREN
+--   reduce production conj_list -> literal
+
+State 40:
+## Known stack suffix:
+## literal LOGICAL_AND
+## LR(1) items:
+conj_list -> literal LOGICAL_AND . conj_list [ CLOSE_PAREN ]
+## Transitions:
+-- On TRUE shift to state 1
+-- On NUMBER shift to state 2
+-- On MATH_MINUS shift to state 3
+-- On IDENT shift to state 4
+-- On FALSE shift to state 16
+-- On literal shift to state 39
+-- On integer shift to state 19
+-- On conj_list shift to state 41
+## Reductions:
+
+State 41:
+## Known stack suffix:
+## literal LOGICAL_AND conj_list
+## LR(1) items:
+conj_list -> literal LOGICAL_AND conj_list . [ CLOSE_PAREN ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production conj_list -> literal LOGICAL_AND conj_list
+
+State 42:
+## Known stack suffix:
+## ANSWER OPEN_PAREN conj_list
+## LR(1) items:
+exists_projector -> ANSWER OPEN_PAREN conj_list . CLOSE_PAREN [ # ]
+## Transitions:
+-- On CLOSE_PAREN shift to state 43
+## Reductions:
+
+State 43:
+## Known stack suffix:
+## ANSWER OPEN_PAREN conj_list CLOSE_PAREN
+## LR(1) items:
+exists_projector -> ANSWER OPEN_PAREN conj_list CLOSE_PAREN . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production exists_projector -> ANSWER OPEN_PAREN conj_list CLOSE_PAREN
+
+State 44:
+## Known stack suffix:
+## exists_projector
+## LR(1) items:
+exists_projector' -> exists_projector . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, accept exists_projector
+
+State 45:
+## Known stack suffix:
+##
+## LR(1) items:
+invariant_info' -> . invariant_info [ # ]
+## Transitions:
+-- On INVARIANT shift to state 46
+-- On invariant_list shift to state 57
+-- On invariant_info shift to state 58
+-- On invariant shift to state 59
+## Reductions:
+
+State 46:
+## Known stack suffix:
+## INVARIANT
+## LR(1) items:
+invariant -> INVARIANT . AT LOC UNDERSCORE pos_list OPEN_PAREN conj_list CLOSE_PAREN [ INVARIANT # ]
+## Transitions:
+-- On AT shift to state 47
+## Reductions:
+
+State 47:
+## Known stack suffix:
+## INVARIANT AT
+## LR(1) items:
+invariant -> INVARIANT AT . LOC UNDERSCORE pos_list OPEN_PAREN conj_list CLOSE_PAREN [ INVARIANT # ]
+## Transitions:
+-- On LOC shift to state 48
+## Reductions:
+
+State 48:
+## Known stack suffix:
+## INVARIANT AT LOC
+## LR(1) items:
+invariant -> INVARIANT AT LOC . UNDERSCORE pos_list OPEN_PAREN conj_list CLOSE_PAREN [ INVARIANT # ]
+## Transitions:
+-- On UNDERSCORE shift to state 49
+## Reductions:
+
+State 49:
+## Known stack suffix:
+## INVARIANT AT LOC UNDERSCORE
+## LR(1) items:
+invariant -> INVARIANT AT LOC UNDERSCORE . pos_list OPEN_PAREN conj_list CLOSE_PAREN [ INVARIANT # ]
+## Transitions:
+-- On NUMBER shift to state 50
+-- On pos_list shift to state 53
+## Reductions:
+
+State 50:
+## Known stack suffix:
+## NUMBER
+## LR(1) items:
+pos_list -> NUMBER . [ OPEN_PAREN ]
+pos_list -> NUMBER . UNDERSCORE pos_list [ OPEN_PAREN ]
+## Transitions:
+-- On UNDERSCORE shift to state 51
+## Reductions:
+-- On OPEN_PAREN
+--   reduce production pos_list -> NUMBER
+
+State 51:
+## Known stack suffix:
+## NUMBER UNDERSCORE
+## LR(1) items:
+pos_list -> NUMBER UNDERSCORE . pos_list [ OPEN_PAREN ]
+## Transitions:
+-- On NUMBER shift to state 50
+-- On pos_list shift to state 52
+## Reductions:
+
+State 52:
+## Known stack suffix:
+## NUMBER UNDERSCORE pos_list
+## LR(1) items:
+pos_list -> NUMBER UNDERSCORE pos_list . [ OPEN_PAREN ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production pos_list -> NUMBER UNDERSCORE pos_list
+
+State 53:
+## Known stack suffix:
+## INVARIANT AT LOC UNDERSCORE pos_list
+## LR(1) items:
+invariant -> INVARIANT AT LOC UNDERSCORE pos_list . OPEN_PAREN conj_list CLOSE_PAREN [ INVARIANT # ]
+## Transitions:
+-- On OPEN_PAREN shift to state 54
+## Reductions:
+
+State 54:
+## Known stack suffix:
+## INVARIANT AT LOC UNDERSCORE pos_list OPEN_PAREN
+## LR(1) items:
+invariant -> INVARIANT AT LOC UNDERSCORE pos_list OPEN_PAREN . conj_list CLOSE_PAREN [ INVARIANT # ]
+## Transitions:
+-- On TRUE shift to state 1
+-- On NUMBER shift to state 2
+-- On MATH_MINUS shift to state 3
+-- On IDENT shift to state 4
+-- On FALSE shift to state 16
+-- On literal shift to state 39
+-- On integer shift to state 19
+-- On conj_list shift to state 55
+## Reductions:
+
+State 55:
+## Known stack suffix:
+## INVARIANT AT LOC UNDERSCORE pos_list OPEN_PAREN conj_list
+## LR(1) items:
+invariant -> INVARIANT AT LOC UNDERSCORE pos_list OPEN_PAREN conj_list . CLOSE_PAREN [ INVARIANT # ]
+## Transitions:
+-- On CLOSE_PAREN shift to state 56
+## Reductions:
+
+State 56:
+## Known stack suffix:
+## INVARIANT AT LOC UNDERSCORE pos_list OPEN_PAREN conj_list CLOSE_PAREN
+## LR(1) items:
+invariant -> INVARIANT AT LOC UNDERSCORE pos_list OPEN_PAREN conj_list CLOSE_PAREN . [ INVARIANT # ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production invariant -> INVARIANT AT LOC UNDERSCORE pos_list OPEN_PAREN conj_list CLOSE_PAREN
+
+State 57:
+## Known stack suffix:
+## invariant_list
+## LR(1) items:
+invariant_info -> invariant_list . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production invariant_info -> invariant_list
+
+State 58:
+## Known stack suffix:
+## invariant_info
+## LR(1) items:
+invariant_info' -> invariant_info . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, accept invariant_info
+
+State 59:
+## Known stack suffix:
+## invariant
+## LR(1) items:
+invariant_list -> invariant . invariant_list [ # ]
+## Transitions:
+-- On INVARIANT shift to state 46
+-- On invariant_list shift to state 60
+-- On invariant shift to state 59
+## Reductions:
+
+State 60:
+## Known stack suffix:
+## invariant invariant_list
+## LR(1) items:
+invariant_list -> invariant invariant_list . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production invariant_list -> invariant invariant_list
+
