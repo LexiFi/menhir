@@ -3,6 +3,7 @@
   open Parser
   open LexerHelper
 
+  exception ExnEOF
 
 (*
 
@@ -78,5 +79,6 @@ rule token = parse
   | "TYPE_VARIABLE" { TYPE_VARIABLE("`type_variable")      }
   | "UNDERSCORE"    { UNDERSCORE                           }
   (** Lexing error. *)
-  | _               { error "during lexing" (Position.cpos lexbuf) "unexpected character." }
+  | eof { raise ExnEOF }
+  | _   { error "during lexing" (Position.cpos lexbuf) "unexpected character." }
 
