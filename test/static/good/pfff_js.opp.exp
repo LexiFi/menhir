@@ -1,0 +1,2349 @@
+File "pfff_js.mly", line 171, characters 36-51:
+Warning: the token TCommentNewline is unused.
+File "pfff_js.mly", line 171, characters 22-35:
+Warning: the token TCommentSpace is unused.
+%{
+(* Yoann Padioleau
+ *
+ * Copyright (C) 2010-2014 Facebook
+ * Copyright (C) 2019-2020 r2c
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * version 2.1 as published by the Free Software Foundation, with the
+ * special exception on linking described in file license.txt.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the file
+ * license.txt for more details.
+ *)
+open Common
+
+open AST_generic_
+open Ast_js
+module PI = Parse_info
+module H = AST_generic_
+
+(*************************************************************************)
+(* Prelude *)
+(*************************************************************************)
+(* This file contains a grammar for Javascript (ES6 and more), as well
+ * as partial support for Typescript.
+ *
+ * reference:
+ *  - https://en.wikipedia.org/wiki/JavaScript_syntax
+ *  - http://www.ecma-international.org/publications/standards/Ecma-262.htm
+ *  - https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#A
+ *
+ * src: originally ocamlyacc-ified from Marcel Laverdet 'fbjs2' via Emacs
+ * macros, itself extracted from the official ECMAscript specification at:
+ * http://www.ecma-international.org/publications/standards/ecma-262.htm
+ * back in the day (probably ES4 or ES3).
+ *
+ * I have heavily extended the grammar to provide the first parser for Flow.
+ * I have extended it also to deal with many new Javascript features
+ * (see cst_js.ml top comment).
+ *
+ * The grammar is close to the ECMA grammar but I've simplified a few things
+ * when I could:
+ *  - less intermediate grammar rules for advanced features
+ *    (they are inlined in the original grammar rule)
+ *  - by using my retagging-tokens technique (see parsing_hacks_js.ml)
+ *    I could also get rid of some of the ugliness in the ECMA grammar
+ *    that has to deal with ambiguous constructs
+ *    (they conflate together expressions and arrow parameters, object
+ *    values and object matching, etc.).
+ *    Instead, in this grammar things are clearly separated.
+ *  - I've used some macros to factorize rules, including some tricky
+ *    macros to factorize expression rules.
+ *)
+
+(*************************************************************************)
+(* Helpers *)
+(*************************************************************************)
+let fb = PI.fake_bracket
+
+let sndopt = function
+  | None -> None
+  | Some (_, x) -> Some x
+
+(* ugly *)
+let anon_semgrep_lambda = "!anon_semgrep_lambda!"
+
+let fix_sgrep_module_item xs =
+  match xs with
+ (* ugly, but in a sgrep pattern, anonymous functions are parsed as a toplevel
+  * function decl (because 'function_decl' accepts id_opt, see its comment).
+  * This is why we intercept this case by returning instead an Expr pattern.
+  *)
+  | [DefStmt ({name = (s, _); _}, FuncDef def)]
+    when s = anon_semgrep_lambda ->
+      Expr (Fun (def, None))
+  | [ExprStmt (e, sc) as x] ->
+      if PI.is_fake sc
+      then Expr e
+      else Stmt x
+  | [x] -> Stmt x
+  | xs -> Stmts xs
+
+let mk_Fun ?(id=None) ?(attrs=[]) ?(props=[])
+  f_kind (_generics,(_,f_params,_),f_rettype) (lc,xs,rc) =
+  let f_attrs = (props |> List.map attr) @ attrs in
+  Fun ({ f_kind; f_params; f_body = Block (lc, xs, rc); f_rettype; f_attrs }, id)
+
+let mk_FuncDef props f_kind (_generics,(_,f_params,_),f_rettype) (lc,xs,rc) =
+  let f_attrs = props |> List.map attr in
+  FuncDef { f_kind; f_params; f_body = Block (lc, xs, rc); f_rettype; f_attrs }
+
+let mk_Class ?(props=[]) tok idopt _generics (c_extends, c_implements) c_body =
+  let c_attrs = props |> List.map attr in
+  Class ({c_kind = H.Class, tok; c_extends; c_implements; c_attrs; c_body},
+         idopt)
+
+let mk_ClassDef ?(attrs=[]) ?(props=[]) tok _generics (c_extends, c_implements) c_body =
+  let c_attrs = (props |> List.map attr) @ attrs in
+  ClassDef ({c_kind = H.Class, tok; c_extends; c_implements; c_attrs; c_body})
+
+let mk_Field ?(fld_type=None) ?(props=[]) fld_name eopt =
+  let fld_attrs = props |> List.map attr in
+  Field { fld_name; fld_attrs; fld_type; fld_body = eopt }
+
+let mk_FieldColon ?(fld_type=None) ?(props=[]) fld_name eopt =
+  let fld_attrs = props |> List.map attr in
+  FieldColon { fld_name; fld_attrs; fld_type; fld_body = eopt }
+
+let add_modifiers _propsTODO fld =
+  fld
+
+let mk_def (idopt, defkind) =
+  (* TODO: fun default_opt -> ... *)
+  let name =
+    match idopt with
+    | None -> Flag_parsing.sgrep_guard (anon_semgrep_lambda, PI.fake_info "")
+    | Some id -> id
+  in
+  basic_entity name, defkind
+
+
+let mk_Super tok =
+  IdSpecial (Super, tok)
+
+let mk_pattern binding_pattern init_opt =
+  match init_opt with
+  | None -> binding_pattern
+  | Some (t, e) -> Assign (binding_pattern, t, e)
+
+(* Javascript has implicit returns for arrows with expression body *)
+let mk_block_return e =
+  fb [Return (PI.fake_info "return", Some e, PI.sc)]
+
+let special spec tok xs =
+  Apply (IdSpecial (spec, tok), fb xs)
+
+let bop op a b c = special (ArithOp op) b [a;c]
+let uop op tok x = special op tok [x]
+
+let seq (e1, t, e2) = special Seq t [e1; e2]
+
+let mk_Assign (e1, (tok, opopt), e2) =
+  match opopt with
+  | None -> Assign (e1, tok, e2)
+  (* less: should use intermediate? can unsugar like this? *)
+  | Some op -> Assign (e1, tok, special (ArithOp op) tok [e1;e2])
+
+let mk_Encaps opt (t1, xs, _t2) =
+  let b, extra =
+    match opt with
+    | None -> false, []
+    | Some e -> true, [e]
+  in
+  special (Encaps b) t1 (extra @ xs)
+
+%}
+%start json
+%start json_pattern
+%start main
+%start module_item_or_eof
+%start sgrep_spatch_pattern
+%token <Parse_info.t> EOF
+%token <Parse_info.t> LDots
+%token <Parse_info.t> RDots
+%token <Parse_info.t> TComment
+%token <Parse_info.t> TCommentNewline
+%token <Parse_info.t> TCommentSpace
+%token <Parse_info.t> TUnknown
+%token <Parse_info.t> T_AND
+%token <Parse_info.t> T_ANY_TYPE
+%token <Parse_info.t> T_ARROW
+%token <Parse_info.t> T_AS
+%token <Parse_info.t> T_ASSIGN
+%token <Parse_info.t> T_ASYNC
+%token <Parse_info.t> T_AT
+%token <Parse_info.t> T_AWAIT
+%token <Parse_info.t> T_BACKQUOTE
+%token <Parse_info.t> T_BIT_AND
+%token <Parse_info.t> T_BIT_AND_ASSIGN
+%token <Parse_info.t> T_BIT_NOT
+%token <Parse_info.t> T_BIT_OR
+%token <Parse_info.t> T_BIT_OR_ASSIGN
+%token <Parse_info.t> T_BIT_XOR
+%token <Parse_info.t> T_BIT_XOR_ASSIGN
+%token <Parse_info.t> T_BOOLEAN_TYPE
+%token <Parse_info.t> T_BREAK
+%token <Parse_info.t> T_CASE
+%token <Parse_info.t> T_CATCH
+%token <Parse_info.t> T_CLASS
+%token <Parse_info.t> T_COLON
+%token <Parse_info.t> T_COMMA
+%token <Parse_info.t> T_CONST
+%token <Parse_info.t> T_CONSTRUCTOR
+%token <Parse_info.t> T_CONTINUE
+%token <Parse_info.t> T_DECLARE
+%token <Parse_info.t> T_DECR
+%token <Parse_info.t> T_DEFAULT
+%token <Parse_info.t> T_DELETE
+%token <Parse_info.t> T_DIV
+%token <Parse_info.t> T_DIV_ASSIGN
+%token <Parse_info.t> T_DO
+%token <Parse_info.t> T_DOLLARCURLY
+%token <Parse_info.t> T_DOTS
+%token <Parse_info.t> T_ELSE
+%token <string * Parse_info.t> T_ENCAPSED_STRING
+%token <Parse_info.t> T_ENUM
+%token <Parse_info.t> T_EQUAL
+%token <Parse_info.t> T_EXPONENT
+%token <Parse_info.t> T_EXPORT
+%token <Parse_info.t> T_EXTENDS
+%token <Parse_info.t> T_FALSE
+%token <Parse_info.t> T_FINALLY
+%token <float option * Parse_info.t> T_FLOAT
+%token <Parse_info.t> T_FOR
+%token <Parse_info.t> T_FROM
+%token <Parse_info.t> T_FUNCTION
+%token <Parse_info.t> T_GET
+%token <Parse_info.t> T_GREATER_THAN
+%token <Parse_info.t> T_GREATER_THAN_EQUAL
+%token <string * Parse_info.t> T_ID
+%token <Parse_info.t> T_IF
+%token <Parse_info.t> T_IMPLEMENTS
+%token <Parse_info.t> T_IMPORT
+%token <Parse_info.t> T_IN
+%token <Parse_info.t> T_INCR
+%token <Parse_info.t> T_INSTANCEOF
+%token <int option * Parse_info.t> T_INT
+%token <Parse_info.t> T_INTERFACE
+%token <Parse_info.t> T_LBRACKET
+%token <Parse_info.t> T_LCURLY
+%token <Parse_info.t> T_LCURLY_SEMGREP
+%token <Parse_info.t> T_LESS_THAN
+%token <Parse_info.t> T_LESS_THAN_EQUAL
+%token <Parse_info.t> T_LET
+%token <Parse_info.t> T_LPAREN
+%token <Parse_info.t> T_LPAREN_ARROW
+%token <Parse_info.t> T_LPAREN_METHOD_SEMGREP
+%token <Parse_info.t> T_LSHIFT
+%token <Parse_info.t> T_LSHIFT_ASSIGN
+%token <Parse_info.t> T_MINUS
+%token <Parse_info.t> T_MINUS_ASSIGN
+%token <Parse_info.t> T_MOD
+%token <Parse_info.t> T_MODULE
+%token <Parse_info.t> T_MOD_ASSIGN
+%token <Parse_info.t> T_MULT
+%token <Parse_info.t> T_MULT_ASSIGN
+%token <Parse_info.t> T_NEW
+%token <Parse_info.t> T_NOT
+%token <Parse_info.t> T_NOT_EQUAL
+%token <Parse_info.t> T_NULL
+%token <Parse_info.t> T_NUMBER_TYPE
+%token <Parse_info.t> T_OF
+%token <Parse_info.t> T_OR
+%token <Parse_info.t> T_PERIOD
+%token <Parse_info.t> T_PLING
+%token <Parse_info.t> T_PLUS
+%token <Parse_info.t> T_PLUS_ASSIGN
+%token <Parse_info.t> T_PRIVATE
+%token <Parse_info.t> T_PROTECTED
+%token <Parse_info.t> T_PUBLIC
+%token <Parse_info.t> T_RBRACKET
+%token <Parse_info.t> T_RCURLY
+%token <Parse_info.t> T_READONLY
+%token <(Parse_info.t * (string * Parse_info.t) * Parse_info.t) * (string * Parse_info.t) option> T_REGEX
+%token <Parse_info.t> T_RETURN
+%token <Parse_info.t> T_RPAREN
+%token <Parse_info.t> T_RSHIFT
+%token <Parse_info.t> T_RSHIFT3
+%token <Parse_info.t> T_RSHIFT3_ASSIGN
+%token <Parse_info.t> T_RSHIFT_ASSIGN
+%token <Parse_info.t> T_SEMICOLON
+%token <Parse_info.t> T_SET
+%token <Parse_info.t> T_STATIC
+%token <Parse_info.t> T_STRICT_EQUAL
+%token <Parse_info.t> T_STRICT_NOT_EQUAL
+%token <string * Parse_info.t> T_STRING
+%token <Parse_info.t> T_STRING_TYPE
+%token <Parse_info.t> T_SUPER
+%token <Parse_info.t> T_SWITCH
+%token <Parse_info.t> T_THIS
+%token <Parse_info.t> T_THROW
+%token <Parse_info.t> T_TRUE
+%token <Parse_info.t> T_TRY
+%token <Parse_info.t> T_TYPE
+%token <Parse_info.t> T_TYPEOF
+%token <Parse_info.t> T_VAR
+%token <Parse_info.t> T_VIRTUAL_SEMICOLON
+%token <Parse_info.t> T_VOID
+%token <Parse_info.t> T_WHILE
+%token <Parse_info.t> T_WITH
+%token <string * Parse_info.t> T_XHP_ATTR
+%token <string option * Parse_info.t> T_XHP_CLOSE_TAG
+%token <Parse_info.t> T_XHP_GT
+%token <string * Parse_info.t> T_XHP_OPEN_TAG
+%token <Parse_info.t> T_XHP_SHORT_FRAGMENT
+%token <Parse_info.t> T_XHP_SLASH_GT
+%token <string * Parse_info.t> T_XHP_TEXT
+%token <Parse_info.t> T_YIELD
+%nonassoc p_IF
+%nonassoc T_ELSE
+%nonassoc below_COLON
+%nonassoc T_COLON
+%left T_OR
+%left T_AND
+%left T_BIT_OR
+%left T_BIT_XOR
+%left T_BIT_AND
+%left T_EQUAL T_NOT_EQUAL T_STRICT_EQUAL T_STRICT_NOT_EQUAL
+%left T_GREATER_THAN T_GREATER_THAN_EQUAL T_IN T_INSTANCEOF T_LESS_THAN T_LESS_THAN_EQUAL
+%left T_LSHIFT T_RSHIFT T_RSHIFT3
+%left T_MINUS T_PLUS
+%left T_DIV T_MOD T_MULT
+%right T_EXPONENT
+%right T_AWAIT T_BIT_NOT T_DECR T_DELETE T_INCR T_NOT T_TYPEOF T_VOID
+%type <Ast_js.expr> binding_element
+%type <Ast_js.expr> binding_elision_element
+%type <Ast_js.property> binding_property
+%type <Ast_js.property list> class_element
+%type <Ast_js.definition list> decl
+%type <Ast_js.expr> element
+%type <Parse_info.t * Ast_js.expr> initializeur
+%type <Ast_js.stmt list> item
+%type <Ast_js.expr> json
+%type <Ast_js.any> json_pattern
+%type <Ast_js.a_program> main
+%type <Ast_js.stmt list> module_item
+%type <Ast_js.stmt option> module_item_or_eof
+%type <Parse_info.t> sc
+%type <Ast_js.any> sgrep_spatch_pattern
+%type <Ast_js.stmt list> stmt
+%%
+
+option_T_COMMA_:
+  
+    {    ( None )}
+| x = T_COMMA
+    {    ( Some x )}
+
+option_T_CONST_:
+  
+    {    ( None )}
+| x = T_CONST
+    {    ( Some x )}
+
+option_annotation_:
+  
+    {    ( None )}
+| x = annotation
+    {    ( Some x )}
+
+option_arguments_:
+  
+    {    ( None )}
+| x = arguments
+    {    ( Some x )}
+
+option_binding_id_:
+  
+    {    ( None )}
+| x = binding_id
+    {    ( Some x )}
+
+option_expr_:
+  
+    {    ( None )}
+| x = expr
+    {    ( Some x )}
+
+option_expr_no_in_:
+  
+    {    ( None )}
+| x = expr_no_in
+    {    ( Some x )}
+
+option_extends_clause_:
+  
+    {    ( None )}
+| x = extends_clause
+    {    ( Some x )}
+
+option_generics_:
+  
+    {    ( None )}
+| x = generics
+    {    ( Some x )}
+
+option_id_:
+  
+    {    ( None )}
+| x = id
+    {    ( Some x )}
+
+option_initializeur_:
+  
+    {    ( None )}
+| x = initializeur
+    {    ( Some x )}
+
+option_sc_:
+  
+    {    ( None )}
+| x = sc
+    {    ( Some x )}
+
+list_case_clause_:
+  
+    {    ( [] )}
+| x = case_clause xs = list_case_clause_
+    {    ( x :: xs )}
+
+list_class_element_:
+  
+    {    ( [] )}
+| x = class_element xs = list_class_element_
+    {    ( x :: xs )}
+
+list_encaps_:
+  
+    {    ( [] )}
+| x = encaps xs = list_encaps_
+    {    ( x :: xs )}
+
+list_module_item_:
+  
+    {    ( [] )}
+| x = module_item xs = list_module_item_
+    {    ( x :: xs )}
+
+list_type_member_:
+  
+    {    ( [] )}
+| x = type_member xs = list_type_member_
+    {    ( x :: xs )}
+
+list_xhp_attribute_:
+  
+    {    ( [] )}
+| x = xhp_attribute xs = list_xhp_attribute_
+    {    ( x :: xs )}
+
+list_xhp_child_:
+  
+    {    ( [] )}
+| x = xhp_child xs = list_xhp_child_
+    {    ( x :: xs )}
+
+nonempty_list_decorator_:
+  x = decorator
+    {    ( [ x ] )}
+| x = decorator xs = nonempty_list_decorator_
+    {    ( x :: xs )}
+
+nonempty_list_item_:
+  x = item
+    {    ( [ x ] )}
+| x = item xs = nonempty_list_item_
+    {    ( x :: xs )}
+
+nonempty_list_module_item_:
+  x = module_item
+    {    ( [ x ] )}
+| x = module_item xs = nonempty_list_module_item_
+    {    ( x :: xs )}
+
+listc_argument_:
+  _1 = argument
+    {                  ( [_1] )}
+| _1 = listc_argument_ _2 = T_COMMA _3 = argument
+    {                  ( _1 @ [_3] )}
+
+listc_binding_property_:
+  _1 = binding_property
+    {                  ( [_1] )}
+| _1 = listc_binding_property_ _2 = T_COMMA _3 = binding_property
+    {                  ( _1 @ [_3] )}
+
+listc_enum_member_:
+  _1 = enum_member
+    {                  ( [_1] )}
+| _1 = listc_enum_member_ _2 = T_COMMA _3 = enum_member
+    {                  ( _1 @ [_3] )}
+
+listc_import_specifier_:
+  _1 = import_specifier
+    {                  ( [_1] )}
+| _1 = listc_import_specifier_ _2 = T_COMMA _3 = import_specifier
+    {                  ( _1 @ [_3] )}
+
+listc_property_name_and_value_:
+  _1 = property_name_and_value
+    {                  ( [_1] )}
+| _1 = listc_property_name_and_value_ _2 = T_COMMA _3 = property_name_and_value
+    {                  ( _1 @ [_3] )}
+
+listc_type__:
+  _1 = type_
+    {                  ( [_1] )}
+| _1 = listc_type__ _2 = T_COMMA _3 = type_
+    {                  ( _1 @ [_3] )}
+
+listc_type_argument_:
+  _1 = type_argument
+    {                  ( [_1] )}
+| _1 = listc_type_argument_ _2 = T_COMMA _3 = type_argument
+    {                  ( _1 @ [_3] )}
+
+listc_type_parameter_:
+  _1 = type_parameter
+    {                  ( [_1] )}
+| _1 = listc_type_parameter_ _2 = T_COMMA _3 = type_parameter
+    {                  ( _1 @ [_3] )}
+
+listc_type_reference_:
+  _1 = type_reference_aux
+    {let _1 =   ( match _1 with
+    (* TODO: could be TyApply if snd $1 is a Some *)
+    | [id] -> TyName ([id])
+    | ids ->  TyName (ids)
+  ) in
+                  ( [_1] )}
+| _1 = listc_type_reference_ _2 = T_COMMA _1_inlined1 = type_reference_aux
+    {let _3 =
+  let _1 = _1_inlined1 in
+    ( match _1 with
+    (* TODO: could be TyApply if snd $1 is a Some *)
+    | [id] -> TyName ([id])
+    | ids ->  TyName (ids)
+  )
+in
+                  ( _1 @ [_3] )}
+
+listc_variable_decl_:
+  _1 = variable_decl
+    {                  ( [_1] )}
+| _1 = listc_variable_decl_ _2 = T_COMMA _3 = variable_decl
+    {                  ( _1 @ [_3] )}
+
+listc_variable_decl_no_in_:
+  _1 = variable_decl_no_in
+    {                  ( [_1] )}
+| _1 = listc_variable_decl_no_in_ _2 = T_COMMA _3 = variable_decl_no_in
+    {                  ( _1 @ [_3] )}
+
+optl_elision_:
+  
+    {               ( [] )}
+| _1 = elision
+    {               ( _1 )}
+
+optl_implements_clause_:
+  
+    {               ( [] )}
+| _1 = implements_clause
+    {               ( _1 )}
+
+optl_interface_extends_:
+  
+    {               ( [] )}
+| _1 = interface_extends
+    {               ( _1 )}
+
+optl_param_type_list_:
+  
+    {               ( [] )}
+| _1 = param_type_list
+    {               ( _1 )}
+
+optl_stmt_list_:
+  
+    {               ( [] )}
+| _1 = stmt_list
+    {               ( _1 )}
+
+main:
+  _1 = program _2 = EOF
+    {                  ( _1 )}
+
+program:
+  _1 = list_module_item_
+    {                      ( List.flatten _1 )}
+
+module_item_or_eof:
+  _1 = module_item
+    {               ( Some (stmt1 _1) )}
+| _1 = EOF
+    {               ( None )}
+
+module_item:
+  _1 = item
+    {               ( _1 )}
+| _1 = import_decl
+    {               ( _1 |> List.map (fun x -> M x) )}
+| _1 = export_decl
+    {               ( _1 )}
+
+item:
+  _1 = stmt
+    {        ( _1 )}
+| _1 = decl
+    {        ( _1 |> List.map (fun v -> DefStmt v) )}
+
+decl:
+  _1 = function_decl
+    {                  ( [mk_def _1] )}
+| _1 = generator_decl
+    {                  ( [mk_def _1] )}
+| _1 = async_decl
+    {                  ( [mk_def _1] )}
+| _1 = lexical_decl
+    {                  ( vars_to_defs _1 )}
+| _1 = class_decl
+    {                  ( [mk_def _1] )}
+| _1 = interface_decl
+    {                   ( [mk_def _1] )}
+| _1 = type_alias_decl
+    {                   ( [mk_def _1] )}
+| _1 = enum_decl
+    {                   ( [mk_def _1] )}
+
+json:
+  _1 = expr _2 = EOF
+    {               ( _1 )}
+
+json_pattern:
+  _1 = expr _2 = EOF
+    {     ( Expr _1 )}
+| _1 = T_ID _2 = T_COLON _3 = assignment_expr _4 = option_T_COMMA_ _5 = EOF
+    {let _1 =                    ( _1 ) in
+     ( Partial (PartialSingleField (_1, _2, _3)) )}
+| _1 = string_literal _2 = T_COLON _3 = assignment_expr _4 = option_T_COMMA_ _5 = EOF
+    {let _1 =                    ( _1 ) in
+     ( Partial (PartialSingleField (_1, _2, _3)) )}
+
+sgrep_spatch_pattern:
+  _1 = T_LCURLY_SEMGREP _2 = T_RCURLY
+    {                           ( Expr (Obj (_1, [], _2)) )}
+| _1 = T_LCURLY_SEMGREP _2 = listc_property_name_and_value_ _3 = option_T_COMMA_ _4 = T_RCURLY
+    {     ( Expr (Obj (_1, _2, _4)) )}
+| _1 = T_ID _2 = T_LPAREN_METHOD_SEMGREP _3 = formal_parameter_list_opt _4 = T_RPAREN _5 = option_annotation_ _6 = T_LCURLY _7 = function_body _8 = T_RCURLY _9 = EOF
+    {   ( let sig_ = (None, (_2, _3, _4), _5) in
+     let fun_ = mk_Fun (Method, _2) sig_ (_6, _7, _8) in
+     Property (mk_Field (PN _1) (Some fun_))
+   )}
+| _1 = assignment_expr_no_stmt _2 = EOF
+    {                                 ( Expr _1 )}
+| _1 = module_item _2 = EOF
+    {                                 ( fix_sgrep_module_item _1 )}
+| _1 = module_item _2 = nonempty_list_module_item_ _3 = EOF
+    {                                 ( Stmts (List.flatten (_1::_2)) )}
+| _1 = T_FUNCTION _2 = T_DOTS _3 = call_signature _4 = T_LCURLY _5 = function_body _6 = T_RCURLY
+    {   ( match mk_FuncDef [] (Function, _1) _3 (_4, _5, _6) with
+   | FuncDef def -> Partial (PartialFunOrFuncDef (_2, def))
+   | _ -> raise Impossible
+   )}
+| _1 = T_FUNCTION _2 = option_id_ _3 = call_signature _4 = EOF
+    {   ( Partial (PartialDef (mk_def (_2, mk_FuncDef [] (Function,_1) _3 (fb[])))))}
+| _1 = T_CLASS _2 = option_binding_id_ _3 = option_generics_ _4 = class_heritage _5 = EOF
+    {   ( Partial (PartialDef (mk_def (_2, mk_ClassDef _1 _3 _4 (fb [])))) )}
+| _1 = T_IF _2 = T_LPAREN _3 = expr _4 = T_RPAREN _5 = EOF
+    {   ( Partial (PartialIf (_1, _3)) )}
+| _1 = T_TRY _2 = block _3 = EOF
+    {   ( Partial (PartialTry (_1, _2)) )}
+| _1 = catch _2 = EOF
+    {   ( Partial (PartialCatch _1) )}
+| _1 = finally _2 = EOF
+    {   ( Partial (PartialFinally _1) )}
+| _1 = T_ID _2 = T_COLON _3 = assignment_expr _4 = option_T_COMMA_ _5 = EOF
+    {let _1 =                    ( _1 ) in
+     ( Partial (PartialSingleField (_1, _2, _3)) )}
+| _1 = string_literal _2 = T_COLON _3 = assignment_expr _4 = option_T_COMMA_ _5 = EOF
+    {let _1 =                    ( _1 ) in
+     ( Partial (PartialSingleField (_1, _2, _3)) )}
+
+import_decl:
+  _1 = T_IMPORT _2 = import_clause _3 = from_clause _4 = sc
+    {    ( let f = _2 in let (_t, path) = _3 in f _1 path )}
+| _1 = T_IMPORT _2 = module_specifier _3 = sc
+    {    ( [ImportFile (_1, _2)] )}
+
+import_clause:
+  _1 = import_default
+    {                                      ( _1 )}
+| _1 = import_default _2 = T_COMMA _3 = import_names
+    {    ( (fun t path -> _1 t path @ _3 t path) )}
+| _1 = import_names
+    {                                      ( _1 )}
+
+import_default:
+  _1 = binding_id
+    {  ( (fun t path -> [Import (t, (default_entity, snd _1), Some _1, path)]) )}
+
+import_names:
+  _1 = T_MULT _2 = T_AS _3 = binding_id
+    {     ( (fun t path -> [ModuleAlias (t, _3, path)]) )}
+| _1 = named_imports
+    {     ( (fun t path -> _1 |> List.map (fun (n1, n2opt) ->
+          Import (t, n1, n2opt, path)))
+     )}
+| _1 = T_TYPE _2 = named_imports
+    {     ( (fun _t _path -> [] (* TODO *)) )}
+
+named_imports:
+  _1 = T_LCURLY _2 = T_RCURLY
+    {                                       ( [] )}
+| _1 = T_LCURLY _2 = listc_import_specifier_ _3 = T_RCURLY
+    {                                       ( _2 )}
+| _1 = T_LCURLY _2 = listc_import_specifier_ _3 = T_COMMA _4 = T_RCURLY
+    {                                       ( _2 )}
+
+from_clause:
+  _1 = T_FROM _2 = module_specifier
+    {                                     ( (_1, _2) )}
+
+import_specifier:
+  _1 = binding_id
+    {                              ( _1, None )}
+| _1 = id _2 = T_AS _3 = binding_id
+    {                              ( _1, Some (_3) )}
+| _1 = T_DEFAULT _2 = T_AS _3 = binding_id
+    {                              ( ("default",_1), Some (_3) )}
+| _1 = T_DEFAULT
+    {                              ( ("default",_1), None )}
+
+module_specifier:
+  _1 = string_literal
+    {                   ( _1 )}
+| _1 = T_ID
+    {         ( Flag_parsing.sgrep_guard (_1) )}
+
+export_decl:
+  _1 = T_EXPORT _2 = export_names
+    {                               ( _2 _1 )}
+| _1 = T_EXPORT _2 = variable_stmt
+    {    ( vars_to_stmts _2 (*$1, ExportDecl (St $2)*) )}
+| _1 = T_EXPORT _2 = decl
+    {    ( _2 |> List.map (fun v -> DefStmt v) (*$1, ExportDecl $2*) )}
+| _1 = T_EXPORT _2 = T_DEFAULT _3 = decl
+    {    ( _3 |> List.map (fun v -> DefStmt v) (* $1, ExportDefaultDecl ($2, $3) *) )}
+| _1 = T_EXPORT _2 = T_DEFAULT _3 = assignment_expr_no_stmt _4 = sc
+    {    ( [] (* $1, ExportDefaultExpr ($2, $3, $4) *)  )}
+| _1 = T_EXPORT _2 = T_DEFAULT _3 = object_literal _4 = sc
+    {    ( [] (* $1, ExportDefaultExpr ($2, Object $3, $4) *)  )}
+
+export_names:
+  _1 = T_MULT _2 = from_clause _3 = sc
+    {    ( (fun t -> [M (ReExportNamespace (t, _1, fst _2, snd _2))]) )}
+| _1 = export_clause _2 = from_clause _3 = sc
+    {    ( (fun _t -> []) (*TODO ReExportNames ($1, $2, $3)*) )}
+| _1 = export_clause _2 = sc
+    {    ( (fun _t -> []) (*TODO ExportNames ($1, $2)*) )}
+
+export_clause:
+  _1 = T_LCURLY _2 = T_RCURLY
+    {                                        ( (_1, [], _2) )}
+| _1 = T_LCURLY _2 = listc_import_specifier_ _3 = T_RCURLY
+    {                                        ( (_1, _2, _3) )}
+| _1 = T_LCURLY _2 = listc_import_specifier_ _3 = T_COMMA _4 = T_RCURLY
+    {                                        ( (_1, _2, _4) )}
+
+variable_stmt:
+  _1 = T_VAR _2 = listc_variable_decl_ _3 = sc
+    {                                             ( build_vars  (Var, _1) _2 )}
+
+lexical_decl:
+  _1 = T_CONST _2 = listc_variable_decl_ _3 = sc
+    {                                   ( build_vars (Const, _1) _2 )}
+| _1 = T_LET _2 = listc_variable_decl_ _3 = sc
+    {                                   ( build_vars (Let, _1) _2 )}
+
+variable_decl:
+  _1 = id _2 = option_annotation_ _3 = option_initializeur_
+    {                                              ( Left _1, _2, sndopt _3 )}
+| _1 = binding_pattern _2 = option_annotation_ _3 = initializeur
+    {                                              ( Right _1, _2, Some (snd _3) )}
+
+initializeur:
+  _1 = T_ASSIGN _2 = assignment_expr
+    {                                  ( _1, _2 )}
+
+for_variable_decl:
+  _1 = T_VAR _2 = listc_variable_decl_no_in_
+    {                                      ( build_vars (Var, _1) _2 )}
+| _1 = T_CONST _2 = listc_variable_decl_no_in_
+    {                                      ( build_vars (Const, _1) _2 )}
+| _1 = T_LET _2 = listc_variable_decl_no_in_
+    {                                      ( build_vars (Let, _1) _2 )}
+
+variable_decl_no_in:
+  _1 = id _2 = initializer_no_in
+    {                                        ( Left _1, None, Some _2 )}
+| _1 = id
+    {                                        ( Left _1, None, None )}
+| _1 = binding_pattern _2 = initializer_no_in
+    {                                        ( Right _1, None, Some _2 )}
+
+for_single_variable_decl:
+  _1 = T_VAR _2 = for_binding
+    {                       ( build_var (Var, _1) _2 )}
+| _1 = T_CONST _2 = for_binding
+    {                       ( build_var (Const, _1) _2 )}
+| _1 = T_LET _2 = for_binding
+    {                       ( build_var (Let, _1) _2 )}
+
+for_binding:
+  _1 = id _2 = option_annotation_
+    {                     ( Left _1,  _2,   None )}
+| _1 = binding_pattern
+    {                     ( Right _1, None, None )}
+
+binding_pattern:
+  _1 = object_binding_pattern
+    {                          ( _1 )}
+| _1 = array_binding_pattern
+    {                          ( _1 )}
+
+object_binding_pattern:
+  _1 = T_LCURLY _2 = T_RCURLY
+    {                                         ( Obj (_1, [], _2)  )}
+| _1 = T_LCURLY _2 = listc_binding_property_ _3 = option_T_COMMA_ _4 = T_RCURLY
+    {                                         ( Obj (_1, _2, _4) )}
+
+binding_property:
+  _1 = binding_id _2 = option_initializeur_
+    {    ( match _2 with
+      (* { x } shorthand for { x: x }, like in OCaml *)
+      | None -> mk_FieldColon (PN _1) (Some (Id _1))
+      | Some (_, e) -> mk_FieldColon (PN _1) (Some e)
+    )}
+| _1 = property_name _2 = T_COLON _3 = binding_element
+    {                                     ( mk_FieldColon _1 (Some _3) )}
+| _1 = T_DOTS _2 = binding_id
+    {                         ( FieldSpread (_1, Id _2) )}
+| _1 = T_DOTS _2 = binding_pattern
+    {                         ( FieldSpread (_1, _2) )}
+
+binding_element:
+  _1 = binding_id _2 = option_initializeur_
+    {                                    ( mk_pattern (Id _1) _2 )}
+| _1 = binding_pattern _2 = option_initializeur_
+    {                                    ( mk_pattern (_1)       _2 )}
+
+array_binding_pattern:
+  _1 = T_LBRACKET _2 = T_RBRACKET
+    {                                ( Arr (_1, [], _2) )}
+| _1 = T_LBRACKET _2 = binding_element_list _3 = T_RBRACKET
+    {                                ( Arr (_1, _2, _3) )}
+
+binding_start_element:
+  _1 = T_COMMA
+    {                        ( [] (* TODO elision *) )}
+| _1 = binding_element _2 = T_COMMA
+    {                        ( [_1] )}
+
+binding_start_list:
+  _1 = binding_start_element
+    {                                             ( _1 )}
+| _1 = binding_start_list _2 = binding_start_element
+    {                                             ( _1 @ _2 )}
+
+binding_element_list:
+  _1 = binding_start_list
+    {                                              ( _1 )}
+| _1 = binding_elision_element
+    {                                              ( [_1] )}
+| _1 = binding_start_list _2 = binding_elision_element
+    {                                              ( _1 @ [_2] )}
+
+binding_elision_element:
+  _1 = binding_element
+    {                          ( _1 )}
+| _1 = T_DOTS _2 = binding_id
+    {                          ( special Spread _1 [Id _2] )}
+| _1 = T_DOTS _2 = binding_pattern
+    {                          ( special Spread _1 [_2] )}
+
+function_decl:
+  _1 = T_FUNCTION _2 = option_id_ _3 = call_signature _4 = T_LCURLY _5 = function_body _6 = T_RCURLY
+    {   ( _2, mk_FuncDef [] (Function, _1) _3 (_4, _5, _6) )}
+
+function_expr:
+  _1 = T_FUNCTION _2 = option_id_ _3 = call_signature _4 = T_LCURLY _5 = function_body _6 = T_RCURLY
+    {   ( mk_Fun ~id:_2 (LambdaKind, _1) _3 (_4, _5, _6) )}
+
+call_signature:
+  _1 = option_generics_ _2 = T_LPAREN _3 = formal_parameter_list_opt _4 = T_RPAREN _5 = option_annotation_
+    {  ( _1, (_2, _3, _4), _5 )}
+
+function_body:
+  _1 = optl_stmt_list_
+    {                               ( _1 )}
+
+formal_parameter_list_opt:
+  
+    {                               ( [] )}
+| _1 = formal_parameter_list _2 = option_T_COMMA_
+    {                               ( List.rev _1 )}
+
+formal_parameter_list:
+  _1 = formal_parameter_list _2 = T_COMMA _3 = formal_parameter
+    {                                              ( _3::_1 )}
+| _1 = formal_parameter
+    {                                              ( [_1] )}
+
+formal_parameter:
+  _1 = id
+    {                     ( ParamClassic (mk_param _1) )}
+| _1 = id _2 = initializeur
+    {                     ( ParamClassic { (mk_param _1) with p_default = Some (snd _2)} )}
+| _1 = binding_pattern _2 = option_annotation_ _3 = option_initializeur_
+    {    ( ParamPattern (mk_pattern _1 _3) (* annotation? *) )}
+| _1 = T_DOTS _2 = id
+    {                     ( ParamClassic { (mk_param _2) with p_dots = Some _1; } )}
+| _1 = id _2 = annotation
+    {                     ( ParamClassic { (mk_param _1) with p_type = Some _2; } )}
+| _1 = id _2 = T_PLING
+    {                     ( ParamClassic (mk_param _1) )}
+| _1 = id _2 = T_PLING _3 = annotation
+    {                     ( ParamClassic { (mk_param _1) with p_type = Some _3 } )}
+| _1 = id _2 = annotation _3 = initializeur
+    {     ( ParamClassic { (mk_param _1) with p_type = Some _2; p_default=Some (snd _3)})}
+| _1 = T_DOTS _2 = id _3 = annotation
+    {    ( ParamClassic { (mk_param _2) with p_dots = Some _1; p_type = Some _3;} )}
+| _1 = T_DOTS
+    {                      ( Flag_parsing.sgrep_guard (ParamEllipsis _1) )}
+
+generator_decl:
+  _1 = T_FUNCTION _2 = T_MULT _3 = id _4 = call_signature _5 = T_LCURLY _6 = function_body _7 = T_RCURLY
+    {   ( Some _3, mk_FuncDef [Generator, _2] (Function, _1) _4 (_5, _6, _7) )}
+
+generator_expr:
+  _1 = T_FUNCTION _2 = T_MULT _3 = option_id_ _4 = call_signature _5 = T_LCURLY _6 = function_body _7 = T_RCURLY
+    {   ( mk_Fun ~id:_3 ~props:[Generator, _2] (LambdaKind, _1) _4 (_5, _6, _7) )}
+
+async_decl:
+  _1 = T_ASYNC _2 = T_FUNCTION _3 = id _4 = call_signature _5 = T_LCURLY _6 = function_body _7 = T_RCURLY
+    {   ( Some _3, mk_FuncDef [Async, _1] (Function, _2) _4 (_5, _6, _7) )}
+
+async_function_expr:
+  _1 = T_ASYNC _2 = T_FUNCTION _3 = option_id_ _4 = call_signature _5 = T_LCURLY _6 = function_body _7 = T_RCURLY
+    {   ( mk_Fun ~id:_3 ~props:[Async, _1] (LambdaKind, _2) _4 (_5, _6, _7) )}
+
+class_decl:
+  _2 = T_CLASS _3 = option_binding_id_ _4 = option_generics_ _5 = class_heritage _6 = class_body
+    {let _1 =                ( [] ) in
+   ( _3, mk_ClassDef ~attrs:_1 _2 _4 _5 _6 )}
+| _1 = nonempty_list_decorator_ _2 = T_CLASS _3 = option_binding_id_ _4 = option_generics_ _5 = class_heritage _6 = class_body
+    {let _1 =                 ( _1 ) in
+   ( _3, mk_ClassDef ~attrs:_1 _2 _4 _5 _6 )}
+
+class_body:
+  _1 = T_LCURLY _2 = list_class_element_ _3 = T_RCURLY
+    {                                   ( (_1, List.flatten _2, _3) )}
+
+class_heritage:
+  _1 = option_extends_clause_ _2 = optl_implements_clause_
+    {  ( Common.opt_to_list _1, _2 )}
+
+extends_clause:
+  _1 = T_EXTENDS _2 = type_or_expr
+    {                                       ( _2 )}
+
+implements_clause:
+  _1 = T_IMPLEMENTS _2 = listc_type__
+    {                                             ( _2 )}
+
+binding_id:
+  _1 = id
+    {               ( _1 )}
+
+class_expr:
+  _1 = T_CLASS _2 = option_binding_id_ _3 = option_generics_ _4 = class_heritage _5 = class_body
+    {   ( mk_Class _1 _2 _3 _4 _5 )}
+
+class_element:
+  _1 = method_definition
+    {                                       ( [_1] )}
+| _1 = access_modifiers _2 = method_definition
+    {                                       ( [add_modifiers _1 _2] )}
+| _1 = property_name _2 = option_annotation_ _3 = option_initializeur_ _4 = sc
+    {    ( [mk_Field _1 ~fld_type:_2 (sndopt _3)] )}
+| _1 = access_modifiers _2 = property_name _3 = option_annotation_ _4 = option_initializeur_ _5 = sc
+    {    ( [mk_Field ~props:_1 _2 ~fld_type:_3 (sndopt _4)] )}
+| _1 = sc
+    {         ( [] )}
+| _1 = T_DOTS
+    {         ( Flag_parsing.sgrep_guard ([FieldEllipsis _1]) )}
+
+access_modifiers:
+  _1 = access_modifier
+    {                                    ( [_1] )}
+| _1 = access_modifiers _2 = access_modifier
+    {                                    ( _1 @ [_2] )}
+
+access_modifier:
+  _1 = T_STATIC
+    {               ( Static, _1 )}
+| _1 = T_PUBLIC
+    {               ( Public, _1 )}
+| _1 = T_PRIVATE
+    {               ( Private, _1 )}
+| _1 = T_PROTECTED
+    {               ( Protected, _1 )}
+| _1 = T_READONLY
+    {               ( Readonly, _1 )}
+
+method_definition:
+  _4 = property_name _5 = call_signature _6 = T_LCURLY _7 = function_body _8 = T_RCURLY
+    {let _3 =     ( None ) in
+let _2 =     ( None ) in
+let _1 =                ( [] ) in
+    ( let attrs =
+        _1 @
+        (match _2 with None -> [] | Some t -> [KeywordAttr (Async, t)]) @
+        (match _3 with None -> [] | Some x -> [KeywordAttr x])
+      in
+      mk_Field _4 (Some (mk_Fun ~attrs (Method, _6) _5 (_6, _7, _8))) )}
+| x = method_get_set_star _4 = property_name _5 = call_signature _6 = T_LCURLY _7 = function_body _8 = T_RCURLY
+    {let _3 =     ( Some x ) in
+let _2 =     ( None ) in
+let _1 =                ( [] ) in
+    ( let attrs =
+        _1 @
+        (match _2 with None -> [] | Some t -> [KeywordAttr (Async, t)]) @
+        (match _3 with None -> [] | Some x -> [KeywordAttr x])
+      in
+      mk_Field _4 (Some (mk_Fun ~attrs (Method, _6) _5 (_6, _7, _8))) )}
+| x = T_ASYNC _4 = property_name _5 = call_signature _6 = T_LCURLY _7 = function_body _8 = T_RCURLY
+    {let _3 =     ( None ) in
+let _2 =     ( Some x ) in
+let _1 =                ( [] ) in
+    ( let attrs =
+        _1 @
+        (match _2 with None -> [] | Some t -> [KeywordAttr (Async, t)]) @
+        (match _3 with None -> [] | Some x -> [KeywordAttr x])
+      in
+      mk_Field _4 (Some (mk_Fun ~attrs (Method, _6) _5 (_6, _7, _8))) )}
+| x = T_ASYNC x_inlined1 = method_get_set_star _4 = property_name _5 = call_signature _6 = T_LCURLY _7 = function_body _8 = T_RCURLY
+    {let _3 =
+  let x = x_inlined1 in
+      ( Some x )
+in
+let _2 =     ( Some x ) in
+let _1 =                ( [] ) in
+    ( let attrs =
+        _1 @
+        (match _2 with None -> [] | Some t -> [KeywordAttr (Async, t)]) @
+        (match _3 with None -> [] | Some x -> [KeywordAttr x])
+      in
+      mk_Field _4 (Some (mk_Fun ~attrs (Method, _6) _5 (_6, _7, _8))) )}
+| _1 = nonempty_list_decorator_ _4 = property_name _5 = call_signature _6 = T_LCURLY _7 = function_body _8 = T_RCURLY
+    {let _3 =     ( None ) in
+let _2 =     ( None ) in
+let _1 =                 ( _1 ) in
+    ( let attrs =
+        _1 @
+        (match _2 with None -> [] | Some t -> [KeywordAttr (Async, t)]) @
+        (match _3 with None -> [] | Some x -> [KeywordAttr x])
+      in
+      mk_Field _4 (Some (mk_Fun ~attrs (Method, _6) _5 (_6, _7, _8))) )}
+| _1 = nonempty_list_decorator_ x = method_get_set_star _4 = property_name _5 = call_signature _6 = T_LCURLY _7 = function_body _8 = T_RCURLY
+    {let _3 =     ( Some x ) in
+let _2 =     ( None ) in
+let _1 =                 ( _1 ) in
+    ( let attrs =
+        _1 @
+        (match _2 with None -> [] | Some t -> [KeywordAttr (Async, t)]) @
+        (match _3 with None -> [] | Some x -> [KeywordAttr x])
+      in
+      mk_Field _4 (Some (mk_Fun ~attrs (Method, _6) _5 (_6, _7, _8))) )}
+| _1 = nonempty_list_decorator_ x = T_ASYNC _4 = property_name _5 = call_signature _6 = T_LCURLY _7 = function_body _8 = T_RCURLY
+    {let _3 =     ( None ) in
+let _2 =     ( Some x ) in
+let _1 =                 ( _1 ) in
+    ( let attrs =
+        _1 @
+        (match _2 with None -> [] | Some t -> [KeywordAttr (Async, t)]) @
+        (match _3 with None -> [] | Some x -> [KeywordAttr x])
+      in
+      mk_Field _4 (Some (mk_Fun ~attrs (Method, _6) _5 (_6, _7, _8))) )}
+| _1 = nonempty_list_decorator_ x = T_ASYNC x_inlined1 = method_get_set_star _4 = property_name _5 = call_signature _6 = T_LCURLY _7 = function_body _8 = T_RCURLY
+    {let _3 =
+  let x = x_inlined1 in
+      ( Some x )
+in
+let _2 =     ( Some x ) in
+let _1 =                 ( _1 ) in
+    ( let attrs =
+        _1 @
+        (match _2 with None -> [] | Some t -> [KeywordAttr (Async, t)]) @
+        (match _3 with None -> [] | Some x -> [KeywordAttr x])
+      in
+      mk_Field _4 (Some (mk_Fun ~attrs (Method, _6) _5 (_6, _7, _8))) )}
+
+method_get_set_star:
+  _1 = T_MULT
+    {          ( Generator, _1 )}
+| _1 = T_GET
+    {          ( Get, _1 )}
+| _1 = T_SET
+    {          ( Set, _1 )}
+
+interface_decl:
+  _1 = T_INTERFACE _2 = binding_id _3 = option_generics_ _4 = optl_interface_extends_ _5 = object_type
+    {   ( let (t1, _xsTODO, t2) = _5 in
+      Some _2, ClassDef { c_kind = H.Interface, _1;
+      c_extends = _4; c_implements = []; c_attrs = [];
+      c_body = (t1, [], t2) } )}
+
+interface_extends:
+  _1 = T_EXTENDS _2 = listc_type_reference_
+    {  ( _2 |> List.map (fun t -> Right t) )}
+
+type_alias_decl:
+  _1 = T_TYPE _2 = id _3 = T_ASSIGN _4 = type_ _5 = sc
+    {  ( Some _2, DefTodo (("typedef", _1), [Type _4; Tk _5]) )}
+
+enum_decl:
+  _1 = option_T_CONST_ _2 = T_ENUM _3 = id _4 = T_LCURLY _5 = listc_enum_member_ _6 = option_T_COMMA_ _7 = T_RCURLY
+    {  ( Some _3, DefTodo (("enum", _2), [Stmt (Block (_4, [], _7))]) )}
+
+enum_member:
+  _1 = property_name
+    {                 ( )}
+| _1 = property_name _2 = T_ASSIGN _3 = assignment_expr_no_stmt
+    {                                             ( )}
+
+decorator_name:
+  _1 = T_ID
+    {        ( [_1] )}
+| _1 = decorator_name _2 = T_PERIOD _3 = T_ID
+    {                           ( _1 @ [_3] )}
+
+decorator:
+  _1 = T_AT _2 = decorator_name _3 = option_arguments_
+    {                                          ( NamedAttr (_1, _2, _3) )}
+
+annotation:
+  _1 = T_COLON _2 = type_
+    {                      ( _2 )}
+
+complex_annotation:
+  _1 = annotation
+    {              ( _1 )}
+| _1 = option_generics_ _2 = T_LPAREN _3 = optl_param_type_list_ _4 = T_RPAREN _5 = T_COLON _6 = type_
+    {     ( _6 (* TODO *) )}
+
+type_:
+  _1 = primary_or_union_type
+    {                         ( _1 )}
+| _1 = T_PLING _2 = type_
+    {                         ( TyQuestion (_1, _2) )}
+| _1 = T_LPAREN_ARROW _2 = optl_param_type_list_ _3 = T_RPAREN _4 = T_ARROW _5 = type_
+    {   ( _5 (* TODO *) )}
+
+primary_or_union_type:
+  _1 = primary_or_intersect_type
+    {                             ( _1 )}
+| _1 = union_type
+    {              ( _1 )}
+
+primary_or_intersect_type:
+  _1 = primary_type
+    {                ( _1 )}
+| _1 = intersect_type
+    {                  ( _1 )}
+
+primary_type:
+  _1 = primary_type2
+    {                        ( _1 )}
+| _1 = primary_type _2 = T_LBRACKET _3 = T_RBRACKET
+    {                        ( TyArray (_1, (_2, (), _3)) )}
+
+primary_type2:
+  _1 = predefined_type
+    {                        ( TyName ([_1]) )}
+| _1 = type_reference_aux
+    {let _1 =   ( match _1 with
+    (* TODO: could be TyApply if snd $1 is a Some *)
+    | [id] -> TyName ([id])
+    | ids ->  TyName (ids)
+  ) in
+                        ( _1 )}
+| _1 = object_type
+    {    ( let (t1, _xsTODO, t2) = _1 in
+      TyRecordAnon ((t1, (), t2)) )}
+| _1 = T_LBRACKET _2 = listc_type__ _3 = T_RBRACKET
+    {                        ( let members = List.map (fun x -> TyTupMember x) _2 in
+                          TyTuple (_1, members, _3) )}
+| _1 = T_STRING
+    {     ( TyLiteral (String _1)
+       (* G.OtherType (G.OT_Todo, [G.TodoK ("LitType", snd $1);
+                                G.E (G.L (G.String $1))]) *)  )}
+
+predefined_type:
+  _1 = T_ANY_TYPE
+    {                   ( "any", _1 )}
+| _1 = T_NUMBER_TYPE
+    {                   ( "number", _1 )}
+| _1 = T_BOOLEAN_TYPE
+    {                   ( "boolean", _1 )}
+| _1 = T_STRING_TYPE
+    {                   ( "string", _1 )}
+| _1 = T_VOID
+    {                   ( "void", _1 )}
+| _1 = T_NULL
+    {                   ( "null", _1 )}
+
+type_reference_aux:
+  _1 = type_name
+    {             ( _1 )}
+| _1 = type_name _2 = type_arguments
+    {                            ( _1 (* TODO type_arguments *) )}
+
+type_name:
+  _1 = T_ID
+    {        ( [_1] )}
+| _1 = module_name _2 = T_PERIOD _3 = T_ID
+    {                        ( _1 @ [_3] )}
+
+module_name:
+  _1 = T_ID
+    {        ( [_1] )}
+| _1 = module_name _2 = T_PERIOD _3 = T_ID
+    {                        ( _1 @ [_3] )}
+
+union_type:
+  _1 = primary_or_union_type _2 = T_BIT_OR _3 = primary_type
+    {    ( TyOr (_1, _2, _3) )}
+
+intersect_type:
+  _1 = primary_or_intersect_type _2 = T_BIT_AND _3 = primary_type
+    {    ( TyAnd (_1, _2, _3) )}
+
+object_type:
+  _1 = T_LCURLY _2 = list_type_member_ _3 = T_RCURLY
+    {    ( (_1, _2, _3) )}
+
+type_member:
+  _1 = property_name_typescript _2 = complex_annotation _3 = sc_or_comma
+    {    ( { fld_name = _1; fld_attrs = []; fld_type = Some _2; fld_body = None } )}
+| _1 = property_name_typescript _2 = T_PLING _3 = complex_annotation _4 = sc_or_comma
+    {    ( { fld_name = _1; fld_attrs = [attr (Optional, _2)]; fld_type = Some _3;
+        fld_body = None } )}
+| _1 = T_LBRACKET _2 = T_ID _3 = T_COLON _4 = T_STRING_TYPE _5 = T_RBRACKET _6 = complex_annotation _7 = sc_or_comma
+    {    ( let fld_name = PN ("IndexMethod??TODO?", _1) in
+      { fld_name; fld_attrs = []; fld_type = Some _6; fld_body = None}
+    )}
+| _1 = T_LBRACKET _2 = T_ID _3 = T_COLON _4 = T_NUMBER_TYPE _5 = T_RBRACKET _6 = complex_annotation _7 = sc_or_comma
+    {    ( let fld_name = PN ("IndexMethod??TODO?", _1) in
+      { fld_name; fld_attrs = []; fld_type = Some _6; fld_body = None}
+    )}
+
+property_name_typescript:
+  _1 = id
+    {         ( PN _1 )}
+| _1 = string_literal
+    {                   ( PN _1 )}
+| _1 = numeric_literal_as_string
+    {                             ( PN _1 )}
+| _1 = ident_keyword
+    {                   ( PN _1 )}
+
+param_type_list:
+  _1 = param_type _2 = T_COMMA _3 = param_type_list
+    {                                      ( _1::_3 )}
+| _1 = param_type
+    {                                      ( [_1] )}
+| _1 = optional_param_type_list
+    {                                      ( _1 )}
+
+param_type:
+  _1 = id _2 = complex_annotation
+    {                                  ( () (* TODO *) )}
+
+optional_param_type:
+  _1 = id _2 = T_PLING _3 = complex_annotation
+    {                                               ( () )}
+
+optional_param_type_list:
+  _1 = optional_param_type _2 = T_COMMA _3 = optional_param_type_list
+    {                                                    ( _1::_3 )}
+| _1 = optional_param_type
+    {                             ( [_1] )}
+| _1 = rest_param_type
+    {                             ( [_1] )}
+
+rest_param_type:
+  _1 = T_DOTS _2 = id _3 = complex_annotation
+    {                                             ( () (* TODO *) )}
+
+generics:
+  _1 = T_LESS_THAN _2 = listc_type_parameter_ _3 = T_GREATER_THAN
+    {                                                           ( () )}
+
+type_parameter:
+  _1 = T_ID
+    {                     ( _1 )}
+
+type_arguments:
+  _1 = T_LESS_THAN _2 = listc_type_argument_ _3 = T_GREATER_THAN
+    {                                                   (  )}
+| _1 = mismatched_type_arguments
+    {                             ( )}
+
+type_argument:
+  _1 = type_
+    {                     ( _1 )}
+
+mismatched_type_arguments:
+  _1 = T_LESS_THAN _2 = type_argument_list1 _3 = T_RSHIFT
+    {                                             ( _1, _2, _3 )}
+| _1 = T_LESS_THAN _2 = type_argument_list2 _3 = T_RSHIFT3
+    {                                             ( _1, _2, _3 )}
+
+type_argument_list1:
+  _1 = nominal_type1
+    {                                              (  )}
+| _1 = listc_type_argument_ _2 = T_COMMA _3 = nominal_type1
+    {                                              ( )}
+
+nominal_type1:
+  _1 = type_name _2 = type_arguments1
+    {                                         ( _1 )}
+
+type_arguments1:
+  _1 = T_LESS_THAN _2 = listc_type_argument_
+    {                                                     ( (*$1, $2, G.fake ">"*) )}
+
+type_argument_list2:
+  _1 = nominal_type2
+    {                                            ( )}
+| _1 = listc_type_argument_ _2 = T_COMMA _3 = nominal_type2
+    {                                            ( )}
+
+nominal_type2:
+  _1 = type_name _2 = type_arguments2
+    {                                         ( )}
+
+type_arguments2:
+  _1 = T_LESS_THAN _2 = type_argument_list1
+    {                                                    ( (*$1, $2, G.fake ">"*) )}
+
+type_or_expr:
+  _1 = type_reference_aux
+    {let _1 =   ( match _1 with
+    (* TODO: could be TyApply if snd $1 is a Some *)
+    | [id] -> TyName ([id])
+    | ids ->  TyName (ids)
+  ) in
+    ( match _1 with
+     (* TODO: generate a Left expr? of simple id? or a ObjAccess? *)
+     | t -> Right t
+    )}
+
+stmt:
+  _1 = block
+    {                   ( [_1] )}
+| _1 = variable_stmt
+    {                   ( vars_to_stmts _1 )}
+| _1 = empty_stmt
+    {                   ( [_1] )}
+| _1 = expr_stmt
+    {                   ( [_1] )}
+| _1 = if_stmt
+    {                   ( [_1] )}
+| _1 = iteration_stmt
+    {                   ( [_1] )}
+| _1 = continue_stmt
+    {                   ( [_1] )}
+| _1 = break_stmt
+    {                   ( [_1] )}
+| _1 = return_stmt
+    {                   ( [_1] )}
+| _1 = with_stmt
+    {                   ( [_1] )}
+| _1 = labelled_stmt
+    {                   ( [_1] )}
+| _1 = switch_stmt
+    {                   ( [_1] )}
+| _1 = throw_stmt
+    {                   ( [_1] )}
+| _1 = try_stmt
+    {                   ( [_1] )}
+| _1 = T_DOTS
+    {         ( [ExprStmt (Ellipsis _1, PI.sc)] )}
+
+block:
+  _1 = T_LCURLY _2 = optl_stmt_list_ _3 = T_RCURLY
+    {                               ( Block (_1, _2, _3) )}
+
+stmt_list:
+  _1 = nonempty_list_item_
+    {                 ( List.flatten _1 )}
+
+empty_stmt:
+  _1 = sc
+    {               ( Block (_1, [], _1) )}
+
+expr_stmt:
+  _1 = expr_no_stmt _2 = sc
+    {                           ( ExprStmt (_1, _2) )}
+
+if_stmt:
+  _1 = T_IF _2 = T_LPAREN _3 = expr _4 = T_RPAREN _1_inlined1 = stmt _6 = T_ELSE _1_inlined2 = stmt
+    {let _7 =
+  let _1 = _1_inlined2 in
+              ( stmt1 _1 )
+in
+let _5 =
+  let _1 = _1_inlined1 in
+              ( stmt1 _1 )
+in
+                                        ( If (_1, (_3), _5,Some(_7)) )}
+| _1 = T_IF _2 = T_LPAREN _3 = expr _4 = T_RPAREN _1_inlined1 = stmt %prec p_IF
+    {let _5 =
+  let _1 = _1_inlined1 in
+              ( stmt1 _1 )
+in
+                                        ( If (_1, (_3), _5, None) )}
+
+iteration_stmt:
+  _1 = T_DO _1_inlined1 = stmt _3 = T_WHILE _4 = T_LPAREN _5 = expr _6 = T_RPAREN _7 = sc
+    {let _2 =
+  let _1 = _1_inlined1 in
+              ( stmt1 _1 )
+in
+                                        ( Do (_1, _2, (_5)) )}
+| _1 = T_WHILE _2 = T_LPAREN _3 = expr _4 = T_RPAREN _1_inlined1 = stmt
+    {let _5 =
+  let _1 = _1_inlined1 in
+              ( stmt1 _1 )
+in
+                                        ( While (_1, (_3), _5) )}
+| _1 = T_FOR _2 = T_LPAREN _3 = option_expr_no_in_ _4 = T_SEMICOLON _5 = option_expr_ _6 = T_SEMICOLON _7 = option_expr_ _8 = T_RPAREN _1_inlined1 = stmt
+    {let _9 =
+  let _1 = _1_inlined1 in
+              ( stmt1 _1 )
+in
+     ( let x = match _3 with None -> Left [] | Some e -> Right e in
+       For (_1, ForClassic (x, _5, _7), _9) )}
+| _1 = T_FOR _2 = T_LPAREN _3 = for_variable_decl _4 = T_SEMICOLON _5 = option_expr_ _6 = T_SEMICOLON _7 = option_expr_ _8 = T_RPAREN _1_inlined1 = stmt
+    {let _9 =
+  let _1 = _1_inlined1 in
+              ( stmt1 _1 )
+in
+     ( For (_1, ForClassic (Left _3, _5, _7), _9) )}
+| _1 = T_FOR _2 = T_LPAREN _3 = left_hand_side_expr _4 = T_IN _5 = expr _6 = T_RPAREN _1_inlined1 = stmt
+    {let _7 =
+  let _1 = _1_inlined1 in
+              ( stmt1 _1 )
+in
+     ( For (_1, ForIn (Right _3, _4, _5), _7) )}
+| _1 = T_FOR _2 = T_LPAREN _3 = for_single_variable_decl _4 = T_IN _5 = expr _6 = T_RPAREN _1_inlined1 = stmt
+    {let _7 =
+  let _1 = _1_inlined1 in
+              ( stmt1 _1 )
+in
+     ( For (_1, ForIn (Left _3, _4, _5), _7) )}
+| _1 = T_FOR _2 = T_LPAREN _3 = left_hand_side_expr _4 = T_OF _5 = assignment_expr _6 = T_RPAREN _1_inlined1 = stmt
+    {let _7 =
+  let _1 = _1_inlined1 in
+              ( stmt1 _1 )
+in
+     ( For (_1, ForOf (Right _3, _4, _5), _7) )}
+| _1 = T_FOR _2 = T_LPAREN _3 = for_single_variable_decl _4 = T_OF _5 = assignment_expr _6 = T_RPAREN _1_inlined1 = stmt
+    {let _7 =
+  let _1 = _1_inlined1 in
+              ( stmt1 _1 )
+in
+     ( For (_1, ForOf (Left _3, _4, _5), _7) )}
+| _1 = T_FOR _2 = T_LPAREN _3 = T_DOTS _4 = T_RPAREN _1_inlined1 = stmt
+    {let _5 =
+  let _1 = _1_inlined1 in
+              ( stmt1 _1 )
+in
+     ( Flag_parsing.sgrep_guard (For (_1, ForEllipsis _3, _5)) )}
+
+initializer_no_in:
+  _1 = T_ASSIGN _2 = assignment_expr_no_in
+    {                                             ( _2 )}
+
+continue_stmt:
+  _1 = T_CONTINUE _2 = option_id_ _3 = sc
+    {                                 ( Continue (_1, _2, _3) )}
+
+break_stmt:
+  _1 = T_BREAK _2 = option_id_ _3 = sc
+    {                                 ( Break (_1, _2, _3) )}
+
+return_stmt:
+  _1 = T_RETURN _2 = option_expr_ _3 = sc
+    {                               ( Return (_1, _2, _3) )}
+
+with_stmt:
+  _1 = T_WITH _2 = T_LPAREN _3 = expr _4 = T_RPAREN _1_inlined1 = stmt
+    {let _5 =
+  let _1 = _1_inlined1 in
+              ( stmt1 _1 )
+in
+                                     ( With (_1, _3, _5) )}
+
+switch_stmt:
+  _1 = T_SWITCH _2 = T_LPAREN _3 = expr _4 = T_RPAREN _5 = case_block
+    {                                              ( Switch (_1, _3, _5) )}
+
+labelled_stmt:
+  _1 = id _2 = T_COLON _1_inlined1 = stmt
+    {let _3 =
+  let _1 = _1_inlined1 in
+              ( stmt1 _1 )
+in
+                            ( Label (_1, _3) )}
+
+throw_stmt:
+  _1 = T_THROW _2 = expr _3 = sc
+    {                            ( Throw (_1, _2, _3) )}
+
+try_stmt:
+  _1 = T_TRY _2 = block _3 = catch
+    {                             ( Try (_1, _2, Some _3, None)  )}
+| _1 = T_TRY _2 = block _3 = finally
+    {                             ( Try (_1, _2, None, Some _3) )}
+| _1 = T_TRY _2 = block _3 = catch _4 = finally
+    {                             ( Try (_1, _2, Some _3, Some _4) )}
+
+catch:
+  _1 = T_CATCH _2 = T_LPAREN _3 = id _4 = T_RPAREN _5 = block
+    {                                         ( BoundCatch (_1, Id _3, _5) )}
+| _1 = T_CATCH _2 = block
+    {                                         ( UnboundCatch (_1, _2) )}
+| _1 = T_CATCH _2 = T_LPAREN _3 = binding_pattern _4 = T_RPAREN _5 = block
+    {                                         ( BoundCatch (_1, (_3), _5) )}
+
+finally:
+  _1 = T_FINALLY _2 = block
+    {                         ( _1, _2 )}
+
+case_block:
+  _1 = T_LCURLY _2 = list_case_clause_ _3 = T_RCURLY
+    {     ( (_2) )}
+| _1 = T_LCURLY _2 = list_case_clause_ _3 = default_clause _4 = list_case_clause_ _5 = T_RCURLY
+    {     ( (_2 @ [_3] @ _4) )}
+
+case_clause:
+  _1 = T_CASE _2 = expr _3 = T_COLON _4 = optl_stmt_list_
+    {                                              ( Case (_1, _2, stmt1 _4) )}
+
+default_clause:
+  _1 = T_DEFAULT _2 = T_COLON _3 = optl_stmt_list_
+    {                                              ( Default (_1, stmt1 _3) )}
+
+expr:
+  _1 = assignment_expr
+    {                   ( _1 )}
+| _1 = expr _2 = T_COMMA _3 = assignment_expr
+    {                            ( seq (_1, _2, _3) )}
+
+assignment_expr:
+  _1 = conditional_expr_d1_
+    {                        ( _1 )}
+| _1 = left_hand_side_expr__d1_ _2 = assignment_operator _3 = assignment_expr
+    {    ( mk_Assign (_1,_2,_3) )}
+| _1 = arrow_function
+    {                  ( _1 )}
+| _1 = T_YIELD
+    {                                   ( special Yield _1 [] )}
+| _1 = T_YIELD _2 = assignment_expr
+    {                                   ( special Yield _1  [_2] )}
+| _1 = T_YIELD _2 = T_MULT _3 = assignment_expr
+    {                                   ( special YieldStar _1 [_3] )}
+| _1 = left_hand_side_expr__d1_ _2 = T_AS _3 = type_
+    {                                       ( _1 (* TODO $2 $3 *) )}
+| _1 = T_DOTS
+    {         ( Flag_parsing.sgrep_guard (Ellipsis _1) )}
+
+left_hand_side_expr:
+  _1 = left_hand_side_expr__d1_
+    {                                              ( _1 )}
+
+conditional_expr_d1_:
+  _1 = post_in_expr_d1_
+    {                   ( _1 )}
+| _1 = post_in_expr_d1_ _2 = T_PLING _3 = assignment_expr _4 = T_COLON _5 = assignment_expr
+    {    ( Conditional (_1, _3, _5) )}
+
+conditional_expr_primary_no_stmt_:
+  _1 = post_in_expr_primary_no_stmt_
+    {                   ( _1 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_PLING _3 = assignment_expr _4 = T_COLON _5 = assignment_expr
+    {    ( Conditional (_1, _3, _5) )}
+
+left_hand_side_expr__d1_:
+  _1 = new_expr_d1_
+    {                ( _1 )}
+| _1 = call_expr_d1_
+    {                ( _1 )}
+
+left_hand_side_expr__primary_no_stmt_:
+  _1 = new_expr_primary_no_stmt_
+    {                ( _1 )}
+| _1 = call_expr_primary_no_stmt_
+    {                ( _1 )}
+
+post_in_expr_d1_:
+  _1 = pre_in_expr_d1_
+    {                  ( _1 )}
+| _1 = post_in_expr_d1_ _2 = T_LESS_THAN _3 = post_in_expr_d1_
+    {                                                         ( bop Lt _1 _2 _3 )}
+| _1 = post_in_expr_d1_ _2 = T_GREATER_THAN _3 = post_in_expr_d1_
+    {                                                         ( bop Gt _1 _2 _3 )}
+| _1 = post_in_expr_d1_ _2 = T_LESS_THAN_EQUAL _3 = post_in_expr_d1_
+    {                                                         ( bop LtE _1 _2 _3 )}
+| _1 = post_in_expr_d1_ _2 = T_GREATER_THAN_EQUAL _3 = post_in_expr_d1_
+    {                                                         ( bop GtE _1 _2 _3 )}
+| _1 = post_in_expr_d1_ _2 = T_INSTANCEOF _3 = post_in_expr_d1_
+    {    ( special Instanceof _2 [_1; _3] )}
+| _1 = post_in_expr_d1_ _2 = T_IN _3 = post_in_expr_d1_
+    {                                                     ( special In _2 [_1; _3] )}
+| _1 = post_in_expr_d1_ _2 = T_EQUAL _3 = post_in_expr_d1_
+    {                                                     ( bop Eq _1 _2 _3 )}
+| _1 = post_in_expr_d1_ _2 = T_NOT_EQUAL _3 = post_in_expr_d1_
+    {                                                     ( bop NotEq _1 _2 _3 )}
+| _1 = post_in_expr_d1_ _2 = T_STRICT_EQUAL _3 = post_in_expr_d1_
+    {                                                     ( bop PhysEq _1 _2 _3 )}
+| _1 = post_in_expr_d1_ _2 = T_STRICT_NOT_EQUAL _3 = post_in_expr_d1_
+    {                                                         ( bop NotPhysEq _1 _2 _3 )}
+| _1 = post_in_expr_d1_ _2 = T_BIT_AND _3 = post_in_expr_d1_
+    {                                                     ( bop BitAnd _1 _2 _3 )}
+| _1 = post_in_expr_d1_ _2 = T_BIT_XOR _3 = post_in_expr_d1_
+    {                                                     ( bop BitXor _1 _2 _3 )}
+| _1 = post_in_expr_d1_ _2 = T_BIT_OR _3 = post_in_expr_d1_
+    {                                                     ( bop BitOr _1 _2 _3 )}
+| _1 = post_in_expr_d1_ _2 = T_AND _3 = post_in_expr_d1_
+    {                                                     ( bop And _1 _2 _3 )}
+| _1 = post_in_expr_d1_ _2 = T_OR _3 = post_in_expr_d1_
+    {                                                     ( bop Or _1 _2 _3 )}
+
+post_in_expr_primary_no_stmt_:
+  _1 = pre_in_expr_primary_no_stmt_
+    {                  ( _1 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_LESS_THAN _3 = post_in_expr_d1_
+    {                                                         ( bop Lt _1 _2 _3 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_GREATER_THAN _3 = post_in_expr_d1_
+    {                                                         ( bop Gt _1 _2 _3 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_LESS_THAN_EQUAL _3 = post_in_expr_d1_
+    {                                                         ( bop LtE _1 _2 _3 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_GREATER_THAN_EQUAL _3 = post_in_expr_d1_
+    {                                                         ( bop GtE _1 _2 _3 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_INSTANCEOF _3 = post_in_expr_d1_
+    {    ( special Instanceof _2 [_1; _3] )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_IN _3 = post_in_expr_d1_
+    {                                                     ( special In _2 [_1; _3] )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_EQUAL _3 = post_in_expr_d1_
+    {                                                     ( bop Eq _1 _2 _3 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_NOT_EQUAL _3 = post_in_expr_d1_
+    {                                                     ( bop NotEq _1 _2 _3 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_STRICT_EQUAL _3 = post_in_expr_d1_
+    {                                                     ( bop PhysEq _1 _2 _3 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_STRICT_NOT_EQUAL _3 = post_in_expr_d1_
+    {                                                         ( bop NotPhysEq _1 _2 _3 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_BIT_AND _3 = post_in_expr_d1_
+    {                                                     ( bop BitAnd _1 _2 _3 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_BIT_XOR _3 = post_in_expr_d1_
+    {                                                     ( bop BitXor _1 _2 _3 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_BIT_OR _3 = post_in_expr_d1_
+    {                                                     ( bop BitOr _1 _2 _3 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_AND _3 = post_in_expr_d1_
+    {                                                     ( bop And _1 _2 _3 )}
+| _1 = post_in_expr_primary_no_stmt_ _2 = T_OR _3 = post_in_expr_d1_
+    {                                                     ( bop Or _1 _2 _3 )}
+
+pre_in_expr_d1_:
+  _1 = left_hand_side_expr__d1_
+    {                                               ( _1 )}
+| _1 = pre_in_expr_d1_ _2 = T_INCR
+    {    ( special (IncrDecr (Incr, Postfix)) _2 [_1] )}
+| _1 = pre_in_expr_d1_ _2 = T_DECR
+    {    ( special (IncrDecr (Decr, Postfix)) _2 [_1] )}
+| _1 = T_INCR _2 = pre_in_expr_d1_
+    {  ( special (IncrDecr (Incr, Prefix)) _1 [_2] )}
+| _1 = T_DECR _2 = pre_in_expr_d1_
+    {  ( special (IncrDecr (Decr, Prefix)) _1 [_2] )}
+| _1 = T_DELETE _2 = pre_in_expr_d1_
+    {                                               ( special Delete _1 [_2] )}
+| _1 = T_VOID _2 = pre_in_expr_d1_
+    {                                               ( special Void _1 [_2] )}
+| _1 = T_TYPEOF _2 = pre_in_expr_d1_
+    {                                               ( special Typeof _1 [_2] )}
+| _1 = T_PLUS _2 = pre_in_expr_d1_
+    {                                               ( uop (ArithOp Plus) _1 _2 )}
+| _1 = T_MINUS _2 = pre_in_expr_d1_
+    {                                               ( uop (ArithOp Minus) _1 _2)}
+| _1 = T_BIT_NOT _2 = pre_in_expr_d1_
+    {                                               ( uop (ArithOp BitNot) _1 _2 )}
+| _1 = T_NOT _2 = pre_in_expr_d1_
+    {                                               ( uop (ArithOp Not) _1 _2 )}
+| _1 = T_AWAIT _2 = pre_in_expr_d1_
+    {                                               ( special Await _1 [_2] )}
+| _1 = pre_in_expr_d1_ _2 = T_MULT _3 = pre_in_expr_d1_
+    {                                            ( bop Mult _1 _2 _3 )}
+| _1 = pre_in_expr_d1_ _2 = T_DIV _3 = pre_in_expr_d1_
+    {                                            ( bop Div _1 _2 _3 )}
+| _1 = pre_in_expr_d1_ _2 = T_MOD _3 = pre_in_expr_d1_
+    {                                            ( bop Mod _1 _2 _3 )}
+| _1 = pre_in_expr_d1_ _2 = T_PLUS _3 = pre_in_expr_d1_
+    {                                            ( bop Plus _1 _2 _3 )}
+| _1 = pre_in_expr_d1_ _2 = T_MINUS _3 = pre_in_expr_d1_
+    {                                            ( bop Minus _1 _2 _3 )}
+| _1 = pre_in_expr_d1_ _2 = T_LSHIFT _3 = pre_in_expr_d1_
+    {                                            ( bop LSL _1 _2 _3 )}
+| _1 = pre_in_expr_d1_ _2 = T_RSHIFT _3 = pre_in_expr_d1_
+    {                                            ( bop LSR _1 _2 _3 )}
+| _1 = pre_in_expr_d1_ _2 = T_RSHIFT3 _3 = pre_in_expr_d1_
+    {                                            ( bop ASR _1 _2 _3 )}
+| _1 = pre_in_expr_d1_ _2 = T_EXPONENT _3 = pre_in_expr_d1_
+    {                                             ( bop Pow _1 _2 _3 )}
+
+pre_in_expr_primary_no_stmt_:
+  _1 = left_hand_side_expr__primary_no_stmt_
+    {                                               ( _1 )}
+| _1 = pre_in_expr_primary_no_stmt_ _2 = T_INCR
+    {    ( special (IncrDecr (Incr, Postfix)) _2 [_1] )}
+| _1 = pre_in_expr_primary_no_stmt_ _2 = T_DECR
+    {    ( special (IncrDecr (Decr, Postfix)) _2 [_1] )}
+| _1 = T_INCR _2 = pre_in_expr_d1_
+    {  ( special (IncrDecr (Incr, Prefix)) _1 [_2] )}
+| _1 = T_DECR _2 = pre_in_expr_d1_
+    {  ( special (IncrDecr (Decr, Prefix)) _1 [_2] )}
+| _1 = T_DELETE _2 = pre_in_expr_d1_
+    {                                               ( special Delete _1 [_2] )}
+| _1 = T_VOID _2 = pre_in_expr_d1_
+    {                                               ( special Void _1 [_2] )}
+| _1 = T_TYPEOF _2 = pre_in_expr_d1_
+    {                                               ( special Typeof _1 [_2] )}
+| _1 = T_PLUS _2 = pre_in_expr_d1_
+    {                                               ( uop (ArithOp Plus) _1 _2 )}
+| _1 = T_MINUS _2 = pre_in_expr_d1_
+    {                                               ( uop (ArithOp Minus) _1 _2)}
+| _1 = T_BIT_NOT _2 = pre_in_expr_d1_
+    {                                               ( uop (ArithOp BitNot) _1 _2 )}
+| _1 = T_NOT _2 = pre_in_expr_d1_
+    {                                               ( uop (ArithOp Not) _1 _2 )}
+| _1 = T_AWAIT _2 = pre_in_expr_d1_
+    {                                               ( special Await _1 [_2] )}
+| _1 = pre_in_expr_primary_no_stmt_ _2 = T_MULT _3 = pre_in_expr_d1_
+    {                                            ( bop Mult _1 _2 _3 )}
+| _1 = pre_in_expr_primary_no_stmt_ _2 = T_DIV _3 = pre_in_expr_d1_
+    {                                            ( bop Div _1 _2 _3 )}
+| _1 = pre_in_expr_primary_no_stmt_ _2 = T_MOD _3 = pre_in_expr_d1_
+    {                                            ( bop Mod _1 _2 _3 )}
+| _1 = pre_in_expr_primary_no_stmt_ _2 = T_PLUS _3 = pre_in_expr_d1_
+    {                                            ( bop Plus _1 _2 _3 )}
+| _1 = pre_in_expr_primary_no_stmt_ _2 = T_MINUS _3 = pre_in_expr_d1_
+    {                                            ( bop Minus _1 _2 _3 )}
+| _1 = pre_in_expr_primary_no_stmt_ _2 = T_LSHIFT _3 = pre_in_expr_d1_
+    {                                            ( bop LSL _1 _2 _3 )}
+| _1 = pre_in_expr_primary_no_stmt_ _2 = T_RSHIFT _3 = pre_in_expr_d1_
+    {                                            ( bop LSR _1 _2 _3 )}
+| _1 = pre_in_expr_primary_no_stmt_ _2 = T_RSHIFT3 _3 = pre_in_expr_d1_
+    {                                            ( bop ASR _1 _2 _3 )}
+| _1 = pre_in_expr_primary_no_stmt_ _2 = T_EXPONENT _3 = pre_in_expr_d1_
+    {                                             ( bop Pow _1 _2 _3 )}
+
+call_expr_d1_:
+  _1 = member_expr_d1_ _2 = arguments
+    {                                     ( Apply (_1, _2) )}
+| _1 = call_expr_d1_ _2 = arguments
+    {                                     ( Apply (_1, _2) )}
+| _1 = call_expr_d1_ _2 = T_LBRACKET _3 = expr _4 = T_RBRACKET
+    {                                     ( ArrAccess (_1, (_2, _3,_4)))}
+| _1 = call_expr_d1_ _2 = T_PERIOD _3 = method_name
+    {                                     ( ObjAccess (_1, _2, PN _3) )}
+| _1 = call_expr_d1_ _2 = template_literal
+    {                                     ( mk_Encaps (Some _1) _2 )}
+| _1 = T_SUPER _2 = arguments
+    {                                     ( Apply (mk_Super(_1), _2) )}
+| _1 = call_expr_d1_ _2 = T_PERIOD _3 = T_DOTS
+    {                                ( ObjAccessEllipsis (_1, _3) )}
+
+call_expr_primary_no_stmt_:
+  _1 = member_expr_primary_no_stmt_ _2 = arguments
+    {                                     ( Apply (_1, _2) )}
+| _1 = call_expr_primary_no_stmt_ _2 = arguments
+    {                                     ( Apply (_1, _2) )}
+| _1 = call_expr_primary_no_stmt_ _2 = T_LBRACKET _3 = expr _4 = T_RBRACKET
+    {                                     ( ArrAccess (_1, (_2, _3,_4)))}
+| _1 = call_expr_primary_no_stmt_ _2 = T_PERIOD _3 = method_name
+    {                                     ( ObjAccess (_1, _2, PN _3) )}
+| _1 = call_expr_primary_no_stmt_ _2 = template_literal
+    {                                     ( mk_Encaps (Some _1) _2 )}
+| _1 = T_SUPER _2 = arguments
+    {                                     ( Apply (mk_Super(_1), _2) )}
+| _1 = call_expr_primary_no_stmt_ _2 = T_PERIOD _3 = T_DOTS
+    {                                ( ObjAccessEllipsis (_1, _3) )}
+
+new_expr_d1_:
+  _1 = member_expr_d1_
+    {                     ( _1 )}
+| _1 = T_NEW _2 = new_expr_d1_
+    {                      ( special New _1 [_2] )}
+
+new_expr_primary_no_stmt_:
+  _1 = member_expr_primary_no_stmt_
+    {                     ( _1 )}
+| _1 = T_NEW _2 = new_expr_d1_
+    {                      ( special New _1 [_2] )}
+
+member_expr_d1_:
+  _1 = primary_expr_d1_
+    {                                     ( _1 )}
+| _1 = member_expr_d1_ _2 = T_LBRACKET _3 = expr _4 = T_RBRACKET
+    {                                     ( ArrAccess(_1, (_2, _3, _4)) )}
+| _1 = member_expr_d1_ _2 = T_PERIOD _3 = field_name
+    {                                     ( ObjAccess(_1, _2, PN _3) )}
+| _1 = T_NEW _2 = member_expr_d1_ _3 = arguments
+    {                                     ( Apply(special New _1 [_2], _3) )}
+| _1 = member_expr_d1_ _2 = template_literal
+    {                                     ( mk_Encaps (Some _1) _2 )}
+| _1 = T_SUPER _2 = T_LBRACKET _3 = expr _4 = T_RBRACKET
+    {                                     ( ArrAccess(mk_Super(_1),(_2,_3,_4)))}
+| _1 = T_SUPER _2 = T_PERIOD _3 = field_name
+    {                                     ( ObjAccess(mk_Super(_1), _2, PN _3) )}
+| _1 = T_NEW _2 = T_PERIOD _3 = id
+    {                (
+     if fst _3 = "target"
+     then special NewTarget _1 []
+     else raise (Parsing.Parse_error)
+  )}
+| _1 = member_expr_d1_ _2 = T_PERIOD _3 = T_DOTS
+    {                            ( ObjAccessEllipsis(_1, _2) )}
+
+member_expr_primary_no_stmt_:
+  _1 = primary_expr_primary_no_stmt_
+    {                                     ( _1 )}
+| _1 = member_expr_primary_no_stmt_ _2 = T_LBRACKET _3 = expr _4 = T_RBRACKET
+    {                                     ( ArrAccess(_1, (_2, _3, _4)) )}
+| _1 = member_expr_primary_no_stmt_ _2 = T_PERIOD _3 = field_name
+    {                                     ( ObjAccess(_1, _2, PN _3) )}
+| _1 = T_NEW _2 = member_expr_d1_ _3 = arguments
+    {                                     ( Apply(special New _1 [_2], _3) )}
+| _1 = member_expr_primary_no_stmt_ _2 = template_literal
+    {                                     ( mk_Encaps (Some _1) _2 )}
+| _1 = T_SUPER _2 = T_LBRACKET _3 = expr _4 = T_RBRACKET
+    {                                     ( ArrAccess(mk_Super(_1),(_2,_3,_4)))}
+| _1 = T_SUPER _2 = T_PERIOD _3 = field_name
+    {                                     ( ObjAccess(mk_Super(_1), _2, PN _3) )}
+| _1 = T_NEW _2 = T_PERIOD _3 = id
+    {                (
+     if fst _3 = "target"
+     then special NewTarget _1 []
+     else raise (Parsing.Parse_error)
+  )}
+| _1 = member_expr_primary_no_stmt_ _2 = T_PERIOD _3 = T_DOTS
+    {                            ( ObjAccessEllipsis(_1, _2) )}
+
+primary_expr_d1_:
+  _1 = primary_expr_no_braces
+    {                          ( _1 )}
+| _1 = d1
+    {     ( _1 )}
+
+primary_expr_primary_no_stmt_:
+  _1 = primary_expr_no_braces
+    {                          ( _1 )}
+| _1 = primary_no_stmt
+    {     ( _1 )}
+
+d1:
+  _1 = primary_with_stmt
+    {                      ( _1 )}
+
+primary_with_stmt:
+  _1 = object_literal
+    {                             ( Obj _1 )}
+| _1 = function_expr
+    {                             ( _1 )}
+| _1 = class_expr
+    {                             ( _1 )}
+| _1 = generator_expr
+    {                             ( _1 )}
+| _1 = async_function_expr
+    {                             ( _1 )}
+
+primary_expr_no_braces:
+  _1 = T_THIS
+    {                   ( IdSpecial (This, _1) )}
+| _1 = id
+    {                   ( idexp_or_special _1 )}
+| _1 = null_literal
+    {                   ( IdSpecial (Null, _1) )}
+| _1 = boolean_literal
+    {                   ( L (Bool _1) )}
+| _1 = numeric_literal
+    {                   ( L (Num _1) )}
+| _1 = string_literal
+    {                   ( L (String _1) )}
+| _1 = regex_literal
+    {                                ( L (Regexp (fst _1, snd _1)) )}
+| _1 = array_literal
+    {                                ( _1 )}
+| _1 = T_LPAREN _2 = expr _3 = T_RPAREN
+    {                ( _2 )}
+| _1 = T_LPAREN _2 = id _3 = T_COLON _4 = type_ _5 = T_RPAREN
+    {                        ( TypedMetavar (_2, _3, _4) )}
+| _1 = xhp_html
+    {            ( Xml _1 )}
+| _1 = template_literal
+    {                    ( mk_Encaps None _1 )}
+| _1 = LDots _2 = expr _3 = RDots
+    {                    ( Flag_parsing.sgrep_guard (DeepEllipsis (_1, _2, _3)) )}
+
+boolean_literal:
+  _1 = T_TRUE
+    {           ( true, _1 )}
+| _1 = T_FALSE
+    {           ( false, _1 )}
+
+null_literal:
+  _1 = T_NULL
+    {                     ( _1 )}
+
+numeric_literal:
+  _1 = T_INT
+    {   ( (match fst _1 with
+     | None -> None
+     | Some i -> Some (float_of_int i)
+     ), snd _1
+   )}
+| _1 = T_FLOAT
+    {            ( _1 )}
+
+numeric_literal_as_string:
+  _1 = numeric_literal
+    {    ( let t = snd _1 in
+      (Parse_info.str_of_info t, t)
+    )}
+
+regex_literal:
+  _1 = T_REGEX
+    {                       ( _1 )}
+
+string_literal:
+  _1 = T_STRING
+    {                         ( _1 )}
+
+assignment_operator:
+  _1 = T_ASSIGN
+    {                    ( _1, None )}
+| _1 = T_MULT_ASSIGN
+    {                    ( _1, Some Mult )}
+| _1 = T_DIV_ASSIGN
+    {                    ( _1, Some Div )}
+| _1 = T_MOD_ASSIGN
+    {                    ( _1, Some Mod  )}
+| _1 = T_PLUS_ASSIGN
+    {                    ( _1, Some Plus  )}
+| _1 = T_MINUS_ASSIGN
+    {                    ( _1, Some Minus )}
+| _1 = T_LSHIFT_ASSIGN
+    {                    ( _1, Some LSL )}
+| _1 = T_RSHIFT_ASSIGN
+    {                    ( _1, Some LSR )}
+| _1 = T_RSHIFT3_ASSIGN
+    {                    ( _1, Some ASR  )}
+| _1 = T_BIT_AND_ASSIGN
+    {                    ( _1, Some BitAnd )}
+| _1 = T_BIT_XOR_ASSIGN
+    {                    ( _1, Some BitXor )}
+| _1 = T_BIT_OR_ASSIGN
+    {                    ( _1, Some BitOr )}
+
+array_literal:
+  _1 = T_LBRACKET _2 = optl_elision_ _3 = T_RBRACKET
+    {                                           ( Arr(_1, [], _3) )}
+| _1 = T_LBRACKET _2 = element_list_rev _3 = optl_elision_ _4 = T_RBRACKET
+    {                                           ( Arr(_1, List.rev _2, _4) )}
+
+element_list_rev:
+  _1 = optl_elision_ _2 = element
+    {                                         ( [_2] )}
+| _1 = element_list_rev _2 = T_COMMA _3 = element
+    {                                         ( _3::_1 )}
+| _1 = element_list_rev _2 = T_COMMA _3 = elision _4 = element
+    {                                         ( _4::_1 )}
+
+element:
+  _1 = assignment_expr
+    {                         ( _1 )}
+| _1 = T_DOTS _2 = assignment_expr
+    {                         ( special Spread _1 [_2] )}
+
+object_literal:
+  _1 = T_LCURLY _2 = T_RCURLY
+    {                                                ( (_1, [], _2) )}
+| _1 = T_LCURLY _2 = listc_property_name_and_value_ _3 = option_T_COMMA_ _4 = T_RCURLY
+    {                                                ( (_1, _2, _4) )}
+
+property_name_and_value:
+  _1 = property_name _2 = T_COLON _3 = assignment_expr
+    {                                        ( FieldColon (mk_field _1 (Some _3)) )}
+| _1 = method_definition
+    {                                        ( _1 )}
+| _1 = id
+    {                ( FieldColon (mk_field (PN _1) (Some (Id (_1)))) )}
+| _1 = T_DOTS _2 = assignment_expr
+    {                                        ( (FieldSpread (_1, _2)) )}
+| _1 = T_DOTS
+    {                                        ( (FieldEllipsis _1 ) )}
+
+arguments:
+  _1 = T_LPAREN _2 = argument_list_opt _3 = T_RPAREN
+    {                                     ( (_1, _2, _3) )}
+
+argument_list_opt:
+  
+    {               ( [] )}
+| _1 = listc_argument_ _2 = option_T_COMMA_
+    {                         ( _1  )}
+
+argument:
+  _1 = assignment_expr
+    {                         ( _1 )}
+| _1 = T_DOTS _2 = assignment_expr
+    {                         ( special Spread _1 [_2] )}
+
+xhp_html:
+  _1 = T_XHP_OPEN_TAG _2 = list_xhp_attribute_ _3 = T_XHP_GT _4 = list_xhp_child_ _5 = T_XHP_CLOSE_TAG
+    {     ( { xml_kind = XmlClassic (snd _1, _1, _3, snd _5); xml_attrs=_2; xml_body=_4 } )}
+| _1 = T_XHP_OPEN_TAG _2 = list_xhp_attribute_ _3 = T_XHP_SLASH_GT
+    {     ( { xml_kind = XmlSingleton (snd _1, _1, _3); xml_attrs = _2; xml_body = [] } )}
+| _1 = T_XHP_SHORT_FRAGMENT _2 = list_xhp_child_ _3 = T_XHP_CLOSE_TAG
+    {     ( { xml_kind = XmlFragment (_1, snd _3); xml_attrs = []; xml_body = _2 } )}
+
+xhp_child:
+  _1 = T_XHP_TEXT
+    {                     ( XmlText _1 )}
+| _1 = xhp_html
+    {                     ( XmlXml _1 )}
+| _1 = T_LCURLY _2 = expr _3 = option_sc_ _4 = T_RCURLY
+    {                     ( XmlExpr (_1, Some _2, _4) )}
+| _1 = T_LCURLY _2 = T_RCURLY
+    {                     ( XmlExpr (_1, None, _2) )}
+
+xhp_attribute:
+  _1 = T_XHP_ATTR _2 = T_ASSIGN _3 = xhp_attribute_value
+    {    ( XmlAttr (_1, _2, _3) )}
+| _1 = T_LCURLY _2 = T_DOTS _3 = assignment_expr _4 = T_RCURLY
+    {    ( XmlAttrExpr (_1, special Spread _2 [_3],_4))}
+| _1 = T_XHP_ATTR
+    {    ( XmlAttr (_1, PI.fake_info "=", L (Bool(true, snd _1))) )}
+| _1 = T_DOTS
+    {    ( XmlEllipsis _1 )}
+
+xhp_attribute_value:
+  _1 = T_STRING
+    {                      ( L (String _1) )}
+| _1 = T_LCURLY _2 = expr _3 = option_sc_ _4 = T_RCURLY
+    {                      ( _2 )}
+| _1 = T_DOTS
+    {                      ( Ellipsis _1 )}
+| _1 = T_XHP_ATTR
+    {              ( Flag_parsing.sgrep_guard (idexp _1) )}
+
+template_literal:
+  _1 = T_BACKQUOTE _2 = list_encaps_ _3 = T_BACKQUOTE
+    {                                                   ( (_1, _2, _3) )}
+
+encaps:
+  _1 = T_ENCAPSED_STRING
+    {                            ( L (String _1) )}
+| _1 = T_DOLLARCURLY _2 = expr _3 = T_RCURLY
+    {                            ( _2 )}
+
+arrow_function:
+  _1 = T_ASYNC _2 = id _3 = T_ARROW _4 = arrow_body
+    {     ( mk_Fun ~props:[Async, _1] (Arrow, _3) ((), fb [ParamClassic (mk_param _2)], None) _4 )}
+| _1 = id _2 = T_ARROW _3 = arrow_body
+    {     ( mk_Fun (Arrow, _2) ((), fb [ParamClassic (mk_param _1)], None) _3 )}
+| _1 = T_ASYNC _2 = T_LPAREN_ARROW _3 = formal_parameter_list_opt _4 = T_RPAREN _5 = option_annotation_ _6 = T_ARROW _7 = arrow_body
+    {    ( mk_Fun ~props:[Async, _1] (Arrow, _6) ((), (_2, _3, _4), _5) _7 )}
+| _1 = T_LPAREN_ARROW _2 = formal_parameter_list_opt _3 = T_RPAREN _4 = option_annotation_ _5 = T_ARROW _6 = arrow_body
+    {    ( mk_Fun (Arrow, _5) ((), (_1, _2, _3), _4) _6 )}
+
+arrow_body:
+  _1 = block
+    {          ( match _1 with Block (a,b,c) -> (a,b,c) | _ -> raise Impossible )}
+| _1 = assignment_expr_no_stmt
+    {                                                         ( mk_block_return _1 )}
+| _1 = function_expr
+    {                 ( mk_block_return _1 )}
+| _1 = T_DOTS
+    {         ( Flag_parsing.sgrep_guard (mk_block_return (Ellipsis _1)) )}
+
+expr_no_in:
+  _1 = assignment_expr_no_in
+    {                         ( _1 )}
+| _1 = expr_no_in _2 = T_COMMA _3 = assignment_expr_no_in
+    {                                        ( seq (_1, _2, _3) )}
+
+assignment_expr_no_in:
+  _1 = conditional_expr_no_in
+    {                          ( _1 )}
+| _1 = left_hand_side_expr__d1_ _2 = assignment_operator _3 = assignment_expr_no_in
+    {     ( mk_Assign (_1, _2, _3) )}
+
+conditional_expr_no_in:
+  _1 = post_in_expr_no_in
+    {                      ( _1 )}
+| _1 = post_in_expr_no_in _2 = T_PLING _3 = assignment_expr_no_in _4 = T_COLON _5 = assignment_expr_no_in
+    {     ( Conditional (_1, _3, _5) )}
+
+post_in_expr_no_in:
+  _1 = pre_in_expr_d1_
+    {                   ( _1 )}
+| _1 = post_in_expr_no_in _2 = T_LESS_THAN _3 = post_in_expr_d1_
+    {                                                          ( bop Lt _1 _2 _3 )}
+| _1 = post_in_expr_no_in _2 = T_GREATER_THAN _3 = post_in_expr_d1_
+    {                                                          ( bop Gt _1 _2 _3 )}
+| _1 = post_in_expr_no_in _2 = T_LESS_THAN_EQUAL _3 = post_in_expr_d1_
+    {                                                          ( bop LtE _1 _2 _3 )}
+| _1 = post_in_expr_no_in _2 = T_GREATER_THAN_EQUAL _3 = post_in_expr_d1_
+    {                                                            ( bop GtE _1 _2 _3 )}
+| _1 = post_in_expr_no_in _2 = T_INSTANCEOF _3 = post_in_expr_d1_
+    {   ( special Instanceof _2 [_1; _3] )}
+| _1 = post_in_expr_no_in _2 = T_EQUAL _3 = post_in_expr_d1_
+    {                                                       ( bop Eq _1 _2 _3 )}
+| _1 = post_in_expr_no_in _2 = T_NOT_EQUAL _3 = post_in_expr_d1_
+    {                                                       ( bop NotEq _1 _2 _3 )}
+| _1 = post_in_expr_no_in _2 = T_STRICT_EQUAL _3 = post_in_expr_d1_
+    {                                                       ( bop PhysEq _1 _2 _3)}
+| _1 = post_in_expr_no_in _2 = T_STRICT_NOT_EQUAL _3 = post_in_expr_d1_
+    {                                                            ( bop NotPhysEq _1 _2 _3 )}
+| _1 = post_in_expr_no_in _2 = T_BIT_AND _3 = post_in_expr_d1_
+    {                                                       ( bop BitAnd _1 _2 _3)}
+| _1 = post_in_expr_no_in _2 = T_BIT_XOR _3 = post_in_expr_d1_
+    {                                                       ( bop BitXor _1 _2 _3)}
+| _1 = post_in_expr_no_in _2 = T_BIT_OR _3 = post_in_expr_d1_
+    {                                                       ( bop BitOr _1 _2 _3 )}
+| _1 = post_in_expr_no_in _2 = T_AND _3 = post_in_expr_d1_
+    {                                                       ( bop And _1 _2 _3 )}
+| _1 = post_in_expr_no_in _2 = T_OR _3 = post_in_expr_d1_
+    {                                                       ( bop Or _1 _2 _3 )}
+
+expr_no_stmt:
+  _1 = assignment_expr_no_stmt
+    {                           ( _1 )}
+| _1 = expr_no_stmt _2 = T_COMMA _3 = assignment_expr
+    {                                    ( seq (_1, _2, _3) )}
+
+assignment_expr_no_stmt:
+  _1 = conditional_expr_primary_no_stmt_
+    {                                     ( _1 )}
+| _1 = left_hand_side_expr__primary_no_stmt_ _2 = assignment_operator _3 = assignment_expr
+    {     ( mk_Assign (_1, _2, _3) )}
+| _1 = arrow_function
+    {                  ( _1 )}
+| _1 = T_YIELD
+    {                               ( special Yield _1 [] )}
+| _1 = T_YIELD _2 = assignment_expr
+    {                               ( special Yield _1 [_2] )}
+| _1 = T_YIELD _2 = T_MULT _3 = assignment_expr
+    {                               ( special YieldStar _1 [_3] )}
+
+primary_no_stmt:
+  _1 = TUnknown _2 = TComment
+    {                                   ( raise Impossible )}
+
+id:
+  _1 = T_ID %prec below_COLON
+    {                                         ( _1 )}
+| _1 = ident_semi_keyword
+    {                      ( PI.str_of_info _1, _1 )}
+
+ident_semi_keyword:
+  _1 = T_FROM
+    {          ( _1 )}
+| _1 = T_OF
+    {                        ( _1 )}
+| _1 = T_GET
+    {         ( _1 )}
+| _1 = T_SET
+    {                        ( _1 )}
+| _1 = T_CONSTRUCTOR
+    {                 ( _1 )}
+| _1 = T_TYPE
+    {          ( _1 )}
+| _1 = T_ANY_TYPE
+    {              ( _1 )}
+| _1 = T_NUMBER_TYPE
+    {                                     ( _1 )}
+| _1 = T_BOOLEAN_TYPE
+    {                                                             ( _1 )}
+| _1 = T_STRING_TYPE
+    {                 ( _1 )}
+| _1 = T_DECLARE
+    {             ( _1 )}
+| _1 = T_MODULE
+    {            ( _1 )}
+| _1 = T_PUBLIC
+    {            ( _1 )}
+| _1 = T_PRIVATE
+    {                               ( _1 )}
+| _1 = T_PROTECTED
+    {                                                    ( _1 )}
+| _1 = T_READONLY
+    {                                                                        ( _1 )}
+| _1 = T_AS
+    {        ( _1 )}
+| _1 = T_ASYNC
+    {           ( _1 )}
+
+ident_keyword:
+  _1 = ident_keyword_bis
+    {                                 ( PI.str_of_info _1, _1 )}
+
+ident_keyword_bis:
+  _1 = T_FUNCTION
+    {              ( _1 )}
+| _1 = T_CONST
+    {           ( _1 )}
+| _1 = T_VAR
+    {                          ( _1 )}
+| _1 = T_LET
+    {                                         ( _1 )}
+| _1 = T_IF
+    {        ( _1 )}
+| _1 = T_ELSE
+    {                        ( _1 )}
+| _1 = T_WHILE
+    {           ( _1 )}
+| _1 = T_FOR
+    {                          ( _1 )}
+| _1 = T_DO
+    {                                        ( _1 )}
+| _1 = T_CONTINUE
+    {              ( _1 )}
+| _1 = T_BREAK
+    {                               ( _1 )}
+| _1 = T_SWITCH
+    {            ( _1 )}
+| _1 = T_CASE
+    {                            ( _1 )}
+| _1 = T_DEFAULT
+    {                                               ( _1 )}
+| _1 = T_RETURN
+    {            ( _1 )}
+| _1 = T_THROW
+    {           ( _1 )}
+| _1 = T_TRY
+    {                          ( _1 )}
+| _1 = T_CATCH
+    {                                           ( _1 )}
+| _1 = T_FINALLY
+    {                                                              ( _1 )}
+| _1 = T_YIELD
+    {           ( _1 )}
+| _1 = T_AWAIT
+    {                            ( _1 )}
+| _1 = T_NEW
+    {         ( _1 )}
+| _1 = T_IN
+    {                       ( _1 )}
+| _1 = T_INSTANCEOF
+    {                                             ( _1 )}
+| _1 = T_DELETE
+    {                                                               ( _1 )}
+| _1 = T_THIS
+    {          ( _1 )}
+| _1 = T_SUPER
+    {                           ( _1 )}
+| _1 = T_WITH
+    {          ( _1 )}
+| _1 = T_NULL
+    {          ( _1 )}
+| _1 = T_FALSE
+    {           ( _1 )}
+| _1 = T_TRUE
+    {                           ( _1 )}
+| _1 = T_CLASS
+    {           ( _1 )}
+| _1 = T_INTERFACE
+    {                                ( _1 )}
+| _1 = T_EXTENDS
+    {                                                   ( _1 )}
+| _1 = T_STATIC
+    {                                                                     ( _1 )}
+| _1 = T_IMPORT
+    {            ( _1 )}
+| _1 = T_EXPORT
+    {                              ( _1 )}
+| _1 = T_ENUM
+    {          ( _1 )}
+| _1 = T_TYPEOF
+    {            ( _1 )}
+| _1 = T_VOID
+    {                            ( _1 )}
+
+field_name:
+  _1 = id
+    {                 ( _1 )}
+| _1 = ident_keyword
+    {                 ( _1 )}
+
+method_name:
+  _1 = id
+    {                 ( _1 )}
+| _1 = ident_keyword
+    {                 ( _1 )}
+
+property_name:
+  _1 = id
+    {                   ( PN _1 )}
+| _1 = string_literal
+    {                   ( PN _1 )}
+| _1 = numeric_literal_as_string
+    {                             ( PN _1 )}
+| _1 = ident_keyword
+    {                   ( PN _1 )}
+| _1 = T_LBRACKET _2 = assignment_expr _3 = T_RBRACKET
+    {                           ( PN_Computed (_2) )}
+
+sc:
+  _1 = T_SEMICOLON
+    {                       ( _1 )}
+| _1 = T_VIRTUAL_SEMICOLON
+    {                       ( _1 )}
+
+sc_or_comma:
+  _1 = sc
+    {       ( _1 )}
+| _1 = T_COMMA
+    {       ( _1 )}
+
+elision:
+  _1 = T_COMMA
+    {               ( [_1] )}
+| _1 = elision _2 = T_COMMA
+    {               ( _1 @ [_2] )}
+
+%%
+
+

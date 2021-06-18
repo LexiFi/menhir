@@ -13,7 +13,7 @@
 
 (* A generic implementation of depth-first search. *)
 
-(* The graph [G] must be equipped with ways of iterating over the outoing
+(* The graph [G] must be equipped with ways of iterating over the outgoing
    edges of a node and over the root notes. Edges can be labeled. If no labels
    are needed, then the type [label] should be defined as [unit]. *)
 

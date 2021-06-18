@@ -179,7 +179,7 @@ let silently_solved =
    [Raw.transitions]. This means that, once an edge has been removed, it can
    no longer be followed. *)
 
-module ForwardEdges = struct
+module RawForwardEdges = struct
   type node = Raw.node
   type label = Symbol.t
   let foreach_outgoing_edge node f =
@@ -385,7 +385,7 @@ let () =
     let traverse = traverse
     let discover = discover
   end in
-  let module R = DFS.Run(ForwardEdges)(M)(D) in
+  let module R = DFS.Run(RawForwardEdges)(M)(D) in
   ()
 
 let () =
@@ -488,13 +488,6 @@ let reductions node =
 let predecessors node =
   predecessors.(raw node)
 
-module BackwardEdges = struct
-  type nonrec node = node
-  type label = unit
-  let foreach_outgoing_edge node f =
-    List.iter (fun node -> f () node) (predecessors node)
-end
-
 let conflict_tokens node =
   _conflict_tokens.(raw node)
 
@@ -523,6 +516,24 @@ let is_start node =
       true
   | Some _ ->
       false
+
+(* -------------------------------------------------------------------------- *)
+
+(* Graph views. *)
+
+module ForwardEdges = struct
+  type nonrec node = node
+  type label = Symbol.t
+  let foreach_outgoing_edge node f =
+    SymbolMap.iter f (transitions node)
+end
+
+module BackwardEdges = struct
+  type nonrec node = node
+  type label = unit (* could be changed to [Symbol.t option] if needed *)
+  let foreach_outgoing_edge node f =
+    List.iter (fun node -> f () node) (predecessors node)
+end
 
 (* -------------------------------------------------------------------------- *)
 

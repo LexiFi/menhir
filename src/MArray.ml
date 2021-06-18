@@ -97,6 +97,14 @@ let existsi p a =
     else loop (succ i) in
   loop 0
 
+let count p a =
+  let n = length a in
+  let c = ref 0 in
+  for i = 0 to n-1 do
+    if p (unsafe_get a i) then c := !c + 1
+  done;
+  !c
+
 (* To keep compatibility with OCaml 4.02, we copy [Array.for_all],
    which appeared in 4.03. *)
 
@@ -152,6 +160,9 @@ let test () =
   assert (rev [|1; 2; 3; 4|] = [|4; 3; 2; 1|]) ;
   assert (rev_of_list [1; 2; 3; 4; 5] = [|5; 4; 3; 2; 1|]) ;
   assert (rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1]) ;
+  assert (count (fun x -> x mod 2 = 0) [| 1;2;3 |] = 1) ;
+  assert (count (fun x -> x mod 2 = 0) [||] = 0) ;
   assert (suffix [|1; 2; 3; 4; 5|] 0 = [||]) ;
   assert (suffix [|1; 2; 3; 4; 5|] 3 = [|3; 4; 5|]) ;
-  assert (suffix [|1; 2; 3; 4; 5|] 5 = [|1; 2; 3; 4; 5|])
+  assert (suffix [|1; 2; 3; 4; 5|] 5 = [|1; 2; 3; 4; 5|]) ;
+  ()

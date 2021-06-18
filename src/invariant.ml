@@ -729,6 +729,105 @@ module Long () = struct
     publish Nonterminal.tabulate goto_symbols goto_states cell
 
 
-  let () = Time.tick "Constructing the long invariant"
-end
-(* Long *)
+end (* Long *)
+
+(* ------------------------------------------------------------------------ *)
+
+(* Compute which states are reachable from each entry state. *)
+
+(* This information is computed only on demand. *)
+
+(* This information is used in the new code back-end to determine in which
+   states we have static knowledge of the final result type of the parser,
+   ['final]. This information can be built into the GADT that describes the
+   states, and this in turn can be used to perform certain optimizations (such
+   as removing case analyses that have only one branch) while preserving the
+   well-typedness of the OCaml code. *)
+
+let debug =
+  false
+
+type sources =
+  | Zero
+  | One of Lr1.node
+  | MoreThanOne
+
+let cons source sources =
+  match sources with
+  | Zero ->
+      One source
+  | One _
+  | MoreThanOne ->
+      MoreThanOne
+
+let sources : sources array Lazy.t =
+  lazy begin
+    (* Prepare an array that maps each node in the LR(1) automaton to a list
+       of the entry nodes from which this node is reachable. We are interested
+       in the identity of the list elements only if the list has length one;
+       otherwise, we do not care. *)
+    let sources : sources array = Array.make Lr1.n Zero in
+    (* For each entry node [source], *)
+    Lr1.entry |> ProductionMap.iter begin fun prod source ->
+      (* Perform a forward depth-first search of the automaton, so as to
+         discover all of the nodes that are reachable from [source]. *)
+      let c = ref 0 in
+      let module G = struct
+        include Lr1.ForwardEdges
+        let foreach_root f = f source
+      end in
+      let module M = DFS.MarkArray(Lr1) in
+      let module D = struct
+        let discover node =
+          let node = Lr1.number node in
+          sources.(node) <- cons source sources.(node);
+          incr c
+        let traverse _source _label _target = ()
+      end in
+      let module R = DFS.Run(G)(M)(D) in
+      if debug then begin
+        let symbol = (Production.rhs prod).(0) in
+        Printf.eprintf
+          "The start symbol %s reaches %d out of %d states.\n"
+            (Symbol.print symbol)
+            !c Lr1.n
+      end
+    end;
+    if debug then begin
+      (* Every node is reachable from at least one entry node. *)
+      assert (MArray.for_all (fun sources -> sources <> Zero) sources);
+      (* Count how many nodes are reachable from only one entry node. *)
+      Printf.eprintf
+        "%d out of %d states are reachable from only one entry node.\n"
+          (MArray.count (fun sources -> sources <> MoreThanOne) sources)
+          Lr1.n
+    end;
+    sources
+  end
+
+(* As an optimization, if there is a single start symbol, then we do not
+   need to run any of the above code. *)
+
+let single_start_symbol : Nonterminal.t option =
+  if ProductionMap.cardinal Lr1.entry = 1 then
+    let prod, _node = ProductionMap.choose Lr1.entry in
+    Production.classify prod (* must return [Some _] *)
+  else
+    None
+
+(* The public entry point. *)
+
+let reachable_from_single_start_symbol : Lr1.node -> Nonterminal.t option =
+  fun node ->
+    match single_start_symbol with
+    | Some _ ->
+        single_start_symbol
+    | None ->
+        let sources = Lazy.force sources in
+        match sources.(Lr1.number node) with
+        | Zero ->
+            assert false
+        | One source ->
+            Some (Lr1.nt_of_entry source)
+        | MoreThanOne ->
+            None

@@ -185,3 +185,12 @@ val universal: Symbol.t -> bool
    whose length is always the maximum position of the bullet in the items
    of the state at hand. *)
 module Long () : STACK
+
+(* ------------------------------------------------------------------------- *)
+(* Reachability from the entry states. *)
+
+(**[reachable_from_single_start_symbol node] determines whether the LR(1)
+   state [node] is reachable from a single entry state. If that is the
+   case, then it returns [Some nt], where [nt] is the corresponding (user)
+   start symbol. Otherwise, it returns [None]. *)
+val reachable_from_single_start_symbol: Lr1.node -> Nonterminal.t option

@@ -120,6 +120,14 @@ val is_start_or_exit: node -> Nonterminal.t option
 
 val predecessors: node -> node list
 
+(* A view of the forward edges as a graph. *)
+
+module ForwardEdges : sig
+  type nonrec node = node
+  type label = Symbol.t
+  val foreach_outgoing_edge: node -> (label -> node -> unit) -> unit
+end
+
 (* A view of the backward (reverse) edges as a graph. *)
 
 module BackwardEdges : sig

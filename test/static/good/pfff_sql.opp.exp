@@ -1,0 +1,521 @@
+File "pfff_sql.mly", line 90, characters 10-19:
+Warning: the token SHIFTHERE is unused.
+File "pfff_sql.mly", line 80, characters 22-32:
+Warning: the token TSEMICOLON is unused.
+File "pfff_sql.mly", line 84, characters 22-30:
+Warning: the token TUnknown is unused.
+%{
+(*
+ * src: http://docs.openlinksw.com/virtuoso/GRAMMAR.html
+ *
+ *)
+
+%}
+%start main
+%token <Ast_sql.info> APPROXNUM
+%token <Ast_sql.info> EOF
+%token <Ast_sql.info> TCOMMA
+%token <Ast_sql.info> TCPAR
+%token <Ast_sql.info> TDIV
+%token <Ast_sql.info> TDOT
+%token <Ast_sql.info> TMINUS
+%token <Ast_sql.info> TMUL
+%token <Ast_sql.info> TOPAND
+%token <Ast_sql.info> TOPAR
+%token <Ast_sql.info> TOPNEG
+%token <Ast_sql.info> TOPNOT
+%token <Ast_sql.info> TOPOR
+%token <Ast_sql.info> TPLUS
+%token <Ast_sql.info> TSEMICOLON
+%token <Ast_sql.info> TUnknown
+%token <Ast_sql.info> T_ALL
+%token <Ast_sql.info> T_AND
+%token <Ast_sql.info> T_AS
+%token <Ast_sql.info> T_ASC
+%token <Ast_sql.info> T_BEGIN
+%token <Ast_sql.info> T_BY
+%token <Ast_sql.info> T_COMMIT
+%token <Ast_sql.info> T_COMPARISON
+%token <Ast_sql.info> T_DELETE
+%token <Ast_sql.info> T_DESC
+%token <Ast_sql.info> T_DISTINCT
+%token <Ast_sql.info> T_DNUMBER
+%token <Ast_sql.info> T_DUPLICATE
+%token <Ast_sql.info> T_FROM
+%token <Ast_sql.info> T_IN
+%token <Ast_sql.info> T_INSERT
+%token <Ast_sql.info> T_INTNUM
+%token <Ast_sql.info> T_INTO
+%token <Ast_sql.info> T_JOIN
+%token <Ast_sql.info> T_KEY
+%token <Ast_sql.info> T_LEFT
+%token <Ast_sql.info> T_LIKE
+%token <Ast_sql.info> T_LIMIT
+%token <Ast_sql.info> T_MEMCACHE_DIRTY
+%token <Ast_sql.info> T_NAME
+%token <Ast_sql.info> T_NOT
+%token <Ast_sql.info> T_NULLX
+%token <Ast_sql.info> T_ON
+%token <Ast_sql.info> T_OR
+%token <Ast_sql.info> T_ORDER
+%token <Ast_sql.info> T_OUTER
+%token <Ast_sql.info> T_REPLACING
+%token <Ast_sql.info> T_ROLLBACK
+%token <Ast_sql.info> T_SELECT
+%token <Ast_sql.info> T_SET
+%token <Ast_sql.info> T_SOFT
+%token <Ast_sql.info> T_STRING
+%token <Ast_sql.info> T_UNION
+%token <Ast_sql.info> T_UPDATE
+%token <Ast_sql.info> T_VALUES
+%token <Ast_sql.info> T_WHERE
+%nonassoc SHIFTHERE
+%nonassoc T_AS
+%left TOPOR
+%left TOPAND
+%left T_OR
+%left T_AND
+%left TMINUS TPLUS
+%left TDIV TMUL
+%nonassoc UMINUS
+%right T_NOT
+%right TOPNOT
+%right TOPNEG
+%type <unit> main
+%%
+
+main:
+  _1 = toplevel _2 = EOF
+    {                   (  )}
+
+toplevel:
+  _1 = select_statement
+    {                    ( )}
+| _1 = insert_statement
+    {                    ( )}
+| _1 = update_statement_searched
+    {                             ( )}
+| _1 = delete_statement_searched
+    {                             ( )}
+| _1 = TOPAR _2 = select_statement _3 = TCPAR
+    {                                ( )}
+| _1 = T_COMMIT
+    {            ( )}
+| _1 = T_BEGIN
+    {           ( )}
+| _1 = T_ROLLBACK
+    {              ( )}
+
+table:
+  _1 = q_table_name
+    {                ( )}
+| _1 = q_table_name _2 = T_AS _3 = T_NAME
+    {                            ( )}
+| _1 = q_table_name _2 = T_NAME
+    {                       ( )}
+
+q_table_name:
+  _1 = T_NAME
+    {          ( )}
+| _1 = T_NAME _2 = TDOT _3 = T_NAME
+    {                      ( )}
+| _1 = T_NAME _2 = TDOT _3 = T_NAME _4 = TDOT _5 = T_NAME
+    {                                  ( )}
+| _1 = T_NAME _2 = TDOT _3 = TDOT _4 = T_NAME
+    {                            ( )}
+
+column:
+  _1 = T_NAME
+    {          ( )}
+
+column_ref:
+  _1 = T_NAME
+    {          ( )}
+| _1 = T_NAME _2 = TDOT _3 = T_NAME
+    {                      ( )}
+| _1 = TMUL
+    {        ( )}
+| _1 = T_NAME _2 = TDOT _3 = T_NAME _4 = TDOT _5 = T_NAME
+    {                                  ( )}
+| _1 = T_NAME _2 = TDOT _3 = T_NAME _4 = TDOT _5 = T_NAME _6 = TDOT _7 = T_NAME
+    {                                              ( )}
+| _1 = T_NAME _2 = TDOT _3 = TDOT _4 = T_NAME _5 = TDOT _6 = T_NAME
+    {                                       ( )}
+| _1 = T_NAME _2 = TDOT _3 = TMUL
+    {                    ( )}
+| _1 = T_NAME _2 = TDOT _3 = T_NAME _4 = TDOT _5 = TMUL
+    {                                ( )}
+| _1 = T_NAME _2 = TDOT _3 = T_NAME _4 = TDOT _5 = T_NAME _6 = TDOT _7 = TMUL
+    {                                            ( )}
+| _1 = T_NAME _2 = TDOT _3 = TDOT _4 = T_NAME _5 = TDOT _6 = TMUL
+    {                                     ( )}
+
+select_statement:
+  _1 = T_SELECT _2 = all_distinct_opt _3 = selection _4 = table_exp
+    {     ( )}
+
+all_distinct:
+  _1 = T_ALL
+    {         ( )}
+| _1 = T_DISTINCT
+    {               ( )}
+
+selection:
+  _1 = scalar_exp_list
+    {                           ( )}
+
+table_exp:
+  _1 = from_clause _2 = where_clause_opt _3 = order_by_clause_opt _4 = limit_clause_opt
+    {   ( )}
+
+from_clause:
+  _1 = T_FROM _2 = table_ref_list
+    {                                   ( )}
+
+where_clause:
+  _1 = T_WHERE _2 = search_condition
+    {                                       ( )}
+
+order_by_clause:
+  _1 = T_ORDER _2 = T_BY _3 = ordering_spec_list
+    {                                                 ( )}
+
+ordering_spec:
+  _1 = T_INTNUM _2 = asc_desc_opt
+    {                         ( )}
+| _1 = column_ref _2 = asc_desc_opt
+    {                           ( )}
+
+asc_desc:
+  _1 = T_ASC
+    {         ( )}
+| _1 = T_DESC
+    {          ( )}
+
+table_ref:
+  _1 = table
+    {         ( )}
+| _1 = TOPAR _2 = query_exp _3 = TCPAR _4 = T_NAME
+    {                                ( )}
+| _1 = joined_table
+    {                ( )}
+
+search_condition:
+  
+    {   ( )}
+| _1 = search_condition _2 = T_OR _3 = search_condition
+    {                                          ( )}
+| _1 = search_condition _2 = T_AND _3 = search_condition
+    {                                           ( )}
+| _1 = T_NOT _2 = search_condition
+    {                          ( )}
+| _1 = TOPAR _2 = search_condition _3 = TCPAR
+    {                                ( )}
+| _1 = predicate
+    {             ( )}
+
+predicate:
+  _1 = comparison_predicate
+    {                        ( )}
+| _1 = in_predicate
+    {                ( )}
+| _1 = like_predicate
+    {                  ( )}
+| _1 = scalar_exp_predicate
+    {                        ( )}
+
+scalar_exp_predicate:
+  _1 = scalar_exp
+    {              ( )}
+
+comparison_predicate:
+  _1 = scalar_exp _2 = T_COMPARISON _3 = scalar_exp
+    {                                      ( )}
+| _1 = scalar_exp _2 = T_COMPARISON _3 = subquery
+    {                                    ( )}
+
+like_predicate:
+  _1 = scalar_exp _2 = T_NOT _3 = T_LIKE _4 = scalar_exp _5 = opt_escape
+    {                                                 ( )}
+| _1 = scalar_exp _2 = T_LIKE _3 = scalar_exp _4 = opt_escape
+    {                                           ( )}
+
+opt_escape:
+  
+    {                ( )}
+
+in_predicate:
+  _1 = scalar_exp _2 = T_NOT _3 = T_IN _4 = TOPAR _5 = scalar_exp_list _6 = TCPAR
+    {                                                     ( )}
+| _1 = scalar_exp _2 = T_IN _3 = TOPAR _4 = scalar_exp_list _5 = TCPAR
+    {                                               ( )}
+| _1 = scalar_exp _2 = T_NOT _3 = T_IN _4 = subquery
+    {                                  ( )}
+| _1 = scalar_exp _2 = T_IN _3 = subquery
+    {                            ( )}
+
+subquery:
+  _1 = TOPAR _2 = T_SELECT _3 = all_distinct_opt _4 = selection _5 = table_exp _6 = TCPAR
+    {                                                             ( )}
+
+joined_table:
+  _1 = table_ref _2 = jtype _3 = outer_opt _4 = T_JOIN _5 = table_ref_nj _6 = T_ON _7 = search_condition
+    {     ( )}
+
+jtype:
+  _1 = T_LEFT
+    {          ( )}
+
+outer_opt:
+  
+    {               ( )}
+| _1 = T_OUTER
+    {           ( )}
+
+table_ref_nj:
+  _1 = table
+    {                   ( )}
+| _1 = subquery _2 = T_NAME
+    {                   ( )}
+
+limit_clause:
+  _1 = T_LIMIT _2 = int_list
+    {                    ( )}
+
+insert_statement:
+  _1 = T_INSERT _2 = insert_mode _3 = table _4 = priv_opt_column_commalist _5 = values_or_query_spec _6 = on_duplicate_opt _7 = memcache_opt
+    {     ( )}
+| _1 = T_INSERT _2 = insert_mode _3 = table _4 = T_SET _5 = assignment_list
+    {                     ( )}
+
+insert_mode:
+  _1 = T_INTO
+    {          ( )}
+| _1 = T_REPLACING
+    {               ( )}
+| _1 = T_SOFT
+    {          ( )}
+
+priv_opt_column_commalist:
+  
+    {               ( )}
+| _1 = TOPAR _2 = column_list _3 = TCPAR
+    {                           ( )}
+
+values_or_query_spec:
+  _1 = T_VALUES _2 = TOPAR _3 = insert_atom_list _4 = TCPAR
+    {                                         ( )}
+| _1 = query_spec
+    {              ( )}
+
+insert_atom:
+  _1 = scalar_exp
+    {                        ( )}
+
+query_exp:
+  _1 = query_term
+    {              ( )}
+| _1 = query_exp _2 = T_UNION _3 = query_term
+    {                                ( )}
+| _1 = query_exp _2 = T_UNION _3 = T_ALL _4 = query_term
+    {                                      ( )}
+
+query_term:
+  _1 = query_spec
+    {               ( )}
+| _1 = TOPAR _2 = query_exp _3 = TCPAR
+    {                         ( )}
+
+query_spec:
+  _1 = T_SELECT _2 = all_distinct_opt _3 = selection _4 = table_exp
+    {                                                 ( )}
+
+memcache:
+  _1 = T_MEMCACHE_DIRTY _2 = string_list
+    {                                ( )}
+
+on_duplicate_opt:
+  
+    {   ( )}
+| _1 = T_ON _2 = T_DUPLICATE _3 = T_KEY _4 = update_statement_duplicate
+    {                                                     ( )}
+
+update_statement_duplicate:
+  _1 = T_UPDATE _2 = table _3 = T_SET _4 = assignment_update_list
+    {                                               ( )}
+| _1 = T_UPDATE _2 = assignment_update_list
+    {                                   ( )}
+
+assignment_update:
+  _1 = column _2 = T_COMPARISON _3 = scalar_exp
+    {                                  ( )}
+| _1 = column _2 = T_COMPARISON _3 = T_VALUES _4 = TOPAR _5 = insert_atom_list _6 = TCPAR
+    {                                                             ( )}
+
+assignment_update_list:
+  _1 = assignment_update
+    {                     ( )}
+| _1 = assignment_update_list _2 = TCOMMA _3 = assignment_update
+    {                                                   ( )}
+
+update_statement_searched:
+  _1 = T_UPDATE _2 = table _3 = T_SET _4 = assignment_list _5 = where_clause_opt _6 = memcache_opt
+    {( )}
+
+assignment:
+  _1 = column _2 = T_COMPARISON _3 = scalar_exp
+    {                                  ( )}
+
+delete_statement_searched:
+  _1 = T_DELETE _2 = T_FROM _3 = table _4 = where_clause_opt _5 = memcache_opt
+    { ( )}
+
+scalar_exp:
+  _1 = scalar_exp _2 = TPLUS _3 = scalar_exp
+    {                               ( )}
+| _1 = scalar_exp _2 = TMINUS _3 = scalar_exp
+    {                                ( )}
+| _1 = scalar_exp _2 = TMUL _3 = scalar_exp
+    {                              ( )}
+| _1 = scalar_exp _2 = TDIV _3 = scalar_exp
+    {                              ( )}
+| _1 = scalar_exp _2 = TOPAND _3 = scalar_exp
+    {                                ( )}
+| _1 = scalar_exp _2 = TOPOR _3 = scalar_exp
+    {                               ( )}
+| _1 = TOPNEG _2 = scalar_exp
+    {                      ( )}
+| _1 = TOPNOT _2 = scalar_exp
+    {                      ( )}
+| _1 = TPLUS _2 = scalar_exp %prec UMINUS
+    {                                 ( )}
+| _1 = TMINUS _2 = scalar_exp %prec UMINUS
+    {                                  ( )}
+| _1 = atom
+    {        ( )}
+| _1 = column_ref
+    {              ( )}
+| _1 = as_expression
+    {                 ( )}
+| _1 = TOPAR _2 = scalar_exp_list _3 = TCPAR
+    {                               ( )}
+| _1 = function_call
+    {                 ( )}
+
+atom:
+  _1 = literal
+    {           ( )}
+
+function_call:
+  _1 = q_table_name _2 = TOPAR _3 = scalar_exp_list_opt _4 = TCPAR
+    {                                                ( )}
+
+literal:
+  _1 = T_STRING
+    {            ( )}
+| _1 = T_INTNUM
+    {            ( )}
+| _1 = APPROXNUM
+    {             ( )}
+| _1 = T_NULLX
+    {           ( )}
+| _1 = T_DNUMBER
+    {             ( )}
+
+as_expression:
+  _1 = scalar_exp _2 = T_AS _3 = T_NAME
+    {                          ( )}
+
+scalar_exp_list:
+  _1 = scalar_exp
+    {                                     ( [_1] )}
+| _1 = scalar_exp_list _2 = TCOMMA _3 = scalar_exp
+    {                                     ( _1 @ [_3] )}
+
+assignment_list:
+  _1 = assignment
+    {                                     ( [_1] )}
+| _1 = assignment_list _2 = TCOMMA _3 = assignment
+    {                                     ( _1 @ [_3] )}
+
+ordering_spec_list:
+  _1 = ordering_spec
+    {                                        ( [_1] )}
+| _1 = ordering_spec_list _2 = TCOMMA _3 = ordering_spec
+    {                                           ( _1 @ [_3] )}
+
+table_ref_list:
+  _1 = table_ref
+    {             ( )}
+| _1 = table_ref_list _2 = TCOMMA _3 = table_ref
+    {                                   ( )}
+
+insert_atom_list:
+  _1 = insert_atom
+    {               ( )}
+| _1 = insert_atom_list _2 = TCOMMA _3 = insert_atom
+    {                                       ( )}
+
+column_list:
+  _1 = column
+    {          ( )}
+| _1 = column_list _2 = TCOMMA _3 = column
+    {                             ( )}
+
+string_list:
+  _1 = T_STRING
+    {            ( )}
+| _1 = string_list _2 = TCOMMA _3 = T_STRING
+    {                               ( )}
+
+int_list:
+  _1 = T_INTNUM
+    {            ( )}
+| _1 = int_list _2 = TCOMMA _3 = T_INTNUM
+    {                            ( )}
+
+all_distinct_opt:
+  
+    {                        ( None )}
+| _1 = all_distinct
+    {                        ( Some _1 )}
+
+scalar_exp_list_opt:
+  
+    {                   (  )}
+| _1 = scalar_exp_list
+    {                   (  )}
+
+where_clause_opt:
+  
+    {                ( )}
+| _1 = where_clause
+    {                ( )}
+
+order_by_clause_opt:
+  
+    {               ( )}
+| _1 = order_by_clause
+    {                   ( )}
+
+memcache_opt:
+  
+    {   ( )}
+| _1 = memcache
+    {            ( )}
+
+asc_desc_opt:
+  
+    {   ( )}
+| _1 = asc_desc
+    {            ( )}
+
+limit_clause_opt:
+  
+    {   ( )}
+| _1 = limit_clause
+    {                 ( )}
+
+%%
+
+

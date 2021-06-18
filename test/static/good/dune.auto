@@ -598,6 +598,37 @@
     (diff apron.20160125-apron_parser.conflicts.exp
       apron.20160125-apron_parser.conflicts)))
 
+(rule (target astrada_css.opp.out) (deps astrada_css.mly)
+  (action
+    (with-outputs-to astrada_css.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess --stacklang-test %{deps})))))
+
+(rule (alias astrada_css)
+  (action (diff astrada_css.opp.exp astrada_css.opp.out)))
+
+(rule
+  (targets astrada_css.out astrada_css.automaton
+    astrada_css.automaton.resolved astrada_css.conflicts astrada_css.timings)
+  (deps astrada_css.mly)
+  (action
+    (with-outputs-to astrada_css.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to astrada_css.timings --stacklang-test %{deps})))))
+
+(rule (alias astrada_css) (action (diff astrada_css.exp astrada_css.out)))
+
+(rule (alias astrada_css)
+  (action (diff astrada_css.automaton.exp astrada_css.automaton)))
+
+(rule (alias astrada_css)
+  (action
+    (diff astrada_css.automaton.resolved.exp astrada_css.automaton.resolved)))
+
+(rule (alias astrada_css)
+  (action (diff astrada_css.conflicts.exp astrada_css.conflicts)))
+
 (rule (target atd_parser.opp.out) (deps atd_parser.mly)
   (action
     (with-outputs-to atd_parser.opp.out
@@ -3614,7 +3645,8 @@
   (action
     (with-outputs-to dolmen_ae.opp.out
       (with-accepted-exit-codes 0
-        (run menhir --base dolmen_ae --only-preprocess %{deps})))))
+        (run menhir --base dolmen_ae --only-preprocess --stacklang-test
+          %{deps})))))
 
 (rule (alias dolmen_ae) (action (diff dolmen_ae.opp.exp dolmen_ae.opp.out)))
 
@@ -3626,7 +3658,8 @@
     (with-outputs-to dolmen_ae.out
       (with-accepted-exit-codes 0
         (run menhir --base dolmen_ae --dump --dump-resolved --explain -lg 2
-          -la 2 -lc 2 --timings-to dolmen_ae.timings %{deps})))))
+          -la 2 -lc 2 --timings-to dolmen_ae.timings --stacklang-test
+          %{deps})))))
 
 (rule (alias dolmen_ae) (action (diff dolmen_ae.exp dolmen_ae.out)))
 
@@ -4409,7 +4442,8 @@
 (rule (target frontc_cparser.opp.out) (deps frontc_cparser.mly)
   (action
     (with-outputs-to frontc_cparser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess --stacklang-test %{deps})))))
 
 (rule (alias frontc_cparser)
   (action (diff frontc_cparser.opp.exp frontc_cparser.opp.out)))
@@ -4423,7 +4457,7 @@
     (with-outputs-to frontc_cparser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to frontc_cparser.timings %{deps})))))
+          --timings-to frontc_cparser.timings --stacklang-test %{deps})))))
 
 (rule (alias frontc_cparser)
   (action (diff frontc_cparser.exp frontc_cparser.out)))
@@ -10084,6 +10118,212 @@
 
 (rule (alias petr4) (action (diff petr4.conflicts.exp petr4.conflicts)))
 
+(rule (target pfff_cpp.opp.out) (deps pfff_cpp.mly)
+  (action
+    (with-outputs-to pfff_cpp.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess --stacklang-test %{deps})))))
+
+(rule (alias pfff_cpp) (action (diff pfff_cpp.opp.exp pfff_cpp.opp.out)))
+
+(rule
+  (targets pfff_cpp.out pfff_cpp.automaton pfff_cpp.automaton.resolved
+    pfff_cpp.conflicts pfff_cpp.timings)
+  (deps pfff_cpp.mly)
+  (action
+    (with-outputs-to pfff_cpp.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to pfff_cpp.timings --stacklang-test %{deps})))))
+
+(rule (alias pfff_cpp) (action (diff pfff_cpp.exp pfff_cpp.out)))
+
+(rule (alias pfff_cpp)
+  (action (diff pfff_cpp.automaton.exp pfff_cpp.automaton)))
+
+(rule (alias pfff_cpp)
+  (action (diff pfff_cpp.automaton.resolved.exp pfff_cpp.automaton.resolved)))
+
+(rule (alias pfff_cpp)
+  (action (diff pfff_cpp.conflicts.exp pfff_cpp.conflicts)))
+
+(rule (target pfff_go.opp.out) (deps pfff_go.mly)
+  (action
+    (with-outputs-to pfff_go.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess --stacklang-test %{deps})))))
+
+(rule (alias pfff_go) (action (diff pfff_go.opp.exp pfff_go.opp.out)))
+
+(rule
+  (targets pfff_go.out pfff_go.automaton pfff_go.automaton.resolved
+    pfff_go.conflicts pfff_go.timings)
+  (deps pfff_go.mly)
+  (action
+    (with-outputs-to pfff_go.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to pfff_go.timings --stacklang-test %{deps})))))
+
+(rule (alias pfff_go) (action (diff pfff_go.exp pfff_go.out)))
+
+(rule (alias pfff_go)
+  (action (diff pfff_go.automaton.exp pfff_go.automaton)))
+
+(rule (alias pfff_go)
+  (action (diff pfff_go.automaton.resolved.exp pfff_go.automaton.resolved)))
+
+(rule (alias pfff_go)
+  (action (diff pfff_go.conflicts.exp pfff_go.conflicts)))
+
+(rule (target pfff_java.opp.out) (deps pfff_java.mly)
+  (action
+    (with-outputs-to pfff_java.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess --stacklang-test %{deps})))))
+
+(rule (alias pfff_java) (action (diff pfff_java.opp.exp pfff_java.opp.out)))
+
+(rule
+  (targets pfff_java.out pfff_java.automaton pfff_java.automaton.resolved
+    pfff_java.conflicts pfff_java.timings)
+  (deps pfff_java.mly)
+  (action
+    (with-outputs-to pfff_java.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to pfff_java.timings --stacklang-test %{deps})))))
+
+(rule (alias pfff_java) (action (diff pfff_java.exp pfff_java.out)))
+
+(rule (alias pfff_java)
+  (action (diff pfff_java.automaton.exp pfff_java.automaton)))
+
+(rule (alias pfff_java)
+  (action
+    (diff pfff_java.automaton.resolved.exp pfff_java.automaton.resolved)))
+
+(rule (alias pfff_java)
+  (action (diff pfff_java.conflicts.exp pfff_java.conflicts)))
+
+(rule (target pfff_js.opp.out) (deps pfff_js.mly)
+  (action
+    (with-outputs-to pfff_js.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess --stacklang-test %{deps})))))
+
+(rule (alias pfff_js) (action (diff pfff_js.opp.exp pfff_js.opp.out)))
+
+(rule
+  (targets pfff_js.out pfff_js.automaton pfff_js.automaton.resolved
+    pfff_js.conflicts pfff_js.timings)
+  (deps pfff_js.mly)
+  (action
+    (with-outputs-to pfff_js.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to pfff_js.timings --stacklang-test %{deps})))))
+
+(rule (alias pfff_js) (action (diff pfff_js.exp pfff_js.out)))
+
+(rule (alias pfff_js)
+  (action (diff pfff_js.automaton.exp pfff_js.automaton)))
+
+(rule (alias pfff_js)
+  (action (diff pfff_js.automaton.resolved.exp pfff_js.automaton.resolved)))
+
+(rule (alias pfff_js)
+  (action (diff pfff_js.conflicts.exp pfff_js.conflicts)))
+
+(rule (target pfff_php.opp.out) (deps pfff_php.mly)
+  (action
+    (with-outputs-to pfff_php.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess --stacklang-test %{deps})))))
+
+(rule (alias pfff_php) (action (diff pfff_php.opp.exp pfff_php.opp.out)))
+
+(rule
+  (targets pfff_php.out pfff_php.automaton pfff_php.automaton.resolved
+    pfff_php.conflicts pfff_php.timings)
+  (deps pfff_php.mly)
+  (action
+    (with-outputs-to pfff_php.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to pfff_php.timings --stacklang-test %{deps})))))
+
+(rule (alias pfff_php) (action (diff pfff_php.exp pfff_php.out)))
+
+(rule (alias pfff_php)
+  (action (diff pfff_php.automaton.exp pfff_php.automaton)))
+
+(rule (alias pfff_php)
+  (action (diff pfff_php.automaton.resolved.exp pfff_php.automaton.resolved)))
+
+(rule (alias pfff_php)
+  (action (diff pfff_php.conflicts.exp pfff_php.conflicts)))
+
+(rule (target pfff_python.opp.out) (deps pfff_python.mly)
+  (action
+    (with-outputs-to pfff_python.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess --stacklang-test %{deps})))))
+
+(rule (alias pfff_python)
+  (action (diff pfff_python.opp.exp pfff_python.opp.out)))
+
+(rule
+  (targets pfff_python.out pfff_python.automaton
+    pfff_python.automaton.resolved pfff_python.conflicts pfff_python.timings)
+  (deps pfff_python.mly)
+  (action
+    (with-outputs-to pfff_python.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to pfff_python.timings --stacklang-test %{deps})))))
+
+(rule (alias pfff_python) (action (diff pfff_python.exp pfff_python.out)))
+
+(rule (alias pfff_python)
+  (action (diff pfff_python.automaton.exp pfff_python.automaton)))
+
+(rule (alias pfff_python)
+  (action
+    (diff pfff_python.automaton.resolved.exp pfff_python.automaton.resolved)))
+
+(rule (alias pfff_python)
+  (action (diff pfff_python.conflicts.exp pfff_python.conflicts)))
+
+(rule (target pfff_sql.opp.out) (deps pfff_sql.mly)
+  (action
+    (with-outputs-to pfff_sql.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess --stacklang-test %{deps})))))
+
+(rule (alias pfff_sql) (action (diff pfff_sql.opp.exp pfff_sql.opp.out)))
+
+(rule
+  (targets pfff_sql.out pfff_sql.automaton pfff_sql.automaton.resolved
+    pfff_sql.conflicts pfff_sql.timings)
+  (deps pfff_sql.mly)
+  (action
+    (with-outputs-to pfff_sql.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to pfff_sql.timings --stacklang-test %{deps})))))
+
+(rule (alias pfff_sql) (action (diff pfff_sql.exp pfff_sql.out)))
+
+(rule (alias pfff_sql)
+  (action (diff pfff_sql.automaton.exp pfff_sql.automaton)))
+
+(rule (alias pfff_sql)
+  (action (diff pfff_sql.automaton.resolved.exp pfff_sql.automaton.resolved)))
+
+(rule (alias pfff_sql)
+  (action (diff pfff_sql.conflicts.exp pfff_sql.conflicts)))
+
 (rule (target photos.opp.out) (deps photos.mly)
   (action
     (with-outputs-to photos.opp.out
@@ -12950,6 +13190,7 @@
     (alias anonymous-param)
     (alias anonymous-param-redundant)
     (alias apron.20160125-apron_parser)
+    (alias astrada_css)
     (alias atd_parser)
     (alias attapl-deptypes)
     (alias attapl-mini)
@@ -13217,17 +13458,19 @@
     (alias parameterized-nonterminal)
     (alias parse_xquery)
     (alias parser_cocci_menhir)
-    (alias parser_cpp)
-    (alias parser_css)
-    (alias parser_java)
-    (alias parser_js)
-    (alias parser_php)
     (alias parser_raw)
     (alias partest)
     (alias permutation)
     (alias permutation-growth)
     (alias petit-1)
     (alias petr4)
+    (alias pfff_cpp)
+    (alias pfff_go)
+    (alias pfff_java)
+    (alias pfff_js)
+    (alias pfff_php)
+    (alias pfff_python)
+    (alias pfff_sql)
     (alias photos)
     (alias phpparser)
     (alias pippijn)
