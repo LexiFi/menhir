@@ -420,7 +420,6 @@ let options = Arg.align [
   "--log-automaton", Arg.Set_int logA, "<level> Log information about the automaton";
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
-  "--long-invariant", Arg.Set short_invariant, "  (undocumented)";
   "--merge-errors", Arg.String add_merge_errors, "<filename> (used twice) Merge two .messages files";
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
   "--no-dollars", Arg.Unit (fun () -> dollars := DollarsDisallowed), " Disallow $i in semantic actions";
@@ -454,6 +453,7 @@ let options = Arg.align [
   "--represent-values", Arg.Set represent_values, " (undocumented)";
   "--represent-everything", Arg.Unit represent_everything, " (undocumented)";
   "--require-aliases", Arg.Set require_aliases, " Check that every token has a token alias";
+  "--short-invariant", Arg.Set short_invariant, "  (undocumented)";
   "--stacklang-dump", Arg.Set stacklang_dump, " (undocumented)";
   "--stacklang-graph", Arg.Set stacklang_graph, " (undocumented)";
   "--stacklang-test", Arg.Set stacklang_test, " (undocumented)";
