@@ -148,9 +148,10 @@ let _every_run_pops nt =
    no penalty. Otherwise, we choose "run pushes" everywhere. *)
 
 let gotopushes : Nonterminal.t -> bool =
-  (*if Settings.optimize_for_code_size
-  then Nonterminal.tabulate (fun nt -> not (every_run_pops nt))
-  else*) fun _nt -> false
+ (*if Settings.optimize_for_code_size
+   then Nonterminal.tabulate (fun nt -> not (every_run_pops nt))
+   else*)
+ fun _nt -> false
 
 
 let runpushes s =
@@ -284,7 +285,7 @@ module L = struct
                 (tag s)
                 { known_cells = filter_stack @@ stack_type_state s
                 ; sfinal_type =
-                    ( match Lr1.is_start_or_exit s with
+                    ( match reachable_from_single_start_symbol s with
                     | None ->
                         None
                     | Some nonterminal ->
@@ -517,7 +518,7 @@ module L = struct
           (fun nonterminal ->
             routine_final_type
               (Nonterminal.ocamltype_of_start_symbol nonterminal) )
-          (Lr1.is_start_or_exit s);
+          (reachable_from_single_start_symbol s);
         let stack_type = stack_type_run s in
         routine_stack_type @@ filter_stack stack_type;
         run s

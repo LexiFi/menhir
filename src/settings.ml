@@ -453,7 +453,7 @@ let options = Arg.align [
   "--represent-values", Arg.Set represent_values, " (undocumented)";
   "--represent-everything", Arg.Unit represent_everything, " (undocumented)";
   "--require-aliases", Arg.Set require_aliases, " Check that every token has a token alias";
-  "--short-invariant", Arg.Set short_invariant, "  (undocumented)";
+  "--short-invariant", Arg.Set short_invariant, " (undocumented)";
   "--stacklang-dump", Arg.Set stacklang_dump, " (undocumented)";
   "--stacklang-graph", Arg.Set stacklang_graph, " (undocumented)";
   "--stacklang-test", Arg.Set stacklang_test, " (undocumented)";
