@@ -26,17 +26,17 @@ type sentence =
   }
 
 let small_sentences =
-  List.init 1000 (fun i ->
+  List.init 10 (fun i ->
       { name = sprintf "sentence_1000_%d" i; seed = Some i; size = 1000 } )
 
 
 let big_sentences =
-  List.init 20 (fun i ->
+  List.init 2 (fun i ->
       { name = sprintf "sentence_100000_%d" i; seed = Some i; size = 100000 } )
 
 
 let huge_sentences =
-  List.init 10 (fun i ->
+  List.init 1 (fun i ->
       { name = sprintf "sentence_1000000_%d" i; seed = Some i; size = 1000000 } )
 
 
@@ -91,6 +91,10 @@ let rule_global file backends sentences =
   fprintf
     file
     {|
+(executable
+ (name speed)
+ (libraries unix))
+
 (rule
  (alias benchmark)
  (deps
@@ -99,7 +103,7 @@ let rule_global file backends sentences =
   ; sentences/*.tokens
   %s
   speed.sh
-  speed.ml)
+  speed.exe)
  (action
   (run bash speed.sh)))
 |}

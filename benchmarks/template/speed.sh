@@ -27,5 +27,5 @@ for file in sentences/*.tokens ; do
     tput el
   done
 done
-ocaml speed.ml "$benchname"
+./speed.exe "$benchname"
 tput sc

@@ -74,17 +74,17 @@ let read f =
 
 let print m =
   out
-    "Time : %.1f seconds per billion tokens.\n"
+    "    Time : %.1f seconds per billion tokens.\n"
     (m.time *. 1000000000.0 /. m.tokens);
   out
-    "Space: %.2f words per token (minor) and %.2f words per token (major)\n"
+    "    Space: %.2f words per token (minor) and %.2f words per token (major)\n"
     (m.minor /. m.tokens)
     (m.major /. m.tokens);
   out
-    "A total of %.3f words per tokens were allocated\n"
+    "    A total of %.3f words per tokens were allocated\n"
     ((m.minor +. m.major -. m.promoted) /. m.tokens);
   out
-    "Among these %.2f words per token were used for the AST.\n"
+    "    Among these %.2f words per token were used for the AST.\n"
     (m.ast /. m.tokens);
   out "\n";
   ()
@@ -102,8 +102,18 @@ let backends =
              (Array.to_list (Sys.readdir "backends")) ) ) )
 
 
-(* Read three measurements performed by separate processes. *)
 let m backend =
+  let Unix.{ st_size; _ } =
+    let ( / ) = Filename.concat in
+    Unix.stat
+      ( "backends"
+      / (backend ^ ".backend")
+      / ".main.eobjs"
+      / "native"
+      / "dune__exe__Parser.o" )
+  in
+  let ( / ) = Int.div in
+  let ko_size = st_size / 1000 in
   let time_suffix = backend ^ ".time" in
   let bases =
     Array.to_list (Sys.readdir "times")
@@ -112,22 +122,24 @@ let m backend =
     |> List.map Filename.remove_extension
     |> List.sort_uniq compare
   in
-
-  average
-    (List.map
-       (fun base -> read (sprintf "times/%s.%s.time" base backend))
-       bases )
+  ( ko_size
+  , average
+      (List.map
+         (fun base -> read (sprintf "times/%s.%s.time" base backend))
+         bases ) )
 
 
 (* Display a comparison. *)
 
 let () =
   let name = Sys.argv.(1) in
-  out " ----- %s benchmark ----- \n" name;
+  out "[ Start of %s benchmark ]\n" name;
   List.iter
     (fun backend ->
       let m = m backend in
-      out "%s back-end:\n" backend;
-      print m )
+      out "  %s back-end:\n" backend;
+      out "    parser.o size : %d ko\n" (fst m);
+      print (snd m) )
     backends;
+  out "[ End of %s benchmark ]\n" name;
   flush stdout
