@@ -188,6 +188,11 @@ val iterx: (node -> unit) -> unit
 
 val targets: ('a -> node list -> node -> 'a) -> 'a -> Symbol.t -> 'a
 
+(* [all_sources symbol] is the set of all sources of edges labeled
+   with [symbol]. *)
+
+val all_sources: Symbol.t -> NodeSet.t
+
 (* [all_targets symbol] is the set of all targets of edges labeled
    with [symbol]. *)
 

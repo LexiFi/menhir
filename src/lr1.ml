@@ -747,6 +747,11 @@ module NodeMap =
 module ImperativeNodeMap =
   Fix.Glue.ArraysAsImperativeMaps(struct let n = n end)
 
+let all_sources symbol =
+  targets (fun accu sources _target ->
+    List.fold_left (fun accu source -> NodeSet.add source accu) accu sources
+  ) NodeSet.empty symbol
+
 let all_targets symbol =
   targets (fun accu _sources target ->
     NodeSet.add target accu
