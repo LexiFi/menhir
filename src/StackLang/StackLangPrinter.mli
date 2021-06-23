@@ -62,3 +62,8 @@ val partial_block_to_string : culprit:block -> block -> string
 val print_partial_tblock : culprit:block -> out_channel -> typed_block -> unit
 
 val partial_tblock_to_string : culprit:block -> typed_block -> string
+
+val print_ocamltype : out_channel -> Stretch.ocamltype -> unit
+
+val ocamltype_to_string : Stretch.ocamltype -> string
+

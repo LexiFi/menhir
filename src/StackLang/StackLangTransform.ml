@@ -740,6 +740,15 @@ let rec rsbct_block program cells sync final_type block =
           let final_type' = final_type_intersection program.states taglist in
           let cells', sync' = Annotate.case_tag_branch tagpat block in
           let block = rsbct_block program cells' sync' final_type' block in
+          let print_option = function
+            | None ->
+                "None"
+            | Some s ->
+                sprintf "Some %s" s
+          in
+          let print_ft ft =
+            print_option (Option.map StackLangPrinter.ocamltype_to_string ft)
+          in
           if Array.length cells >= Array.length cells'
              && final_type = final_type'
              (* TODO : *)
@@ -756,7 +765,13 @@ let rec rsbct_block program cells sync final_type block =
             let comment =
               if final_type = final_type'
               then "Single branch optim : not performed, because of cells."
-              else "Single branch optim : not performed, because of final type."
+              else
+                sprintf
+                  "Single branch optim : not performed, because of final type \
+                   : %s != %s"
+                  (print_ft final_type)
+                  (print_ft final_type')
+              (* TODO EMILE : print final types *)
             in
             IComment (comment, block)
       | [] ->

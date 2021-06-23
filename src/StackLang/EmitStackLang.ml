@@ -496,6 +496,8 @@ module L = struct
        jump to an appropriate new state. There is no default branch. Although a
        default branch may need to be later added in order to avoid a warning
        from the OCaml compiler, this default branch is dead. *)
+    (* TODO Emile : do not produce case tags on states that may not be
+       represented. *)
     case_tag state (fun branch ->
         Lr1.targets
           (fun () sources target ->
@@ -565,8 +567,3 @@ module Run () = struct
 
   let () = Time.tick "Producing StackLang code"
 end
-
-(*
-- ((start_p ("" 4 45 53)) (end_p ("" 5 70 87))))))) (code_no_stack_optim)
-+ ((start_p ("" 5 70 76)) (end_p ("" 5 70 87)))))))
-*)

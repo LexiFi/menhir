@@ -378,4 +378,8 @@ let print_partial_tblock ~culprit = to_channel (partial_tblock culprit)
 
 let partial_tblock_to_string ~culprit = to_string (partial_tblock culprit)
 
+let ocamltype_to_string = to_string ocamltype
+
+let print_ocamltype = to_channel ocamltype
+
 let to_string = to_string program
