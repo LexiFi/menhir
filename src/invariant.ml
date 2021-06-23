@@ -720,6 +720,11 @@ end (* Long *)
    as removing case analyses that have only one branch) while preserving the
    well-typedness of the OCaml code. *)
 
+module Origin = struct
+
+type origin =
+  Nonterminal.t option
+
 let debug =
   false
 
@@ -791,19 +796,76 @@ let single_start_symbol : Nonterminal.t option =
   else
     None
 
+let optimize f x =
+  match single_start_symbol with
+  | Some _ ->
+      single_start_symbol
+  | None ->
+      f x
+
 (* The public entry point. *)
 
-let reachable_from_single_start_symbol : Lr1.node -> Nonterminal.t option =
-  fun node ->
-    match single_start_symbol with
-    | Some _ ->
-        single_start_symbol
-    | None ->
-        let sources = Lazy.force sources in
-        match sources.(Lr1.number node) with
-        | Zero ->
-            assert false
-        | One source ->
-            Some (Lr1.nt_of_entry source)
-        | MoreThanOne ->
-            None
+let run : Lr1.node -> origin =
+  optimize (fun node ->
+    let sources = Lazy.force sources in
+    match sources.(Lr1.number node) with
+    | Zero ->
+        assert false
+    | One source ->
+        Some (Lr1.nt_of_entry source)
+    | MoreThanOne ->
+        None
+  )
+
+(* Combining the start-symbol information reported by two states. *)
+
+let conj2 ostart1 ostart2 =
+  match ostart1, ostart2 with
+  | Some nt1, Some nt2 when Nonterminal.equal nt1 nt2 ->
+      (* If both sides report reachability from a single start symbol, and if
+         this start symbol is the same on both sides, then keep this origin. *)
+      ostart1
+  | _ ->
+      (* If either side reports more than one possible start symbol, or if the
+         two sides disagree on the unique start symbol, then no definite start
+         symbol is known. *)
+      None
+
+(* Combining the start-symbol information reported by a set of states. *)
+
+let conj ostarts =
+  match ostarts with
+  | [] ->
+      (* In principle, we could return a bottom value here, but we do not have
+         one; we return a top value instead, that is, [None]. This should not
+         be a problem in practice: if a production is never reduced, then the
+         return type of its [reduce] function is irrelevant. *)
+      None
+  | ostart :: ostarts ->
+      List.fold_left conj2 ostart ostarts
+
+(* To find the result type of the function [goto nt], we look at all edges
+   labeled [nt] and take the conjunction of the result types of their target
+   vertices. (We could just as well use their source vertices, I think.) *)
+
+let goto : Nonterminal.t -> origin =
+  optimize (fun nt ->
+    Symbol.N nt
+    |> Lr1.all_targets
+    |> Lr1.NodeSet.elements
+    |> List.map run
+    |> conj
+  )
+
+(* To find the result type of the function [reduce prod], we simply ask for
+   the result type of the function [goto nt], where [nt] is the left-hand
+   side of this production. *)
+
+(* Another approach would be to find all states where [prod] can be reduced
+   and take the conjunction of the result types associated with these states.
+   These approaches should be equivalent. *)
+
+let reduce prod =
+  goto (Production.nt prod)
+
+end (* Origin *)

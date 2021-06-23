@@ -176,8 +176,31 @@ module Long () : STACK
 (* ------------------------------------------------------------------------- *)
 (* Reachability from the entry states. *)
 
-(**[reachable_from_single_start_symbol node] determines whether the LR(1)
-   state [node] is reachable from a single entry state. If that is the
-   case, then it returns [Some nt], where [nt] is the corresponding (user)
-   start symbol. Otherwise, it returns [None]. *)
-val reachable_from_single_start_symbol: Lr1.node -> Nonterminal.t option
+module Origin : sig
+
+  (**The origin [Some nt] indicates that the start symbol [nt] is definitely
+     known. The origin [None] indicates that no start symbol is known, that
+     is, several start symbols are possible, or maybe none at all. *)
+  type origin =
+    Nonterminal.t option
+
+  (**[run s] determines whether the LR(1) state [s] is reachable from a single
+     entry state. If that is the case, then it returns [Some nt], where [nt]
+     is the corresponding start symbol. Otherwise, it returns [None]. In the
+     code back-end, this determines the result type of the [run] function
+     associated with [s]. *)
+  val run: Lr1.node -> origin
+
+  (**[reduce prod] determines whether the states where production [prod] is
+     reduced are reachable from a single entry state. In the code back-end,
+     this determines the result type of the [reduce] function associated with
+     [prod]. *)
+  val reduce: Production.index -> origin
+
+  (**[goto nt] determines whether the states that are the target of a
+     transition labeled [nt] are reachable from a single entry state. In the
+     code back-end, this determines the result type of the [goto] function
+     associated with [nt]. *)
+  val goto: Nonterminal.t -> origin
+
+end
