@@ -41,6 +41,7 @@ module Nonterminal : sig
 
   (* Comparison. *)
 
+  val equal: t -> t -> bool
   val compare: t -> t -> int
 
   (* The number of nonterminals. This includes the extra nonterminals

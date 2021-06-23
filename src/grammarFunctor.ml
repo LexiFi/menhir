@@ -103,6 +103,9 @@ module Nonterminal = struct
 
   let n2i i = i
 
+  let equal (nt1 : t) (nt2 : t) =
+    nt1 = nt2
+
   let compare = (-)
 
   (* Determine how many nonterminals we have and build mappings
