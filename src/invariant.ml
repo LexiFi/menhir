@@ -709,7 +709,8 @@ end (* Long *)
 
 (* ------------------------------------------------------------------------ *)
 
-(* Compute which states are reachable from each entry state. *)
+(* Compute which entry states can reach each [run], [reduce], and [goto]
+   function. *)
 
 (* This information is computed only on demand. *)
 
@@ -720,152 +721,109 @@ end (* Long *)
    as removing case analyses that have only one branch) while preserving the
    well-typedness of the OCaml code. *)
 
+(* This information is computed via a forward data flow analysis. *)
+
+(* The join semi-lattice of properties is as follows. *)
+
+module P = struct
+
+  (* [SingleOrigin s] means that we are reachable via a single entry state
+     [s]. [Top] means that we are reachable via multiple entry states. *)
+  type property =
+    | SingleOrigin of Nonterminal.t
+    | Top
+
+  let leq_join p1 p2 =
+    match p1, p2 with
+    | _, Top
+    | Top, _ ->
+        Top
+    | SingleOrigin start1, SingleOrigin start2 ->
+        if Nonterminal.equal start1 start2 then p2 else Top
+
+end
+
+(* The call graph of the [run], [reduce] and [goto] functions. *)
+
+module G = struct
+
+  include P
+
+  type variable =
+    | Run of Lr1.node
+    | Reduce of Production.index
+    | Goto of Nonterminal.t
+
+  type t = variable
+
+  let foreach_root yield =
+    (* The entry points are the [run] functions associated with each of
+       the entry states. *)
+    Lr1.entry |> ProductionMap.iter (fun prod node ->
+      let nt = Option.force (Production.classify prod) in
+      yield (Run node) (SingleOrigin nt)
+    )
+
+  let foreach_successor v origin yield =
+    match v with
+    | Run node ->
+        (* For each transition from [node] to [node'], the function [run node]
+           calls the function [run node']. In the case of [goto] transitions,
+           this is not a direct call (it goes through [reduce] and [goto]
+           functions), but it is nevertheless accounted for here. *)
+        Lr1.transitions node |> SymbolMap.iter begin fun _label node' ->
+          yield (Run node') origin
+        end;
+        Lr1.reductions node |> TerminalMap.iter begin fun _tok prods ->
+          let prod = Misc.single prods in
+          yield (Reduce prod) origin
+        end
+    | Reduce prod ->
+        (* A [reduce] function ends with a call to a [goto] function. *)
+        let nt = Production.nt prod in
+        yield (Goto nt) origin
+    | Goto _nt ->
+        (* A [goto] function appears to make no calls. The calls that it
+           makes have already been accounted for above. *)
+        ()
+
+end
+
+(* Run the analysis on demand. *)
+
+let solution : (G.variable -> P.property option) Lazy.t =
+  lazy (
+    let module D = Fix.DataFlow.ForType(G)(P)(G) in
+    D.solution
+  )
+
+(* Convert a [property option] to something clearer for the end user. *)
+
 module Origin = struct
 
-type origin =
-  Nonterminal.t option
+  type origin =
+    | Dead
+    | SingleOrigin of Nonterminal.t
+    | MultipleOrigins
 
-let debug =
-  false
+  let convert op =
+    match op with
+    | None ->
+        Dead
+    | Some (P.SingleOrigin nt) ->
+        SingleOrigin nt
+    | Some (P.Top) ->
+        MultipleOrigins
 
-type sources =
-  | Zero
-  | One of Lr1.node
-  | MoreThanOne
+  (* Publish the data. *)
 
-let cons source sources =
-  match sources with
-  | Zero ->
-      One source
-  | One _
-  | MoreThanOne ->
-      MoreThanOne
+  let run node =
+    convert (Lazy.force solution (G.Run node))
 
-let sources : sources array Lazy.t =
-  lazy begin
-    (* Prepare an array that maps each node in the LR(1) automaton to a list
-       of the entry nodes from which this node is reachable. We are interested
-       in the identity of the list elements only if the list has length one;
-       otherwise, we do not care. *)
-    let sources : sources array = Array.make Lr1.n Zero in
-    (* For each entry node [source], *)
-    Lr1.entry |> ProductionMap.iter begin fun prod source ->
-      (* Perform a forward depth-first search of the automaton, so as to
-         discover all of the nodes that are reachable from [source]. *)
-      let c = ref 0 in
-      let module G = struct
-        include Lr1.ForwardEdges
-        let foreach_root f = f source
-      end in
-      let module M = DFS.MarkArray(Lr1) in
-      let module D = struct
-        let discover node =
-          let node = Lr1.number node in
-          sources.(node) <- cons source sources.(node);
-          incr c
-        let traverse _source _label _target = ()
-      end in
-      let module R = DFS.Run(G)(M)(D) in
-      if debug then begin
-        let symbol = (Production.rhs prod).(0) in
-        Printf.eprintf
-          "The start symbol %s reaches %d out of %d states.\n"
-            (Symbol.print symbol)
-            !c Lr1.n
-      end
-    end;
-    if debug then begin
-      (* Every node is reachable from at least one entry node. *)
-      assert (MArray.for_all (fun sources -> sources <> Zero) sources);
-      (* Count how many nodes are reachable from only one entry node. *)
-      Printf.eprintf
-        "%d out of %d states are reachable from only one entry node.\n"
-          (MArray.count (fun sources -> sources <> MoreThanOne) sources)
-          Lr1.n
-    end;
-    sources
-  end
+  let reduce prod =
+    convert (Lazy.force solution (G.Reduce prod))
 
-(* As an optimization, if there is a single start symbol, then we do not
-   need to run any of the above code. *)
-
-let single_start_symbol : Nonterminal.t option =
-  if ProductionMap.cardinal Lr1.entry = 1 then
-    let prod, _node = ProductionMap.choose Lr1.entry in
-    Production.classify prod (* must return [Some _] *)
-  else
-    None
-
-let optimize f x =
-  match single_start_symbol with
-  | Some _ ->
-      single_start_symbol
-  | None ->
-      f x
-
-(* The public entry point. *)
-
-let run : Lr1.node -> origin =
-  optimize (fun node ->
-    let sources = Lazy.force sources in
-    match sources.(Lr1.number node) with
-    | Zero ->
-        assert false
-    | One source ->
-        Some (Lr1.nt_of_entry source)
-    | MoreThanOne ->
-        None
-  )
-
-(* Combining the start-symbol information reported by two states. *)
-
-let conj2 ostart1 ostart2 =
-  match ostart1, ostart2 with
-  | Some nt1, Some nt2 when Nonterminal.equal nt1 nt2 ->
-      (* If both sides report reachability from a single start symbol, and if
-         this start symbol is the same on both sides, then keep this origin. *)
-      ostart1
-  | _ ->
-      (* If either side reports more than one possible start symbol, or if the
-         two sides disagree on the unique start symbol, then no definite start
-         symbol is known. *)
-      None
-
-(* Combining the start-symbol information reported by a set of states. *)
-
-let conj ostarts =
-  match ostarts with
-  | [] ->
-      (* In principle, we could return a bottom value here, but we do not have
-         one; we return a top value instead, that is, [None]. This should not
-         be a problem in practice: if a production is never reduced, then the
-         return type of its [reduce] function is irrelevant. *)
-      None
-  | ostart :: ostarts ->
-      List.fold_left conj2 ostart ostarts
-
-(* To find the result type of the function [goto nt], we look at all edges
-   labeled [nt] and take the conjunction of the result types of their target
-   vertices. (We could just as well use their source vertices, I think.) *)
-
-let goto : Nonterminal.t -> origin =
-  optimize (fun nt ->
-    Symbol.N nt
-    |> Lr1.all_targets
-    |> Lr1.NodeSet.elements
-    |> List.map run
-    |> conj
-  )
-
-(* To find the result type of the function [reduce prod], we simply ask for
-   the result type of the function [goto nt], where [nt] is the left-hand
-   side of this production. *)
-
-(* Another approach would be to find all states where [prod] can be reduced
-   and take the conjunction of the result types associated with these states.
-   These approaches should be equivalent. *)
-
-let reduce prod =
-  goto (Production.nt prod)
+  let goto nt =
+    convert (Lazy.force solution (G.Goto nt))
 
 end (* Origin *)

@@ -178,29 +178,25 @@ module Long () : STACK
 
 module Origin : sig
 
-  (**The origin [Some nt] indicates that the start symbol [nt] is definitely
-     known. The origin [None] indicates that no start symbol is known, that
-     is, several start symbols are possible, or maybe none at all. *)
+  (**The origin [SingleOrigin nt] indicates that the point of interest is
+     reachable only via the start symbol [nt]. The origin [Dead] that this
+     point in unreachable. [MultipleOrigins] indicates that this point is
+     reachable via several start symbols. *)
   type origin =
-    Nonterminal.t option
+    | Dead
+    | SingleOrigin of Nonterminal.t
+    | MultipleOrigins
 
-  (**[run s] determines whether the LR(1) state [s] is reachable from a single
-     entry state. If that is the case, then it returns [Some nt], where [nt]
-     is the corresponding start symbol. Otherwise, it returns [None]. In the
-     code back-end, this determines the result type of the [run] function
-     associated with [s]. *)
+  (**[run s] determines via which start symbols the [run] function for state
+     [s] is reachable. *)
   val run: Lr1.node -> origin
 
-  (**[reduce prod] determines whether the states where production [prod] is
-     reduced are reachable from a single entry state. In the code back-end,
-     this determines the result type of the [reduce] function associated with
-     [prod]. *)
+  (**[reduce prod] determines via which start symbols the [reduce] function
+     for production [prod] is reachable. *)
   val reduce: Production.index -> origin
 
-  (**[goto nt] determines whether the states that are the target of a
-     transition labeled [nt] are reachable from a single entry state. In the
-     code back-end, this determines the result type of the [goto] function
-     associated with [nt]. *)
+  (**[goto nt] determines via which start symbols the [goto] function for the
+     nonterminal symbol [nt] is reachable. *)
   val goto: Nonterminal.t -> origin
 
 end
