@@ -248,6 +248,7 @@ let id input =
 (* [run] runs a bunch of tests in parallel. *)
 
 let run (inputs : inputs) =
+  printf ";; %d distinct tests.\n\n" (List.length inputs);
   iter process inputs;
   let ids = map id inputs in
   let ids = sort_uniq Stdlib.compare ids in
