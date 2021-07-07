@@ -2,6 +2,8 @@
 
 ## 2021/06/XX
 
+* Standard library: introduce `iboption(X)` and `iloption(X)`.
+
 * The new command line switches `--random-*` can be used to randomly generate
   sentences that are valid with respect to the grammar. If the grammar is in
   the class LR(1) (that is, if it has no conflicts at all), then the generated

@@ -134,10 +134,30 @@ x = X
 | X
     { true }
 
+(* [iboption(X)] is identical to [boption(X)], except its definition is
+   inlined. This has the effect of duplicating the production that
+   refers to it, possibly eliminating an LR(1) conflict. *)
+
+%public %inline iboption(X):
+  /* nothing */
+    { false }
+| X
+    { true }
+
 (* [loption(X)] recognizes either nothing or [X]. It produces a value
    of type ['a list] if [X] produces a value of type ['a list]. *)
 
 %public loption(X):
+  /* nothing */
+    { [] }
+| x = X
+    { x }
+
+(* [iloption(X)] is identical to [loption(X)], except its definition is
+   inlined. This has the effect of duplicating the production that
+   refers to it, possibly eliminating an LR(1) conflict. *)
+
+%public %inline iloption(X):
   /* nothing */
     { [] }
 | x = X
