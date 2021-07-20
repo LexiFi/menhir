@@ -1,0 +1,106 @@
+Grammar has 18 nonterminal symbols, among which 1 start symbols.
+Grammar has 23 terminal symbols.
+Grammar has 40 productions.
+nullable(value) = false
+nullable(toml_ast) = false
+nullable(table_path) = false
+nullable(table_header) = false
+nullable(table_entry) = false
+nullable(table_array_header) = false
+nullable(table) = true
+nullable(separated_nonempty_list(DOT,key)) = false
+nullable(separated_nonempty_list(COMMA,key_value_pair)) = false
+nullable(nonempty_list(NEWLINE)) = false
+nullable(loption(separated_nonempty_list(COMMA,key_value_pair))) = true
+nullable(list(NEWLINE)) = true
+nullable(key_value_pair) = false
+nullable(key) = false
+nullable(items_on_lines(table_entry)) = true
+nullable(item_sequence(COMMA,value)) = true
+nullable(inline_table) = false
+nullable(array) = false
+first(value) = STRING OFFSET_DATETIME MULTILINE_STRING LOCAL_TIME LOCAL_DATETIME LOCAL_DATE LEFT_BRACE INTEGER FLOAT BOOLEAN ARRAY_START
+first(toml_ast) = TABLE_HEADER_START TABLE_ARRAY_HEADER_START NEWLINE KEY EOF
+first(table_path) = KEY
+first(table_header) = TABLE_HEADER_START
+first(table_entry) = TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY
+first(table_array_header) = TABLE_ARRAY_HEADER_START
+first(table) = TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY
+first(separated_nonempty_list(DOT,key)) = KEY
+first(separated_nonempty_list(COMMA,key_value_pair)) = KEY
+first(nonempty_list(NEWLINE)) = NEWLINE
+first(loption(separated_nonempty_list(COMMA,key_value_pair))) = KEY
+first(list(NEWLINE)) = NEWLINE
+first(key_value_pair) = KEY
+first(key) = KEY
+first(items_on_lines(table_entry)) = TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY
+first(item_sequence(COMMA,value)) = STRING OFFSET_DATETIME MULTILINE_STRING LOCAL_TIME LOCAL_DATETIME LOCAL_DATE LEFT_BRACE INTEGER FLOAT BOOLEAN ARRAY_START
+first(inline_table) = LEFT_BRACE
+first(array) = ARRAY_START
+minimal(value) = (* 1 *) BOOLEAN
+minimal(toml_ast) = (* 1 *) EOF
+minimal(table_path) = (* 1 *) KEY
+minimal(table_header) = (* 3 *) TABLE_HEADER_START KEY TABLE_HEADER_END
+minimal(table_entry) = (* 3 *) KEY EQ BOOLEAN
+minimal(table_array_header) = (* 3 *) TABLE_ARRAY_HEADER_START KEY TABLE_ARRAY_HEADER_END
+minimal(table) = (* 0 *)
+minimal(separated_nonempty_list(DOT,key)) = (* 1 *) KEY
+minimal(separated_nonempty_list(COMMA,key_value_pair)) = (* 3 *) KEY EQ BOOLEAN
+minimal(nonempty_list(NEWLINE)) = (* 1 *) NEWLINE
+minimal(loption(separated_nonempty_list(COMMA,key_value_pair))) = (* 0 *)
+minimal(list(NEWLINE)) = (* 0 *)
+minimal(key_value_pair) = (* 3 *) KEY EQ BOOLEAN
+minimal(key) = (* 1 *) KEY
+minimal(items_on_lines(table_entry)) = (* 0 *)
+minimal(item_sequence(COMMA,value)) = (* 0 *)
+minimal(inline_table) = (* 2 *) LEFT_BRACE RIGHT_BRACE
+minimal(array) = (* 2 *) ARRAY_START ARRAY_END
+maximal(value) = infinity
+maximal(toml_ast) = infinity
+maximal(table_path) = infinity
+maximal(table_header) = infinity
+maximal(table_entry) = infinity
+maximal(table_array_header) = infinity
+maximal(table) = infinity
+maximal(separated_nonempty_list(DOT,key)) = infinity
+maximal(separated_nonempty_list(COMMA,key_value_pair)) = infinity
+maximal(nonempty_list(NEWLINE)) = infinity
+maximal(loption(separated_nonempty_list(COMMA,key_value_pair))) = infinity
+maximal(list(NEWLINE)) = infinity
+maximal(key_value_pair) = infinity
+maximal(key) = 1
+maximal(items_on_lines(table_entry)) = infinity
+maximal(item_sequence(COMMA,value)) = infinity
+maximal(inline_table) = infinity
+maximal(array) = infinity
+follow(value) = RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+follow(toml_ast) = #
+follow(table_path) = TABLE_HEADER_END TABLE_ARRAY_HEADER_END EQ
+follow(table_header) = NEWLINE EOF
+follow(table_entry) = NEWLINE EOF
+follow(table_array_header) = NEWLINE EOF
+follow(table) = EOF
+follow(separated_nonempty_list(DOT,key)) = TABLE_HEADER_END TABLE_ARRAY_HEADER_END EQ
+follow(separated_nonempty_list(COMMA,key_value_pair)) = RIGHT_BRACE
+follow(nonempty_list(NEWLINE)) = TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY EOF
+follow(loption(separated_nonempty_list(COMMA,key_value_pair))) = RIGHT_BRACE
+follow(list(NEWLINE)) = TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY EOF
+follow(key_value_pair) = RIGHT_BRACE NEWLINE EOF COMMA
+follow(key) = TABLE_HEADER_END TABLE_ARRAY_HEADER_END EQ DOT
+follow(items_on_lines(table_entry)) = EOF
+follow(item_sequence(COMMA,value)) = ARRAY_END
+follow(inline_table) = RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+follow(array) = RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+Built an LR(0) automaton with 55 states.
+The grammar is not SLR(1) -- 1 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 55 states.
+Warning: one state has shift/reduce conflicts.
+Warning: one shift/reduce conflict was arbitrarily resolved.
+32 out of 55 states have a default reduction.
+14 out of 55 states are represented.
+0 out of 44 symbols keep track of their start position.
+0 out of 44 symbols keep track of their end position.
+27 out of 41 productions exploit shiftreduce optimization.
+0 out of 55 states can peek at an error.
+174 functions before inlining, 32 functions after inlining.

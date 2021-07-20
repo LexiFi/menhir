@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 390 distinct tests.
+;; 391 distinct tests.
 
 (rule (target JSParse.opp.out) (deps JSParse.mly)
   (action
@@ -11681,6 +11681,36 @@
   (action
     (diff tilde-used-warning.conflicts.exp tilde-used-warning.conflicts)))
 
+(rule (target toml_parser.opp.out) (deps toml_parser.mly)
+  (action
+    (with-outputs-to toml_parser.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias toml_parser)
+  (action (diff toml_parser.opp.exp toml_parser.opp.out)))
+
+(rule
+  (targets toml_parser.out toml_parser.automaton
+    toml_parser.automaton.resolved toml_parser.conflicts toml_parser.timings)
+  (deps toml_parser.mly)
+  (action
+    (with-outputs-to toml_parser.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to toml_parser.timings %{deps})))))
+
+(rule (alias toml_parser) (action (diff toml_parser.exp toml_parser.out)))
+
+(rule (alias toml_parser)
+  (action (diff toml_parser.automaton.exp toml_parser.automaton)))
+
+(rule (alias toml_parser)
+  (action
+    (diff toml_parser.automaton.resolved.exp toml_parser.automaton.resolved)))
+
+(rule (alias toml_parser)
+  (action (diff toml_parser.conflicts.exp toml_parser.conflicts)))
+
 (rule (target tony-rc_parse.opp.out) (deps tony-rc_parse.mly)
   (action
     (with-outputs-to tony-rc_parse.opp.out
@@ -13212,6 +13242,7 @@
     (alias sysver)
     (alias talparser)
     (alias tilde-used-warning)
+    (alias toml_parser)
     (alias tony-rc_parse)
     (alias tony-xmlparse)
     (alias touist.3.5.0-parser)

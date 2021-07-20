@@ -1,0 +1,30 @@
+
+** Conflict (shift/reduce) in state 34.
+** Token involved: ARRAY_END
+** This state is reached from toml_ast after reading:
+
+list(NEWLINE) table_path EQ ARRAY_START
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+toml_ast 
+list(NEWLINE) table EOF 
+              items_on_lines(table_entry) 
+              table_entry 
+              key_value_pair 
+              table_path EQ value 
+                            array 
+                            (?)
+
+** In state 34, looking ahead at ARRAY_END, shifting is permitted
+** because of the following sub-derivation:
+
+ARRAY_START . ARRAY_END 
+
+** In state 34, looking ahead at ARRAY_END, reducing production
+** item_sequence(COMMA,value) ->
+** is permitted because of the following sub-derivation:
+
+ARRAY_START item_sequence(COMMA,value) ARRAY_END // lookahead token appears
+            . 

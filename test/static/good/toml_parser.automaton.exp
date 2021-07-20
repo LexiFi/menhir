@@ -1,0 +1,645 @@
+State 0:
+## Known stack suffix:
+##
+## LR(1) items:
+toml_ast' -> . toml_ast [ # ]
+## Transitions:
+-- On NEWLINE shift to state 1
+-- On toml_ast shift to state 3
+-- On list(NEWLINE) shift to state 4
+## Reductions:
+-- On TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY EOF
+--   reduce production list(NEWLINE) ->
+
+State 1:
+## Known stack suffix:
+## NEWLINE
+## LR(1) items:
+list(NEWLINE) -> NEWLINE . list(NEWLINE) [ TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY EOF ]
+## Transitions:
+-- On NEWLINE shift to state 1
+-- On list(NEWLINE) shift to state 2
+## Reductions:
+-- On TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY EOF
+--   reduce production list(NEWLINE) ->
+
+State 2:
+## Known stack suffix:
+## NEWLINE list(NEWLINE)
+## LR(1) items:
+list(NEWLINE) -> NEWLINE list(NEWLINE) . [ TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY EOF ]
+## Transitions:
+## Reductions:
+-- On TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY EOF
+--   reduce production list(NEWLINE) -> NEWLINE list(NEWLINE)
+
+State 3:
+## Known stack suffix:
+## toml_ast
+## LR(1) items:
+toml_ast' -> toml_ast . [ # ]
+## Transitions:
+## Reductions:
+-- On #
+--   accept toml_ast
+
+State 4:
+## Known stack suffix:
+## list(NEWLINE)
+## LR(1) items:
+toml_ast -> list(NEWLINE) . table EOF [ # ]
+## Transitions:
+-- On TABLE_HEADER_START shift to state 5
+-- On TABLE_ARRAY_HEADER_START shift to state 13
+-- On KEY shift to state 6
+-- On table_path shift to state 16
+-- On table_header shift to state 44
+-- On table_entry shift to state 45
+-- On table_array_header shift to state 49
+-- On table shift to state 52
+-- On separated_nonempty_list(DOT,key) shift to state 9
+-- On key_value_pair shift to state 50
+-- On key shift to state 10
+-- On items_on_lines(table_entry) shift to state 54
+## Reductions:
+-- On EOF
+--   reduce production items_on_lines(table_entry) ->
+
+State 5:
+## Known stack suffix:
+## TABLE_HEADER_START
+## LR(1) items:
+table_header -> TABLE_HEADER_START . table_path TABLE_HEADER_END [ NEWLINE EOF ]
+## Transitions:
+-- On KEY shift to state 6
+-- On table_path shift to state 7
+-- On separated_nonempty_list(DOT,key) shift to state 9
+-- On key shift to state 10
+## Reductions:
+
+State 6:
+## Known stack suffix:
+## KEY
+## LR(1) items:
+key -> KEY . [ TABLE_HEADER_END TABLE_ARRAY_HEADER_END EQ DOT ]
+## Transitions:
+## Reductions:
+-- On TABLE_HEADER_END TABLE_ARRAY_HEADER_END EQ DOT
+--   reduce production key -> KEY
+
+State 7:
+## Known stack suffix:
+## TABLE_HEADER_START table_path
+## LR(1) items:
+table_header -> TABLE_HEADER_START table_path . TABLE_HEADER_END [ NEWLINE EOF ]
+## Transitions:
+-- On TABLE_HEADER_END shift to state 8
+## Reductions:
+
+State 8:
+## Known stack suffix:
+## TABLE_HEADER_START table_path TABLE_HEADER_END
+## LR(1) items:
+table_header -> TABLE_HEADER_START table_path TABLE_HEADER_END . [ NEWLINE EOF ]
+## Transitions:
+## Reductions:
+-- On NEWLINE EOF
+--   reduce production table_header -> TABLE_HEADER_START table_path TABLE_HEADER_END
+
+State 9:
+## Known stack suffix:
+## separated_nonempty_list(DOT,key)
+## LR(1) items:
+table_path -> separated_nonempty_list(DOT,key) . [ TABLE_HEADER_END TABLE_ARRAY_HEADER_END EQ ]
+## Transitions:
+## Reductions:
+-- On TABLE_HEADER_END TABLE_ARRAY_HEADER_END EQ
+--   reduce production table_path -> separated_nonempty_list(DOT,key)
+
+State 10:
+## Known stack suffix:
+## key
+## LR(1) items:
+separated_nonempty_list(DOT,key) -> key . [ TABLE_HEADER_END TABLE_ARRAY_HEADER_END EQ ]
+separated_nonempty_list(DOT,key) -> key . DOT separated_nonempty_list(DOT,key) [ TABLE_HEADER_END TABLE_ARRAY_HEADER_END EQ ]
+## Transitions:
+-- On DOT shift to state 11
+## Reductions:
+-- On TABLE_HEADER_END TABLE_ARRAY_HEADER_END EQ
+--   reduce production separated_nonempty_list(DOT,key) -> key
+
+State 11:
+## Known stack suffix:
+## key DOT
+## LR(1) items:
+separated_nonempty_list(DOT,key) -> key DOT . separated_nonempty_list(DOT,key) [ TABLE_HEADER_END TABLE_ARRAY_HEADER_END EQ ]
+## Transitions:
+-- On KEY shift to state 6
+-- On separated_nonempty_list(DOT,key) shift to state 12
+-- On key shift to state 10
+## Reductions:
+
+State 12:
+## Known stack suffix:
+## key DOT separated_nonempty_list(DOT,key)
+## LR(1) items:
+separated_nonempty_list(DOT,key) -> key DOT separated_nonempty_list(DOT,key) . [ TABLE_HEADER_END TABLE_ARRAY_HEADER_END EQ ]
+## Transitions:
+## Reductions:
+-- On TABLE_HEADER_END TABLE_ARRAY_HEADER_END EQ
+--   reduce production separated_nonempty_list(DOT,key) -> key DOT separated_nonempty_list(DOT,key)
+
+State 13:
+## Known stack suffix:
+## TABLE_ARRAY_HEADER_START
+## LR(1) items:
+table_array_header -> TABLE_ARRAY_HEADER_START . table_path TABLE_ARRAY_HEADER_END [ NEWLINE EOF ]
+## Transitions:
+-- On KEY shift to state 6
+-- On table_path shift to state 14
+-- On separated_nonempty_list(DOT,key) shift to state 9
+-- On key shift to state 10
+## Reductions:
+
+State 14:
+## Known stack suffix:
+## TABLE_ARRAY_HEADER_START table_path
+## LR(1) items:
+table_array_header -> TABLE_ARRAY_HEADER_START table_path . TABLE_ARRAY_HEADER_END [ NEWLINE EOF ]
+## Transitions:
+-- On TABLE_ARRAY_HEADER_END shift to state 15
+## Reductions:
+
+State 15:
+## Known stack suffix:
+## TABLE_ARRAY_HEADER_START table_path TABLE_ARRAY_HEADER_END
+## LR(1) items:
+table_array_header -> TABLE_ARRAY_HEADER_START table_path TABLE_ARRAY_HEADER_END . [ NEWLINE EOF ]
+## Transitions:
+## Reductions:
+-- On NEWLINE EOF
+--   reduce production table_array_header -> TABLE_ARRAY_HEADER_START table_path TABLE_ARRAY_HEADER_END
+
+State 16:
+## Known stack suffix:
+## table_path
+## LR(1) items:
+key_value_pair -> table_path . EQ value [ RIGHT_BRACE NEWLINE EOF COMMA ]
+## Transitions:
+-- On EQ shift to state 17
+## Reductions:
+
+State 17:
+## Known stack suffix:
+## table_path EQ
+## LR(1) items:
+key_value_pair -> table_path EQ . value [ RIGHT_BRACE NEWLINE EOF COMMA ]
+## Transitions:
+-- On STRING shift to state 18
+-- On OFFSET_DATETIME shift to state 19
+-- On MULTILINE_STRING shift to state 20
+-- On LOCAL_TIME shift to state 21
+-- On LOCAL_DATETIME shift to state 22
+-- On LOCAL_DATE shift to state 23
+-- On LEFT_BRACE shift to state 24
+-- On INTEGER shift to state 31
+-- On FLOAT shift to state 32
+-- On BOOLEAN shift to state 33
+-- On ARRAY_START shift to state 34
+-- On value shift to state 43
+-- On inline_table shift to state 39
+-- On array shift to state 40
+## Reductions:
+
+State 18:
+## Known stack suffix:
+## STRING
+## LR(1) items:
+value -> STRING . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production value -> STRING
+
+State 19:
+## Known stack suffix:
+## OFFSET_DATETIME
+## LR(1) items:
+value -> OFFSET_DATETIME . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production value -> OFFSET_DATETIME
+
+State 20:
+## Known stack suffix:
+## MULTILINE_STRING
+## LR(1) items:
+value -> MULTILINE_STRING . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production value -> MULTILINE_STRING
+
+State 21:
+## Known stack suffix:
+## LOCAL_TIME
+## LR(1) items:
+value -> LOCAL_TIME . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production value -> LOCAL_TIME
+
+State 22:
+## Known stack suffix:
+## LOCAL_DATETIME
+## LR(1) items:
+value -> LOCAL_DATETIME . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production value -> LOCAL_DATETIME
+
+State 23:
+## Known stack suffix:
+## LOCAL_DATE
+## LR(1) items:
+value -> LOCAL_DATE . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production value -> LOCAL_DATE
+
+State 24:
+## Known stack suffix:
+## LEFT_BRACE
+## LR(1) items:
+inline_table -> LEFT_BRACE . loption(separated_nonempty_list(COMMA,key_value_pair)) RIGHT_BRACE [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+-- On KEY shift to state 6
+-- On table_path shift to state 16
+-- On separated_nonempty_list(DOT,key) shift to state 9
+-- On separated_nonempty_list(COMMA,key_value_pair) shift to state 25
+-- On loption(separated_nonempty_list(COMMA,key_value_pair)) shift to state 26
+-- On key_value_pair shift to state 28
+-- On key shift to state 10
+## Reductions:
+-- On RIGHT_BRACE
+--   reduce production loption(separated_nonempty_list(COMMA,key_value_pair)) ->
+
+State 25:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,key_value_pair)
+## LR(1) items:
+loption(separated_nonempty_list(COMMA,key_value_pair)) -> separated_nonempty_list(COMMA,key_value_pair) . [ RIGHT_BRACE ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE
+--   reduce production loption(separated_nonempty_list(COMMA,key_value_pair)) -> separated_nonempty_list(COMMA,key_value_pair)
+
+State 26:
+## Known stack suffix:
+## LEFT_BRACE loption(separated_nonempty_list(COMMA,key_value_pair))
+## LR(1) items:
+inline_table -> LEFT_BRACE loption(separated_nonempty_list(COMMA,key_value_pair)) . RIGHT_BRACE [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+-- On RIGHT_BRACE shift to state 27
+## Reductions:
+
+State 27:
+## Known stack suffix:
+## LEFT_BRACE loption(separated_nonempty_list(COMMA,key_value_pair)) RIGHT_BRACE
+## LR(1) items:
+inline_table -> LEFT_BRACE loption(separated_nonempty_list(COMMA,key_value_pair)) RIGHT_BRACE . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production inline_table -> LEFT_BRACE loption(separated_nonempty_list(COMMA,key_value_pair)) RIGHT_BRACE
+
+State 28:
+## Known stack suffix:
+## key_value_pair
+## LR(1) items:
+separated_nonempty_list(COMMA,key_value_pair) -> key_value_pair . [ RIGHT_BRACE ]
+separated_nonempty_list(COMMA,key_value_pair) -> key_value_pair . COMMA separated_nonempty_list(COMMA,key_value_pair) [ RIGHT_BRACE ]
+## Transitions:
+-- On COMMA shift to state 29
+## Reductions:
+-- On RIGHT_BRACE
+--   reduce production separated_nonempty_list(COMMA,key_value_pair) -> key_value_pair
+
+State 29:
+## Known stack suffix:
+## key_value_pair COMMA
+## LR(1) items:
+separated_nonempty_list(COMMA,key_value_pair) -> key_value_pair COMMA . separated_nonempty_list(COMMA,key_value_pair) [ RIGHT_BRACE ]
+## Transitions:
+-- On KEY shift to state 6
+-- On table_path shift to state 16
+-- On separated_nonempty_list(DOT,key) shift to state 9
+-- On separated_nonempty_list(COMMA,key_value_pair) shift to state 30
+-- On key_value_pair shift to state 28
+-- On key shift to state 10
+## Reductions:
+
+State 30:
+## Known stack suffix:
+## key_value_pair COMMA separated_nonempty_list(COMMA,key_value_pair)
+## LR(1) items:
+separated_nonempty_list(COMMA,key_value_pair) -> key_value_pair COMMA separated_nonempty_list(COMMA,key_value_pair) . [ RIGHT_BRACE ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE
+--   reduce production separated_nonempty_list(COMMA,key_value_pair) -> key_value_pair COMMA separated_nonempty_list(COMMA,key_value_pair)
+
+State 31:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
+value -> INTEGER . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production value -> INTEGER
+
+State 32:
+## Known stack suffix:
+## FLOAT
+## LR(1) items:
+value -> FLOAT . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production value -> FLOAT
+
+State 33:
+## Known stack suffix:
+## BOOLEAN
+## LR(1) items:
+value -> BOOLEAN . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production value -> BOOLEAN
+
+State 34:
+## Known stack suffix:
+## ARRAY_START
+## LR(1) items:
+array -> ARRAY_START . ARRAY_END [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+array -> ARRAY_START . item_sequence(COMMA,value) ARRAY_END [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+-- On STRING shift to state 18
+-- On OFFSET_DATETIME shift to state 19
+-- On MULTILINE_STRING shift to state 20
+-- On LOCAL_TIME shift to state 21
+-- On LOCAL_DATETIME shift to state 22
+-- On LOCAL_DATE shift to state 23
+-- On LEFT_BRACE shift to state 24
+-- On INTEGER shift to state 31
+-- On FLOAT shift to state 32
+-- On BOOLEAN shift to state 33
+-- On ARRAY_START shift to state 34
+-- On ARRAY_END shift to state 35
+-- On value shift to state 36
+-- On item_sequence(COMMA,value) shift to state 41
+-- On inline_table shift to state 39
+-- On array shift to state 40
+## Reductions:
+-- On ARRAY_END
+--   reduce production item_sequence(COMMA,value) ->
+** Conflict on ARRAY_END
+
+State 35:
+## Known stack suffix:
+## ARRAY_START ARRAY_END
+## LR(1) items:
+array -> ARRAY_START ARRAY_END . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production array -> ARRAY_START ARRAY_END
+
+State 36:
+## Known stack suffix:
+## value
+## LR(1) items:
+item_sequence(COMMA,value) -> value . [ ARRAY_END ]
+item_sequence(COMMA,value) -> value . COMMA item_sequence(COMMA,value) [ ARRAY_END ]
+## Transitions:
+-- On COMMA shift to state 37
+## Reductions:
+-- On ARRAY_END
+--   reduce production item_sequence(COMMA,value) -> value
+
+State 37:
+## Known stack suffix:
+## value COMMA
+## LR(1) items:
+item_sequence(COMMA,value) -> value COMMA . item_sequence(COMMA,value) [ ARRAY_END ]
+## Transitions:
+-- On STRING shift to state 18
+-- On OFFSET_DATETIME shift to state 19
+-- On MULTILINE_STRING shift to state 20
+-- On LOCAL_TIME shift to state 21
+-- On LOCAL_DATETIME shift to state 22
+-- On LOCAL_DATE shift to state 23
+-- On LEFT_BRACE shift to state 24
+-- On INTEGER shift to state 31
+-- On FLOAT shift to state 32
+-- On BOOLEAN shift to state 33
+-- On ARRAY_START shift to state 34
+-- On value shift to state 36
+-- On item_sequence(COMMA,value) shift to state 38
+-- On inline_table shift to state 39
+-- On array shift to state 40
+## Reductions:
+-- On ARRAY_END
+--   reduce production item_sequence(COMMA,value) ->
+
+State 38:
+## Known stack suffix:
+## value COMMA item_sequence(COMMA,value)
+## LR(1) items:
+item_sequence(COMMA,value) -> value COMMA item_sequence(COMMA,value) . [ ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On ARRAY_END
+--   reduce production item_sequence(COMMA,value) -> value COMMA item_sequence(COMMA,value)
+
+State 39:
+## Known stack suffix:
+## inline_table
+## LR(1) items:
+value -> inline_table . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production value -> inline_table
+
+State 40:
+## Known stack suffix:
+## array
+## LR(1) items:
+value -> array . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production value -> array
+
+State 41:
+## Known stack suffix:
+## ARRAY_START item_sequence(COMMA,value)
+## LR(1) items:
+array -> ARRAY_START item_sequence(COMMA,value) . ARRAY_END [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+-- On ARRAY_END shift to state 42
+## Reductions:
+
+State 42:
+## Known stack suffix:
+## ARRAY_START item_sequence(COMMA,value) ARRAY_END
+## LR(1) items:
+array -> ARRAY_START item_sequence(COMMA,value) ARRAY_END . [ RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA ARRAY_END
+--   reduce production array -> ARRAY_START item_sequence(COMMA,value) ARRAY_END
+
+State 43:
+## Known stack suffix:
+## table_path EQ value
+## LR(1) items:
+key_value_pair -> table_path EQ value . [ RIGHT_BRACE NEWLINE EOF COMMA ]
+## Transitions:
+## Reductions:
+-- On RIGHT_BRACE NEWLINE EOF COMMA
+--   reduce production key_value_pair -> table_path EQ value
+
+State 44:
+## Known stack suffix:
+## table_header
+## LR(1) items:
+table_entry -> table_header . [ NEWLINE EOF ]
+## Transitions:
+## Reductions:
+-- On NEWLINE EOF
+--   reduce production table_entry -> table_header
+
+State 45:
+## Known stack suffix:
+## table_entry
+## LR(1) items:
+items_on_lines(table_entry) -> table_entry . [ EOF ]
+items_on_lines(table_entry) -> table_entry . nonempty_list(NEWLINE) items_on_lines(table_entry) [ EOF ]
+## Transitions:
+-- On NEWLINE shift to state 46
+-- On nonempty_list(NEWLINE) shift to state 48
+## Reductions:
+-- On EOF
+--   reduce production items_on_lines(table_entry) -> table_entry
+
+State 46:
+## Known stack suffix:
+## NEWLINE
+## LR(1) items:
+nonempty_list(NEWLINE) -> NEWLINE . [ TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY EOF ]
+nonempty_list(NEWLINE) -> NEWLINE . nonempty_list(NEWLINE) [ TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY EOF ]
+## Transitions:
+-- On NEWLINE shift to state 46
+-- On nonempty_list(NEWLINE) shift to state 47
+## Reductions:
+-- On TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY EOF
+--   reduce production nonempty_list(NEWLINE) -> NEWLINE
+
+State 47:
+## Known stack suffix:
+## NEWLINE nonempty_list(NEWLINE)
+## LR(1) items:
+nonempty_list(NEWLINE) -> NEWLINE nonempty_list(NEWLINE) . [ TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY EOF ]
+## Transitions:
+## Reductions:
+-- On TABLE_HEADER_START TABLE_ARRAY_HEADER_START KEY EOF
+--   reduce production nonempty_list(NEWLINE) -> NEWLINE nonempty_list(NEWLINE)
+
+State 48:
+## Known stack suffix:
+## table_entry nonempty_list(NEWLINE)
+## LR(1) items:
+items_on_lines(table_entry) -> table_entry nonempty_list(NEWLINE) . items_on_lines(table_entry) [ EOF ]
+## Transitions:
+-- On TABLE_HEADER_START shift to state 5
+-- On TABLE_ARRAY_HEADER_START shift to state 13
+-- On KEY shift to state 6
+-- On table_path shift to state 16
+-- On table_header shift to state 44
+-- On table_entry shift to state 45
+-- On table_array_header shift to state 49
+-- On separated_nonempty_list(DOT,key) shift to state 9
+-- On key_value_pair shift to state 50
+-- On key shift to state 10
+-- On items_on_lines(table_entry) shift to state 51
+## Reductions:
+-- On EOF
+--   reduce production items_on_lines(table_entry) ->
+
+State 49:
+## Known stack suffix:
+## table_array_header
+## LR(1) items:
+table_entry -> table_array_header . [ NEWLINE EOF ]
+## Transitions:
+## Reductions:
+-- On NEWLINE EOF
+--   reduce production table_entry -> table_array_header
+
+State 50:
+## Known stack suffix:
+## key_value_pair
+## LR(1) items:
+table_entry -> key_value_pair . [ NEWLINE EOF ]
+## Transitions:
+## Reductions:
+-- On NEWLINE EOF
+--   reduce production table_entry -> key_value_pair
+
+State 51:
+## Known stack suffix:
+## table_entry nonempty_list(NEWLINE) items_on_lines(table_entry)
+## LR(1) items:
+items_on_lines(table_entry) -> table_entry nonempty_list(NEWLINE) items_on_lines(table_entry) . [ EOF ]
+## Transitions:
+## Reductions:
+-- On EOF
+--   reduce production items_on_lines(table_entry) -> table_entry nonempty_list(NEWLINE) items_on_lines(table_entry)
+
+State 52:
+## Known stack suffix:
+## list(NEWLINE) table
+## LR(1) items:
+toml_ast -> list(NEWLINE) table . EOF [ # ]
+## Transitions:
+-- On EOF shift to state 53
+## Reductions:
+
+State 53:
+## Known stack suffix:
+## list(NEWLINE) table EOF
+## LR(1) items:
+toml_ast -> list(NEWLINE) table EOF . [ # ]
+## Transitions:
+## Reductions:
+-- On #
+--   reduce production toml_ast -> list(NEWLINE) table EOF
+
+State 54:
+## Known stack suffix:
+## items_on_lines(table_entry)
+## LR(1) items:
+table -> items_on_lines(table_entry) . [ EOF ]
+## Transitions:
+## Reductions:
+-- On EOF
+--   reduce production table -> items_on_lines(table_entry)
+
