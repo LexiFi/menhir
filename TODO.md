@@ -279,6 +279,15 @@
 
 ## Standard library
 
+* We currently have only two visibility levels (`%public` means globally
+  visible, while no qualifier means file-private). We might wish for more
+  structure. We might also wish to have a way of ensuring forward
+  compatibility when we add new definitions to the standard library. E.g., we
+  might wish to restrict `%public` to indicate that a name is defined at the
+  user level and introduce `%root` to indicate that a name is defined at the
+  root level. The standard library would use `%root`, and ordinary users would
+  be forbidden from using it.
+
 * Add more list forms (left-recursive lists, flexible lists, etc.).
 
 * We might wish to add `epsilon` (which recognizes the empty string and
