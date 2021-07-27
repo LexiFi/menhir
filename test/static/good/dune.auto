@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 391 distinct tests.
+;; 392 distinct tests.
 
 (rule (target JSParse.opp.out) (deps JSParse.mly)
   (action
@@ -10643,6 +10643,36 @@
 (rule (alias pxp-ucs2_to_utf8)
   (action (diff pxp-ucs2_to_utf8.conflicts.exp pxp-ucs2_to_utf8.conflicts)))
 
+(rule (target pyre-check.opp.out) (deps pyre-check.mly)
+  (action
+    (with-outputs-to pyre-check.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias pyre-check)
+  (action (diff pyre-check.opp.exp pyre-check.opp.out)))
+
+(rule
+  (targets pyre-check.out pyre-check.automaton pyre-check.automaton.resolved
+    pyre-check.conflicts pyre-check.timings)
+  (deps pyre-check.mly)
+  (action
+    (with-outputs-to pyre-check.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to pyre-check.timings %{deps})))))
+
+(rule (alias pyre-check) (action (diff pyre-check.exp pyre-check.out)))
+
+(rule (alias pyre-check)
+  (action (diff pyre-check.automaton.exp pyre-check.automaton)))
+
+(rule (alias pyre-check)
+  (action
+    (diff pyre-check.automaton.resolved.exp pyre-check.automaton.resolved)))
+
+(rule (alias pyre-check)
+  (action (diff pyre-check.conflicts.exp pyre-check.conflicts)))
+
 (rule (target rdf_sparql_parser.opp.out) (deps rdf_sparql_parser.mly)
   (action
     (with-outputs-to rdf_sparql_parser.opp.out
@@ -13211,6 +13241,7 @@
     (alias public-inline-1)
     (alias pxp-m2parsergen)
     (alias pxp-ucs2_to_utf8)
+    (alias pyre-check)
     (alias rdf_sparql_parser)
     (alias reason.3.3.7-reason_parser)
     (alias reason_parser)

@@ -1,0 +1,1195 @@
+
+** Conflict (shift/reduce) in state 512.
+** Token involved: NEWLINE
+** This state is reached from parse after reading:
+
+TRY COLON nonempty_list(NEWLINE) INDENT statements DEDENT
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+(?)
+
+** In state 512, looking ahead at NEWLINE, reducing production
+** list(NEWLINE) ->
+** is permitted because of the following sub-derivation:
+
+statement statements // lookahead token appears because statements can begin with NEWLINE
+compound_statement // lookahead token is inherited
+TRY COLON block list(handler) named_optional_block(ELSE) named_optional_block(FINALLY) // lookahead token is inherited because list(handler) named_optional_block(ELSE) named_optional_block(FINALLY) can vanish
+          nonempty_list(NEWLINE) INDENT statements DEDENT list(NEWLINE) // lookahead token is inherited
+                                                          . 
+
+** In state 512, looking ahead at NEWLINE, shifting is permitted
+** because of the following sub-derivation:
+
+statement statements 
+compound_statement 
+TRY COLON block list(handler) named_optional_block(ELSE) named_optional_block(FINALLY) 
+          nonempty_list(NEWLINE) INDENT statements DEDENT list(NEWLINE) 
+                                                          . NEWLINE list(NEWLINE) 
+
+** Conflict (shift/reduce) in state 509.
+** Token involved: IF
+** This state is reached from parse after reading:
+
+ASYNC
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+(?)
+
+** In state 509, looking ahead at IF, shifting is permitted
+** because of the following sub-derivation:
+
+async_statement 
+ASYNC compound_statement 
+      . IF conditional 
+
+** In state 509, looking ahead at IF, reducing production
+** identifier -> ASYNC
+** is permitted because of the following sub-derivation:
+
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+test_list PLUSEQUALS value 
+separated_nonempty_list_indicator(COMMA,test) 
+test separated_nonempty_list_indicator_tail(COMMA,test) 
+or_test IF test_list ELSE test // lookahead token appears
+and_test // lookahead token is inherited
+not_test // lookahead token is inherited
+comparison // lookahead token is inherited
+expression // lookahead token is inherited
+atom // lookahead token is inherited
+identifier // lookahead token is inherited
+ASYNC . 
+
+** Conflict (shift/reduce) in state 490.
+** Token involved: NEWLINE
+** This state is reached from parse after reading:
+
+TRY COLON nonempty_list(NEWLINE) INDENT statements DEDENT NEWLINE
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+(?)
+
+** In state 490, looking ahead at NEWLINE, reducing production
+** list(NEWLINE) ->
+** is permitted because of the following sub-derivation:
+
+statement statements // lookahead token appears because statements can begin with NEWLINE
+compound_statement // lookahead token is inherited
+TRY COLON block list(handler) named_optional_block(ELSE) named_optional_block(FINALLY) // lookahead token is inherited because list(handler) named_optional_block(ELSE) named_optional_block(FINALLY) can vanish
+          nonempty_list(NEWLINE) INDENT statements DEDENT list(NEWLINE) // lookahead token is inherited
+                                                          NEWLINE list(NEWLINE) // lookahead token is inherited
+                                                                  . 
+
+** In state 490, looking ahead at NEWLINE, shifting is permitted
+** because of the following sub-derivation:
+
+statement statements 
+compound_statement 
+TRY COLON block list(handler) named_optional_block(ELSE) named_optional_block(FINALLY) 
+          nonempty_list(NEWLINE) INDENT statements DEDENT list(NEWLINE) 
+                                                          NEWLINE list(NEWLINE) 
+                                                                  . NEWLINE list(NEWLINE) 
+
+** Conflict (shift/reduce) in state 489.
+** Token involved: NEWLINE
+** This state is reached from parse after reading:
+
+CLASS reference bases COLON nonempty_list(NEWLINE) INDENT ELLIPSES NEWLINE DEDENT
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+(?)
+
+** In state 489, looking ahead at NEWLINE, reducing production
+** list(NEWLINE) ->
+** is permitted because of the following sub-derivation:
+
+statement statements // lookahead token appears because statements can begin with NEWLINE
+compound_statement // lookahead token is inherited
+CLASS reference bases COLON block_or_stub_body // lookahead token is inherited
+                            nonempty_list(NEWLINE) INDENT ELLIPSES NEWLINE DEDENT list(NEWLINE) // lookahead token is inherited
+                                                                                  . 
+
+** In state 489, looking ahead at NEWLINE, shifting is permitted
+** because of the following sub-derivation:
+
+statement statements 
+compound_statement 
+CLASS reference bases COLON block_or_stub_body 
+                            nonempty_list(NEWLINE) INDENT ELLIPSES NEWLINE DEDENT list(NEWLINE) 
+                                                                                  . NEWLINE list(NEWLINE) 
+
+** Conflict (shift/reduce) in state 487.
+** Token involved: NEWLINE
+** This state is reached from parse after reading:
+
+CLASS reference bases COLON nonempty_list(NEWLINE) INDENT ELLIPSES
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+compound_statement 
+CLASS reference bases COLON block_or_stub_body 
+                            (?)
+
+** In state 487, looking ahead at NEWLINE, reducing production
+** atom -> ELLIPSES
+** is permitted because of the following sub-derivation:
+
+block 
+nonempty_list(NEWLINE) INDENT statements DEDENT list(NEWLINE) 
+                              statement statements 
+                              simple_statement 
+                              parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE // lookahead token appears
+                              small_statement // lookahead token is inherited
+                              test_list // lookahead token is inherited
+                              separated_nonempty_list_indicator(COMMA,test) // lookahead token is inherited
+                              test separated_nonempty_list_indicator_tail(COMMA,test) // lookahead token is inherited because separated_nonempty_list_indicator_tail(COMMA,test) can vanish
+                              or_test // lookahead token is inherited
+                              and_test // lookahead token is inherited
+                              not_test // lookahead token is inherited
+                              comparison // lookahead token is inherited
+                              expression // lookahead token is inherited
+                              atom // lookahead token is inherited
+                              ELLIPSES . 
+
+** In state 487, looking ahead at NEWLINE, shifting is permitted
+** because of the following sub-derivation:
+
+nonempty_list(NEWLINE) INDENT ELLIPSES . NEWLINE DEDENT list(NEWLINE) 
+
+** Conflict (shift/reduce) in state 483.
+** Token involved: NEWLINE
+** This state is reached from parse after reading:
+
+CLASS reference bases COLON ELLIPSES
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+compound_statement 
+CLASS reference bases COLON block_or_stub_body 
+                            (?)
+
+** In state 483, looking ahead at NEWLINE, reducing production
+** atom -> ELLIPSES
+** is permitted because of the following sub-derivation:
+
+block 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE // lookahead token appears
+small_statement // lookahead token is inherited
+test_list // lookahead token is inherited
+separated_nonempty_list_indicator(COMMA,test) // lookahead token is inherited
+test separated_nonempty_list_indicator_tail(COMMA,test) // lookahead token is inherited because separated_nonempty_list_indicator_tail(COMMA,test) can vanish
+or_test // lookahead token is inherited
+and_test // lookahead token is inherited
+not_test // lookahead token is inherited
+comparison // lookahead token is inherited
+expression // lookahead token is inherited
+atom // lookahead token is inherited
+ELLIPSES . 
+
+** In state 483, looking ahead at NEWLINE, shifting is permitted
+** because of the following sub-derivation:
+
+ELLIPSES . NEWLINE 
+
+** Conflict (shift/reduce) in state 411.
+** Tokens involved: COLON AS
+** The following explanations concentrate on token COLON.
+** This state is reached from parse after reading:
+
+TRY COLON block EXCEPT expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+compound_statement 
+TRY COLON block list(handler) named_optional_block(ELSE) named_optional_block(FINALLY) 
+                handler list(handler) 
+                (?)
+
+** In state 411, looking ahead at COLON, reducing production
+** comparison -> expression
+** is permitted because of the following sub-derivation:
+
+EXCEPT or_test COLON block // lookahead token appears
+       and_test // lookahead token is inherited
+       not_test // lookahead token is inherited
+       comparison // lookahead token is inherited
+       expression . 
+
+** In state 411, looking ahead at COLON, shifting is permitted
+** because of the following sub-derivation:
+
+EXCEPT expression . COLON block 
+
+** Conflict (shift/reduce) in state 356.
+** Tokens involved: SLASHSLASHEQUALS SLASHEQUALS RIGHTANGLERIGHTANGLEEQUALS PLUSEQUALS PERCENTEQUALS MINUSEQUALS LEFTANGLELEFTANGLEEQUALS HATEQUALS EQUALS BAREQUALS ATEQUALS ASTERIKSEQUALS ASTERIKSASTERIKSEQUALS AMPERSANDEQUALS
+** The following explanations concentrate on token SLASHSLASHEQUALS.
+** This state is reached from parse after reading:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 356, looking ahead at SLASHSLASHEQUALS, reducing production
+** expression -> expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET
+** is permitted because of the following sub-derivation:
+
+test_list SLASHSLASHEQUALS value // lookahead token appears
+separated_nonempty_list_indicator(COMMA,test) // lookahead token is inherited
+test separated_nonempty_list_indicator_tail(COMMA,test) // lookahead token is inherited because separated_nonempty_list_indicator_tail(COMMA,test) can vanish
+or_test // lookahead token is inherited
+and_test // lookahead token is inherited
+not_test // lookahead token is inherited
+comparison // lookahead token is inherited
+expression // lookahead token is inherited
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET . 
+
+** In state 356, looking ahead at SLASHSLASHEQUALS, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET . SLASHSLASHEQUALS value 
+
+** Conflict (shift/reduce) in state 346.
+** Token involved: EQUALS
+** This state is reached from parse after reading:
+
+targets expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+targets value option(comment_annotation) 
+(?)
+
+** In state 346, looking ahead at EQUALS, reducing production
+** expression -> expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET
+** is permitted because of the following sub-derivation:
+
+targets test_list EQUALS // lookahead token appears
+        separated_nonempty_list_indicator(COMMA,test) // lookahead token is inherited
+        test separated_nonempty_list_indicator_tail(COMMA,test) // lookahead token is inherited because separated_nonempty_list_indicator_tail(COMMA,test) can vanish
+        or_test // lookahead token is inherited
+        and_test // lookahead token is inherited
+        not_test // lookahead token is inherited
+        comparison // lookahead token is inherited
+        expression // lookahead token is inherited
+        expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET . 
+
+** In state 346, looking ahead at EQUALS, shifting is permitted
+** because of the following sub-derivation:
+
+targets expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET . EQUALS 
+
+** Conflict (reduce/reduce) in state 337.
+** Tokens involved: SEMICOLON NEWLINE
+** The following explanations concentrate on token SEMICOLON.
+** This state is reached from parse after reading:
+
+targets ELLIPSES
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement SEMICOLON parser_generator_separated_list_of_lists(SEMICOLON,small_statement) // lookahead token appears
+(?)
+
+** In state 337, looking ahead at SEMICOLON, reducing production
+** atom -> ELLIPSES
+** is permitted because of the following sub-derivation:
+
+targets value option(comment_annotation) // lookahead token is inherited because option(comment_annotation) can vanish
+        test_list // lookahead token is inherited
+        separated_nonempty_list_indicator(COMMA,test) // lookahead token is inherited
+        test separated_nonempty_list_indicator_tail(COMMA,test) // lookahead token is inherited because separated_nonempty_list_indicator_tail(COMMA,test) can vanish
+        or_test // lookahead token is inherited
+        and_test // lookahead token is inherited
+        not_test // lookahead token is inherited
+        comparison // lookahead token is inherited
+        expression // lookahead token is inherited
+        atom // lookahead token is inherited
+        ELLIPSES . 
+
+** In state 337, looking ahead at SEMICOLON, reducing production
+** small_statement -> targets ELLIPSES
+** is permitted because of the following sub-derivation:
+
+targets ELLIPSES . 
+
+** Conflict (reduce/reduce) in state 323.
+** Tokens involved: SEMICOLON NEWLINE
+** The following explanations concentrate on token SEMICOLON.
+** This state is reached from parse after reading:
+
+test_list COLON expression EQUALS ELLIPSES
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement SEMICOLON parser_generator_separated_list_of_lists(SEMICOLON,small_statement) // lookahead token appears
+(?)
+
+** In state 323, looking ahead at SEMICOLON, reducing production
+** atom -> ELLIPSES
+** is permitted because of the following sub-derivation:
+
+test_list COLON expression EQUALS test_list // lookahead token is inherited
+                                  separated_nonempty_list_indicator(COMMA,test) // lookahead token is inherited
+                                  test separated_nonempty_list_indicator_tail(COMMA,test) // lookahead token is inherited because separated_nonempty_list_indicator_tail(COMMA,test) can vanish
+                                  or_test // lookahead token is inherited
+                                  and_test // lookahead token is inherited
+                                  not_test // lookahead token is inherited
+                                  comparison // lookahead token is inherited
+                                  expression // lookahead token is inherited
+                                  atom // lookahead token is inherited
+                                  ELLIPSES . 
+
+** In state 323, looking ahead at SEMICOLON, reducing production
+** small_statement -> test_list COLON expression EQUALS ELLIPSES
+** is permitted because of the following sub-derivation:
+
+test_list COLON expression EQUALS ELLIPSES . 
+
+** Conflict (shift/reduce) in state 284.
+** Tokens involved: ELLIPSES DOT
+** The following explanations concentrate on token ELLIPSES.
+** This state is reached from parse after reading:
+
+FROM ellipsis_or_dot
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+FROM from IMPORT imports 
+     from_string 
+     (?)
+
+** In state 284, looking ahead at ELLIPSES, shifting is permitted
+** because of the following sub-derivation:
+
+nonempty_list(ellipsis_or_dot) 
+ellipsis_or_dot nonempty_list(ellipsis_or_dot) 
+                ellipsis_or_dot 
+                . ELLIPSES 
+
+** In state 284, looking ahead at ELLIPSES, reducing production
+** nonempty_list(ellipsis_or_dot) -> ellipsis_or_dot
+** is permitted because of the following sub-derivation:
+
+nonempty_list(ellipsis_or_dot) from_string // lookahead token appears because from_string can begin with ELLIPSES
+ellipsis_or_dot . 
+
+** Conflict (shift/reduce) in state 217.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+TILDE expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 217, looking ahead at LEFTBRACKET, reducing production
+** atom -> TILDE expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+TILDE expression . 
+
+** In state 217, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+TILDE expression 
+      expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce) in state 216.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+PLUS expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 216, looking ahead at LEFTBRACKET, reducing production
+** atom -> PLUS expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+PLUS expression . 
+
+** In state 216, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+PLUS expression 
+     expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce) in state 215.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+TILDE NOT expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 215, looking ahead at LEFTBRACKET, reducing production
+** atom -> NOT expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+TILDE expression // lookahead token is inherited
+      atom // lookahead token is inherited
+      NOT expression . 
+
+** In state 215, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+TILDE expression 
+      atom 
+      NOT expression 
+          expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce) in state 214.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+MINUS expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 214, looking ahead at LEFTBRACKET, reducing production
+** atom -> MINUS expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+MINUS expression . 
+
+** In state 214, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+MINUS expression 
+      expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (reduce/reduce) in state 206.
+** Tokens involved: SLASHSLASHEQUALS SLASHEQUALS SEMICOLON RIGHTPARENS RIGHTCURLY RIGHTBRACKET RIGHTANGLERIGHTANGLEEQUALS RIGHTANGLEEQUALS RIGHTANGLE PLUSEQUALS PERCENTEQUALS OR NEWLINE MINUSEQUALS LEFTBRACKET LEFTANGLELEFTANGLEEQUALS LEFTANGLEEQUALS LEFTANGLE ISNOT IS IN IF HATEQUALS FROM FOR EXCLAMATIONMARK EQUALS ELSE DOUBLEEQUALS COMMA COLON BAREQUALS ATEQUALS ASYNC ASTERIKSEQUALS ASTERIKSASTERIKSEQUALS AS ANNOTATION_COMMENT AND AMPERSANDEQUALS
+** The following explanations concentrate on token SLASHSLASHEQUALS.
+** This state is reached from parse after reading:
+
+NOT expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+test_list SLASHSLASHEQUALS value // lookahead token appears
+separated_nonempty_list_indicator(COMMA,test) // lookahead token is inherited
+test separated_nonempty_list_indicator_tail(COMMA,test) // lookahead token is inherited because separated_nonempty_list_indicator_tail(COMMA,test) can vanish
+or_test // lookahead token is inherited
+and_test // lookahead token is inherited
+not_test // lookahead token is inherited
+(?)
+
+** In state 206, looking ahead at SLASHSLASHEQUALS, reducing production
+** atom -> NOT expression
+** is permitted because of the following sub-derivation:
+
+comparison // lookahead token is inherited
+expression // lookahead token is inherited
+atom // lookahead token is inherited
+NOT expression . 
+
+** In state 206, looking ahead at SLASHSLASHEQUALS, reducing production
+** comparison -> expression
+** is permitted because of the following sub-derivation:
+
+NOT not_test // lookahead token is inherited
+    comparison // lookahead token is inherited
+    expression . 
+
+** Conflict (shift/reduce) in state 192.
+** Tokens involved: FOR ASYNC
+** The following explanations concentrate on token FOR.
+** This state is reached from parse after reading:
+
+LEFTCURLY test
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+(?)
+
+** In state 192, looking ahead at FOR, shifting is permitted
+** because of the following sub-derivation:
+
+LEFTCURLY test nonempty_list(comprehension) RIGHTCURLY 
+               comprehension 
+               . FOR expression_list IN or_test list(condition) 
+
+** In state 192, looking ahead at FOR, reducing production
+** set_or_dictionary_entry -> test
+** is permitted because of the following sub-derivation:
+
+set_or_dictionary 
+LEFTCURLY set_or_dictionary_maker option(COMMA) RIGHTCURLY 
+          set_or_dictionary_maker comprehension // lookahead token appears because comprehension can begin with FOR
+          set_or_dictionary_entry // lookahead token is inherited
+          test . 
+
+** Conflict (shift/reduce) in state 170.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+AWAIT expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 170, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+AWAIT expression 
+      expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** In state 170, looking ahead at LEFTBRACKET, reducing production
+** expression -> AWAIT expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+AWAIT expression . 
+
+** Conflict (shift/reduce) in state 114.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+expression ASTERIKS expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 114, looking ahead at LEFTBRACKET, reducing production
+** atom -> expression ASTERIKS expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+expression ASTERIKS expression . 
+
+** In state 114, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+expression ASTERIKS expression 
+                    expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce) in state 113.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+expression BAR expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 113, looking ahead at LEFTBRACKET, reducing production
+** atom -> expression BAR expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+expression BAR expression . 
+
+** In state 113, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+expression BAR expression 
+               expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce) in state 111.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+expression AMPERSAND expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 111, looking ahead at LEFTBRACKET, reducing production
+** atom -> expression AMPERSAND expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+expression AMPERSAND expression . 
+
+** In state 111, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+expression AMPERSAND expression 
+                     expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce) in state 109.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+expression HAT expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 109, looking ahead at LEFTBRACKET, reducing production
+** atom -> expression HAT expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+expression HAT expression . 
+
+** In state 109, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+expression HAT expression 
+               expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce) in state 107.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+expression LEFTANGLELEFTANGLE expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 107, looking ahead at LEFTBRACKET, reducing production
+** atom -> expression LEFTANGLELEFTANGLE expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+expression LEFTANGLELEFTANGLE expression . 
+
+** In state 107, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+expression LEFTANGLELEFTANGLE expression 
+                              expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce) in state 105.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+expression MINUS expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 105, looking ahead at LEFTBRACKET, reducing production
+** atom -> expression MINUS expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+expression MINUS expression . 
+
+** In state 105, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+expression MINUS expression 
+                 expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce/reduce) in state 103.
+** Tokens involved: SLASHSLASHEQUALS SLASHEQUALS SLASH SEMICOLON RIGHTPARENS RIGHTCURLY RIGHTBRACKET RIGHTANGLERIGHTANGLEEQUALS RIGHTANGLERIGHTANGLE RIGHTANGLEEQUALS RIGHTANGLE PLUSEQUALS PLUS PERCENTEQUALS PERCENT OR NOT NEWLINE MINUSEQUALS MINUS LEFTBRACKET LEFTANGLELEFTANGLEEQUALS LEFTANGLELEFTANGLE LEFTANGLEEQUALS LEFTANGLE ISNOT IS IN IF HATEQUALS HAT FROM FOR EXCLAMATIONMARK EQUALS ELSE DOUBLEEQUALS COMMA COLON BAREQUALS BAR ATEQUALS ASYNC ASTERIKSEQUALS ASTERIKSASTERIKSEQUALS ASTERIKS AS ANNOTATION_COMMENT AND AMPERSANDEQUALS AMPERSAND
+** The following explanations concentrate on token SLASH.
+** This state is reached from parse after reading:
+
+expression ASTERIKS ASTERIKS expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+(?)
+
+** In state 103, looking ahead at SLASH, shifting is permitted
+** because of the following sub-derivation:
+
+expression ASTERIKS ASTERIKS expression 
+                             atom 
+                             expression . SLASH SLASH expression 
+
+** In state 103, looking ahead at SLASH, reducing production
+** atom -> expression ASTERIKS ASTERIKS expression
+** is permitted because of the following sub-derivation:
+
+expression SLASH SLASH expression // lookahead token appears
+atom // lookahead token is inherited
+expression ASTERIKS ASTERIKS expression . 
+
+** In state 103, looking ahead at SLASH, reducing production
+** atom -> ASTERIKS expression
+** is permitted because of the following sub-derivation:
+
+expression SLASH SLASH expression // lookahead token appears
+atom // lookahead token is inherited
+expression ASTERIKS expression // lookahead token is inherited
+                    atom // lookahead token is inherited
+                    ASTERIKS expression . 
+
+** Conflict (shift/reduce) in state 100.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+expression PERCENT expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 100, looking ahead at LEFTBRACKET, reducing production
+** atom -> expression PERCENT expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+expression PERCENT expression . 
+
+** In state 100, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+expression PERCENT expression 
+                   expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce) in state 98.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+expression PLUS expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 98, looking ahead at LEFTBRACKET, reducing production
+** atom -> expression PLUS expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+expression PLUS expression . 
+
+** In state 98, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+expression PLUS expression 
+                expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce) in state 96.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+expression RIGHTANGLERIGHTANGLE expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 96, looking ahead at LEFTBRACKET, reducing production
+** atom -> expression RIGHTANGLERIGHTANGLE expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+expression RIGHTANGLERIGHTANGLE expression . 
+
+** In state 96, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+expression RIGHTANGLERIGHTANGLE expression 
+                                expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce) in state 94.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+expression SLASH expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 94, looking ahead at LEFTBRACKET, reducing production
+** atom -> expression SLASH expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+expression SLASH expression . 
+
+** In state 94, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+expression SLASH expression 
+                 expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce) in state 93.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+expression AT expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 93, looking ahead at LEFTBRACKET, reducing production
+** atom -> expression AT expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+expression AT expression . 
+
+** In state 93, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+expression AT expression 
+              expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (shift/reduce) in state 54.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+expression SLASH SLASH expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 54, looking ahead at LEFTBRACKET, reducing production
+** atom -> expression SLASH SLASH expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+expression SLASH SLASH expression . 
+
+** In state 54, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+expression SLASH SLASH expression 
+                       expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
+
+** Conflict (reduce/reduce) in state 41.
+** Token involved: RIGHTPARENS
+** This state is reached from parse after reading:
+
+expression LEFTPARENS test
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+expression LEFTPARENS arguments RIGHTPARENS // lookahead token appears
+                      (?)
+
+** In state 41, looking ahead at RIGHTPARENS, reducing production
+** argument -> test
+** is permitted because of the following sub-derivation:
+
+parser_generator_separated_list(COMMA,argument) // lookahead token is inherited
+argument // lookahead token is inherited
+test . 
+
+** In state 41, looking ahead at RIGHTPARENS, reducing production
+** test_with_generator -> test
+** is permitted because of the following sub-derivation:
+
+test_with_generator // lookahead token is inherited
+test . 
+
+** Conflict (shift/reduce) in state 38.
+** Token involved: LEFTBRACKET
+** This state is reached from parse after reading:
+
+ASTERIKS expression
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse 
+statements EOF 
+statement statements 
+simple_statement 
+parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
+small_statement 
+(?)
+
+** In state 38, looking ahead at LEFTBRACKET, reducing production
+** atom -> ASTERIKS expression
+** is permitted because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value // lookahead token appears
+atom // lookahead token is inherited
+ASTERIKS expression . 
+
+** In state 38, looking ahead at LEFTBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+expression LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET PLUSEQUALS value 
+atom 
+ASTERIKS expression 
+         expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
