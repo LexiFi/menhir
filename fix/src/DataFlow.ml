@@ -139,3 +139,69 @@ module ForType (T : TYPE) =
 
 module ForIntSegment (K : sig val n: int end) =
   Run(Glue.ArraysAsImperativeMaps(K))
+
+(* An alternative interface, allowing specialized (more efficient) maps *)
+
+module ForCustomMaps
+  (P : MINIMAL_SEMI_LATTICE)
+  (G : DATA_FLOW_GRAPH with type property := P.property)
+  (V : ARRAY with type key := G.variable and type value := P.property)
+  (B : ARRAY with type key := G.variable and type value := bool)
+    : sig end
+= struct
+  open P
+  open G
+
+  (* Compared to the standard Queue, CompactQueue is quite faster and consumes
+     less memory.
+     On computer, analysing cca_cpp grammar terminates 5% faster (2s) and
+     consumes 13% less memory (~370MB).
+  *)
+
+  let queue = CompactQueue.create ()
+
+  (* The queue stores a set of dirty variables, whose outgoing transitions must
+     be examined. The "B" map keeps track of whether a variable is queued or
+     not. *)
+
+  let schedule var =
+    if not (B.get var) then (
+      B.set var true;
+      CompactQueue.push var queue
+    )
+
+  (* [update x' p'] ensures that the property associated with the variable [x']
+     is at least [p']. If this causes a change in the property at [x'], then
+     [x] is scheduled or rescheduled. *)
+
+  let update (x' : variable) (p' : property) =
+    let p = V.get x' in
+    let p'' = P.leq_join p' p in
+    if p'' != p then begin
+      (* The failure of the physical equality test [p'' == p] implies that
+         [P.leq p' p] does not hold. Thus, [x'] is affected by this update
+         and must itself be scheduled. *)
+      V.set x' p'';
+      schedule x'
+    end
+
+  (* [examine] examines a variable that has just been taken out of the stack.
+     Its outgoing transitions are inspected and its successors are updated. *)
+
+  let examine (x : variable) =
+    (* [x] is dirty, so a property must have been associated with it. *)
+    G.foreach_successor x (V.get x) update
+
+  (* Populate the stack with the root variables. *)
+
+  let () = G.foreach_root (fun x p -> V.set x p; schedule x)
+
+  (* As long as the stack is nonempty, pop a variable and examine it. *)
+
+  let () =
+    while not (CompactQueue.is_empty queue) do
+      let var = CompactQueue.pop queue in
+      B.set var false;
+      examine var
+    done
+end

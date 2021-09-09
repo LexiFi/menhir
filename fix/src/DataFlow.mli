@@ -79,3 +79,19 @@ module ForIntSegment
      : SOLUTION
        with type variable = G.variable
         and type property = P.property option
+
+(**An alternative interface, allowing specialized (more efficient) maps.
+
+   The [P] map can be initialized with any valid approximation for the property
+   (e.g. bottom or a better approximation if any is known).
+   The [B] map should initialized with [false] everywhere.
+
+   The functor returns nothing: map [V] is mutated and contains the resulting
+   fixed point. *)
+
+module ForCustomMaps
+  (P : MINIMAL_SEMI_LATTICE)
+  (G : DATA_FLOW_GRAPH with type property := P.property)
+  (V : ARRAY with type key := G.variable and type value := P.property)
+  (B : ARRAY with type key := G.variable and type value := bool)
+    : sig end

@@ -80,6 +80,21 @@ module type IMPERATIVE_MAPS = sig
   val iter: (key -> 'data -> unit) -> 'data t -> unit
 end
 
+(**[ARRAY] is an alternative abstraction of Maps.
+   An instance of [ARRAY] directly represents a map, there is no separate
+   object of type ['a t].
+   The [value] type is fixed, allowing for specialized representations.
+
+   The domain of the map never changes:
+   - [set] does not extend the map,
+   - [get] cannot raise [Not_found]. *)
+module type ARRAY = sig
+  type key
+  type value
+  val get : key -> value
+  val set : key -> value -> unit
+end
+
 (* -------------------------------------------------------------------------- *)
 
 (**The signature [PROPERTY] is used by [Fix.Make], the least fixed point
