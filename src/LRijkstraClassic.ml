@@ -96,7 +96,14 @@ let is_solid s =
 module Run (X : sig
   (* If [verbose] is set, produce various messages on [stderr]. *)
   val verbose: bool
-end) = struct
+end)() : sig
+  include LRijkstra.REACHABILITY_ALGORITHM
+
+  val query :
+    Lr1.node -> Nonterminal.t -> Terminal.t ->
+    (Word.t -> Terminal.t -> unit) ->
+    unit
+end = struct
 
 (* ------------------------------------------------------------------------ *)
 
@@ -821,5 +828,111 @@ let facts, edge_facts =
 
 let total_trie_size =
   Trie.total_size()
+
+module Word = struct
+  include W
+  type t = word
+end
+
+module Graph = struct
+  (* A vertex is a pair [s, z], where [z] is a real terminal symbol. *)
+  type node =
+    Lr1.node * Terminal.t
+
+  let state (s, _z) =
+    s
+
+  let lookaheads (_s, z) =
+    TerminalSet.singleton z
+
+  let equal (s'1, z1) (s'2, z2) =
+    Lr1.Node.compare s'1 s'2 = 0 && Terminal.compare z1 z2 = 0
+
+  let hash (s, z) =
+    Hashtbl.hash (Lr1.number s, z)
+
+  (* An edge is labeled with a word. *)
+  type label =
+    W.word
+
+  let append_word =
+    W.append
+
+  (* We search forward from every [s, z], where [s] is an initial state. *)
+  let sources f =
+    Terminal.iter_real (fun z ->
+        ProductionMap.iter (fun _ s ->
+            f (s, z)
+          ) Lr1.entry
+      )
+
+  (* The successors of [s, z] are defined as follows. *)
+  let successors (s, z) edge =
+    assert (Terminal.real z);
+    (* For every transition out of [s], labeled [sym], leading to [s']... *)
+    Lr1.transitions s |> SymbolMap.iter (fun sym s' ->
+        match sym with
+        | Symbol.T t ->
+          if Terminal.equal z t then
+            (* If [sym] is the terminal symbol [z], then this transition
+               matches our lookahead assumption, so we can take it. For
+               every [z'], we have an edge to [s', z'], labeled with the
+               singleton word [z]. *)
+            let w = W.singleton z in
+            Terminal.iter_real (fun z' ->
+                edge w 1 (s', z')
+              )
+        | Symbol.N nt ->
+          (* If [sym] is a nonterminal symbol [nt], then we query [E]
+             in order to find out which (minimal) words [w] allow us
+             to take this transition. We must again try every [z'],
+             and must respect the constraint that the first symbol
+             of the word [w.z'] is [z]. For every [z'] and [w] that
+             fulfill these requirements, we have an edge to [s', z'],
+             labeled with the word [w]. *)
+          query s nt z (fun w z' ->
+              edge w (W.length w) (s', z')
+            )
+      )
+end
+
+module Statistics = struct
+  let header =
+    "grammar,terminals,nonterminals,grammar_size,automaton_size,\
+     trie_size,facts,edge_facts,time,heap"
+
+  let print c ~time ~heap =
+    Printf.fprintf c
+      "%s,%d,%d,%d,%d,%d,%d,%d,%.2f,%d\n%!"
+      (* Grammar name. *)
+      Settings.base
+      (* Number of terminal symbols. *)
+      Terminal.n
+      (* Number of nonterminal symbols. *)
+      Nonterminal.n
+      (* Grammar size (not counting the error productions). *)
+      begin
+        Production.foldx (fun prod accu ->
+            let rhs = Production.rhs prod in
+            if List.mem (Symbol.T Terminal.error) (Array.to_list rhs) then
+              accu
+            else
+              accu + Array.length rhs
+          ) 0
+      end
+      (* Automaton size (i.e., number of states). *)
+      Lr1.n
+      (* Total trie size. *)
+      total_trie_size
+      (* Size of [F]. *)
+      facts
+      (* Size of [E]. *)
+      edge_facts
+      (* Elapsed user time, in seconds. *)
+      time
+      (* Max heap size, in megabytes. *)
+      heap
+end
+
 
 end

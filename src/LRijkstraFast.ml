@@ -11,7 +11,14 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module Run () =
+module Run
+    (X : sig
+       val validate : bool
+       val verbose : bool
+     end)
+    () :
+  LRijkstra.REACHABILITY_ALGORITHM
+=
 struct
   open Grammar
 
@@ -201,7 +208,9 @@ struct
         let reductions =
           let raw = Lr1.reductions (Lr1C.to_g lr1) in
           let raw =
-            TerminalMap.fold (fun t ps acc -> (t, List.hd ps) :: acc) raw []
+            TerminalMap.fold (fun t ps acc ->
+                MList.cons_if (Terminal.non_error t) (t, List.hd ps) acc
+              ) raw []
           in
           (* Regroup lookahead tokens by production *)
           MList.group_by raw
@@ -589,7 +598,7 @@ struct
     (*val decode_index : cell -> CTree.n index * int * int*)
 
     val cost : cell -> int
-    val word : cell -> Terminal.t list -> Terminal.t list
+    val append_word : cell -> Terminal.t list -> Terminal.t list
   end = struct
     type cell = int
 
@@ -826,7 +835,7 @@ struct
       let node, offset = decode_index2 index in
       cost_table.%(node).(offset)
 
-    let rec word cell acc =
+    let rec append_word cell acc =
       let node, i_b, i_a = decode_index cell in
       match CTree.split node with
       | L tr ->
@@ -869,7 +878,7 @@ struct
               | None ->
                 Printf.eprintf "abort, cost = %d\n%!" current_cost;
                 assert false
-              | Some cell' -> word cell' acc
+              | Some cell' -> append_word cell' acc
         end
       | R inner ->
         let current_cost = cost cell in
@@ -884,8 +893,8 @@ struct
               Array.iter (fun i_br ->
                   let r_cost = cost (r_index i_br i_a) in
                   if l_cost + r_cost = current_cost then (
-                    let acc = word (r_index i_br i_a) acc in
-                    let acc = word (l_index i_b i_al) acc in
+                    let acc = append_word (r_index i_br i_a) acc in
+                    let acc = append_word (l_index i_b i_al) acc in
                     raise (Break acc)
                   )
                 ) i_brs
@@ -915,4 +924,150 @@ struct
     Printf.printf "max word length: %d\n%!" !max_word*)
 
   (*let () = Gc.print_stat stderr*)
+
+  module Word = struct
+    type t = Terminal.t list
+    let singleton x = [x]
+    let elements xs = xs
+    let compare xs1 xs2 = MList.compare Terminal.compare xs1 xs2
+    let length = List.length
+  end
+
+  module Graph = struct
+    (* A vertex is a pair [s, z], where [z] is a real terminal symbol. *)
+    type node = Lr1C.n index * int
+
+    let state (s, _c) =
+      Lr1C.to_g s
+
+    let lookaheads (s, c) =
+      (Classes.for_lr1 s).(c)
+
+    let equal (s1, c1 : node) (s2, c2 : node) =
+      Int.equal (s1 :> int) (s2 :> int) && Int.equal c1 c2
+
+    let hash (node : node) =
+      Hashtbl.hash node
+
+    (* An edge is labeled with a word. *)
+    type label = Vars.cell
+
+    let append_word = Vars.append_word
+
+    (* We search forward from every [s, z], where [s] is an initial state. *)
+    let sources f =
+      ProductionMap.iter begin fun _ lr1 ->
+        let lr1 = Lr1C.of_g lr1 in
+        (* In practice, there should be only one class for an initial state. *)
+        let classes = Classes.for_lr1 lr1 in
+        assert (Array.length classes = 1);
+        for i = 0 to Array.length classes - 1 do
+          f (lr1, i)
+        done
+      end Lr1.entry
+
+    (* The successors of [s, z] are defined as follows. *)
+    let successors (source, i_b : node) (edge : label -> int -> node -> unit) =
+      let before = Classes.for_lr1 source in
+      List.iter begin fun tr ->
+        match
+          match Classes.before_transition tr with
+          | [|b|] when TerminalSet.is_singleton b ->
+            if TerminalSet.disjoint b before.(i_b) then
+              None
+            else
+              Some 0
+          | _ -> Some i_b
+        with
+        | None -> ()
+        | Some i_b ->
+          let after = Classes.after_transition tr in
+          let target = Transition.target tr in
+          let after' = Classes.for_lr1 target in
+          let mapping = post_map after after' in
+          Array.iteri begin fun i_a i_a's ->
+            let cell = Vars.encode_index (CTree.leaf tr) i_b i_a in
+            let cost = Vars.cost cell in
+            if cost < max_int then
+              Array.iter (fun i_a' -> edge cell cost (target, i_a')) i_a's
+          end mapping.forward
+      end (Transition.successors source)
+  end
+
+  module Statistics = struct
+    let header = ""
+
+    let print _ ~time:_ ~heap:_ =
+      failwith "TODO"
+  end
+
+  (* Workaround unused values *)
+  let _ = Transition.t
+  let _ = Transition.of_t
+  let _ = Transition.find
+  let _ = Transition.symbol_nt
+  let _ = CTree.node
+  let _ = CNode.definition
+  let _ = Vars.cell_count
+
+  let () =
+    if X.validate then begin
+      let module Classic = LRijkstraClassic.Run(X)() in
+      Index.iter Transition.nt begin fun tr ->
+        let nt = Transition.symbol_nt tr in
+        let tr = Transition.of_nt tr in
+        let node = CTree.leaf tr in
+        let lr1 = Transition.source tr in
+        (*let lr1' = Transition.target tr in
+          Printf.eprintf "ijkstra: checking item %d/%d: %d-%s->%d\n%!"
+          (tr :> int) (Transition.nt :> int)
+          (lr1 :> int) (Nonterminal.print false nt) (lr1' :> int)
+          ;*)
+        let missing classes =
+          let diff a b = TerminalSet.fold TerminalSet.remove b a in
+          Array.fold_left diff TerminalSet.universe classes
+        in
+        let missing_before = missing (CClasses.before node) in
+        let missing_after = missing (CClasses.after node) in
+        TerminalSet.iter begin fun t ->
+          Classic.query (Lr1C.to_g lr1) nt t (fun _ _ -> assert false)
+        end missing_before;
+        Array.iteri begin fun i_b s_b ->
+          let min_table = Hashtbl.create 7 in
+          TerminalSet.iter begin fun t ->
+            Classic.query (Lr1C.to_g lr1) nt t begin fun w t' ->
+              assert (not (TerminalSet.mem t' missing_after));
+              let n = Classic.Word.length w in
+              match Hashtbl.find_opt min_table t' with
+              | Some (_, n') when n' <= n -> ()
+              | _ -> Hashtbl.replace min_table t' (w, n)
+            end
+          end s_b;
+          Array.iteri begin fun i_a s_a ->
+            let cell = Vars.encode_index node i_b i_a in
+            let cost = Vars.cost cell in
+            TerminalSet.iter begin fun t ->
+              match Hashtbl.find min_table t with
+              | (w, n)->
+                if n <> cost then (
+                  let ts ts = "{" ^ TerminalSet.print ts ^ "}" in
+                  let word ts =
+                    String.concat " " (List.map Terminal.print ts)
+                  in
+                  Printf.eprintf "  lengths differ: %d <> %d\n\
+                                 \    before: %s\n\
+                                 \    after: %s\n\
+                                 \    LRijkstra: %s\n\
+                                 \    Ijkstra: %s\n%!" n cost
+                    (ts s_b) (ts s_a)
+                    (word (Classic.Word.elements w))
+                    (word (Vars.append_word cell []))
+                  ;
+                )
+              | exception Not_found -> ()
+            end s_a
+          end (CClasses.after node)
+        end (CClasses.before node);
+      end
+    end
 end
