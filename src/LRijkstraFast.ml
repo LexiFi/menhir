@@ -22,84 +22,116 @@ module Run
 struct
   open Grammar
 
-  (* The set of all terminals, useful for encoding default reduction *)
+  (* The set of all real terminals, useful for encoding default reduction *)
   let all_terminals = TerminalSet.universe
 
+  (* Partition refinement algorithm for sets of terminals *)
   let terminal_partition =
     let module TerminalPartition = Refine.Make(TerminalSet) in
     fun sets ->
-      TerminalPartition.partition (List.sort_uniq TerminalSet.compare sets)
+      (* Removing duplicates can speed-up partitioning significantly *)
+      let sets = List.sort_uniq TerminalSet.compare sets in
+      TerminalPartition.partition sets
 
-  (* Explicit representation of transitions *)
+  (* The algorithm uses many typed vectors (provided by Fix.Numbering.Typed) *)
   open Fix.Numbering.Typed
   open Infix
 
+  (* [Lr1C] represents Lr1 states as elements of a [Numbering.Typed] set *)
   module Lr1C = struct
     include (val const Lr1.n)
     let of_g lr1 = Index.of_int n (Lr1.number lr1)
     let to_g lr1 = Lr1.of_number (Index.to_int lr1)
   end
 
+  (* Transitions are represented *)
   module Transition : sig
-    type nt and t and any
-    val nt : nt cardinal
-    val t : t cardinal
+    (* Abstract types used as index to represent the different sets of
+       transitions.
+       For instance, [goto] represents the finite set of goto transition:
+       - the value [goto : goto cardinal] is the cardinal of this set
+       - any value of type [goto index] is a member of this set
+         (representing a goto transition)
+    *)
+    type goto and shift and any
+
+    (* The set of goto transitions *)
+    val goto : goto cardinal
+    (* The set of all transitions = goto U shift *)
     val any : any cardinal
 
-    val of_nt : nt index -> any index
-    val of_t : t index -> any index
-    val split : any index -> (nt index, t index) either
+    (* Unused: The set of shift transitions
+       val shift : shift cardinal
+    *)
 
-    val find_nt : Lr1C.n index -> Nonterminal.t -> nt index
-    val find : Lr1C.n index -> Symbol.t -> any index
+    (* Building the isomorphism between any and goto U shift *)
 
+    (* Inject goto into any *)
+    val of_goto : goto index -> any index
+
+    (* Inject shift into any, unused
+       val of_shift : shift index -> any index*)
+
+    (* Project a transition into a goto or a shift transition *)
+    val split : any index -> (goto index, shift index) either
+
+    (* [find_goto s nt] finds the goto transition originating from [s] and
+       labelled by [nt], or raise [Not_found].  *)
+    val find_goto : Lr1C.n index -> Nonterminal.t -> goto index
+
+    (*val find : Lr1C.n index -> Symbol.t -> any index*)
+
+    (* Get the source source of a transition *)
     val source : any index -> Lr1C.n index
+
+    (* Get the target state of a transition *)
     val target : any index -> Lr1C.n index
+
     val symbol : any index -> Symbol.t
-    val symbol_nt : nt index -> Nonterminal.t
-    val symbol_t : t index -> Terminal.t
+    val symbol_nt : goto index -> Nonterminal.t
+    val symbol_t : shift index -> Terminal.t
 
     val successors : Lr1C.n index -> any index list
     val predecessors : Lr1C.n index -> any index list
   end =
   struct
-    module NT = Gensym()
-    module T = Gensym()
+    module Goto = Gensym()
+    module Shift = Gensym()
 
     let () =
       Lr1.iter (fun lr1 ->
           SymbolMap.iter (fun sym _ -> match sym with
               | Symbol.T t ->
                 if Terminal.real t then
-                  ignore (T.fresh ())
-              | Symbol.N _ -> ignore (NT.fresh ())
+                  ignore (Shift.fresh ())
+              | Symbol.N _ -> ignore (Goto.fresh ())
             ) (Lr1.transitions lr1)
         );
 
-    type nt = NT.n
-    let nt = NT.n
+    type goto = Goto.n
+    let goto = Goto.n
 
-    type t = T.n
-    let t = T.n
+    type shift = Shift.n
+    let shift = Shift.n
 
-    module Any = (val sum nt t)
+    module Any = (val sum goto shift)
     type any = Any.n
     let any = Any.n
 
-    let of_nt = Any.inj_l
-    let of_t  = Any.inj_r
+    let of_goto = Any.inj_l
+    (*let of_shift  = Any.inj_r*)
     let split = Any.prj
 
-    let nt_sources = Vector.make' nt (fun () -> Index.of_int Lr1C.n 0)
-    let nt_symbols = Vector.make' nt (fun () -> Nonterminal.i2n 0)
-    let nt_targets = Vector.make' nt (fun () -> Index.of_int Lr1C.n 0)
+    let nt_sources = Vector.make' goto (fun () -> Index.of_int Lr1C.n 0)
+    let nt_symbols = Vector.make' goto (fun () -> Nonterminal.i2n 0)
+    let nt_targets = Vector.make' goto (fun () -> Index.of_int Lr1C.n 0)
 
-    let t_sources = Vector.make' t (fun () -> Index.of_int Lr1C.n 0)
-    let t_symbols = Vector.make' t (fun () -> Terminal.i2t 0)
-    let t_targets = Vector.make' t (fun () -> Index.of_int Lr1C.n 0)
+    let t_sources = Vector.make' shift (fun () -> Index.of_int Lr1C.n 0)
+    let t_symbols = Vector.make' shift (fun () -> Terminal.i2t 0)
+    let t_targets = Vector.make' shift (fun () -> Index.of_int Lr1C.n 0)
 
     let nt_table = Hashtbl.create 7
-    let nt_pack lr1 nt = Index.to_int lr1 * Nonterminal.n + Nonterminal.n2i nt
+    let nt_pack lr1 goto = Index.to_int lr1 * Nonterminal.n + Nonterminal.n2i goto
 
     let t_table = Hashtbl.create 7
     let t_pack lr1 t = Index.to_int lr1 * Terminal.n + Terminal.t2i t
@@ -107,8 +139,8 @@ struct
     let predecessors = Vector.make Lr1C.n []
 
     let successors =
-      let next_nt = Index.enumerate nt in
-      let next_t = Index.enumerate t in
+      let next_nt = Index.enumerate goto in
+      let next_t = Index.enumerate shift in
       Vector.init Lr1C.n begin fun source ->
         SymbolMap.fold begin fun sym target acc ->
           match sym with
@@ -139,11 +171,11 @@ struct
     let successors lr1 = successors.%(lr1)
     let predecessors lr1 = predecessors.%(lr1)
 
-    let find_nt source nt = Hashtbl.find nt_table (nt_pack source nt)
+    let find_goto source nt = Hashtbl.find nt_table (nt_pack source nt)
 
-    let find source = function
-      | Symbol.T t -> of_t (Hashtbl.find t_table (t_pack source t))
-      | Symbol.N nt -> of_nt (Hashtbl.find nt_table (nt_pack source nt))
+    (*let find source = function
+      | Symbol.T t -> of_shift (Hashtbl.find t_table (t_pack source t))
+      | Symbol.N nt -> of_goto (Hashtbl.find nt_table (nt_pack source nt))*)
 
     let source i =
       match split i with
@@ -163,7 +195,7 @@ struct
       | L i -> nt_targets.%(i)
       | R i -> t_targets.%(i)
 
-    let () = Time.tick "Ijkstra: populate transition table"
+    let () = Time.tick "LRijkstraFast: populate transition table"
 
     let () =
       if false then
@@ -181,7 +213,7 @@ struct
       state: Lr1C.n index;
     }
 
-    val of_transition: Transition.nt index -> t list
+    val of_transition: Transition.goto index -> t list
   end = struct
 
     type t = {
@@ -201,7 +233,7 @@ struct
         | Symbol.N _ -> false
       ) (Lr1.transitions (Lr1C.to_g lr1))
 
-    let table = Vector.make Transition.nt []
+    let table = Vector.make Transition.goto []
 
     let () =
       Index.iter Lr1C.n begin fun lr1 ->
@@ -249,7 +281,7 @@ struct
                   ) rhs [lr1, []]
               in
               List.iter (fun (source, steps) ->
-                  table.%::(Transition.find_nt source lhs) <-
+                  table.%::(Transition.find_goto source lhs) <-
                     { production; lookahead; steps; state=lr1 }
                 ) states
           )
@@ -257,7 +289,7 @@ struct
 
     let of_transition tr = table.%(tr)
 
-    let () = Time.tick "Ijkstra: populate reduction table"
+    let () = Time.tick "LRijkstraFast: populate reduction table"
 
     let () =
       if false then
@@ -269,7 +301,7 @@ struct
   (* Compute classes refinement *)
 
   module Classes = struct
-    module Node = (val sum Lr1C.n Transition.nt)
+    module Node = (val sum Lr1C.n Transition.goto)
     module Gr = struct
       type node = Node.n index
       let n = (cardinal Node.n)
@@ -305,7 +337,7 @@ struct
 
     module Scc = Tarjan.Run(Gr)
 
-    let () = Time.tick "Ijkstra: class graph SCC"
+    let () = Time.tick "LRijkstraFast: class graph SCC"
 
     let classes = Vector.make Node.n []
 
@@ -394,7 +426,7 @@ struct
       | L edge -> for_edge edge
       | R _ -> all_terminals
 
-    let () = Time.tick "Ijkstra: token classes for each transition"
+    let () = Time.tick "LRijkstraFast: token classes for each transition"
   end
 
   module ConsedTree () : sig
@@ -402,17 +434,20 @@ struct
     module Inner : CARDINAL
 
     val leaf : Transition.any index -> n index
-    val node : n index -> n index -> n index
+    (* Unused
+       val node : n index -> n index -> n index*)
     val import : Transition.any index Mcop.solution -> n index
 
     val inject : Inner.n index -> n index
     val split : n index -> (Transition.any index, Inner.n index) either
 
     module Freeze() : sig
-      type definition =
-        | Leaf of Transition.any index
-        | Node of (n index * n index)
-      val definition : n index -> definition
+      (* Unused
+         type definition =
+           | Leaf of Transition.any index
+           | Node of (n index * n index)
+         val definition : n index -> definition
+      *)
       val define : Inner.n index -> n index * n index
     end
   end = struct
@@ -426,15 +461,6 @@ struct
     type pack = n index * n index
     let pack t u = (t, u)
     let unpack x = x
-
-    (* Negligible performance impact
-       type pack = int
-       let pack t u = (Index.to_int t lsl 32) lor (Index.to_int u)
-       let unpack x =
-         let t = x lsr 32 in
-         let u = x land (1 lsl 32 - 1) in
-         (Index.of_int n t, Index.of_int n u)
-    *)
 
     let node_table : (pack, Inner.n index) Hashtbl.t = Hashtbl.create 7
 
@@ -465,23 +491,23 @@ struct
           (fun pair index -> rev_index.%(index) <- unpack pair)
           node_table;
 
-      type definition =
+      (*type definition =
         | Leaf of Transition.any index
         | Node of (n index * n index)
 
       let definition t =
         match prj t with
         | L tr -> Leaf tr
-        | R ix -> Node (define ix)
+        | R ix -> Node (define ix)*)
     end
   end
 
   module CTree = ConsedTree()
 
   let nt_equations =
-    Vector.init Transition.nt @@ fun tr ->
+    Vector.init Transition.goto @@ fun tr ->
     let first_dim =
-      Array.length (Classes.before_transition (Transition.of_nt tr))
+      Array.length (Classes.before_transition (Transition.of_goto tr))
     in
     let transition_size tr =
       Array.length (Classes.after_transition tr)
@@ -501,7 +527,7 @@ struct
 
   module CNode = CTree.Freeze()
 
-  let () = Time.tick "Ijkstra: built equation tree"
+  let () = Time.tick "LRijkstraFast: built equation tree"
 
   module CClasses = struct
     let before_node = Vector.make CTree.Inner.n [||]
@@ -522,7 +548,7 @@ struct
       after_node.%(node) <- after r;
   end
 
-  let () = Time.tick "Ijkstra: classes for each tree node"
+  let () = Time.tick "LRijkstraFast: classes for each tree node"
 
   type pre_map =
     | Pre_identity
@@ -551,19 +577,7 @@ struct
         None
     )
 
-  let quick_subset a b =
-    let result = TerminalSet.quick_subset a b in
-    (*if result then (*sanity*)assert (TerminalSet.subset a b);*)
-    result
-
-  (*let iter_premap outer premap f =
-      match premap with
-      | Pre_identity -> Array.iteri f outer | Pre_singleton i -> f i outer.(i)*)
-
-  (*let iter_premap_forward outer premap f =
-      match premap with
-      | Pre_identity -> Array.iteri f outer
-      | Pre_singleton i -> f 0 outer.(i)*)
+  let quick_subset = TerminalSet.quick_subset
 
   let post_map ?lookahead before after =
     let forward_size = Array.make (Array.length before) 0 in
@@ -605,14 +619,15 @@ struct
     let cell_count = ref 0
 
     let cost_table =
-      Vector.init CTree.n (fun node ->
-          let count =
-            Array.length (CClasses.before node) *
-            Array.length (CClasses.after node)
-          in
-          cell_count := !cell_count + count;
-          Array.make count max_int
-        )
+      let init_node node =
+        let count =
+          Array.length (CClasses.before node) *
+          Array.length (CClasses.after node)
+        in
+        cell_count := !cell_count + count;
+        Array.make count max_int
+      in
+      Vector.init CTree.n init_node
 
     let cell_count = !cell_count
 
@@ -644,19 +659,22 @@ struct
       let sz = Array.length (CClasses.after node) in
       (node, offset / sz, offset mod sz)
 
-    (*(* Sanity checks *)
-      let decode_index i =
+    (* Sanity checks
+
+    let decode_index i =
       let n, b, a as result = decode_index i in
       assert (i = encode_index n b a);
       result
 
-      and encode_index node i_before i_after =
+    and encode_index node i_before i_after =
       let result = encode_index node i_before i_after in
       assert (decode_index result = (node, i_before, i_after));
-      result*)
+      result
+
+    *)
 
     type reverse_dependency =
-      | Eqn of pre_map * int array array * Transition.nt index
+      | Eqn of pre_map * int array array * Transition.goto index
       | Inner of post_map * CTree.Inner.n index
 
     let dependencies =
@@ -691,7 +709,7 @@ struct
         let node, i_before, i_after = decode_index index in
         let update_dep = function
           | Eqn (pre, post, parent) ->
-            let parent = CTree.leaf (Transition.of_nt parent) in
+            let parent = CTree.leaf (Transition.of_goto parent) in
             let i_before' = match pre with
               | Pre_singleton i -> i
               | Pre_identity -> i_before
@@ -793,12 +811,7 @@ struct
           dependencies.%::(r) <- dep
       end
 
-    let () = Time.tick "Ikjstra: reverse dependencies"
-
-    let () =
-      if false then
-        Printf.printf "%d nodes and %d cells in consed tree\n"
-          (cardinal CTree.n) cell_count
+    let () = Time.tick "LRijkstraFast: reverse dependencies"
 
     include Fix.DataFlow.ForCustomMaps
         (struct
@@ -829,7 +842,7 @@ struct
             Bytes.set data.%(node) cell (if value then '\x01' else '\x00')
         end)
 
-    let () = Time.tick "Ijkstra: data flow solution"
+    let () = Time.tick "LRijkstraFast: data flow solution"
 
     let cost index =
       let node, offset = decode_index2 index in
@@ -887,43 +900,22 @@ struct
         let exception Break of Terminal.t list in
         let l_index = encode_index l in
         let r_index = encode_index r in
-        try
-          Array.iteri (fun i_al i_brs ->
-              let l_cost = cost (l_index i_b i_al) in
-              Array.iter (fun i_br ->
-                  let r_cost = cost (r_index i_br i_a) in
-                  if l_cost + r_cost = current_cost then (
-                    let acc = append_word (r_index i_br i_a) acc in
-                    let acc = append_word (l_index i_b i_al) acc in
-                    raise (Break acc)
-                  )
-                ) i_brs
-            ) mapping.forward;
-          assert false
-        with Break acc -> acc
-
+        begin try
+            Array.iteri (fun i_al i_brs ->
+                let l_cost = cost (l_index i_b i_al) in
+                Array.iter (fun i_br ->
+                    let r_cost = cost (r_index i_br i_a) in
+                    if l_cost + r_cost = current_cost then (
+                      let acc = append_word (r_index i_br i_a) acc in
+                      let acc = append_word (l_index i_b i_al) acc in
+                      raise (Break acc)
+                    )
+                  ) i_brs
+              ) mapping.forward;
+            assert false
+          with Break acc -> acc
+        end
   end
-
-
-  (*let () =
-    let max_word = ref (-1) in
-    Index.iter Transition.nt begin fun nt ->
-    let minimum = ref max_int in
-    let node = CTree0.leaf (Transition.of_nt nt) in
-    let before = CClasses.before node in
-    let after = CClasses.after node in
-    for i_b = 0 to Array.length before - 1 do
-      for i_a = 0 to Array.length after - 1 do
-        minimum := min !minimum
-            Vars.cost_table.(Vars.encode_index node i_b i_a)
-      done
-    done;
-    if !minimum < max_int then
-      max_word := max !max_word !minimum
-    end;
-    Printf.printf "max word length: %d\n%!" !max_word*)
-
-  (*let () = Gc.print_stat stderr*)
 
   module Word = struct
     type t = Terminal.t list
@@ -1035,7 +1027,7 @@ struct
            conflict resolution.  *)
         begin
           let count = ref 0 in
-          Index.iter Transition.nt (fun tr ->
+          Index.iter Transition.goto (fun tr ->
               let reductions = Reductions.of_transition tr in
               List.iter (fun {Reductions.production; _} ->
                   let steps = Array.length (Production.rhs production) in
@@ -1046,28 +1038,15 @@ struct
         end
   end
 
-  (* Workaround unused values *)
-  let _ = Transition.t
-  let _ = Transition.of_t
-  let _ = Transition.find
-  let _ = Transition.symbol_nt
-  let _ = CTree.node
-  let _ = CNode.definition
-  let _ = Vars.cell_count
-
-  let () =
-    if X.validate then begin
+  module Validation = struct
+    let validate () =
+      let failed = ref false in
       let module Classic = LRijkstraClassic.Run(X)() in
-      Index.iter Transition.nt begin fun tr ->
+      Index.iter Transition.goto begin fun tr ->
         let nt = Transition.symbol_nt tr in
-        let tr = Transition.of_nt tr in
+        let tr = Transition.of_goto tr in
         let node = CTree.leaf tr in
         let lr1 = Transition.source tr in
-        (*let lr1' = Transition.target tr in
-          Printf.eprintf "ijkstra: checking item %d/%d: %d-%s->%d\n%!"
-          (tr :> int) (Transition.nt :> int)
-          (lr1 :> int) (Nonterminal.print false nt) (lr1' :> int)
-          ;*)
         let missing classes =
           let diff a b = TerminalSet.fold TerminalSet.remove b a in
           Array.fold_left diff TerminalSet.universe classes
@@ -1099,25 +1078,23 @@ struct
             TerminalSet.iter begin fun t ->
               match Hashtbl.find min_table t with
               | (w, n)->
+                let word ts = String.concat " " (List.map Terminal.print ts) in
                 if n <> cost then (
-                  let ts ts = "{" ^ TerminalSet.print ts ^ "}" in
-                  let word ts =
-                    String.concat " " (List.map Terminal.print ts)
-                  in
-                  Printf.eprintf "  lengths differ: %d <> %d\n\
-                                 \    before: %s\n\
-                                 \    after: %s\n\
-                                 \    LRijkstra: %s\n\
-                                 \    Ijkstra: %s\n%!" n cost
-                    (ts s_b) (ts s_a)
+                  Printf.eprintf "  lengths differ: %d <> %d\n" n cost;
+                  Printf.eprintf "    before: {%s}\n" (TerminalSet.print s_b);
+                  Printf.eprintf "    after: {%s}\n" (TerminalSet.print s_a);
+                  Printf.eprintf "    Classic: %s\n\
+                                 \    Fast: %s\n%!"
                     (word (Classic.Word.elements w))
                     (word (Vars.append_word cell []))
-                  ;
                 )
               | exception Not_found -> ()
             end s_a
           end (CClasses.after node)
         end (CClasses.before node);
-      end
-    end
+      end;
+      if !failed then exit 1
+
+    let () = if X.validate then validate ()
+  end
 end
