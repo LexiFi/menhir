@@ -995,10 +995,55 @@ struct
   end
 
   module Statistics = struct
-    let header = ""
+    let header =
+      "grammar,terminals,nonterminals,grammar_size,lr1_states,time,heap,\
+       transitions,tree_size,matrix_cells,u"
 
-    let print _ ~time:_ ~heap:_ =
-      failwith "TODO"
+    let print c ~time ~heap =
+      Printf.fprintf c
+        "%s,%d,%d,%d,%d,%.2f,%d,%d,%d,%d,%d\n%!"
+        (* Grammar name. *)
+        Settings.base
+        (* Number of terminal symbols. *)
+        Terminal.n
+        (* Number of nonterminal symbols. *)
+        Nonterminal.n
+        (* Grammar size (not counting the error productions). *)
+        begin
+          Production.foldx (fun prod accu ->
+              let rhs = Production.rhs prod in
+              if List.mem (Symbol.T Terminal.error) (Array.to_list rhs) then
+                accu
+              else
+                accu + Array.length rhs
+            ) 0
+        end
+        (* Automaton size (i.e., number of states). *)
+        Lr1.n
+        (* Elapsed user time, in seconds. *)
+        time
+        (* Max heap size, in megabytes. *)
+        heap
+        (* Transitions *)
+        (cardinal Transition.any)
+        (* Tree size *)
+        (cardinal CTree.n)
+        (* Matrix cells *)
+        Vars.cell_count
+        (* U ~= \sum_A edges(A) * prodsize(A)
+           though we don't count reductions that became unreachable after
+           conflict resolution.  *)
+        begin
+          let count = ref 0 in
+          Index.iter Transition.nt (fun tr ->
+              let reductions = Reductions.of_transition tr in
+              List.iter (fun {Reductions.production; _} ->
+                  let steps = Array.length (Production.rhs production) in
+                  count := !count + steps
+                ) reductions
+            );
+          !count
+        end
   end
 
   (* Workaround unused values *)
