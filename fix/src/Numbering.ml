@@ -378,6 +378,7 @@ end = struct
 
     val get : ('n, 'a) t -> 'n index -> 'a
     val set : ('n, 'a) t -> 'n index -> 'a -> unit
+    val set_cons : ('n, 'a list) t -> 'n index -> 'a -> unit
 
     val length : ('n, 'a) t -> 'n cardinal
     val empty : (Empty.n, _) t
@@ -393,6 +394,7 @@ end = struct
        safe. *)
     let get = Array.unsafe_get
     let set = Array.unsafe_set
+    let set_cons t i x = set t i (x :: get t i)
 
     let length vec = let c = Array.length vec in lazy c
 
