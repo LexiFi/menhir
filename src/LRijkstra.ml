@@ -241,9 +241,11 @@ let _, _ =
 
 let () =
   !data
-  |> List.fast_sort (fun (nt1, w1, _) (nt2, w2, _) ->
-      let c = Nonterminal.compare nt1 nt2 in
-      if c <> 0 then c else Word.compare w2 w1
+  |> List.fast_sort (fun (nt1, w1, (s1, _)) (nt2, w2, (s2, _)) ->
+      let c = Int.compare (Lr1.number s1) (Lr1.number s2) in
+      if c <> 0 then c else
+        let c = Nonterminal.compare nt1 nt2 in
+        if c <> 0 then c else Word.compare w2 w1
     )
   |> List.map (fun (nt, w, target) -> (nt, Word.elements w, target))
   |> List.iter Interpret.print_messages_item

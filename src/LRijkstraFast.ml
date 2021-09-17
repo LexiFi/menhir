@@ -1036,7 +1036,12 @@ struct
           let min_table = Hashtbl.create 7 in
           TerminalSet.iter begin fun t ->
             Classic.query (Lr1C.to_g lr1) nt t begin fun w t' ->
-              assert (not (TerminalSet.mem t' missing_after));
+              if TerminalSet.mem t' missing_after then (
+                Printf.eprintf "not expecting %s in {%s}\n%!"
+                  (Terminal.print t')
+                  (TerminalSet.print missing_after);
+                assert false;
+              );
               let n = Classic.Word.length w in
               match Hashtbl.find_opt min_table t' with
               | Some (_, n') when n' <= n -> ()
