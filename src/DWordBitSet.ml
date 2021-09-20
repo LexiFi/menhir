@@ -217,28 +217,27 @@ let compare_minimum s1 s2 =
 let interval_union xs =
   List.fold_left union empty xs
 
-let extract_prefix s1 s2 =
+let extract_unique_prefix s1 s2 =
   match s1, s2 with
   | E, _ -> E, E
-  | _, E -> invalid_arg "extract_prefix: r < l"
+  | _, E -> invalid_arg "extract_unique_prefix: r < l"
   | D (hi1, lo1), D (hi2, lo2) ->
     if A.is_empty lo2 then
-      let p, r = A.extract_prefix hi1 hi2 in
+      let p, r = A.extract_unique_prefix hi1 hi2 in
       (construct p lo1, construct r A.empty)
     else if A.is_empty lo1 then
-      invalid_arg "extract_prefix: r < l"
+      invalid_arg "extract_unique_prefix: r < l"
     else
-      let p, r = A.extract_prefix lo1 lo2 in
+      let p, r = A.extract_unique_prefix lo1 lo2 in
       (construct A.empty p, construct hi1 r)
 
-
-let extract_common s1 s2 =
+let extract_shared_prefix s1 s2 =
   match s1, s2 with
   | _, E | E, _ -> E, (s1, s2)
   | D (hi1, lo1), D (hi2, lo2) ->
     if A.equal lo1 lo2 then
-      let hi, (hi1, hi2) = A.extract_common hi1 hi2 in
+      let hi, (hi1, hi2) = A.extract_shared_prefix hi1 hi2 in
       (construct hi lo1, (construct hi1 A.empty, construct hi2 A.empty))
     else
-      let lo, (lo1, lo2) = A.extract_common lo1 lo2 in
+      let lo, (lo1, lo2) = A.extract_shared_prefix lo1 lo2 in
       (construct A.empty lo, (construct hi1 lo1, construct hi2 lo2))

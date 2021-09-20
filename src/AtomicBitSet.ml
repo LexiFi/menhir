@@ -227,7 +227,7 @@ let compare_minimum ss1 ss2 =
 
 let interval_union xs = List.fold_left union empty xs
 
-let extract_prefix ss1 ss2 =
+let extract_unique_prefix ss1 ss2 =
   if ss1 = 0 then
     0, 0
   else
@@ -239,7 +239,7 @@ let extract_prefix ss1 ss2 =
     assert (ss0 <> 0);
     (ss0, ss1 land lnot prefix_mask)
 
-let extract_common ss1 ss2 =
+let extract_shared_prefix ss1 ss2 =
   if ss1 = ss2 then
     ss1, (empty, empty)
   else

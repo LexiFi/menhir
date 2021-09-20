@@ -300,58 +300,58 @@ let compare_minimum s1 s2 =
 let interval_union xs =
   List.fold_left union empty xs
 
-let extract_prefix s1 s2 =
+let extract_unique_prefix s1 s2 =
   match s1, s2 with
   | E, _ -> E, E
-  | _, E -> invalid_arg "extract_prefix: r < l"
+  | _, E -> invalid_arg "extract_unique_prefix: r < l"
   | Q (hh1, hl1, lh1, ll1), Q (hh2, hl2, lh2, ll2) ->
     if not (A.is_empty ll2) then (
-      if A.is_empty ll1 then invalid_arg "extract_prefix: r < l";
-      let p, r = A.extract_prefix ll1 ll2 in
+      if A.is_empty ll1 then invalid_arg "extract_unique_prefix: r < l";
+      let p, r = A.extract_unique_prefix ll1 ll2 in
       construct A.empty A.empty A.empty p,
       construct hh1 hl1 lh1 r
     ) else if not (A.is_empty lh2) then (
       if A.is_empty ll1 && A.is_empty lh1 then
-        invalid_arg "extract_prefix: r < l";
-      let p, r = A.extract_prefix lh1 lh2 in
+        invalid_arg "extract_unique_prefix: r < l";
+      let p, r = A.extract_unique_prefix lh1 lh2 in
       construct A.empty A.empty p ll1,
       construct hh1 hl1 r A.empty
     ) else if not (A.is_empty hl2) then (
       if A.is_empty ll1 && A.is_empty lh1 && A.is_empty hl1 then
-        invalid_arg "extract_prefix: r < l";
-      let p, r = A.extract_prefix hl1 hl2 in
+        invalid_arg "extract_unique_prefix: r < l";
+      let p, r = A.extract_unique_prefix hl1 hl2 in
       construct A.empty p lh1 ll1,
       construct hh1 r A.empty A.empty
     ) else (
       if A.is_empty ll1 && A.is_empty lh1 &&
          A.is_empty hl1 && A.is_empty hh1 then
-        invalid_arg "extract_prefix: r < l";
-      let p, r = A.extract_prefix hh1 hh2 in
+        invalid_arg "extract_unique_prefix: r < l";
+      let p, r = A.extract_unique_prefix hh1 hh2 in
       construct p hl1 lh1 ll1,
       construct r A.empty A.empty A.empty
     )
 
-let extract_common s1 s2 =
+let extract_shared_prefix s1 s2 =
   match s1, s2 with
   | _, E | E, _ -> E, (s1, s2)
   | Q (hh1, hl1, lh1, ll1), Q (hh2, hl2, lh2, ll2) ->
     if not (A.equal ll1 ll2) then
-      let ll, (ll1, ll2) = A.extract_common ll1 ll2 in
+      let ll, (ll1, ll2) = A.extract_shared_prefix ll1 ll2 in
       construct A.empty A.empty A.empty ll,
       (construct hh1 hl1 lh1 ll1,
        construct hh2 hl2 lh2 ll2)
     else if not (A.equal lh1 lh2) then
-      let lh, (lh1, lh2) = A.extract_common lh1 lh2 in
+      let lh, (lh1, lh2) = A.extract_shared_prefix lh1 lh2 in
       construct A.empty A.empty lh ll1,
       (construct hh1 hl1 lh1 A.empty,
        construct hh2 hl2 lh2 A.empty)
     else if not (A.equal hl1 hl2) then
-      let hl, (hl1, hl2) = A.extract_common hl1 hl2 in
+      let hl, (hl1, hl2) = A.extract_shared_prefix hl1 hl2 in
       construct A.empty hl lh1 ll1,
       (construct hh1 hl1 A.empty A.empty,
        construct hh2 hl2 A.empty A.empty)
     else if not (A.equal hh1 hh2) then
-      let hh, (hh1, hh2) = A.extract_common hh1 hh2 in
+      let hh, (hh1, hh2) = A.extract_shared_prefix hh1 hh2 in
       construct hh hl1 lh1 ll1,
       (construct hh1 A.empty A.empty A.empty,
        construct hh2 A.empty A.empty A.empty)

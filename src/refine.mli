@@ -29,7 +29,7 @@ module type DECOMPOSABLE = sig
   (** A set can be tested for emptiness. *)
 
   val compare_minimum : t -> t -> int
-  (** Order two sets by their minimal element.
+  (** Order two nonempty sets by their minimal element.
 
       If we had an function to extract the minimal element, then
       [compare_minimum x y = Element.compare (minimum x) (minimum y)].
@@ -38,43 +38,31 @@ module type DECOMPOSABLE = sig
   *)
 
   val interval_union : t list -> t
-  (** Computes the union of a list of set.
+  (** Computes the union of a list of nonempty sets.
+      [interval_union] requires that all sets [s_i] in the list are ordered by
+      both their minimum elements and maximum elements and does not overlap:
+      [maximum s_i < minimum s_(i+1)]
+  *)
 
-      However, [Refine.Make] makes stronger guarantees when calling
-      [interval_union] that can be used to speed-up the computation.
-      Sets in the list guaranteed to be sorted by [compare_minimum] and, if it
-      existed, by [compare_maximum].
-
-      That is:
-      - each set [s_i] is a subset of the interval
-          [minimum s_i .. maximum s_i],
-      - intervals are totally ordered and non-overlapping
-          [maximum s_i < minimum s_(i+1)]
-     *)
-
-  val extract_prefix : t -> t -> t * t
+  val extract_unique_prefix : t -> t -> t * t
   (** When [compare_minimum s1 s2 < 0],
-      [extract_prefix s1 s2] splits [s1] in [s1_head, s1_tail] such that
+      [extract_unique_prefix s1 s2] splits [s1] in [s1_head, s1_tail] such that
       [s1_head] is made of elements of [s1] that are strictly smaller than any
       element in [s2] and [s1_tail] is made of other elements.
 
       That is, assuming s1 < s2 by [compare_minimum]:
-      - forall h in s1_head, t1 in s1_tail and h < t1
-      - forall h in s1_head, t2 in s2 and h < t2
+      - for all h in s1_head, t1 in s1_tail and h < t1
+      - for all h in s1_head, t2 in s2 and h < t2
       - [s1 = s1_head U s1_tail]
-
-      FIXME: Rename to extract_unique_prefix?
   *)
 
-  val extract_common : t -> t -> t * (t * t)
+  val extract_shared_prefix : t -> t -> t * (t * t)
   (** When [compare_minimum s1 s2 = 0],
-      [extract_common s1 s2 = (common, s1', s2')] such that
+      [extract_shared_prefix s1 s2 = (common, s1', s2')] such that
 
       - [common] are elements that are both in [s1] and [s2]
       - [common] elements are smaller than any element in [s1'] and [s2']
       - [s1 = common U s1'] and [s2 = common U s2']
-
-      FIXME: Rename to extract_shared_prefix?
   *)
 end
 
@@ -85,7 +73,23 @@ module type S = sig
   (** Type of a set, like [DECOMPOSABLE.t] *)
 
   val partition : t list -> t list
-  (* Returns the refined partition of a list of sets. *)
+  (* Returns the refined partition of a list of sets.
+
+     [zs] is a partition of [xs], iff:
+     1) Each element of [xs] can be decomposed in elements of [zs], that is
+        for all x in xs, there exists a subset zs' of zs such that x = U zs'
+     2) Subsets in [zs] does not overlap, that is
+        for all z1, z2 in zs, z1 inter z2 = emptyset
+     3) They cover the same universe, that is
+        [U zs = U xs]
+
+     [ys = partition xs] is the coarsest partition of the list of sets [xs],
+     represented by the list of nonempty sets [ys]. Furthermore, the list [ys]
+     is sorted by [compare_minimum].
+
+     It is the coarsest in the sense that for all partition zs of xs and z in
+     zs, there exists y in ys such that z is a subset of y.
+  *)
 
   val annotated_partition : (t * 'a) list -> (t * 'a list) list
   (* Returns the refined partition of a list of sets. *)

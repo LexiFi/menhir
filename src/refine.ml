@@ -18,8 +18,8 @@ module type DECOMPOSABLE = sig
   val is_empty : t -> bool
   val compare_minimum : t -> t -> int
   val interval_union : t list -> t
-  val extract_prefix : t -> t -> t * t
-  val extract_common : t -> t -> t * (t * t)
+  val extract_unique_prefix : t -> t -> t * t
+  val extract_shared_prefix : t -> t -> t * (t * t)
 end
 
 module type S = sig
@@ -80,8 +80,8 @@ module Make (Set : DECOMPOSABLE) : S with type t := Set.t = struct
     let rec aux parts heap =
       match heap_pop2 heap with
       | Head (s1, k1, s2, k2, heap) ->
-        let sp, s1 = Set.extract_prefix s1 s2 in
-        let sc, (s1, s2) = Set.extract_common s1 s2 in
+        let sp, s1 = Set.extract_unique_prefix s1 s2 in
+        let sc, (s1, s2) = Set.extract_shared_prefix s1 s2 in
         let parts =
           if not (Set.is_empty sp) then (sp, k1) :: parts else parts
         in

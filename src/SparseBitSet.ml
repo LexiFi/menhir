@@ -253,7 +253,11 @@ let rec quick_subset a1 ss1 = function
 let quick_subset s1 s2 =
   match s1 with
   | N -> true
-  | C (a1, ss1, _) -> quick_subset a1 ss1 s2
+  | C (a1, ss1, _) ->
+    (* We know that, by construction, ss1 is not empty.
+       It suffices to test s2 also has elements in common with ss1 at address
+       a1 to determine the quick_subset relation. *)
+    quick_subset a1 ss1 s2
 
 let compare_minimum s1 s2 =
   match s1, s2 with
@@ -267,11 +271,11 @@ let compare_minimum s1 s2 =
 
 let interval_union xs = List.fold_right union xs empty
 
-let rec extract_prefix addr2 ss2 = function
+let rec extract_unique_prefix addr2 ss2 = function
   | N -> N, N
   | C (addr1, ss1, qs1) as self ->
     if addr1 < addr2 then
-      let prefix, suffix = extract_prefix addr2 ss2 qs1 in
+      let prefix, suffix = extract_unique_prefix addr2 ss2 qs1 in
       C (addr1, ss1, prefix), suffix
     else if addr1 > addr2
          || AtomicBitSet.equal ss1 ss2 then
@@ -279,7 +283,7 @@ let rec extract_prefix addr2 ss2 = function
     else
       (* l and r have the same address, and
          l has some prefix that is not part of r (lsb l < lsb r)*)
-      let ss0, ss1 = AtomicBitSet.extract_prefix ss1 ss2 in
+      let ss0, ss1 = AtomicBitSet.extract_unique_prefix ss1 ss2 in
       if AtomicBitSet.is_empty ss0 then
         N, self
       else if AtomicBitSet.is_empty ss1 then
@@ -287,20 +291,20 @@ let rec extract_prefix addr2 ss2 = function
       else
         (C (addr1, ss0, N), C (addr1, ss1, qs1))
 
-let extract_prefix l r =
+let extract_unique_prefix l r =
   match l, r with
   | N, _ -> N, N
-  | _, N -> invalid_arg "extract_prefix: r < l"
-  | l, C (addr2, ss2, _) -> extract_prefix addr2 ss2 l
+  | _, N -> invalid_arg "extract_unique_prefix: r < l"
+  | l, C (addr2, ss2, _) -> extract_unique_prefix addr2 ss2 l
 
-let rec extract_common = function
+let rec extract_shared_prefix = function
   | C (addr1, ss1, qs1), C (addr2, ss2, qs2)
     when addr1 = addr2 ->
     if AtomicBitSet.equal ss1 ss2 then
-      let common, rest = extract_common (qs1, qs2) in
+      let common, rest = extract_shared_prefix (qs1, qs2) in
       (C (addr1, ss1, common), rest)
     else
-      let common, (ss1, ss2) = AtomicBitSet.extract_common ss1 ss2 in
+      let common, (ss1, ss2) = AtomicBitSet.extract_shared_prefix ss1 ss2 in
       let common =
         if AtomicBitSet.is_empty common then N else C (addr1, common, N)
       in
@@ -313,4 +317,4 @@ let rec extract_common = function
       common, (qs1, qs2)
   | (l, r) -> N, (l, r)
 
-let extract_common l r = extract_common (l, r)
+let extract_shared_prefix l r = extract_shared_prefix (l, r)
