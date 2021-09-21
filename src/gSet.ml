@@ -132,5 +132,5 @@ module type S = sig
    val compare_minimum : t -> t -> int
    val extract_unique_prefix : t -> t -> t * t
    val extract_shared_prefix : t -> t -> t * (t * t)
-   val interval_union : t list -> t
+   val sorted_union : t list -> t
 end

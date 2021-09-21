@@ -269,7 +269,13 @@ let compare_minimum s1 s2 =
     | 0 -> AtomicBitSet.compare_minimum ss1 ss2
     | n -> n
 
-let interval_union xs = List.fold_right union xs empty
+let sorted_union xs =
+  (* It is important to start folding from the right end of the list.
+     Since elements are sorted, by starting from the right end we only prepend
+     elements, that makes the algorithm linear in the number of items.
+     Starting from the left end would make it quadratic, revisiting the prefix
+     of a list that get longer and longer as elements are added. *)
+  List.fold_right union xs empty
 
 let rec extract_unique_prefix addr2 ss2 = function
   | N -> N, N

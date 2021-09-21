@@ -225,7 +225,7 @@ let compare_minimum ss1 ss2 =
     compare_lsb ss1' ss2'
   | n -> n
 
-let interval_union xs = List.fold_left union empty xs
+let sorted_union xs = List.fold_left union empty xs
 
 let extract_unique_prefix ss1 ss2 =
   if ss1 = 0 then

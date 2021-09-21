@@ -1013,8 +1013,8 @@ module Domain = struct
   let extract_shared_prefix _ =
     failwith "Patricia.extract_shared_prefix: not implemented"
 
-  let interval_union _ =
-    failwith "Patricia.interval_union: not implemented"
+  let sorted_union _ =
+    failwith "Patricia.sorted_union: not implemented"
 end
 
 (*i --------------------------------------------------------------------------------------------------------------- i*)

@@ -32,8 +32,8 @@ module type DECOMPOSABLE = sig
   (** [compare_minimum s1 s2] compares the nonempty sets [s1] and [s2]
       based on their minimum elements. *)
 
-  val interval_union : t list -> t
-  (** [interval_union ss] computes the union of all sets in the list [ss].
+  val sorted_union : t list -> t
+  (** [sorted_union ss] computes the union of all sets in the list [ss].
       Every set in the list [ss] must be nonempty.
       The intervals that underlie these sets must be ordered and nonoverlapping:
       that is, if [s1] and [s2] are two adjacent sets in the list [ss],

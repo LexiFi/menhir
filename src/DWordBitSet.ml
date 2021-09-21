@@ -214,7 +214,7 @@ let compare_minimum s1 s2 =
     | true , false -> 1
     | false, true  -> -1
 
-let interval_union xs =
+let sorted_union xs =
   List.fold_left union empty xs
 
 let extract_unique_prefix s1 s2 =
