@@ -394,7 +394,7 @@ let print_on_error_reduce_declarations f g =
   List.iter (fun level ->
     fprintf f "%%on_error_reduce";
     List.iter (fun (nt, _level) ->
-      fprintf f " %s" nt
+      fprintf f " %s" (Misc.normalize nt)
     ) level;
     fprintf f "\n"
   ) levels
