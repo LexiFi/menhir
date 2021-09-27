@@ -14,6 +14,9 @@
 * Fix a bug in `--only-preprocess`, causing `%on_error_reduce` declarations
   that involve parameterized symbols to be printed in an incorrect manner.
 
+* Fix a name collision that would cause the code back-end to produce ill-typed
+  code if a token was named `Error`.
+
 ## 2021/04/19
 
 * Mention the demo [coq-minicalc](demos/coq-minicalc) in the manual.
