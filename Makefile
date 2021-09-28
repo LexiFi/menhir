@@ -129,6 +129,7 @@ VERSIONS := \
   4.10.0 \
   4.11.1 \
   4.12.0 \
+  4.13.0 \
 
 .PHONY: versions
 versions:
