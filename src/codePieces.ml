@@ -212,9 +212,7 @@ let basics =
 let excvaldef = {
   valpublic = false;
   valpat = PVar parse_error;
-  valval = EData (basics ^ "." ^ Interface.excname, [])
-    (* 2016/06/23 We now use the qualified name [Basics.Error], instead of
-       just [Error], so as to avoid OCaml's warning 41. *)
+  valval = EData (Interface.excname, [])
 }
 
 (* ------------------------------------------------------------------------ *)
@@ -225,15 +223,27 @@ let excvaldef = {
 
 let mbasics grammar = [
 
+  (* The module [Basics]. *)
   SIModuleDef (basics, MStruct (
+
+    (* The exception [Error]. *)
     SIExcDefs [ Interface.excdef ] ::
+
+    (* 2021/09/27 We now place the definition [let _eRR = Error] at this
+       particular point so as to avoid the risk of a name collision. In
+       previous versions of Menhir, if a token was named [Error], then the
+       definition [let _eRR = Error] would not receive its intended meaning,
+       and the code produced by the code back-end would be ill-typed. *)
+    SIValDefs (false, [ excvaldef ]) ::
+
+    (* The type [token]. *)
     interface_to_structure (
       TokenType.tokentypedef grammar
     )
+
   ));
 
+  (* Include the above submodule. *)
   SIInclude (MVar basics);
-
-  SIValDefs (false, [ excvaldef ]);
 
 ]
