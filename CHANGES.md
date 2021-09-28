@@ -1,6 +1,8 @@
 # Changes
 
-## 2021/06/XX
+## 2021/09/28
+
+* Coq back-end and `coq-menhirlib`: avoid the new warnings in Coq 8.14.
 
 * The new command line switches `--random-*` can be used to randomly generate
   sentences that are valid with respect to the grammar. If the grammar is in
@@ -24,7 +26,7 @@
 
 * Parsers generated with the Coq mode now have support for non-certified basic
   error reporting without an additional parser. This is supported thanks to an
-  extension of the return type `parse_result` in the coq-menhirlib library and
+  extension of the return type `parse_result` in the `coq-menhirlib` library and
   thanks to the new generated helper function `Aut.N_of_state`. See the new
   demo [coq-syntax-errors](demos/coq-syntax-errors) and the updated manual for
   more details. (Contributed by Brian Ward.)
