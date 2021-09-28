@@ -132,7 +132,7 @@ module Run (T: sig end) = struct
     if List.length constrs > 0 then
       begin
         let iteri f = ignore (List.fold_left (fun k x -> f k x; succ k) 1 constrs) in
-        fprintf f "Program Instance %sNum : %sAlphabet.Numbered %s :=\n" name menhirlib_path name;
+        fprintf f "Global Program Instance %sNum : %sAlphabet.Numbered %s :=\n" name menhirlib_path name;
         fprintf f "  { inj := fun x => match x return _ with";
         iteri (fun k constr -> fprintf f "\n    | %s => %d%%positive" constr k);
         fprintf f "\n    end;\n";
@@ -143,7 +143,7 @@ module Run (T: sig end) = struct
       end
     else
       begin
-        fprintf f "Program Instance %sAlph : %sAlphabet.Alphabet %s :=\n" name menhirlib_path name;
+        fprintf f "Global Program Instance %sAlph : %sAlphabet.Alphabet %s :=\n" name menhirlib_path name;
         fprintf f "  { AlphabetComparable := {| compare := fun x y =>\n";
         fprintf f "      match x, y return comparison with end |};\n";
         fprintf f "    AlphabetEnumerable := {| all_list := []%%list |} }.";
@@ -153,12 +153,12 @@ module Run (T: sig end) = struct
     write_inductive_alphabet f "terminal" (
       Terminal.fold (fun t l -> if Terminal.pseudo t then l else print_term t::l)
         []);
-    fprintf f "Instance TerminalAlph : %sAlphabet.Alphabet terminal := _.\n\n" menhirlib_path
+    fprintf f "Global Instance TerminalAlph : %sAlphabet.Alphabet terminal := _.\n\n" menhirlib_path
 
   let write_nonterminals f =
     write_inductive_alphabet f "nonterminal" (
       Nonterminal.foldx (fun nt l -> (print_nterm nt)::l) []);
-    fprintf f "Instance NonTerminalAlph : %sAlphabet.Alphabet nonterminal := _.\n\n" menhirlib_path
+    fprintf f "Global Instance NonTerminalAlph : %sAlphabet.Alphabet nonterminal := _.\n\n" menhirlib_path
 
   let write_symbol_semantic_type f =
     fprintf f "Definition terminal_semantic_type (t:terminal) : Type:=\n";
@@ -200,7 +200,7 @@ module Run (T: sig end) = struct
   let write_productions f =
     write_inductive_alphabet f "production" (
       Production.foldx (fun prod l -> (print_prod prod)::l) []);
-    fprintf f "Instance ProductionAlph : %sAlphabet.Alphabet production := _.\n\n" menhirlib_path
+    fprintf f "Global Instance ProductionAlph : %sAlphabet.Alphabet production := _.\n\n" menhirlib_path
 
   let write_productions_contents f =
     fprintf f "Definition prod_contents (p:production) :\n";
@@ -280,13 +280,13 @@ module Run (T: sig end) = struct
   let write_nis f =
     write_inductive_alphabet f "noninitstate" (
       lr1_foldx_nonfinal (fun l node -> (print_nis node)::l) []);
-    fprintf f "Instance NonInitStateAlph : %sAlphabet.Alphabet noninitstate := _.\n\n" menhirlib_path
+    fprintf f "Global Instance NonInitStateAlph : %sAlphabet.Alphabet noninitstate := _.\n\n" menhirlib_path
 
   let write_init f =
     write_inductive_alphabet f "initstate" (
       ProductionMap.fold (fun _prod node l ->
         (print_init node)::l) Lr1.entry []);
-    fprintf f "Instance InitStateAlph : %sAlphabet.Alphabet initstate := _.\n\n" menhirlib_path
+    fprintf f "Global Instance InitStateAlph : %sAlphabet.Alphabet initstate := _.\n\n" menhirlib_path
 
   let write_start_nt f =
     fprintf f "Definition start_nt (init:initstate) : nonterminal :=\n";

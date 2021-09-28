@@ -27,7 +27,7 @@ Class Decidable (P : Prop) := decide : {P} + {~P}.
 Arguments decide _ {_}.
 
 (** A [Comparable] type has decidable equality. *)
-Instance comparable_decidable_eq T `{ComparableLeibnizEq T} (x y : T) :
+Global Instance comparable_decidable_eq T `{ComparableLeibnizEq T} (x y : T) :
   Decidable (x = y).
 Proof.
   unfold Decidable.
@@ -35,7 +35,7 @@ Proof.
     right; intros ->; by rewrite compare_refl in EQ.
 Defined.
 
-Instance list_decidable_eq T :
+Global Instance list_decidable_eq T :
   (forall x y : T, Decidable (x = y)) ->
   (forall l1 l2 : list T, Decidable (l1 = l2)).
 Proof. unfold Decidable. decide equality. Defined.
