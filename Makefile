@@ -38,6 +38,14 @@ export CDPATH=
 test:
 	@ dune build --display short @test
 
+# [make demos] compiles the demos.
+
+# Some demos require coq-menhirlib to be installed.
+
+.PHONY: demos
+demos:
+	@ make -C demos
+
 # [make mono] runs [make test] with a single core. This may produce more
 # reliable timing data, to be used subsequently by [make data].
 
@@ -263,16 +271,23 @@ DOC     := doc/manual.pdf doc/manual.html doc/manual*.png
 RELEASE := releases/$(DATE)
 WWW     := www
 
-# Prior to making a release, please make sure that `CHANGES.md` has been
-# properly updated. Run [make test] and [make versions] to make sure that
-# Menhir can be compiled and passes all tests under all supported versions of
-# OCaml. Run [make speed] and have a look at the performance figures to make
-# sure that they are in the right ballpark. Finally, test the opam package by
-# running [make pin]. (You may wish to run [make pin] in a dedicated switch,
-# so as to avoid clobbering your regular installation of Menhir.)
+# Prior to making a release, please follow this check-list:
 
-# You may also wish to run [./compile-ocaml.sh], which checks that Menhir is
-# able to compile OCaml. This test requires about 3 minutes.
+# 1. Make sure that [CHANGES.md] has been properly updated.
+# 2. Make sure that [coq-menhirlib/CHANGES.md] has been properly updated.
+# 3. Run [make test] to make sure that Menhir can be compiled and works.
+# 4. Run [make demos] to make sure that the demos can be compiled.
+# 5. Run [make versions] to make sure that Menhir can be compiled
+#    under all supported versions of OCaml.
+# 6. Run [make speed] and have a look at the performance figures to make
+#    sure that they are in the right ballpark.
+
+# You may wish to test the opam package by running [make pin]. (This
+# can be done in a dedicated switch, so as to avoid clobbering your
+# regular installation of Menhir.)
+
+# You may wish to run [./compile-ocaml.sh], which checks that Menhir
+# is able to compile OCaml. This test requires about 3 minutes.
 
 .PHONY: release
 release:
