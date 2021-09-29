@@ -1,16 +1,20 @@
 .PHONY: all clean test
 
-all:
-	@ dune build @all
-	@ $(MAKE) --no-print-directory -C coq-minicalc $@
-	@ $(MAKE) --no-print-directory -C coq-syntax-errors $@
+DEMOS := \
+  calc \
+  calc-alias \
+  calc-ast \
+  calc-incremental \
+  calc-inspection \
+  calc-mini \
+  calc-new-syntax \
+  calc-param \
+  calc-syntax-errors \
+  calc-two \
+  coq-minicalc \
+  coq-syntax-errors \
+  generate-printers \
 
-clean:
-	@ $(MAKE) --no-print-directory -C coq-minicalc $@
-	@ $(MAKE) --no-print-directory -C coq-syntax-errors $@
 
-
-test:
-	@ dune build --force @test
-	@ $(MAKE) --no-print-directory -C coq-syntax-errors $@
-
+all clean test:
+	@ for d in $(DEMOS) ; do make -C $$d $@ ; done
