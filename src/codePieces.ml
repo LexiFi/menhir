@@ -209,10 +209,15 @@ let basics =
   (* 2017/01/20 The name [basics] must be an unlikely name, as it might
      otherwise hide a user-defined module by the same name. *)
 
+(* The global definition [let _eRR : exn = Error] includes a type
+   annotation. This allows us to avoid warning 41, which warns
+   about the existence of a data constructor named [Error] in
+   the standard library. *)
+
 let excvaldef = {
   valpublic = false;
   valpat = PVar parse_error;
-  valval = EData (Interface.excname, [])
+  valval = EAnnot (EData (Interface.excname, []), type2scheme texn)
 }
 
 (* ------------------------------------------------------------------------ *)
