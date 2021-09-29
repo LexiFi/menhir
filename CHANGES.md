@@ -1,5 +1,10 @@
 # Changes
 
+## 2021/09/29
+
+* Fix a problem (introduced on 2021/09/28) that would cause
+  OCaml warning 41 to be triggered in the generated code.
+
 ## 2021/09/28
 
 * Coq back-end and `coq-menhirlib`: avoid the new warnings in Coq 8.14.
