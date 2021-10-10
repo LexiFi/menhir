@@ -1,0 +1,4201 @@
+%{
+open Core_kernel
+open Middle
+open Ast
+open Debugging
+open Errors
+
+(* Takes a sized_basic_type and a list of sizes and repeatedly applies then
+   SArray constructor, taking sizes off the list *)
+let reducearray (sbt, l) =
+  List.fold_right l ~f:(fun z y -> SizedType.SArray (y, z)) ~init:sbt
+
+let build_id id loc =
+  grammar_logger ("identifier " ^ id);
+  {name=id; id_loc=Location_span.of_positions_exn loc}
+
+let rec iterate_n f x = function
+  | 0 -> x
+  | n -> iterate_n f (f x) (n - 1)
+let nest_unsized_array basic_type n =
+  iterate_n (fun t -> UnsizedType.UArray t) basic_type n
+%}
+%start program
+%token AND
+%token ARRAY
+%token ARROWASSIGN
+%token ASSIGN
+%token BANG
+%token BAR
+%token BREAK
+%token CHOLESKYFACTORCORR
+%token CHOLESKYFACTORCOV
+%token COLON
+%token COMMA
+%token COMPLEX
+%token CONTINUE
+%token CORRMATRIX
+%token COVMATRIX
+%token DATABLOCK
+%token DIVIDE
+%token DIVIDEASSIGN
+%token ELSE
+%token ELTDIVIDE
+%token ELTDIVIDEASSIGN
+%token ELTPOW
+%token ELTTIMES
+%token ELTTIMESASSIGN
+%token EOF
+%token EQUALS
+%token FOR
+%token FUNCTIONBLOCK
+%token GENERATEDQUANTITIESBLOCK
+%token GEQ
+%token GETLP
+%token HAT
+%token <string> IDENTIFIER
+%token IDIVIDE
+%token IF
+%token <string> IMAGNUMERAL
+%token IN
+%token INCREMENTLOGPROB
+%token INT
+%token <string> INTNUMERAL
+%token LABRACK
+%token LBRACE
+%token LBRACK
+%token LDIVIDE
+%token LEQ
+%token LOWER
+%token LPAREN
+%token MATRIX
+%token MINUS
+%token MINUSASSIGN
+%token MODELBLOCK
+%token MODULO
+%token MULTIPLIER
+%token NEQUALS
+%token OFFSET
+%token OR
+%token ORDERED
+%token PARAMETERSBLOCK
+%token PLUS
+%token PLUSASSIGN
+%token POSITIVEORDERED
+%token PRINT
+%token PROFILE
+%token QMARK
+%token RABRACK
+%token RBRACE
+%token RBRACK
+%token REAL
+%token <string> REALNUMERAL
+%token REJECT
+%token RETURN
+%token ROWVECTOR
+%token RPAREN
+%token SEMICOLON
+%token SIMPLEX
+%token <string> STRINGLITERAL
+%token TARGET
+%token TILDE
+%token TIMES
+%token TIMESASSIGN
+%token TRANSFORMEDDATABLOCK
+%token TRANSFORMEDPARAMETERSBLOCK
+%token TRANSPOSE
+%token TRUNCATE
+%token UNITVECTOR
+%token UNREACHABLE
+%token UPPER
+%token VECTOR
+%token VOID
+%token WHILE
+%right COMMA
+%right COLON QMARK
+%left OR
+%left AND
+%left EQUALS NEQUALS
+%left GEQ LABRACK LEQ RABRACK
+%left MINUS PLUS
+%left DIVIDE ELTDIVIDE ELTTIMES MODULO TIMES
+%left IDIVIDE LDIVIDE
+%nonassoc unary_over_binary
+%right ELTPOW HAT
+%left TRANSPOSE
+%left LBRACK
+%nonassoc below_ELSE
+%nonassoc ELSE
+%type <Ast.untyped_program> program
+%%
+
+option_DATABLOCK_:
+  
+    {    ( None )}
+| x = DATABLOCK
+    {    ( Some x )}
+
+option_data_block_:
+  
+    {    ( None )}
+| x = data_block
+    {    ( Some x )}
+
+option_expression_:
+  
+    {    ( None )}
+| l = lhs
+    {let x =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( Some x )}
+| e = non_lhs
+    {let x =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( Some x )}
+
+option_function_block_:
+  
+    {    ( None )}
+| x = function_block
+    {    ( Some x )}
+
+option_generated_quantities_block_:
+  
+    {    ( None )}
+| x = generated_quantities_block
+    {    ( Some x )}
+
+option_model_block_:
+  
+    {    ( None )}
+| x = model_block
+    {    ( Some x )}
+
+option_pair_ASSIGN_expression__:
+  
+    {    ( None )}
+| x = ASSIGN l = lhs
+    {let x =
+  let y =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+      ( (x, y) )
+in
+    ( Some x )}
+| x = ASSIGN e = non_lhs
+    {let x =
+  let y =
+    let _endpos = _endpos_e_ in
+    let _startpos = _startpos_e_ in
+    let _loc = (_startpos, _endpos) in
+        ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+  in
+      ( (x, y) )
+in
+    ( Some x )}
+
+option_pair_ASSIGN_no_assign__:
+  
+    {    ( None )}
+| x = ASSIGN y = no_assign
+    {let x =     ( (x, y) ) in
+    ( Some x )}
+
+option_pair_COMMA_expression__:
+  
+    {    ( None )}
+| x = COMMA l = lhs
+    {let x =
+  let y =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+      ( (x, y) )
+in
+    ( Some x )}
+| x = COMMA e = non_lhs
+    {let x =
+  let y =
+    let _endpos = _endpos_e_ in
+    let _startpos = _startpos_e_ in
+    let _loc = (_startpos, _endpos) in
+        ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+  in
+      ( (x, y) )
+in
+    ( Some x )}
+
+option_parameters_block_:
+  
+    {    ( None )}
+| x = parameters_block
+    {    ( Some x )}
+
+option_transformed_data_block_:
+  
+    {    ( None )}
+| x = transformed_data_block
+    {    ( Some x )}
+
+option_transformed_parameters_block_:
+  
+    {    ( None )}
+| x = transformed_parameters_block
+    {    ( Some x )}
+
+option_truncation_:
+  
+    {    ( None )}
+| x = truncation
+    {    ( Some x )}
+
+option_unsized_dims_:
+  
+    {    ( None )}
+| x = unsized_dims
+    {    ( Some x )}
+
+loption_separated_nonempty_list_COMMA_arg_decl__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_arg_decl_
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_expression__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_expression_
+    {    ( x )}
+
+list_COMMA_:
+  
+    {    ( [] )}
+| x = COMMA xs = list_COMMA_
+    {    ( x :: xs )}
+
+list_function_def_:
+  
+    {    ( [] )}
+| x = function_def xs = list_function_def_
+    {    ( x :: xs )}
+
+list_top_var_decl_no_assign_:
+  
+    {    ( [] )}
+| x = top_var_decl_no_assign xs = list_top_var_decl_no_assign_
+    {    ( x :: xs )}
+
+list_top_vardecl_or_statement_:
+  
+    {    ( [] )}
+| x = top_vardecl_or_statement xs = list_top_vardecl_or_statement_
+    {    ( x :: xs )}
+
+list_vardecl_or_statement_:
+  
+    {    ( [] )}
+| x = vardecl_or_statement xs = list_vardecl_or_statement_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_arg_decl_:
+  x = arg_decl
+    {    ( [ x ] )}
+| x = arg_decl _2 = COMMA xs = separated_nonempty_list_COMMA_arg_decl_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_expression_:
+  l = lhs
+    {let x =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( [ x ] )}
+| e = non_lhs
+    {let x =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( [ x ] )}
+| l = lhs _2 = COMMA xs = separated_nonempty_list_COMMA_expression_
+    {let x =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( x :: xs )}
+| e = non_lhs _2 = COMMA xs = separated_nonempty_list_COMMA_expression_
+    {let x =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( x :: xs )}
+
+separated_nonempty_list_COMMA_id_and_optional_assignment_expression__:
+  x = id_and_optional_assignment_expression_
+    {    ( [ x ] )}
+| x = id_and_optional_assignment_expression_ _2 = COMMA xs = separated_nonempty_list_COMMA_id_and_optional_assignment_expression__
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_id_and_optional_assignment_no_assign__:
+  x = id_and_optional_assignment_no_assign_
+    {    ( [ x ] )}
+| x = id_and_optional_assignment_no_assign_ _2 = COMMA xs = separated_nonempty_list_COMMA_id_and_optional_assignment_no_assign__
+    {    ( x :: xs )}
+
+program:
+  ofb = option_function_block_ odb = option_data_block_ otdb = option_transformed_data_block_ opb = option_parameters_block_ otpb = option_transformed_parameters_block_ omb = option_model_block_ ogb = option_generated_quantities_block_ _8 = EOF
+    {let _endpos = _endpos__8_ in
+let _startpos = _startpos_ofb_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "program" ;
+      (* check for empty programs*)
+      let () =
+        match (ofb, odb, otdb, opb, otpb, omb, ogb) with
+        | None, None, None, None, None, None, None ->
+            Input_warnings.empty (fst _loc).pos_fname
+        | _ -> ()
+      in
+      { functionblock= ofb
+      ; datablock= odb
+      ; transformeddatablock= otdb
+      ; parametersblock= opb
+      ; transformedparametersblock= otpb
+      ; modelblock= omb
+      ; generatedquantitiesblock= ogb
+      ; comments= [] }
+    )}
+
+function_block:
+  _1 = FUNCTIONBLOCK _2 = LBRACE fd = list_function_def_ _4 = RBRACE
+    {let _endpos = _endpos__4_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+    ( grammar_logger "function_block" ;
+      {stmts= fd; xloc= Location_span.of_positions_exn _loc} )}
+
+data_block:
+  _1 = DATABLOCK _2 = LBRACE tvd = list_top_var_decl_no_assign_ _4 = RBRACE
+    {let _endpos = _endpos__4_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+    ( grammar_logger "data_block" ;
+      {stmts= List.concat tvd; xloc= Location_span.of_positions_exn _loc} )}
+
+transformed_data_block:
+  _1 = TRANSFORMEDDATABLOCK _2 = LBRACE tvds = list_top_vardecl_or_statement_ _4 = RBRACE
+    {let _endpos = _endpos__4_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+    ( grammar_logger "transformed_data_block" ;
+      {stmts= List.concat tvds; xloc= Location_span.of_positions_exn _loc} )}
+
+parameters_block:
+  _1 = PARAMETERSBLOCK _2 = LBRACE tvd = list_top_var_decl_no_assign_ _4 = RBRACE
+    {let _endpos = _endpos__4_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+    ( grammar_logger "parameters_block" ;
+      {stmts= List.concat tvd; xloc= Location_span.of_positions_exn _loc} )}
+
+transformed_parameters_block:
+  _1 = TRANSFORMEDPARAMETERSBLOCK _2 = LBRACE tvds = list_top_vardecl_or_statement_ _4 = RBRACE
+    {let _endpos = _endpos__4_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+    ( grammar_logger "transformed_parameters_block" ;
+      {stmts= List.concat tvds; xloc= Location_span.of_positions_exn _loc} )}
+
+model_block:
+  _1 = MODELBLOCK _2 = LBRACE vds = list_vardecl_or_statement_ _4 = RBRACE
+    {let _endpos = _endpos__4_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+    ( grammar_logger "model_block" ;
+      {stmts= List.concat vds; xloc= Location_span.of_positions_exn _loc} )}
+
+generated_quantities_block:
+  _1 = GENERATEDQUANTITIESBLOCK _2 = LBRACE tvds = list_top_vardecl_or_statement_ _4 = RBRACE
+    {let _endpos = _endpos__4_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+    ( grammar_logger "generated_quantities_block" ;
+      {stmts= List.concat tvds; xloc= Location_span.of_positions_exn _loc} )}
+
+identifier:
+  id = IDENTIFIER
+    {let _endpos = _endpos_id_ in
+let _startpos = _startpos_id_ in
+let _loc = (_startpos, _endpos) in
+                  ( build_id id _loc )}
+| _1 = TRUNCATE
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+             ( build_id "T" _loc)}
+| _1 = OFFSET
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+           ( build_id "offset" _loc)}
+| _1 = MULTIPLIER
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+               ( build_id "multiplier" _loc)}
+| _1 = LOWER
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+          ( build_id "lower" _loc)}
+| _1 = UPPER
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+          ( build_id "upper" _loc)}
+| _1 = ARRAY
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+          ( build_id "array" _loc)}
+
+decl_identifier:
+  id = identifier
+    {                  ( id )}
+| _1 = FUNCTIONBLOCK
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+                  ( build_id "functions" _loc )}
+| _1 = DATABLOCK
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+              ( build_id "data" _loc )}
+| _1 = PARAMETERSBLOCK
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+                    ( build_id "parameters" _loc )}
+| _1 = MODELBLOCK
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+               ( build_id "model" _loc )}
+| _1 = RETURN
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+           ( build_id "return" _loc )}
+| _1 = IF
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+       ( build_id "if" _loc )}
+| _1 = ELSE
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+         ( build_id "else" _loc )}
+| _1 = WHILE
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+          ( build_id "while" _loc )}
+| _1 = FOR
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+        ( build_id "for" _loc )}
+| _1 = IN
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+       ( build_id "in" _loc )}
+| _1 = BREAK
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+          ( build_id "break" _loc )}
+| _1 = CONTINUE
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+             ( build_id "continue" _loc )}
+| _1 = VOID
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+         ( build_id "void" _loc )}
+| _1 = INT
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+        ( build_id "int" _loc )}
+| _1 = REAL
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+         ( build_id "real" _loc )}
+| _1 = COMPLEX
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+            ( build_id "complex" _loc )}
+| _1 = VECTOR
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+           ( build_id "vector" _loc )}
+| _1 = ROWVECTOR
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+              ( build_id "row_vector" _loc )}
+| _1 = MATRIX
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+           ( build_id "matrix" _loc )}
+| _1 = ORDERED
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+            ( build_id "ordered" _loc )}
+| _1 = POSITIVEORDERED
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+                    ( build_id "positive_ordered" _loc )}
+| _1 = SIMPLEX
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+            ( build_id "simplex" _loc )}
+| _1 = UNITVECTOR
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+               ( build_id "unit_vector" _loc )}
+| _1 = CHOLESKYFACTORCORR
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+                       ( build_id "cholesky_factor_corr" _loc )}
+| _1 = CHOLESKYFACTORCOV
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+                      ( build_id "cholesky_factor_cov" _loc )}
+| _1 = CORRMATRIX
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+               ( build_id "corr_matrix" _loc )}
+| _1 = COVMATRIX
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+              ( build_id "cov_matrix" _loc )}
+| _1 = PRINT
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+          ( build_id "print" _loc )}
+| _1 = REJECT
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+           ( build_id "reject" _loc )}
+| _1 = TARGET
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+           ( build_id "target" _loc )}
+| _1 = GETLP
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+          ( build_id "get_lp" _loc )}
+| _1 = PROFILE
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+            ( build_id "profile" _loc )}
+
+function_def:
+  rt = return_type name = decl_identifier _3 = LPAREN xs = loption_separated_nonempty_list_COMMA_arg_decl__ _5 = RPAREN b = statement
+    {let args =     ( xs ) in
+let _endpos = _endpos_b_ in
+let _startpos = _startpos_rt_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "function_def" ;
+      {stmt=FunDef {returntype = rt; funname = name;
+                           arguments = args; body=b;};
+       smeta={loc=Location_span.of_positions_exn _loc}
+      }
+    )}
+
+return_type:
+  _1 = VOID
+    {    ( grammar_logger "return_type VOID" ; Void )}
+| ut = unsized_type
+    {    (  grammar_logger "return_type unsized_type" ; ReturnType ut )}
+
+arg_decl:
+  od = option_DATABLOCK_ ut = unsized_type id = decl_identifier
+    {    (  grammar_logger "arg_decl" ;
+       match od with None -> (UnsizedType.AutoDiffable, ut, id) | _ -> (DataOnly, ut, id)  )}
+
+always_unsized_dims_:
+  x = unsized_dims
+    {    ( Some(x) )}
+
+unsized_type:
+  _1 = ARRAY n_opt = always_unsized_dims_ bt = basic_type
+    {    (  grammar_logger "unsized_type";
+       nest_unsized_array bt (Option.value n_opt ~default:0)
+    )}
+| bt = basic_type n_opt = option_unsized_dims_
+    {    (  grammar_logger "unsized_type";
+       nest_unsized_array bt (Option.value n_opt ~default:0)
+    )}
+
+basic_type:
+  _1 = INT
+    {    (  grammar_logger "basic_type INT" ; UnsizedType.UInt  )}
+| _1 = REAL
+    {    (  grammar_logger "basic_type REAL"  ; UnsizedType.UReal )}
+| _1 = COMPLEX
+    {    ( grammar_logger "basic_type COMPLEX" ; UnsizedType.UComplex )}
+| _1 = VECTOR
+    {    (  grammar_logger "basic_type VECTOR" ; UnsizedType.UVector )}
+| _1 = ROWVECTOR
+    {    (  grammar_logger "basic_type ROWVECTOR" ; UnsizedType.URowVector )}
+| _1 = MATRIX
+    {    (  grammar_logger "basic_type MATRIX" ; UnsizedType.UMatrix )}
+
+unsized_dims:
+  _1 = LBRACK cs = list_COMMA_ _3 = RBRACK
+    {    ( grammar_logger "unsized_dims" ; List.length(cs) + 1 )}
+
+no_assign:
+  _1 = UNREACHABLE
+    {    ( (* This code will never be reached *)
+      raise (Failure "This should be unreachable; the UNREACHABLE token should \
+                      never be produced")
+    )}
+
+optional_assignment_expression_:
+  rhs_opt = option_pair_ASSIGN_expression__
+    {    ( Option.map ~f:snd rhs_opt )}
+
+optional_assignment_no_assign_:
+  rhs_opt = option_pair_ASSIGN_no_assign__
+    {    ( Option.map ~f:snd rhs_opt )}
+
+id_and_optional_assignment_expression_:
+  id = decl_identifier rhs_opt = optional_assignment_expression_
+    {    ( (id, rhs_opt) )}
+
+id_and_optional_assignment_no_assign_:
+  id = decl_identifier rhs_opt = optional_assignment_no_assign_
+    {    ( (id, rhs_opt) )}
+
+decl_sized_basic_type_expression_:
+  ty = sized_basic_type id = decl_identifier dims = dims rhs_opt = optional_assignment_expression_ _5 = SEMICOLON
+    {let _endpos = _endpos__5_ in
+let _startpos = _startpos_ty_ in
+let _loc = (_startpos, _endpos) in
+    ( (fun ~is_global ->
+      [{ stmt=
+          VarDecl {
+              decl_type= Sized (reducearray (fst ty, dims))
+            ; transformation= snd ty
+            ; identifier= id
+            ; initial_value= rhs_opt
+            ; is_global
+            }
+      ; smeta= {
+          loc= Location_span.of_positions_exn _loc
+        }
+    }])
+    )}
+| ty = sized_basic_type vs = separated_nonempty_list_COMMA_id_and_optional_assignment_expression__ _4 = SEMICOLON
+    {let dims_opt =     ( None ) in
+let (_endpos_dims_opt_, _startpos_dims_opt_) = (_endpos__0_, _endpos__0_) in
+let _endpos = _endpos__4_ in
+let _startpos = _startpos_dims_opt_ in
+let _loc_dims_opt_ = (_startpos_dims_opt_, _endpos_dims_opt_) in
+    ( (fun ~is_global ->
+      let int_ix ix = match ix with
+        | Single e -> Some e
+        | _ -> None
+      in
+      let int_ixs ixs =
+        List.fold_left
+          ~init:(Some [])
+          ~f:(Option.map2 ~f:(fun ixs ix -> ix::ixs))
+          (List.map ~f:int_ix
+             (List.rev ixs))
+      in
+      let error message =
+        pp_syntax_error
+          Fmt.stderr
+          (Parsing (message, Location_span.of_positions_exn _loc_dims_opt_ ));
+        exit 1
+      in
+      let dims = match dims_opt with
+        | Some ({expr= Indexed ({expr= Variable {name="array"; _}; _}, ixs); _}) ->
+           (match int_ixs ixs with
+            | Some sizes -> sizes
+            | None -> error "Dimensions should be expressions, not multiple or range indexing.")
+        | None -> []
+        | _ -> error "Found a declaration following an expression."
+      in
+      List.map vs ~f:(fun (id, rhs_opt) ->
+          { stmt=
+              VarDecl {
+                  decl_type= Sized (reducearray (fst ty, dims))
+                ; transformation= snd ty
+                ; identifier= id
+                ; initial_value= rhs_opt
+                ; is_global
+                }
+          ; smeta= {
+              loc=
+                (* From the docs:
+                We remark that, if the current production has an empty right-hand side,
+                then $startpos and $endpos are equal, and (by convention) are the end
+                position of the most recently parsed symbol (that is, the symbol that
+                happens to be on top of the automaton’s stack when this production is
+                reduced). If the current production has a nonempty right-hand side,
+                then $startpos is the same as $startpos($1) and $endpos is the same
+                as $endpos($n), where n is the length of the right-hand side.
+
+
+                So when dims_opt is empty, it uses the preview token as its startpos,
+                but that makes the whole declaration think it starts at the previous
+                token. Sadly, $sloc and $symbolstartpos generates code using !=, which
+                Core_kernel considers to be an error.
+                 *)
+                let startpos = match dims_opt with
+                  | None -> _startpos_ty_
+                  | Some _ -> _startpos
+                in
+                Location_span.of_positions_exn (startpos, _endpos)
+            }
+          })
+    ))}
+| x = lhs ty = sized_basic_type vs = separated_nonempty_list_COMMA_id_and_optional_assignment_expression__ _4 = SEMICOLON
+    {let dims_opt =     ( Some x ) in
+let (_endpos_dims_opt_, _startpos_dims_opt_) = (_endpos_x_, _startpos_x_) in
+let _endpos = _endpos__4_ in
+let _startpos = _startpos_dims_opt_ in
+let _loc_dims_opt_ = (_startpos_dims_opt_, _endpos_dims_opt_) in
+    ( (fun ~is_global ->
+      let int_ix ix = match ix with
+        | Single e -> Some e
+        | _ -> None
+      in
+      let int_ixs ixs =
+        List.fold_left
+          ~init:(Some [])
+          ~f:(Option.map2 ~f:(fun ixs ix -> ix::ixs))
+          (List.map ~f:int_ix
+             (List.rev ixs))
+      in
+      let error message =
+        pp_syntax_error
+          Fmt.stderr
+          (Parsing (message, Location_span.of_positions_exn _loc_dims_opt_ ));
+        exit 1
+      in
+      let dims = match dims_opt with
+        | Some ({expr= Indexed ({expr= Variable {name="array"; _}; _}, ixs); _}) ->
+           (match int_ixs ixs with
+            | Some sizes -> sizes
+            | None -> error "Dimensions should be expressions, not multiple or range indexing.")
+        | None -> []
+        | _ -> error "Found a declaration following an expression."
+      in
+      List.map vs ~f:(fun (id, rhs_opt) ->
+          { stmt=
+              VarDecl {
+                  decl_type= Sized (reducearray (fst ty, dims))
+                ; transformation= snd ty
+                ; identifier= id
+                ; initial_value= rhs_opt
+                ; is_global
+                }
+          ; smeta= {
+              loc=
+                (* From the docs:
+                We remark that, if the current production has an empty right-hand side,
+                then $startpos and $endpos are equal, and (by convention) are the end
+                position of the most recently parsed symbol (that is, the symbol that
+                happens to be on top of the automaton’s stack when this production is
+                reduced). If the current production has a nonempty right-hand side,
+                then $startpos is the same as $startpos($1) and $endpos is the same
+                as $endpos($n), where n is the length of the right-hand side.
+
+
+                So when dims_opt is empty, it uses the preview token as its startpos,
+                but that makes the whole declaration think it starts at the previous
+                token. Sadly, $sloc and $symbolstartpos generates code using !=, which
+                Core_kernel considers to be an error.
+                 *)
+                let startpos = match dims_opt with
+                  | None -> _startpos_ty_
+                  | Some _ -> _startpos
+                in
+                Location_span.of_positions_exn (startpos, _endpos)
+            }
+          })
+    ))}
+
+decl_top_var_type_expression_:
+  ty = top_var_type id = decl_identifier dims = dims rhs_opt = optional_assignment_expression_ _5 = SEMICOLON
+    {let _endpos = _endpos__5_ in
+let _startpos = _startpos_ty_ in
+let _loc = (_startpos, _endpos) in
+    ( (fun ~is_global ->
+      [{ stmt=
+          VarDecl {
+              decl_type= Sized (reducearray (fst ty, dims))
+            ; transformation= snd ty
+            ; identifier= id
+            ; initial_value= rhs_opt
+            ; is_global
+            }
+      ; smeta= {
+          loc= Location_span.of_positions_exn _loc
+        }
+    }])
+    )}
+| ty = top_var_type vs = separated_nonempty_list_COMMA_id_and_optional_assignment_expression__ _4 = SEMICOLON
+    {let dims_opt =     ( None ) in
+let (_endpos_dims_opt_, _startpos_dims_opt_) = (_endpos__0_, _endpos__0_) in
+let _endpos = _endpos__4_ in
+let _startpos = _startpos_dims_opt_ in
+let _loc_dims_opt_ = (_startpos_dims_opt_, _endpos_dims_opt_) in
+    ( (fun ~is_global ->
+      let int_ix ix = match ix with
+        | Single e -> Some e
+        | _ -> None
+      in
+      let int_ixs ixs =
+        List.fold_left
+          ~init:(Some [])
+          ~f:(Option.map2 ~f:(fun ixs ix -> ix::ixs))
+          (List.map ~f:int_ix
+             (List.rev ixs))
+      in
+      let error message =
+        pp_syntax_error
+          Fmt.stderr
+          (Parsing (message, Location_span.of_positions_exn _loc_dims_opt_ ));
+        exit 1
+      in
+      let dims = match dims_opt with
+        | Some ({expr= Indexed ({expr= Variable {name="array"; _}; _}, ixs); _}) ->
+           (match int_ixs ixs with
+            | Some sizes -> sizes
+            | None -> error "Dimensions should be expressions, not multiple or range indexing.")
+        | None -> []
+        | _ -> error "Found a declaration following an expression."
+      in
+      List.map vs ~f:(fun (id, rhs_opt) ->
+          { stmt=
+              VarDecl {
+                  decl_type= Sized (reducearray (fst ty, dims))
+                ; transformation= snd ty
+                ; identifier= id
+                ; initial_value= rhs_opt
+                ; is_global
+                }
+          ; smeta= {
+              loc=
+                (* From the docs:
+                We remark that, if the current production has an empty right-hand side,
+                then $startpos and $endpos are equal, and (by convention) are the end
+                position of the most recently parsed symbol (that is, the symbol that
+                happens to be on top of the automaton’s stack when this production is
+                reduced). If the current production has a nonempty right-hand side,
+                then $startpos is the same as $startpos($1) and $endpos is the same
+                as $endpos($n), where n is the length of the right-hand side.
+
+
+                So when dims_opt is empty, it uses the preview token as its startpos,
+                but that makes the whole declaration think it starts at the previous
+                token. Sadly, $sloc and $symbolstartpos generates code using !=, which
+                Core_kernel considers to be an error.
+                 *)
+                let startpos = match dims_opt with
+                  | None -> _startpos_ty_
+                  | Some _ -> _startpos
+                in
+                Location_span.of_positions_exn (startpos, _endpos)
+            }
+          })
+    ))}
+| x = lhs ty = top_var_type vs = separated_nonempty_list_COMMA_id_and_optional_assignment_expression__ _4 = SEMICOLON
+    {let dims_opt =     ( Some x ) in
+let (_endpos_dims_opt_, _startpos_dims_opt_) = (_endpos_x_, _startpos_x_) in
+let _endpos = _endpos__4_ in
+let _startpos = _startpos_dims_opt_ in
+let _loc_dims_opt_ = (_startpos_dims_opt_, _endpos_dims_opt_) in
+    ( (fun ~is_global ->
+      let int_ix ix = match ix with
+        | Single e -> Some e
+        | _ -> None
+      in
+      let int_ixs ixs =
+        List.fold_left
+          ~init:(Some [])
+          ~f:(Option.map2 ~f:(fun ixs ix -> ix::ixs))
+          (List.map ~f:int_ix
+             (List.rev ixs))
+      in
+      let error message =
+        pp_syntax_error
+          Fmt.stderr
+          (Parsing (message, Location_span.of_positions_exn _loc_dims_opt_ ));
+        exit 1
+      in
+      let dims = match dims_opt with
+        | Some ({expr= Indexed ({expr= Variable {name="array"; _}; _}, ixs); _}) ->
+           (match int_ixs ixs with
+            | Some sizes -> sizes
+            | None -> error "Dimensions should be expressions, not multiple or range indexing.")
+        | None -> []
+        | _ -> error "Found a declaration following an expression."
+      in
+      List.map vs ~f:(fun (id, rhs_opt) ->
+          { stmt=
+              VarDecl {
+                  decl_type= Sized (reducearray (fst ty, dims))
+                ; transformation= snd ty
+                ; identifier= id
+                ; initial_value= rhs_opt
+                ; is_global
+                }
+          ; smeta= {
+              loc=
+                (* From the docs:
+                We remark that, if the current production has an empty right-hand side,
+                then $startpos and $endpos are equal, and (by convention) are the end
+                position of the most recently parsed symbol (that is, the symbol that
+                happens to be on top of the automaton’s stack when this production is
+                reduced). If the current production has a nonempty right-hand side,
+                then $startpos is the same as $startpos($1) and $endpos is the same
+                as $endpos($n), where n is the length of the right-hand side.
+
+
+                So when dims_opt is empty, it uses the preview token as its startpos,
+                but that makes the whole declaration think it starts at the previous
+                token. Sadly, $sloc and $symbolstartpos generates code using !=, which
+                Core_kernel considers to be an error.
+                 *)
+                let startpos = match dims_opt with
+                  | None -> _startpos_ty_
+                  | Some _ -> _startpos
+                in
+                Location_span.of_positions_exn (startpos, _endpos)
+            }
+          })
+    ))}
+
+decl_top_var_type_no_assign_:
+  ty = top_var_type id = decl_identifier dims = dims rhs_opt = optional_assignment_no_assign_ _5 = SEMICOLON
+    {let _endpos = _endpos__5_ in
+let _startpos = _startpos_ty_ in
+let _loc = (_startpos, _endpos) in
+    ( (fun ~is_global ->
+      [{ stmt=
+          VarDecl {
+              decl_type= Sized (reducearray (fst ty, dims))
+            ; transformation= snd ty
+            ; identifier= id
+            ; initial_value= rhs_opt
+            ; is_global
+            }
+      ; smeta= {
+          loc= Location_span.of_positions_exn _loc
+        }
+    }])
+    )}
+| ty = top_var_type vs = separated_nonempty_list_COMMA_id_and_optional_assignment_no_assign__ _4 = SEMICOLON
+    {let dims_opt =     ( None ) in
+let (_endpos_dims_opt_, _startpos_dims_opt_) = (_endpos__0_, _endpos__0_) in
+let _endpos = _endpos__4_ in
+let _startpos = _startpos_dims_opt_ in
+let _loc_dims_opt_ = (_startpos_dims_opt_, _endpos_dims_opt_) in
+    ( (fun ~is_global ->
+      let int_ix ix = match ix with
+        | Single e -> Some e
+        | _ -> None
+      in
+      let int_ixs ixs =
+        List.fold_left
+          ~init:(Some [])
+          ~f:(Option.map2 ~f:(fun ixs ix -> ix::ixs))
+          (List.map ~f:int_ix
+             (List.rev ixs))
+      in
+      let error message =
+        pp_syntax_error
+          Fmt.stderr
+          (Parsing (message, Location_span.of_positions_exn _loc_dims_opt_ ));
+        exit 1
+      in
+      let dims = match dims_opt with
+        | Some ({expr= Indexed ({expr= Variable {name="array"; _}; _}, ixs); _}) ->
+           (match int_ixs ixs with
+            | Some sizes -> sizes
+            | None -> error "Dimensions should be expressions, not multiple or range indexing.")
+        | None -> []
+        | _ -> error "Found a declaration following an expression."
+      in
+      List.map vs ~f:(fun (id, rhs_opt) ->
+          { stmt=
+              VarDecl {
+                  decl_type= Sized (reducearray (fst ty, dims))
+                ; transformation= snd ty
+                ; identifier= id
+                ; initial_value= rhs_opt
+                ; is_global
+                }
+          ; smeta= {
+              loc=
+                (* From the docs:
+                We remark that, if the current production has an empty right-hand side,
+                then $startpos and $endpos are equal, and (by convention) are the end
+                position of the most recently parsed symbol (that is, the symbol that
+                happens to be on top of the automaton’s stack when this production is
+                reduced). If the current production has a nonempty right-hand side,
+                then $startpos is the same as $startpos($1) and $endpos is the same
+                as $endpos($n), where n is the length of the right-hand side.
+
+
+                So when dims_opt is empty, it uses the preview token as its startpos,
+                but that makes the whole declaration think it starts at the previous
+                token. Sadly, $sloc and $symbolstartpos generates code using !=, which
+                Core_kernel considers to be an error.
+                 *)
+                let startpos = match dims_opt with
+                  | None -> _startpos_ty_
+                  | Some _ -> _startpos
+                in
+                Location_span.of_positions_exn (startpos, _endpos)
+            }
+          })
+    ))}
+| x = lhs ty = top_var_type vs = separated_nonempty_list_COMMA_id_and_optional_assignment_no_assign__ _4 = SEMICOLON
+    {let dims_opt =     ( Some x ) in
+let (_endpos_dims_opt_, _startpos_dims_opt_) = (_endpos_x_, _startpos_x_) in
+let _endpos = _endpos__4_ in
+let _startpos = _startpos_dims_opt_ in
+let _loc_dims_opt_ = (_startpos_dims_opt_, _endpos_dims_opt_) in
+    ( (fun ~is_global ->
+      let int_ix ix = match ix with
+        | Single e -> Some e
+        | _ -> None
+      in
+      let int_ixs ixs =
+        List.fold_left
+          ~init:(Some [])
+          ~f:(Option.map2 ~f:(fun ixs ix -> ix::ixs))
+          (List.map ~f:int_ix
+             (List.rev ixs))
+      in
+      let error message =
+        pp_syntax_error
+          Fmt.stderr
+          (Parsing (message, Location_span.of_positions_exn _loc_dims_opt_ ));
+        exit 1
+      in
+      let dims = match dims_opt with
+        | Some ({expr= Indexed ({expr= Variable {name="array"; _}; _}, ixs); _}) ->
+           (match int_ixs ixs with
+            | Some sizes -> sizes
+            | None -> error "Dimensions should be expressions, not multiple or range indexing.")
+        | None -> []
+        | _ -> error "Found a declaration following an expression."
+      in
+      List.map vs ~f:(fun (id, rhs_opt) ->
+          { stmt=
+              VarDecl {
+                  decl_type= Sized (reducearray (fst ty, dims))
+                ; transformation= snd ty
+                ; identifier= id
+                ; initial_value= rhs_opt
+                ; is_global
+                }
+          ; smeta= {
+              loc=
+                (* From the docs:
+                We remark that, if the current production has an empty right-hand side,
+                then $startpos and $endpos are equal, and (by convention) are the end
+                position of the most recently parsed symbol (that is, the symbol that
+                happens to be on top of the automaton’s stack when this production is
+                reduced). If the current production has a nonempty right-hand side,
+                then $startpos is the same as $startpos($1) and $endpos is the same
+                as $endpos($n), where n is the length of the right-hand side.
+
+
+                So when dims_opt is empty, it uses the preview token as its startpos,
+                but that makes the whole declaration think it starts at the previous
+                token. Sadly, $sloc and $symbolstartpos generates code using !=, which
+                Core_kernel considers to be an error.
+                 *)
+                let startpos = match dims_opt with
+                  | None -> _startpos_ty_
+                  | Some _ -> _startpos
+                in
+                Location_span.of_positions_exn (startpos, _endpos)
+            }
+          })
+    ))}
+
+var_decl:
+  d_fn = decl_sized_basic_type_expression_
+    {    ( grammar_logger "var_decl" ;
+      d_fn ~is_global:false
+    )}
+
+top_var_decl:
+  d_fn = decl_top_var_type_expression_
+    {    ( grammar_logger "top_var_decl" ;
+      d_fn ~is_global:true
+    )}
+
+top_var_decl_no_assign:
+  d_fn = decl_top_var_type_no_assign_
+    {    ( grammar_logger "top_var_decl_no_assign" ;
+      d_fn ~is_global:true
+    )}
+
+sized_basic_type:
+  _1 = INT
+    {    ( grammar_logger "INT_var_type" ; (SizedType.SInt, Identity) )}
+| _1 = REAL
+    {    ( grammar_logger "REAL_var_type" ; (SizedType.SReal, Identity) )}
+| _1 = COMPLEX
+    {    ( grammar_logger "COMPLEX_var_type" ; (SizedType.SComplex, Identity) )}
+| _1 = VECTOR _2 = LBRACK l = lhs _4 = RBRACK
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "VECTOR_var_type" ; (SizedType.SVector (Common.Helpers.AoS, e), Identity) )}
+| _1 = VECTOR _2 = LBRACK e = non_lhs _4 = RBRACK
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "VECTOR_var_type" ; (SizedType.SVector (Common.Helpers.AoS, e), Identity) )}
+| _1 = ROWVECTOR _2 = LBRACK l = lhs _4 = RBRACK
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "ROWVECTOR_var_type" ; (SizedType.SRowVector (AoS, e) , Identity) )}
+| _1 = ROWVECTOR _2 = LBRACK e = non_lhs _4 = RBRACK
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "ROWVECTOR_var_type" ; (SizedType.SRowVector (AoS, e) , Identity) )}
+| _1 = MATRIX _2 = LBRACK l = lhs _4 = COMMA l_inlined1 = lhs _6 = RBRACK
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "MATRIX_var_type" ; (SizedType.SMatrix (AoS, e1, e2), Identity) )}
+| _1 = MATRIX _2 = LBRACK l = lhs _4 = COMMA e = non_lhs _6 = RBRACK
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "MATRIX_var_type" ; (SizedType.SMatrix (AoS, e1, e2), Identity) )}
+| _1 = MATRIX _2 = LBRACK e = non_lhs _4 = COMMA l = lhs _6 = RBRACK
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "MATRIX_var_type" ; (SizedType.SMatrix (AoS, e1, e2), Identity) )}
+| _1 = MATRIX _2 = LBRACK e = non_lhs _4 = COMMA e_inlined1 = non_lhs _6 = RBRACK
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "MATRIX_var_type" ; (SizedType.SMatrix (AoS, e1, e2), Identity) )}
+
+top_var_type:
+  _1 = INT r = range_constraint
+    {    ( grammar_logger "INT_top_var_type" ; (SInt, r) )}
+| _1 = REAL c = type_constraint
+    {    ( grammar_logger "REAL_top_var_type" ; (SReal, c) )}
+| _1 = COMPLEX c = type_constraint
+    {    ( grammar_logger "COMPLEX_var_type" ; (SComplex, c) )}
+| _1 = VECTOR c = type_constraint _3 = LBRACK l = lhs _5 = RBRACK
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "VECTOR_top_var_type" ; (SVector (AoS, e), c) )}
+| _1 = VECTOR c = type_constraint _3 = LBRACK e = non_lhs _5 = RBRACK
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "VECTOR_top_var_type" ; (SVector (AoS, e), c) )}
+| _1 = ROWVECTOR c = type_constraint _3 = LBRACK l = lhs _5 = RBRACK
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "ROWVECTOR_top_var_type" ; (SRowVector (AoS, e), c) )}
+| _1 = ROWVECTOR c = type_constraint _3 = LBRACK e = non_lhs _5 = RBRACK
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "ROWVECTOR_top_var_type" ; (SRowVector (AoS, e), c) )}
+| _1 = MATRIX c = type_constraint _3 = LBRACK l = lhs _5 = COMMA l_inlined1 = lhs _7 = RBRACK
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "MATRIX_top_var_type" ; (SMatrix (AoS, e1, e2), c) )}
+| _1 = MATRIX c = type_constraint _3 = LBRACK l = lhs _5 = COMMA e = non_lhs _7 = RBRACK
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "MATRIX_top_var_type" ; (SMatrix (AoS, e1, e2), c) )}
+| _1 = MATRIX c = type_constraint _3 = LBRACK e = non_lhs _5 = COMMA l = lhs _7 = RBRACK
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "MATRIX_top_var_type" ; (SMatrix (AoS, e1, e2), c) )}
+| _1 = MATRIX c = type_constraint _3 = LBRACK e = non_lhs _5 = COMMA e_inlined1 = non_lhs _7 = RBRACK
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "MATRIX_top_var_type" ; (SMatrix (AoS, e1, e2), c) )}
+| _1 = ORDERED _2 = LBRACK l = lhs _4 = RBRACK
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "ORDERED_top_var_type" ; (SVector (AoS, e), Ordered) )}
+| _1 = ORDERED _2 = LBRACK e = non_lhs _4 = RBRACK
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "ORDERED_top_var_type" ; (SVector (AoS, e), Ordered) )}
+| _1 = POSITIVEORDERED _2 = LBRACK l = lhs _4 = RBRACK
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (
+      grammar_logger "POSITIVEORDERED_top_var_type" ;
+      (SVector (AoS, e), PositiveOrdered)
+    )}
+| _1 = POSITIVEORDERED _2 = LBRACK e = non_lhs _4 = RBRACK
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (
+      grammar_logger "POSITIVEORDERED_top_var_type" ;
+      (SVector (AoS, e), PositiveOrdered)
+    )}
+| _1 = SIMPLEX _2 = LBRACK l = lhs _4 = RBRACK
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "SIMPLEX_top_var_type" ; (SVector (AoS, e), Simplex) )}
+| _1 = SIMPLEX _2 = LBRACK e = non_lhs _4 = RBRACK
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "SIMPLEX_top_var_type" ; (SVector (AoS, e), Simplex) )}
+| _1 = UNITVECTOR _2 = LBRACK l = lhs _4 = RBRACK
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "UNITVECTOR_top_var_type" ; (SVector (AoS, e), UnitVector) )}
+| _1 = UNITVECTOR _2 = LBRACK e = non_lhs _4 = RBRACK
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "UNITVECTOR_top_var_type" ; (SVector (AoS, e), UnitVector) )}
+| _1 = CHOLESKYFACTORCORR _2 = LBRACK l = lhs _4 = RBRACK
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (
+      grammar_logger "CHOLESKYFACTORCORR_top_var_type" ;
+      (SMatrix (AoS, e, e), CholeskyCorr)
+    )}
+| _1 = CHOLESKYFACTORCORR _2 = LBRACK e = non_lhs _4 = RBRACK
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (
+      grammar_logger "CHOLESKYFACTORCORR_top_var_type" ;
+      (SMatrix (AoS, e, e), CholeskyCorr)
+    )}
+| _1 = CHOLESKYFACTORCOV _2 = LBRACK l = lhs oe2 = option_pair_COMMA_expression__ _5 = RBRACK
+    {let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (
+      grammar_logger "CHOLESKYFACTORCOV_top_var_type" ;
+      match oe2 with Some (_,e2) -> ( SMatrix (AoS, e1, e2), CholeskyCov)
+                   | _           ->  (SMatrix (AoS, e1, e1),  CholeskyCov)
+    )}
+| _1 = CHOLESKYFACTORCOV _2 = LBRACK e = non_lhs oe2 = option_pair_COMMA_expression__ _5 = RBRACK
+    {let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (
+      grammar_logger "CHOLESKYFACTORCOV_top_var_type" ;
+      match oe2 with Some (_,e2) -> ( SMatrix (AoS, e1, e2), CholeskyCov)
+                   | _           ->  (SMatrix (AoS, e1, e1),  CholeskyCov)
+    )}
+| _1 = CORRMATRIX _2 = LBRACK l = lhs _4 = RBRACK
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "CORRMATRIX_top_var_type" ; (SMatrix (AoS, e, e), Correlation) )}
+| _1 = CORRMATRIX _2 = LBRACK e = non_lhs _4 = RBRACK
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "CORRMATRIX_top_var_type" ; (SMatrix (AoS, e, e), Correlation) )}
+| _1 = COVMATRIX _2 = LBRACK l = lhs _4 = RBRACK
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "COVMATRIX_top_var_type" ; (SMatrix (AoS, e, e), Covariance) )}
+| _1 = COVMATRIX _2 = LBRACK e = non_lhs _4 = RBRACK
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "COVMATRIX_top_var_type" ; (SMatrix (AoS, e, e), Covariance) )}
+
+type_constraint:
+  r = range_constraint
+    {    (  grammar_logger "type_constraint_range" ; r )}
+| _1 = LABRACK l = offset_mult _3 = RABRACK
+    {    (  grammar_logger "type_constraint_offset_mult" ; l )}
+
+range_constraint:
+  
+    {    ( grammar_logger "empty_constraint" ; Transformation.Identity )}
+| _1 = LABRACK r = range _3 = RABRACK
+    {    (  grammar_logger "range_constraint" ; r )}
+
+range:
+  _1 = LOWER _2 = ASSIGN e1 = constr_expression _4 = COMMA _5 = UPPER _6 = ASSIGN e2 = constr_expression
+    {    ( grammar_logger "lower_upper_range" ; Transformation.LowerUpper (e1, e2) )}
+| _1 = UPPER _2 = ASSIGN e2 = constr_expression _4 = COMMA _5 = LOWER _6 = ASSIGN e1 = constr_expression
+    {    ( grammar_logger "lower_upper_range" ; Transformation.LowerUpper (e1, e2) )}
+| _1 = LOWER _2 = ASSIGN e = constr_expression
+    {    (  grammar_logger "lower_range" ; Lower e )}
+| _1 = UPPER _2 = ASSIGN e = constr_expression
+    {    ( grammar_logger "upper_range" ; Upper e )}
+
+offset_mult:
+  _1 = OFFSET _2 = ASSIGN e1 = constr_expression _4 = COMMA _5 = MULTIPLIER _6 = ASSIGN e2 = constr_expression
+    {    ( grammar_logger "offset_mult" ; Transformation.OffsetMultiplier (e1, e2) )}
+| _1 = MULTIPLIER _2 = ASSIGN e2 = constr_expression _4 = COMMA _5 = OFFSET _6 = ASSIGN e1 = constr_expression
+    {    ( grammar_logger "offset_mult" ; Transformation.OffsetMultiplier (e1, e2) )}
+| _1 = OFFSET _2 = ASSIGN e = constr_expression
+    {    ( grammar_logger "offset" ; Offset e )}
+| _1 = MULTIPLIER _2 = ASSIGN e = constr_expression
+    {    ( grammar_logger "multiplier" ; Multiplier e )}
+
+dims:
+  _1 = LBRACK l = separated_nonempty_list_COMMA_expression_ _3 = RBRACK
+    {    ( grammar_logger "dims" ; l  )}
+
+non_lhs:
+  l = lhs _2 = QMARK l_inlined1 = lhs _4 = COLON l_inlined2 = lhs
+    {let e3 =
+  let l = l_inlined2 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "ifthenelse_expr" ; TernaryIf (e1, e2, e3) )}
+| l = lhs _2 = QMARK l_inlined1 = lhs _4 = COLON e = non_lhs
+    {let e3 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "ifthenelse_expr" ; TernaryIf (e1, e2, e3) )}
+| l = lhs _2 = QMARK e = non_lhs _4 = COLON l_inlined1 = lhs
+    {let e3 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "ifthenelse_expr" ; TernaryIf (e1, e2, e3) )}
+| l = lhs _2 = QMARK e = non_lhs _4 = COLON e_inlined1 = non_lhs
+    {let e3 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "ifthenelse_expr" ; TernaryIf (e1, e2, e3) )}
+| e = non_lhs _2 = QMARK l = lhs _4 = COLON l_inlined1 = lhs
+    {let e3 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "ifthenelse_expr" ; TernaryIf (e1, e2, e3) )}
+| e = non_lhs _2 = QMARK l = lhs _4 = COLON e_inlined1 = non_lhs
+    {let e3 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "ifthenelse_expr" ; TernaryIf (e1, e2, e3) )}
+| e = non_lhs _2 = QMARK e_inlined1 = non_lhs _4 = COLON l = lhs
+    {let e3 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "ifthenelse_expr" ; TernaryIf (e1, e2, e3) )}
+| e = non_lhs _2 = QMARK e_inlined1 = non_lhs _4 = COLON e_inlined2 = non_lhs
+    {let e3 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined2_, _startpos_e_inlined2_, e_inlined2) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "ifthenelse_expr" ; TernaryIf (e1, e2, e3) )}
+| l = lhs _1 = PLUS l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let a =     (  grammar_logger "infix_plus" ; Operator.Plus ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = PLUS e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_plus" ; Operator.Plus ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = MINUS l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let a =     (   grammar_logger "infix_minus" ;Operator.Minus ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = MINUS e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (   grammar_logger "infix_minus" ;Operator.Minus ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = TIMES l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let a =     (  grammar_logger "infix_times" ; Operator.Times ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = TIMES e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_times" ; Operator.Times ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = DIVIDE l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let a =     (  grammar_logger "infix_divide" ; Operator.Divide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = DIVIDE e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_divide" ; Operator.Divide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = IDIVIDE l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let a =     (  grammar_logger "infix_intdivide" ; Operator.IntDivide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = IDIVIDE e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_intdivide" ; Operator.IntDivide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = MODULO l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let a =     (  grammar_logger "infix_modulo" ; Operator.Modulo ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = MODULO e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_modulo" ; Operator.Modulo ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = LDIVIDE l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let a =     (  grammar_logger "infix_ldivide" ; Operator.LDivide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = LDIVIDE e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_ldivide" ; Operator.LDivide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = ELTTIMES l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let a =     (  grammar_logger "infix_elttimes" ; Operator.EltTimes ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = ELTTIMES e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_elttimes" ; Operator.EltTimes ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = ELTDIVIDE l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let a =     (   grammar_logger "infix_eltdivide" ; Operator.EltDivide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = ELTDIVIDE e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (   grammar_logger "infix_eltdivide" ; Operator.EltDivide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = HAT l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let a =     (  grammar_logger "infix_hat" ; Operator.Pow ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = HAT e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_hat" ; Operator.Pow ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = ELTPOW l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let a =     (  grammar_logger "infix_eltpow" ; Operator.EltPow ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = ELTPOW e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_eltpow" ; Operator.EltPow ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = OR l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let l =     (   grammar_logger "infix_or" ; Operator.Or ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = OR e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_or" ; Operator.Or ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = AND l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let l =     (   grammar_logger "infix_and" ; Operator.And ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = AND e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_and" ; Operator.And ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = EQUALS l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let l =     (   grammar_logger "infix_equals" ; Operator.Equals ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = EQUALS e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_equals" ; Operator.Equals ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = NEQUALS l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let l =     (   grammar_logger "infix_nequals" ; Operator.NEquals) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = NEQUALS e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_nequals" ; Operator.NEquals) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = LABRACK l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let l =     (   grammar_logger "infix_less" ; Operator.Less ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = LABRACK e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_less" ; Operator.Less ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = LEQ l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let l =     (   grammar_logger "infix_leq" ; Operator.Leq ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = LEQ e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_leq" ; Operator.Leq ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = RABRACK l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let l =     (   grammar_logger "infix_greater" ; Operator.Greater ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = RABRACK e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_greater" ; Operator.Greater ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = GEQ l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =
+  let l =     (   grammar_logger "infix_geq" ; Operator.Geq ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| l = lhs _1 = GEQ e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_geq" ; Operator.Geq ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = PLUS l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let a =     (  grammar_logger "infix_plus" ; Operator.Plus ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = PLUS e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_plus" ; Operator.Plus ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = MINUS l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let a =     (   grammar_logger "infix_minus" ;Operator.Minus ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = MINUS e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (   grammar_logger "infix_minus" ;Operator.Minus ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = TIMES l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let a =     (  grammar_logger "infix_times" ; Operator.Times ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = TIMES e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_times" ; Operator.Times ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = DIVIDE l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let a =     (  grammar_logger "infix_divide" ; Operator.Divide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = DIVIDE e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_divide" ; Operator.Divide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = IDIVIDE l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let a =     (  grammar_logger "infix_intdivide" ; Operator.IntDivide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = IDIVIDE e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_intdivide" ; Operator.IntDivide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = MODULO l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let a =     (  grammar_logger "infix_modulo" ; Operator.Modulo ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = MODULO e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_modulo" ; Operator.Modulo ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = LDIVIDE l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let a =     (  grammar_logger "infix_ldivide" ; Operator.LDivide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = LDIVIDE e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_ldivide" ; Operator.LDivide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = ELTTIMES l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let a =     (  grammar_logger "infix_elttimes" ; Operator.EltTimes ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = ELTTIMES e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_elttimes" ; Operator.EltTimes ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = ELTDIVIDE l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let a =     (   grammar_logger "infix_eltdivide" ; Operator.EltDivide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = ELTDIVIDE e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (   grammar_logger "infix_eltdivide" ; Operator.EltDivide ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = HAT l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let a =     (  grammar_logger "infix_hat" ; Operator.Pow ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = HAT e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_hat" ; Operator.Pow ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = ELTPOW l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let a =     (  grammar_logger "infix_eltpow" ; Operator.EltPow ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = ELTPOW e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let a =     (  grammar_logger "infix_eltpow" ; Operator.EltPow ) in
+      (   grammar_logger "infix_arithmetic" ; a )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = OR l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let l =     (   grammar_logger "infix_or" ; Operator.Or ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = OR e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_or" ; Operator.Or ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = AND l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let l =     (   grammar_logger "infix_and" ; Operator.And ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = AND e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_and" ; Operator.And ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = EQUALS l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let l =     (   grammar_logger "infix_equals" ; Operator.Equals ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = EQUALS e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_equals" ; Operator.Equals ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = NEQUALS l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let l =     (   grammar_logger "infix_nequals" ; Operator.NEquals) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = NEQUALS e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_nequals" ; Operator.NEquals) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = LABRACK l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let l =     (   grammar_logger "infix_less" ; Operator.Less ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = LABRACK e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_less" ; Operator.Less ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = LEQ l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let l =     (   grammar_logger "infix_leq" ; Operator.Leq ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = LEQ e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_leq" ; Operator.Leq ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = RABRACK l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let l =     (   grammar_logger "infix_greater" ; Operator.Greater ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = RABRACK e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_greater" ; Operator.Greater ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = GEQ l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =
+  let l =     (   grammar_logger "infix_geq" ; Operator.Geq ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| e = non_lhs _1 = GEQ e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =
+  let l =     (   grammar_logger "infix_geq" ; Operator.Geq ) in
+      (  grammar_logger "infix_logical" ; l )
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "infix_expr" ; BinOp (e1, op, e2)  )}
+| _1 = BANG l = lhs %prec unary_over_binary
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =     (   grammar_logger "prefix_bang" ; Operator.PNot ) in
+    ( grammar_logger "prefix_expr" ; PrefixOp (op, e) )}
+| _1 = BANG e = non_lhs %prec unary_over_binary
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =     (   grammar_logger "prefix_bang" ; Operator.PNot ) in
+    ( grammar_logger "prefix_expr" ; PrefixOp (op, e) )}
+| _1 = MINUS l = lhs %prec unary_over_binary
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =     (  grammar_logger "prefix_minus" ; Operator.PMinus ) in
+    ( grammar_logger "prefix_expr" ; PrefixOp (op, e) )}
+| _1 = MINUS e = non_lhs %prec unary_over_binary
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =     (  grammar_logger "prefix_minus" ; Operator.PMinus ) in
+    ( grammar_logger "prefix_expr" ; PrefixOp (op, e) )}
+| _1 = PLUS l = lhs %prec unary_over_binary
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let op =     (   grammar_logger "prefix_plus" ; Operator.PPlus ) in
+    ( grammar_logger "prefix_expr" ; PrefixOp (op, e) )}
+| _1 = PLUS e = non_lhs %prec unary_over_binary
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =     (   grammar_logger "prefix_plus" ; Operator.PPlus ) in
+    ( grammar_logger "prefix_expr" ; PrefixOp (op, e) )}
+| l = lhs _1 = TRANSPOSE
+    {let op =     (  grammar_logger "postfix_transpose" ; Operator.Transpose ) in
+let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "postfix_expr" ; PostfixOp (e, op))}
+| e = non_lhs _1 = TRANSPOSE
+    {let op =     (  grammar_logger "postfix_transpose" ; Operator.Transpose ) in
+let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "postfix_expr" ; PostfixOp (e, op))}
+| ue = non_lhs _2 = LBRACK i = indexes _4 = RBRACK
+    {let _loc_ue_ = (_startpos_ue_, _endpos_ue_) in
+    (  grammar_logger "expression_indexed" ;
+       Indexed ({expr=ue;
+                 emeta={loc= Location_span.of_positions_exn _loc_ue_}}, i))}
+| e = common_expression
+    {    ( grammar_logger "common_expr" ; e )}
+
+constr_expression:
+  e1 = constr_expression _1 = PLUS e2 = constr_expression
+    {let op =     (  grammar_logger "infix_plus" ; Operator.Plus ) in
+let _endpos = _endpos_e2_ in
+let _startpos = _startpos_e1_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_arithmetic" ;
+      {expr=BinOp (e1, op, e2);
+       emeta={loc=Location_span.of_positions_exn _loc}
+      }
+    )}
+| e1 = constr_expression _1 = MINUS e2 = constr_expression
+    {let op =     (   grammar_logger "infix_minus" ;Operator.Minus ) in
+let _endpos = _endpos_e2_ in
+let _startpos = _startpos_e1_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_arithmetic" ;
+      {expr=BinOp (e1, op, e2);
+       emeta={loc=Location_span.of_positions_exn _loc}
+      }
+    )}
+| e1 = constr_expression _1 = TIMES e2 = constr_expression
+    {let op =     (  grammar_logger "infix_times" ; Operator.Times ) in
+let _endpos = _endpos_e2_ in
+let _startpos = _startpos_e1_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_arithmetic" ;
+      {expr=BinOp (e1, op, e2);
+       emeta={loc=Location_span.of_positions_exn _loc}
+      }
+    )}
+| e1 = constr_expression _1 = DIVIDE e2 = constr_expression
+    {let op =     (  grammar_logger "infix_divide" ; Operator.Divide ) in
+let _endpos = _endpos_e2_ in
+let _startpos = _startpos_e1_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_arithmetic" ;
+      {expr=BinOp (e1, op, e2);
+       emeta={loc=Location_span.of_positions_exn _loc}
+      }
+    )}
+| e1 = constr_expression _1 = IDIVIDE e2 = constr_expression
+    {let op =     (  grammar_logger "infix_intdivide" ; Operator.IntDivide ) in
+let _endpos = _endpos_e2_ in
+let _startpos = _startpos_e1_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_arithmetic" ;
+      {expr=BinOp (e1, op, e2);
+       emeta={loc=Location_span.of_positions_exn _loc}
+      }
+    )}
+| e1 = constr_expression _1 = MODULO e2 = constr_expression
+    {let op =     (  grammar_logger "infix_modulo" ; Operator.Modulo ) in
+let _endpos = _endpos_e2_ in
+let _startpos = _startpos_e1_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_arithmetic" ;
+      {expr=BinOp (e1, op, e2);
+       emeta={loc=Location_span.of_positions_exn _loc}
+      }
+    )}
+| e1 = constr_expression _1 = LDIVIDE e2 = constr_expression
+    {let op =     (  grammar_logger "infix_ldivide" ; Operator.LDivide ) in
+let _endpos = _endpos_e2_ in
+let _startpos = _startpos_e1_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_arithmetic" ;
+      {expr=BinOp (e1, op, e2);
+       emeta={loc=Location_span.of_positions_exn _loc}
+      }
+    )}
+| e1 = constr_expression _1 = ELTTIMES e2 = constr_expression
+    {let op =     (  grammar_logger "infix_elttimes" ; Operator.EltTimes ) in
+let _endpos = _endpos_e2_ in
+let _startpos = _startpos_e1_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_arithmetic" ;
+      {expr=BinOp (e1, op, e2);
+       emeta={loc=Location_span.of_positions_exn _loc}
+      }
+    )}
+| e1 = constr_expression _1 = ELTDIVIDE e2 = constr_expression
+    {let op =     (   grammar_logger "infix_eltdivide" ; Operator.EltDivide ) in
+let _endpos = _endpos_e2_ in
+let _startpos = _startpos_e1_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_arithmetic" ;
+      {expr=BinOp (e1, op, e2);
+       emeta={loc=Location_span.of_positions_exn _loc}
+      }
+    )}
+| e1 = constr_expression _1 = HAT e2 = constr_expression
+    {let op =     (  grammar_logger "infix_hat" ; Operator.Pow ) in
+let _endpos = _endpos_e2_ in
+let _startpos = _startpos_e1_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_arithmetic" ;
+      {expr=BinOp (e1, op, e2);
+       emeta={loc=Location_span.of_positions_exn _loc}
+      }
+    )}
+| e1 = constr_expression _1 = ELTPOW e2 = constr_expression
+    {let op =     (  grammar_logger "infix_eltpow" ; Operator.EltPow ) in
+let _endpos = _endpos_e2_ in
+let _startpos = _startpos_e1_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_arithmetic" ;
+      {expr=BinOp (e1, op, e2);
+       emeta={loc=Location_span.of_positions_exn _loc}
+      }
+    )}
+| _1 = BANG e = constr_expression %prec unary_over_binary
+    {let op =     (   grammar_logger "prefix_bang" ; Operator.PNot ) in
+let _startpos_op_ = _startpos__1_ in
+let _endpos = _endpos_e_ in
+let _startpos = _startpos_op_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_prefixOp" ;
+      {expr=PrefixOp (op, e);
+       emeta={loc=Location_span.of_positions_exn _loc}}
+    )}
+| _1 = MINUS e = constr_expression %prec unary_over_binary
+    {let op =     (  grammar_logger "prefix_minus" ; Operator.PMinus ) in
+let _startpos_op_ = _startpos__1_ in
+let _endpos = _endpos_e_ in
+let _startpos = _startpos_op_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_prefixOp" ;
+      {expr=PrefixOp (op, e);
+       emeta={loc=Location_span.of_positions_exn _loc}}
+    )}
+| _1 = PLUS e = constr_expression %prec unary_over_binary
+    {let op =     (   grammar_logger "prefix_plus" ; Operator.PPlus ) in
+let _startpos_op_ = _startpos__1_ in
+let _endpos = _endpos_e_ in
+let _startpos = _startpos_op_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_prefixOp" ;
+      {expr=PrefixOp (op, e);
+       emeta={loc=Location_span.of_positions_exn _loc}}
+    )}
+| e = constr_expression _1 = TRANSPOSE
+    {let op =     (  grammar_logger "postfix_transpose" ; Operator.Transpose ) in
+let _endpos_op_ = _endpos__1_ in
+let _endpos = _endpos_op_ in
+let _startpos = _startpos_e_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_postfix" ;
+      {expr=PostfixOp (e, op);
+       emeta={loc=Location_span.of_positions_exn _loc}}
+    )}
+| e = constr_expression _2 = LBRACK i = indexes _4 = RBRACK
+    {let _endpos = _endpos__4_ in
+let _startpos = _startpos_e_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_indexed" ;
+      {expr=Indexed (e, i);
+       emeta={loc=Location_span.of_positions_exn _loc}}
+    )}
+| e = common_expression
+    {let _endpos = _endpos_e_ in
+let _startpos = _startpos_e_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_common_expr" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}}
+    )}
+| id = identifier
+    {let _endpos = _endpos_id_ in
+let _startpos = _startpos_id_ in
+let _loc = (_startpos, _endpos) in
+    (
+      grammar_logger "constr_expression_identifier" ;
+      {expr=Variable id;
+       emeta={loc=Location_span.of_positions_exn _loc}}
+    )}
+
+common_expression:
+  i = INTNUMERAL
+    {    (  grammar_logger ("intnumeral " ^ i) ; IntNumeral i )}
+| r = REALNUMERAL
+    {    (  grammar_logger ("realnumeral " ^ r) ; RealNumeral r )}
+| z = IMAGNUMERAL
+    {    (  grammar_logger ("imagnumeral " ^ z) ; ImagNumeral (String.drop_suffix z 1) )}
+| _1 = LBRACE xs = separated_nonempty_list_COMMA_expression_ _3 = RBRACE
+    {    (  grammar_logger "array_expression" ; ArrayExpr xs  )}
+| _1 = LBRACK xs = loption_separated_nonempty_list_COMMA_expression__ _3 = RBRACK
+    {let xs =     ( xs ) in
+    (  grammar_logger "row_vector_expression" ; RowVectorExpr xs )}
+| id = identifier _2 = LPAREN xs = loption_separated_nonempty_list_COMMA_expression__ _4 = RPAREN
+    {let args =     ( xs ) in
+    (  grammar_logger "fun_app" ;
+       if
+         List.length args = 1
+         && List.exists ~f:(fun x -> String.is_suffix ~suffix:x id.name) Utils.conditioning_suffices
+       then CondDistApp ((), id, args)
+       else FunApp ((), id, args) )}
+| _1 = TARGET _2 = LPAREN _3 = RPAREN
+    {    ( grammar_logger "target_read" ; GetTarget )}
+| _1 = GETLP _2 = LPAREN _3 = RPAREN
+    {    ( grammar_logger "get_lp" ; GetLP )}
+| id = identifier _2 = LPAREN l = lhs _4 = BAR xs = loption_separated_nonempty_list_COMMA_expression__ _6 = RPAREN
+    {let args =     ( xs ) in
+let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (  grammar_logger "conditional_dist_app" ; CondDistApp ((), id, e :: args) )}
+| id = identifier _2 = LPAREN e = non_lhs _4 = BAR xs = loption_separated_nonempty_list_COMMA_expression__ _6 = RPAREN
+    {let args =     ( xs ) in
+let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (  grammar_logger "conditional_dist_app" ; CondDistApp ((), id, e :: args) )}
+| _1 = LPAREN l = lhs _3 = RPAREN
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    ( grammar_logger "extra_paren" ; Paren e )}
+| _1 = LPAREN e = non_lhs _3 = RPAREN
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    ( grammar_logger "extra_paren" ; Paren e )}
+
+indexes:
+  
+    {    (   grammar_logger "index_nothing" ; [All] )}
+| _1 = COLON
+    {    (   grammar_logger "index_all" ; [All] )}
+| l = lhs
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (  grammar_logger "index_single" ; [Single e] )}
+| e = non_lhs
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (  grammar_logger "index_single" ; [Single e] )}
+| l = lhs _2 = COLON
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (  grammar_logger "index_upper" ; [Upfrom e] )}
+| e = non_lhs _2 = COLON
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (  grammar_logger "index_upper" ; [Upfrom e] )}
+| _1 = COLON l = lhs
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (   grammar_logger "index_lower" ; [Downfrom e] )}
+| _1 = COLON e = non_lhs
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (   grammar_logger "index_lower" ; [Downfrom e] )}
+| l = lhs _2 = COLON l_inlined1 = lhs
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (  grammar_logger "index_twosided" ; [Between (e1, e2)] )}
+| l = lhs _2 = COLON e = non_lhs
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (  grammar_logger "index_twosided" ; [Between (e1, e2)] )}
+| e = non_lhs _2 = COLON l = lhs
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (  grammar_logger "index_twosided" ; [Between (e1, e2)] )}
+| e = non_lhs _2 = COLON e_inlined1 = non_lhs
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (  grammar_logger "index_twosided" ; [Between (e1, e2)] )}
+| i1 = indexes _2 = COMMA i2 = indexes
+    {    (  grammar_logger "indexes" ; i1 @ i2 )}
+
+printables:
+  l = lhs
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (  grammar_logger "printable expression" ; [PExpr e] )}
+| e = non_lhs
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (  grammar_logger "printable expression" ; [PExpr e] )}
+| s = string_literal
+    {    (  grammar_logger "printable string" ; [PString s] )}
+| p1 = printables _2 = COMMA p2 = printables
+    {    ( grammar_logger "printables" ; p1 @ p2 )}
+
+lhs:
+  id = identifier
+    {let _endpos = _endpos_id_ in
+let _startpos = _startpos_id_ in
+let _loc = (_startpos, _endpos) in
+    (  grammar_logger "lhs_identifier" ;
+       {expr=Variable id
+       ;emeta = { loc=Location_span.of_positions_exn _loc}}
+    )}
+| l = lhs _2 = LBRACK indices = indexes _4 = RBRACK
+    {let _endpos = _endpos__4_ in
+let _startpos = _startpos_l_ in
+let _loc = (_startpos, _endpos) in
+    (  grammar_logger "lhs_index" ;
+      {expr=Indexed (l, indices)
+      ;emeta = { loc=Location_span.of_positions_exn _loc}})}
+
+statement:
+  s = atomic_statement
+    {let _endpos = _endpos_s_ in
+let _symbolstartpos = _startpos_s_ in
+let _sloc = (_symbolstartpos, _endpos) in
+    (  grammar_logger "atomic_statement" ;
+       {stmt= s;
+        smeta= { loc=Location_span.of_positions_exn _sloc} }
+    )}
+| s = nested_statement
+    {let _endpos = _endpos_s_ in
+let _symbolstartpos = _startpos_s_ in
+let _sloc = (_symbolstartpos, _endpos) in
+    (  grammar_logger "nested_statement" ;
+       {stmt= s;
+        smeta={loc = Location_span.of_positions_exn _sloc} }
+    )}
+
+atomic_statement:
+  l = lhs _1 = ASSIGN l_inlined1 = lhs _4 = SEMICOLON
+    {let e =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =     (  grammar_logger "assign_plain" ; Assign ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = ASSIGN e = non_lhs _4 = SEMICOLON
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =     (  grammar_logger "assign_plain" ; Assign ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = ARROWASSIGN l_inlined1 = lhs _4 = SEMICOLON
+    {let e =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =     ( grammar_logger "assign_arrow" ; ArrowAssign  ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = ARROWASSIGN e = non_lhs _4 = SEMICOLON
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =     ( grammar_logger "assign_arrow" ; ArrowAssign  ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = PLUSASSIGN l_inlined1 = lhs _4 = SEMICOLON
+    {let e =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =     ( grammar_logger "assign_plus" ; OperatorAssign Plus ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = PLUSASSIGN e = non_lhs _4 = SEMICOLON
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =     ( grammar_logger "assign_plus" ; OperatorAssign Plus ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = MINUSASSIGN l_inlined1 = lhs _4 = SEMICOLON
+    {let e =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =     ( grammar_logger "assign_minus" ; OperatorAssign Minus ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = MINUSASSIGN e = non_lhs _4 = SEMICOLON
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =     ( grammar_logger "assign_minus" ; OperatorAssign Minus ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = TIMESASSIGN l_inlined1 = lhs _4 = SEMICOLON
+    {let e =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =     ( grammar_logger "assign_times"  ; OperatorAssign Times ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = TIMESASSIGN e = non_lhs _4 = SEMICOLON
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =     ( grammar_logger "assign_times"  ; OperatorAssign Times ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = DIVIDEASSIGN l_inlined1 = lhs _4 = SEMICOLON
+    {let e =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =     ( grammar_logger "assign_divide" ; OperatorAssign Divide ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = DIVIDEASSIGN e = non_lhs _4 = SEMICOLON
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =     ( grammar_logger "assign_divide" ; OperatorAssign Divide ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = ELTTIMESASSIGN l_inlined1 = lhs _4 = SEMICOLON
+    {let e =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =     ( grammar_logger "assign_elttimes"  ; OperatorAssign EltTimes ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = ELTTIMESASSIGN e = non_lhs _4 = SEMICOLON
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =     ( grammar_logger "assign_elttimes"  ; OperatorAssign EltTimes ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = ELTDIVIDEASSIGN l_inlined1 = lhs _4 = SEMICOLON
+    {let e =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let op =     ( grammar_logger "assign_eltdivide" ; OperatorAssign EltDivide  ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| l = lhs _1 = ELTDIVIDEASSIGN e = non_lhs _4 = SEMICOLON
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let op =     ( grammar_logger "assign_eltdivide" ; OperatorAssign EltDivide  ) in
+    (  grammar_logger "assignment_statement" ;
+       Assignment {assign_lhs=lvalue_of_expr l;
+                   assign_op=op;
+                   assign_rhs=e} )}
+| id = identifier _2 = LPAREN xs = loption_separated_nonempty_list_COMMA_expression__ _4 = RPAREN _5 = SEMICOLON
+    {let args =     ( xs ) in
+    (  grammar_logger "funapp_statement" ; NRFunApp ((),id, args)  )}
+| _1 = INCREMENTLOGPROB _2 = LPAREN l = lhs _4 = RPAREN _5 = SEMICOLON
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (   grammar_logger "incrementlogprob_statement" ; IncrementLogProb e )}
+| _1 = INCREMENTLOGPROB _2 = LPAREN e = non_lhs _4 = RPAREN _5 = SEMICOLON
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (   grammar_logger "incrementlogprob_statement" ; IncrementLogProb e )}
+| l = lhs _2 = TILDE id = identifier _4 = LPAREN xs = loption_separated_nonempty_list_COMMA_expression__ _6 = RPAREN ot = option_truncation_ _8 = SEMICOLON
+    {let es =     ( xs ) in
+let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (  grammar_logger "tilde_statement" ;
+       let t = match ot with Some tt -> tt | None -> NoTruncate in
+       Tilde {arg= e; distribution= id; args= es; truncation= t  }
+    )}
+| e = non_lhs _2 = TILDE id = identifier _4 = LPAREN xs = loption_separated_nonempty_list_COMMA_expression__ _6 = RPAREN ot = option_truncation_ _8 = SEMICOLON
+    {let es =     ( xs ) in
+let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (  grammar_logger "tilde_statement" ;
+       let t = match ot with Some tt -> tt | None -> NoTruncate in
+       Tilde {arg= e; distribution= id; args= es; truncation= t  }
+    )}
+| _1 = TARGET _2 = PLUSASSIGN l = lhs _4 = SEMICOLON
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (   grammar_logger "targetpe_statement" ; TargetPE e )}
+| _1 = TARGET _2 = PLUSASSIGN e = non_lhs _4 = SEMICOLON
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (   grammar_logger "targetpe_statement" ; TargetPE e )}
+| _1 = BREAK _2 = SEMICOLON
+    {    (  grammar_logger "break_statement" ; Break )}
+| _1 = CONTINUE _2 = SEMICOLON
+    {    (  grammar_logger "continue_statement" ; Continue )}
+| _1 = PRINT _2 = LPAREN l = printables _4 = RPAREN _5 = SEMICOLON
+    {    (  grammar_logger "print_statement" ; Print l )}
+| _1 = REJECT _2 = LPAREN l = printables _4 = RPAREN _5 = SEMICOLON
+    {    (  grammar_logger "reject_statement" ; Reject l  )}
+| _1 = RETURN l = lhs _3 = SEMICOLON
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (  grammar_logger "return_statement" ; Return e )}
+| _1 = RETURN e = non_lhs _3 = SEMICOLON
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (  grammar_logger "return_statement" ; Return e )}
+| _1 = RETURN _2 = SEMICOLON
+    {    (  grammar_logger "return_nothing_statement" ; ReturnVoid )}
+| _1 = SEMICOLON
+    {    (  grammar_logger "skip" ; Skip )}
+
+string_literal:
+  s = STRINGLITERAL
+    {    (  grammar_logger ("string_literal " ^ s) ; s )}
+
+truncation:
+  _1 = TRUNCATE _2 = LBRACK e1 = option_expression_ _4 = COMMA e2 = option_expression_ _6 = RBRACK
+    {    (  grammar_logger "truncation" ;
+       match (e1, e2) with
+       | Some tt1, Some tt2 -> TruncateBetween (tt1, tt2)
+       | Some tt1, None -> TruncateUpFrom tt1
+       | None, Some tt2 -> TruncateDownFrom tt2
+       | None, None -> NoTruncate  )}
+
+nested_statement:
+  _1 = IF _2 = LPAREN l = lhs _4 = RPAREN s1 = statement _6 = ELSE s2 = statement
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (  grammar_logger "ifelse_statement" ; IfThenElse (e, s1, Some s2) )}
+| _1 = IF _2 = LPAREN e = non_lhs _4 = RPAREN s1 = statement _6 = ELSE s2 = statement
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (  grammar_logger "ifelse_statement" ; IfThenElse (e, s1, Some s2) )}
+| _1 = IF _2 = LPAREN l = lhs _4 = RPAREN s = statement %prec below_ELSE
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (  grammar_logger "if_statement" ; IfThenElse (e, s, None) )}
+| _1 = IF _2 = LPAREN e = non_lhs _4 = RPAREN s = statement %prec below_ELSE
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (  grammar_logger "if_statement" ; IfThenElse (e, s, None) )}
+| _1 = WHILE _2 = LPAREN l = lhs _4 = RPAREN s = statement
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (  grammar_logger "while_statement" ; While (e, s) )}
+| _1 = WHILE _2 = LPAREN e = non_lhs _4 = RPAREN s = statement
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (  grammar_logger "while_statement" ; While (e, s) )}
+| _1 = FOR _2 = LPAREN id = identifier _4 = IN l = lhs _6 = COLON l_inlined1 = lhs _8 = RPAREN s = statement
+    {let e2 =
+  let l = l_inlined1 in
+      (
+      grammar_logger "lhs_expression" ;
+      l
+    )
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (
+      grammar_logger "for_statement" ;
+      For {loop_variable= id;
+           lower_bound= e1;
+           upper_bound= e2;
+           loop_body= s;}
+    )}
+| _1 = FOR _2 = LPAREN id = identifier _4 = IN l = lhs _6 = COLON e = non_lhs _8 = RPAREN s = statement
+    {let e2 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e1 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (
+      grammar_logger "for_statement" ;
+      For {loop_variable= id;
+           lower_bound= e1;
+           upper_bound= e2;
+           loop_body= s;}
+    )}
+| _1 = FOR _2 = LPAREN id = identifier _4 = IN e = non_lhs _6 = COLON l = lhs _8 = RPAREN s = statement
+    {let e2 =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (
+      grammar_logger "for_statement" ;
+      For {loop_variable= id;
+           lower_bound= e1;
+           upper_bound= e2;
+           loop_body= s;}
+    )}
+| _1 = FOR _2 = LPAREN id = identifier _4 = IN e = non_lhs _6 = COLON e_inlined1 = non_lhs _8 = RPAREN s = statement
+    {let e2 =
+  let (_endpos_e_, _startpos_e_, e) = (_endpos_e_inlined1_, _startpos_e_inlined1_, e_inlined1) in
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+let e1 =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (
+      grammar_logger "for_statement" ;
+      For {loop_variable= id;
+           lower_bound= e1;
+           upper_bound= e2;
+           loop_body= s;}
+    )}
+| _1 = FOR _2 = LPAREN id = identifier _4 = IN l = lhs _6 = RPAREN s = statement
+    {let e =     (
+      grammar_logger "lhs_expression" ;
+      l
+    ) in
+    (  grammar_logger "foreach_statement" ; ForEach (id, e, s) )}
+| _1 = FOR _2 = LPAREN id = identifier _4 = IN e = non_lhs _6 = RPAREN s = statement
+    {let e =
+  let _endpos = _endpos_e_ in
+  let _startpos = _startpos_e_ in
+  let _loc = (_startpos, _endpos) in
+      ( grammar_logger "non_lhs_expression" ;
+      {expr=e;
+       emeta={loc= Location_span.of_positions_exn _loc}})
+in
+    (  grammar_logger "foreach_statement" ; ForEach (id, e, s) )}
+| _1 = PROFILE _2 = LPAREN st = string_literal _4 = RPAREN _5 = LBRACE l = list_vardecl_or_statement_ _7 = RBRACE
+    {    (  grammar_logger "profile_statement" ; Profile (st, List.concat l) )}
+| _1 = LBRACE l = list_vardecl_or_statement_ _3 = RBRACE
+    {    (  grammar_logger "block_statement" ; Block (List.concat l) )}
+
+vardecl_or_statement:
+  s = statement
+    {    ( grammar_logger "vardecl_or_statement_statement" ; [s] )}
+| v = var_decl
+    {    ( grammar_logger "vardecl_or_statement_vardecl" ; v )}
+
+top_vardecl_or_statement:
+  s = statement
+    {    ( grammar_logger "top_vardecl_or_statement_statement" ; [s] )}
+| v = top_var_decl
+    {    ( grammar_logger "top_vardecl_or_statement_top_vardecl" ; v )}
+
+%%
+
+

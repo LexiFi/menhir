@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 392 distinct tests.
+;; 393 distinct tests.
 
 (rule (target JSParse.opp.out) (deps JSParse.mly)
   (action
@@ -11410,6 +11410,32 @@
     (diff sqlgg.0.4.5-sql_parser.conflicts.exp
       sqlgg.0.4.5-sql_parser.conflicts)))
 
+(rule (target stanc3.opp.out) (deps stanc3.mly)
+  (action
+    (with-outputs-to stanc3.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias stanc3) (action (diff stanc3.opp.exp stanc3.opp.out)))
+
+(rule
+  (targets stanc3.out stanc3.automaton stanc3.automaton.resolved
+    stanc3.conflicts stanc3.timings)
+  (deps stanc3.mly)
+  (action
+    (with-outputs-to stanc3.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to stanc3.timings %{deps})))))
+
+(rule (alias stanc3) (action (diff stanc3.exp stanc3.out)))
+
+(rule (alias stanc3) (action (diff stanc3.automaton.exp stanc3.automaton)))
+
+(rule (alias stanc3)
+  (action (diff stanc3.automaton.resolved.exp stanc3.automaton.resolved)))
+
+(rule (alias stanc3) (action (diff stanc3.conflicts.exp stanc3.conflicts)))
+
 (rule (target statverif.1.97pl1.1-piparser.opp.out)
   (deps statverif.1.97pl1.1-piparser.mly)
   (action
@@ -13264,6 +13290,7 @@
     (alias split-public-symbol)
     (alias split-public-symbol-with-renaming)
     (alias sqlgg.0.4.5-sql_parser)
+    (alias stanc3)
     (alias statverif.1.97pl1.1-piparser)
     (alias subiso)
     (alias subtle-conflict-pager)
