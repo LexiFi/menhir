@@ -36,9 +36,8 @@ let iter f = function
 module Print = struct
 
   let position msg pos =
-    Printf.printf "%s = %s/%03d,\n"
+    Printf.printf "%s = %03d,\n"
       msg
-      pos.pos_fname
       pos.pos_cnum
 
   let offset msg ofs =
@@ -47,12 +46,10 @@ module Print = struct
       ofs
 
   let positions nt (startpos, endpos) =
-    Printf.printf "%s: startpos = %s/%03d,\n%s:   endpos = %s/%03d\n"
+    Printf.printf "%s: startpos = %03d,\n%s:   endpos = %03d\n"
       nt
-      startpos.pos_fname
       startpos.pos_cnum
       nt
-      endpos.pos_fname
       endpos.pos_cnum
 
   let nothing =
@@ -103,4 +100,3 @@ module Print = struct
     position "main: $symbolstartpos" pos1
 
 end
-
