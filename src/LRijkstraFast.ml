@@ -589,6 +589,7 @@ struct
     end
   end
 
+  (* The hash-consed tree of all matrix equations (products and minimums). *)
   module Tree = struct
     include ConsedTree()
 
@@ -1365,39 +1366,81 @@ struct
      It runs LRijkstraClassic and then check that for each class, the minimal
      costs coincide. *)
   module Validation = struct
+
+    (* Find the class missing in a partition.
+
+       In a partition, there is always one class that we can deduce from the
+       other ones by removing all other classes from T.
+       The algorithm is crafted such that this class contains all unreachable
+       configuration.
+       For instance, for a shift transition on a, the partition {{a}, T/{a}} is
+       simply represented as [TerminalSet.singleton a]. The
+
+       The missing function reconstructs this class (T/{a} in the example).
+    *)
+    let missing classes =
+      let diff a b = TerminalSet.fold TerminalSet.remove b a in
+      Array.fold_left diff TerminalSet.universe classes
+
     let validate () =
+      (* A flag to remember if we found an error.
+         We could print the first error and exit immediately, but debugging was
+         much nicer when accumulating errors and failing after.
+         This helped to find patterns in the errors that made fixing easier.
+      *)
       let failed = ref false in
       let module Classic = LRijkstraClassic.Run(X)() in
+      (* Iterate over all goto transitions *)
       Index.iter Transition.goto begin fun tr ->
-        let goto = Transition.goto_symbol tr in
+        (* Find the symbol, the source lr1 state and the corresponding node
+           in the tree of matrix products. *)
+        let nt = Transition.goto_symbol tr in
         let tr = Transition.of_goto tr in
         let node = Tree.leaf tr in
-        let lr1 = Transition.source tr in
-        let missing classes =
-          let diff a b = TerminalSet.fold TerminalSet.remove b a in
-          Array.fold_left diff TerminalSet.universe classes
-        in
+        let lr1 = Lr1C.to_g (Transition.source tr) in
+        (* Check that the classical algorithm agree that the node is
+           unreachable when the lookahead before is in the missing class *)
         let missing_before = missing (Tree.classes_before node) in
-        let missing_after = missing (Tree.classes_after node) in
         TerminalSet.iter begin fun t ->
-          Classic.query (Lr1C.to_g lr1) goto t (fun _ _ -> assert false)
+          Classic.query lr1 nt t (fun _ _ ->
+              Printf.eprintf "fast algorithm determined that state %d is \
+                              unreachable with lookahead %s, \
+                              classic algorithm disagrees"
+                (Lr1.number lr1)
+                (Terminal.print t);
+              failed := true;
+            )
         end missing_before;
+        (* Check that the classical algorithm agree on the minimum cost, and
+           on the unreachable configurations after following the transition. *)
+        let missing_after = missing (Tree.classes_after node) in
         Array.iteri begin fun i_b s_b ->
+          (* We can visit the classes before the transition in order,
+             but the classes after are visited in an unpredictable order
+             (determined by the Classic algorithm.
+             We use a hashtable to store temporary results,
+             then visit the hashtable in an order convenient for comparing the
+             "after classes". *)
           let min_table = Hashtbl.create 7 in
           TerminalSet.iter begin fun t ->
-            Classic.query (Lr1C.to_g lr1) goto t begin fun w t' ->
+            Classic.query lr1 nt t begin fun w t' ->
+              (* Check unreachability *)
               if TerminalSet.mem t' missing_after then (
                 Printf.eprintf "not expecting %s in {%s}\n%!"
                   (Terminal.print t')
                   (TerminalSet.print missing_after);
-                assert false;
+                failed := true;
               );
               let n = Classic.Word.length w in
+              (* Remember the word of minimal length for this "after"
+                 lookahead symbol *)
               match Hashtbl.find_opt min_table t' with
               | Some (_, n') when n' <= n -> ()
               | _ -> Hashtbl.replace min_table t' (w, n)
             end
           end s_b;
+          (* Now checks that both algorithms agree on the minimal length
+             for each "after" class *)
           Array.iteri begin fun i_a s_a ->
             let cell = Cells.encode node i_b i_a in
             let cost = Cells.cost cell in
