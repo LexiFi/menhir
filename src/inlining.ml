@@ -221,7 +221,7 @@ let define_positions (name : string array) nprefix ncallee : sw * sw * sw =
          $endpos. *)
       Before, WhereEnd
 
-    (* Note that, to contrary to intuition perhaps, we do NOT have that
+    (* Note that, contrary to intuition perhaps, we do NOT have that
        if the prefix is empty, then the start position of the inner
        production is the start production of the outer production.
        This is true only if the inner production is non-epsilon. *)
