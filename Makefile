@@ -34,9 +34,13 @@ export CDPATH=
 
 # [make test] runs the tests found in the test/ and demos/ directories.
 
+# The tests declared by (rule (alias test) ...) are attached to the
+# target @test. Those declared by (test (name ...)) are attached to
+# the target @ runtest.
+
 .PHONY: test
 test:
-	@ dune build --display short @test
+	@ dune build --display short @test @runtest
 
 # [make demos] compiles the demos.
 
