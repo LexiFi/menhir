@@ -291,9 +291,8 @@ module F =
 
 let () =
 
-  (* We gather the constraints explained above in two loops. The first loop
-     looks at every (non-start) production [prod]. The second loop looks at
-     every (non-initial) state [s]. *)
+  (* We gather the constraints explained above in a loop over every
+     (non-start) production [prod]. *)
 
   Production.iterx (fun prod ->
 
@@ -335,27 +334,27 @@ let () =
             if id = id' then
               F.record_ConVar true (rhs.(i), where)
           ) ids
-    ) (Action.keywords action)
+    ) (Action.keywords action);
+
+    (* Condition (1) in the long comment above (2015/11/11). If [prod] is an
+       epsilon production, and if it can be reduced in a state [s] whose
+       incoming symbol is [sym], then emit the following constraint: if the
+       left-hand side [nt] keeps track of its start or end position, then
+       [sym] must keep track of its end position. *)
+
+    if length = 0 then
+      Lr1.production_where prod |> Lr1.NodeSet.iter begin fun s ->
+        Lr1.incoming_symbol s |> Option.iter begin fun sym ->
+          F.record_VarVar (Symbol.N nt, WhereStart) (sym, WhereEnd);
+          F.record_VarVar (Symbol.N nt, WhereEnd)   (sym, WhereEnd)
+        end
+      end
 
   ); (* end of loop on productions *)
 
   Lr1.iterx (fun s ->
     (* Let [sym] be the incoming symbol of state [s]. *)
     let sym = Option.force (Lr1.incoming_symbol s) in
-
-    (* Condition (1) in the long comment above (2015/11/11). If an epsilon
-       production [prod] can be reduced in state [s], if its left-hand side
-       [nt] keeps track of its start or end position, then [sym] must keep
-       track of its end position. *)
-    TerminalMap.iter (fun _ prods ->
-      let prod = Misc.single prods in
-      let nt, rhs = Production.def prod in
-      let length = Array.length rhs in
-      if length = 0 then begin
-        F.record_VarVar (Symbol.N nt, WhereStart) (sym, WhereEnd);
-        F.record_VarVar (Symbol.N nt, WhereEnd) (sym, WhereEnd)
-      end
-    ) (Lr1.reductions s);
 
     (* Condition (2) in the long comment above (2015/11/11). This condition
        was incorrectly implemented until 2021/10/12. If the state [s] has an
