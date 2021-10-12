@@ -1,5 +1,12 @@
 # Changes
 
+## 2021/10/12
+
+* Fix a bug in the code back-end which, in some rare cases, could lead to
+  computing an incorrect position. (The table back-end was not affected.)
+  A necessary (but not sufficient) condition for the bug to appear was to
+  mark an epsilon production as `%inline`.
+
 ## 2021/09/29
 
 * Fix a problem (introduced on 2021/09/28) that would cause
