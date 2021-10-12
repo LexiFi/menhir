@@ -256,9 +256,11 @@ end
    right-hand side (if there is one) must do so as well. That is, unless the
    right-hand side is empty. *)
 
-(* 2015/11/11. When a production [prod] is reduced, the top stack cell may be
-   consulted for its end position. This implies that this cell must exist
-   and must store an end position! Now, when does this happen?
+(* 2015/11/11. When a production [prod] is reduced, the cell that lies at
+   the top of the stack (after the cells that correspond to the production's
+   right-hand side have been popped, and before a new cell is pushed onto the
+   stack) may be consulted for its end position. This implies that this cell
+   must exist and must store an end position! Now, when does this happen?
 
    1- This happens if [prod] is an epsilon production and the left-hand symbol
       of the production, [nt prod], keeps track of its start or end position.
@@ -355,11 +357,21 @@ let () =
       end
     ) (Lr1.reductions s);
 
-    (* Condition (2) in the long comment above (2015/11/11). If a production
-       can be reduced in state [s] and mentions [$endpos($0)], then [sym]
-       must keep track of its end position. *)
-    if Lr1.has_beforeend s then
-      F.record_ConVar true (sym, WhereEnd)
+    (* Condition (2) in the long comment above (2015/11/11). This condition
+       was incorrectly implemented until 2021/10/12. If the state [s] has an
+       outgoing goto transition labeled [nt], and if one of the productions
+       associated with [nt] refers to [$endpos($0)], then [sym] must keep
+       track of its end position. *)
+    SymbolMap.iter (fun symbol _target ->
+      match symbol with
+      | Symbol.N nt ->
+          Production.iternt nt (fun prod ->
+            if Action.has_beforeend (Production.action prod) then
+              F.record_ConVar true (sym, WhereEnd)
+          )
+      | Symbol.T _ ->
+          ()
+    ) (Lr1.transitions s)
 
   )
 
