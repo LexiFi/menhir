@@ -149,13 +149,6 @@ val reductions: node -> Production.index list TerminalMap.t
 
 val forbid_default_reduction: node -> bool
 
-(* [has_beforeend s] tests whether the state [s] can reduce a production
-   whose semantic action uses [$endpos($0)]. Note that [$startpos] and
-   [$endpos] have been expanded away already, so we need not worry about
-   the fact that (in an epsilon production) they expand to [$endpos($0)]. *)
-
-val has_beforeend: node -> bool
-
 (* Computing which terminal symbols a state is willing to act upon.
 
    This function is currently unused, but could be used as part of an error

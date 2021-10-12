@@ -635,21 +635,6 @@ let start2item node =
   Item.Set.choose items
 
 (* -------------------------------------------------------------------------- *)
-(* [has_beforeend s] tests whether the state [s] can reduce a production
-   whose semantic action uses [$endpos($0)]. Note that [$startpos] and
-   [$endpos] have been expanded away already, so we need not worry about
-   the fact that (in an epsilon production) they expand to [$endpos($0)]. *)
-
-let has_beforeend node =
-  TerminalMap.fold (fun _ prods accu ->
-    accu ||
-    let prod = Misc.single prods in
-    not (Production.is_start prod) &&
-    let action = Production.action prod in
-    Action.has_beforeend action
-  ) (reductions node) false
-
-(* -------------------------------------------------------------------------- *)
 (* Computing which terminal symbols a state is willing to act upon.
 
    One must keep in mind that, due to the merging of states, a state might be
