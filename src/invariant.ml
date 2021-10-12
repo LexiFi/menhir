@@ -294,29 +294,62 @@ let () =
   (* We gather the constraints explained above in a loop over every
      (non-start) production [prod]. *)
 
-  Production.iterx (fun prod ->
+  Production.iterx begin fun prod ->
 
     let nt, rhs = Production.def prod
     and ids = Production.identifiers prod
     and action = Production.action prod in
     let length = Array.length rhs in
 
-    if length > 0 then begin
+    if length = 0 then begin
+
+      (* An epsilon production. *)
+
+      (* Condition (1) in the long comment above (2015/11/11). If [prod] is an
+         epsilon production, and if it can be reduced in a state [s] whose
+         incoming symbol is [sym], then emit the following constraint: if the
+         left-hand side [nt] keeps track of its start or end position, then
+         [sym] must keep track of its end position. *)
+
+      Lr1.production_where prod |> Lr1.NodeSet.iter begin fun s ->
+        Lr1.incoming_symbol s |> Option.iter begin fun sym ->
+          F.record_VarVar (Symbol.N nt, WhereStart) (sym, WhereEnd);
+          F.record_VarVar (Symbol.N nt, WhereEnd)   (sym, WhereEnd)
+        end
+      end
+
+    end
+    else begin
+
+      (* A non-epsilon production. *)
+
       (* If [nt] keeps track of its start position, then the first symbol
          in the right-hand side must do so as well. *)
       F.record_VarVar (Symbol.N nt, WhereStart) (rhs.(0), WhereStart);
       (* If [nt] keeps track of its end position, then the last symbol
          in the right-hand side must do so as well. *)
       F.record_VarVar (Symbol.N nt, WhereEnd) (rhs.(length - 1), WhereEnd)
+
     end;
+
+    (* Examine the production's position keywords. *)
 
     KeywordSet.iter (function
       | SyntaxError ->
           ()
       | Position (Before, _, _) ->
-          (* Doing nothing here because [$endpos($0)] is dealt with in
-             the second loop. *)
-          ()
+          (* Condition (2) in the long comment above (2015/11/11). This condition
+             was incorrectly implemented until 2021/10/12, because of a confusion
+             between the state where the production is reduced and the state that
+             carries the outgoing edge labeled [nt]. The condition is as follows:
+             if [prod] refers to [$endpos($0)], if the state [s] carries an
+             outgoing transition labeled [nt], and if the incoming symbol of [s]
+             is [sym], then [sym] must keep track of its end position. *)
+          Lr1.all_sources (Symbol.N nt) |> Lr1.NodeSet.iter begin fun s ->
+            Lr1.incoming_symbol s |> Option.iter begin fun sym ->
+              F.record_ConVar true (sym, WhereEnd)
+            end
+          end
       | Position (Left, _, _) ->
           (* [$startpos] and [$endpos] have been expanded away. *)
           assert false
@@ -334,38 +367,9 @@ let () =
             if id = id' then
               F.record_ConVar true (rhs.(i), where)
           ) ids
-    ) (Action.keywords action);
+    ) (Action.keywords action)
 
-    (* Condition (1) in the long comment above (2015/11/11). If [prod] is an
-       epsilon production, and if it can be reduced in a state [s] whose
-       incoming symbol is [sym], then emit the following constraint: if the
-       left-hand side [nt] keeps track of its start or end position, then
-       [sym] must keep track of its end position. *)
-
-    if length = 0 then
-      Lr1.production_where prod |> Lr1.NodeSet.iter begin fun s ->
-        Lr1.incoming_symbol s |> Option.iter begin fun sym ->
-          F.record_VarVar (Symbol.N nt, WhereStart) (sym, WhereEnd);
-          F.record_VarVar (Symbol.N nt, WhereEnd)   (sym, WhereEnd)
-        end
-      end;
-
-    (* Condition (2) in the long comment above (2015/11/11). This condition
-       was incorrectly implemented until 2021/10/12, because of a confusion
-       between the state where the production is reduced and the state that
-       carries the outgoing edge labeled [nt]. The condition is as follows:
-       if [prod] refers to [$endpos($0)], if the state [s] carries an
-       outgoing transition labeled [nt], and if the incoming symbol of [s]
-       is [sym], then [sym] must keep track of its end position. *)
-
-    if Action.has_beforeend (Production.action prod) then
-      Lr1.all_sources (Symbol.N nt) |> Lr1.NodeSet.iter begin fun s ->
-        Lr1.incoming_symbol s |> Option.iter begin fun sym ->
-          F.record_ConVar true (sym, WhereEnd)
-        end
-      end
-
-  ) (* end of loop on productions *)
+  end (* end of loop on productions *)
 
 let track : variable -> bool option =
   let module S = F.Solve() in
