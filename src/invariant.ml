@@ -348,31 +348,24 @@ let () =
           F.record_VarVar (Symbol.N nt, WhereStart) (sym, WhereEnd);
           F.record_VarVar (Symbol.N nt, WhereEnd)   (sym, WhereEnd)
         end
-      end
-
-  ); (* end of loop on productions *)
-
-  Lr1.iterx (fun s ->
-    (* Let [sym] be the incoming symbol of state [s]. *)
-    let sym = Option.force (Lr1.incoming_symbol s) in
+      end;
 
     (* Condition (2) in the long comment above (2015/11/11). This condition
-       was incorrectly implemented until 2021/10/12. If the state [s] has an
-       outgoing goto transition labeled [nt], and if one of the productions
-       associated with [nt] refers to [$endpos($0)], then [sym] must keep
-       track of its end position. *)
-    SymbolMap.iter (fun symbol _target ->
-      match symbol with
-      | Symbol.N nt ->
-          Production.iternt nt (fun prod ->
-            if Action.has_beforeend (Production.action prod) then
-              F.record_ConVar true (sym, WhereEnd)
-          )
-      | Symbol.T _ ->
-          ()
-    ) (Lr1.transitions s)
+       was incorrectly implemented until 2021/10/12, because of a confusion
+       between the state where the production is reduced and the state that
+       carries the outgoing edge labeled [nt]. The condition is as follows:
+       if [prod] refers to [$endpos($0)], if the state [s] carries an
+       outgoing transition labeled [nt], and if the incoming symbol of [s]
+       is [sym], then [sym] must keep track of its end position. *)
 
-  )
+    if Action.has_beforeend (Production.action prod) then
+      Lr1.all_sources (Symbol.N nt) |> Lr1.NodeSet.iter begin fun s ->
+        Lr1.incoming_symbol s |> Option.iter begin fun sym ->
+          F.record_ConVar true (sym, WhereEnd)
+        end
+      end
+
+  ) (* end of loop on productions *)
 
 let track : variable -> bool option =
   let module S = F.Solve() in
