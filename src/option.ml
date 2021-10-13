@@ -60,6 +60,15 @@ let equal equal o1 o2 =
   | Some _, None ->
       false
 
+let sub sub o1 o2 =
+  match o1, o2 with
+  | None, _ ->
+      true
+  | Some _, None ->
+      false
+  | Some x1, Some x2 ->
+      sub x1 x2
+
 let hash hash = function
   | Some x ->
       hash x
@@ -81,5 +90,16 @@ let rec first_value = function
 | [] ->
     None
 
-let simplify = function None -> None | Some o -> o
+let split o =
+  match o with
+  | None ->
+      None, None
+  | Some (x, x') ->
+      Some x, Some x'
 
+let elements o =
+  match o with
+  | None ->
+      []
+  | Some x ->
+      [x]
