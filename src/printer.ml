@@ -569,9 +569,15 @@ let datavalparams f params =
 
 (* A data constructor definition. *)
 
+let datadefcomment f ocomment =
+  Option.iter (fun comment ->
+    fprintf f "%t    (** %s *)%t" nl comment rawnl
+      (* The trailing [rawnl] creates an empty line after the comment. *)
+  ) ocomment
+
 let datadef typename f def =
   fprintf f "  | %s" def.dataname;
-  match def.datavalparams, def.datatypeparams with
+  begin match def.datavalparams, def.datatypeparams with
   | [], None ->
       (* | A *)
       ()
@@ -588,6 +594,8 @@ let datadef typename f def =
       fprintf f " : %a -> %a%s"
         datavalparams def.datavalparams
         (typeparams typ0 typ) indices typename
+  end;
+  datadefcomment f def.comment
 
 let fielddef f def =
   fprintf f "  %s%s: %a"

@@ -470,7 +470,8 @@ let statetypedef = {
                        if Invariant.represented s then {
                          dataname =       statecon s;
                          datavalparams =  [];
-                         datatypeparams = None
+                         datatypeparams = None;
+                         comment =        None;
                        } :: defs
                        else defs
                      ) []

@@ -101,6 +101,9 @@ and datadef = {
        [None] if this is an ordinary ADT. *)
     datatypeparams: typ list option;
 
+    (* A comment about this data constructor. *)
+    comment: string option;
+
   }
 
 and typ =
