@@ -623,6 +623,18 @@ let targets f accu symbol =
     f accu (predecessors target) target
   ) accu targets
 
+let ntargets symbol =
+  targets (fun count _ _ -> count + 1) 0 symbol
+
+exception FoundSingleTarget of node
+
+let single_target symbol =
+  try
+    targets (fun () _ target -> raise (FoundSingleTarget target)) () symbol;
+    assert false
+  with FoundSingleTarget target ->
+    target
+
 (* -------------------------------------------------------------------------- *)
 
 (* Converting a start node into the single item that it contains. *)

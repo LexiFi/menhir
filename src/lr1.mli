@@ -191,6 +191,18 @@ val all_sources: Symbol.t -> NodeSet.t
 
 val all_targets: Symbol.t -> NodeSet.t
 
+(* [ntargets symbol] counts the number of distinct targets of edges
+   labeled with [symbol]. If [symbol] is a non-terminal symbol [nt]
+   then this is the number of branches in the [goto] function
+   associated with [nt]. *)
+
+val ntargets: Symbol.t -> int
+
+(* [single_target symbol] requires [ntargets symbol = 1], and returns
+   the single target of all edges labeled with [symbol]. *)
+
+val single_target: Symbol.t -> node
+
 (* Iteration over all nodes with conflicts. [conflicts f] invokes [f toks
    node] once for every node [node] with a conflict, where [toks] are the
    tokens involved in the conflicts at that node.
