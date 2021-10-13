@@ -1,4 +1,4 @@
-(** This module implements a mutable queue, like [Queue]. However it has a
+(** This module implements a mutable FIFO queue, like [Queue]. However it has a
     more compact representation, storing elements contiguously in an array. *)
 
 type 'a t = {
@@ -43,7 +43,7 @@ let create () = {
 let is_empty q =
   q.size = 0
 
-let push x q =
+let add x q =
   let buffer = q.buffer in
   let length = Array.length buffer in
   if q.size < length then (
@@ -69,7 +69,7 @@ let push x q =
 
 exception Empty
 
-let pop q =
+let take q =
   if q.size = 0 then
     raise Empty
   else (

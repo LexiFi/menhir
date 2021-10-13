@@ -167,7 +167,7 @@ module ForCustomMaps
   let schedule var =
     if not (B.get var) then (
       B.set var true;
-      CompactQueue.push var queue
+      CompactQueue.add var queue
     )
 
   (* [update x' p'] ensures that the property associated with the variable [x']
@@ -196,11 +196,11 @@ module ForCustomMaps
 
   let () = G.foreach_root (fun x p -> V.set x p; schedule x)
 
-  (* As long as the stack is nonempty, pop a variable and examine it. *)
+  (* As long as the stack is nonempty, take a variable and examine it. *)
 
   let () =
     while not (CompactQueue.is_empty queue) do
-      let var = CompactQueue.pop queue in
+      let var = CompactQueue.take queue in
       B.set var false;
       examine var
     done
