@@ -299,18 +299,21 @@ let prefix name =
   if Settings.noprefix then
     name
   else
+    (* This prefix must begin with an underscore. *)
     "_menhir_" ^ name
 
 let dataprefix name =
   if Settings.noprefix then
     name
   else
+    (* This prefix must begin with a capital letter. *)
     "Menhir" ^ name
 
 let tvprefix name =
   if Settings.noprefix then
     name
   else
+    (* This prefix must begin with an ordinary letter (not an underscore). *)
     "ttv_" ^ name
 
 (* ------------------------------------------------------------------------ *)
