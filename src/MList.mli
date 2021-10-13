@@ -29,3 +29,12 @@ val ifnlazy : bool -> (unit -> 'a list) -> 'a list
 
 (** The sum of a list of integers. *)
 val sum : int list -> int
+
+(** [at_most k xs] tests whether the list [xs] contains at most [k] elements. *)
+val at_most : int -> 'a list -> bool
+
+(** [drop k xs] is the list [xs] deprived of its first [k] elements. *)
+val drop : int -> 'a list -> 'a list
+
+(** [take k xs] is the list of the first [k] elements of the list [xs]. *)
+val take : int -> 'a list -> 'a list
