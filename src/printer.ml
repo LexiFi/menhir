@@ -562,8 +562,14 @@ and typ2 f = function
   | t ->
       typ1 f t
 
+and typ3 f = function
+  | TypAs (t, v) ->
+      fprintf f "%a as %a" typ0 t typevar v
+  | t ->
+      typ2 f t
+
 and typ f =
-  typ2 f
+  typ3 f
 
 and scheme f scheme =
   match scheme.quantifiers with

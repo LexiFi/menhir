@@ -170,11 +170,17 @@ let inline_valdefs (defs : valdef list) : valdef list =
             TypTuple (List.map sub typs)
         | TypArrow (typ1, typ2) ->
             TypArrow (sub typ1, sub typ2)
+        | TypAs (typ, v) ->
+            (* Not sure what to do here. Anyway, [TypAs] is used only
+               by the new code back-end, which probably will not need
+               this inliner. *)
+            TypAs (sub typ, v)
       in
       sub scheme.body
   in
 
-  (* Destructuring a type annotation. *)
+  (* Destructuring a type annotation [typ] on a lambda-abstraction
+     [fun formals -> body]. *)
 
   let rec annotate formals body typ =
     match formals, typ with

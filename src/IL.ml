@@ -123,6 +123,9 @@ and typ =
   (* Arrow type. *)
   | TypArrow of typ * typ
 
+  (* Type sharing construct. *)
+  | TypAs of typ * string
+
 and typescheme = {
 
   (* Universal quantifiers, without leading quotes. *)
