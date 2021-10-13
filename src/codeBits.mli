@@ -28,17 +28,6 @@ val tname: string -> typ
 val etuple: expr list -> expr
 val ptuple: pattern list -> pattern
 
-(* A list subject to a condition. (Be careful, though: the list is
-   of course constructed even if the condition is false.) *)
-
-val ifn: bool -> 'a list -> 'a list
-val if1: bool -> 'a -> 'a list
-
-(* A lazy version of [ifn], where the list is constructed only
-   if the condition is true. *)
-
-val ifnlazy: bool -> (unit -> 'a list) -> 'a list
-
 (* Standard types. *)
 
 val tunit: typ

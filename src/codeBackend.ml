@@ -22,6 +22,7 @@ open CodeBits
 open CodePieces
 open TokenType
 open Interface
+let if1, ifn = MList.(if1, ifn)
 
 (* ------------------------------------------------------------------------ *)
 (* Here is a description of our code generation mechanism.
