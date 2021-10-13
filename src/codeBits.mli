@@ -143,3 +143,27 @@ val field: bool -> string -> typ -> fielddef
 
 (** Branches. *)
 val branch: pattern -> expr -> branch
+
+(** A variable as an expression. *)
+val evar: string -> expr
+
+(** A list of variables as expressions. *)
+val evars: string list -> expr list
+
+(** A variable as a pattern. *)
+val pvar: string -> pattern
+
+(** A list of variables as patterns. *)
+val pvars: string list -> pattern list
+
+(** A private value definition. *)
+val def: string -> expr -> valdef
+
+(** A public value definition. *)
+val defpublic: string -> expr -> valdef
+
+(** A single non-recursive value definition. *)
+val valdef: valdef -> structure_item
+
+(** A list of non-recursive value definitions. *)
+val valdefs: valdef list -> structure_item list

@@ -347,3 +347,27 @@ let field modifiable name t =
 
 let branch branchpat branchbody =
   { branchpat; branchbody }
+
+let evar s =
+  EVar s
+
+let evars xs =
+  List.map evar xs
+
+let pvar x =
+  PVar x
+
+let pvars xs =
+  List.map pvar xs
+
+let def f body =
+  { valpublic = false; valpat = PVar f; valval = body }
+
+let defpublic f body =
+  { valpublic = true; valpat = PVar f; valval = body }
+
+let valdef def =
+  SIValDefs (false, [ def ])
+
+let valdefs defs =
+  List.map valdef defs
