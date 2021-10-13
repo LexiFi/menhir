@@ -1,5 +1,10 @@
 # Changes
 
+## 2021/XX/XX
+
+* Disable OCaml warnings 4 (fragile match) and 39 (unused rec flag) in
+  the generated code. (Reported by Armaël Guéneau.)
+
 ## 2021/10/12
 
 * Fix a bug in the code back-end which, in some rare cases, could lead to
