@@ -34,6 +34,9 @@ val push : 'a array -> 'a -> 'a array
    [truncate 3 [|1; 2; 3; 4; 5|] = [|3; 4; 5|]] *)
 val truncate : int -> 'a array -> 'a array
 
+(** [suffix a k] is [truncate k a]. *)
+val suffix : 'a array -> int -> 'a array
+
 (**[is_suffix equal a1 a2] tests whether [a1] is a suffix of [a2]. The
    elements are compared using the function [equal]. *)
 val is_suffix : ('a -> 'a -> bool) -> 'a array -> 'a array -> bool
@@ -59,6 +62,10 @@ val rev_to_list : 'a array -> 'a list
 
 (**[iter_rev f a] is equivalent to [iter f (rev a)]. *)
 val iter_rev : ('a -> unit) -> 'a array -> unit
+
+(**The array [filter p a] contains the elements [x] of the array [a]
+   such that [p x] is true. *)
+val filter : ('a -> bool) -> 'a array -> 'a array
 
 (**[existsi p a] tests whether there exists an index [i] such that
    [p i a.(i)] holds. *)
