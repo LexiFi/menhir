@@ -179,9 +179,9 @@ module Long () : STACK
 module Origin : sig
 
   (**The origin [SingleOrigin nt] indicates that the point of interest is
-     reachable only via the start symbol [nt]. The origin [Dead] that this
-     point in unreachable. [MultipleOrigins] indicates that this point is
-     reachable via several start symbols. *)
+     reachable only via the start symbol [nt]. The origin [Dead] indicates
+     that this point in unreachable. [MultipleOrigins] indicates that this
+     point is reachable via several start symbols. *)
   type origin =
     | Dead
     | SingleOrigin of Nonterminal.t
