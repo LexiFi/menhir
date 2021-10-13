@@ -50,6 +50,11 @@ let write program =
   let module P = Printer.Make (struct
     let filename = Settings.base ^ ".ml"
     let f = open_out filename
+    let () =
+      Printf.fprintf f "[@@@ocaml.warning \"-4-39\"]\n"
+      (* 2021/11/13: disable some warnings in the generated .ml file.
+         Warning 04, fragile match.
+         Warning 39, unused rec flag. *)
     let locate_stretches =
       (* 2017/05/09: always include line number directives in generated .ml
          files. Indeed, they affect the semantics of [assert] instructions
