@@ -27,6 +27,9 @@ let pvarlocated id =
   else
     PVarLocated id
 
+let tname name =
+  TypApp (name, [])
+
 (* Tuples. *)
 
 let etuple = function
@@ -68,27 +71,27 @@ let ifnlazy condition xs =
 (* The unit type. *)
 
 let tunit =
-  TypApp ("unit", [])
+  tname "unit"
 
 (* The Boolean type. *)
 
 let tbool =
-  TypApp ("bool", [])
+  tname "bool"
 
 (* The integer type. *)
 
 let tint =
-  TypApp ("int", [])
+  tname "int"
 
 (* The string type. *)
 
 let tstring =
-  TypApp ("string", [])
+  tname "string"
 
 (* The exception type. *)
 
 let texn =
-  TypApp ("exn", [])
+  tname "exn"
 
 (* The type of pairs. *)
 
@@ -98,7 +101,7 @@ let tpair typ1 typ2 =
 (* The type of lexer positions. *)
 
 let tposition =
-  TypApp ("Lexing.position", [])
+  tname "Lexing.position"
 
 (* The type of the $loc and $sloc keywords. *)
 
@@ -110,12 +113,12 @@ let tlocation =
 (* The type of lexer buffers. *)
 
 let tlexbuf =
-  TypApp ("Lexing.lexbuf", [])
+  tname "Lexing.lexbuf"
 
 (* The type of untyped semantic values. *)
 
 let tobj =
-  TypApp ("Obj.t", [])
+  tname "Obj.t"
 
 (* Building a type variable. *)
 

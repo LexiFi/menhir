@@ -20,6 +20,9 @@ open IL
 (** A smart constructor for [PVarLocated]. *)
 val pvarlocated: string located -> pattern
 
+(** A type name. *)
+val tname: string -> typ
+
 (* Tuples. *)
 
 val etuple: expr list -> expr
