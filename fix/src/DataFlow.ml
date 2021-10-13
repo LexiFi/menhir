@@ -154,8 +154,8 @@ module ForCustomMaps
 
   (* Compared to the standard Queue, CompactQueue is quite faster and consumes
      less memory.
-     On computer, analysing cca_cpp grammar terminates 5% faster (2s) and
-     consumes 13% less memory (~370MB).
+     On my computer, analysing the cca_cpp grammar terminates 5% faster (2s)
+     and consumes 13% less memory (~370MB).
   *)
 
   let queue = CompactQueue.create ()

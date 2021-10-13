@@ -82,8 +82,8 @@ module ForIntSegment
 
 (**An alternative interface, allowing specialized (more efficient) maps.
 
-   The [P] map can be initialized with any valid approximation for the property
-   (e.g. bottom or a better approximation if any is known).
+   The [P] map can be initialized with any valid under-approximation of the
+   desired fixed point (e.g. bottom or a better approximation if any is known).
    The [B] map should initialized with [false] everywhere.
 
    The functor returns nothing: map [V] is mutated and contains the resulting

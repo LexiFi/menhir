@@ -18,7 +18,7 @@ val is_empty : 'a t -> bool
 (** [is_empty q] tests whether the queue [q] is empty. *)
 
 val add : 'a -> 'a t -> unit
-(** [add x q] adds the element [x] at th end of the queue [q]. *)
+(** [add x q] adds the element [x] at the end of the queue [q]. *)
 
 exception Empty
 (** Raised when {!take} is applied to an empty queue. *)

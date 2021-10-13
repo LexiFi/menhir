@@ -4,7 +4,7 @@
 type 'a t = {
 
   mutable buffer: 'a array;
-  (* The array that store all elements. *)
+  (* The array that stores all elements. *)
 
   mutable first: int;
   (* Index of the first element in the queue, if any (the one that will be
@@ -14,11 +14,11 @@ type 'a t = {
   (* The number of elements in the queue. *)
 
   (* Invariants:
-     - [Array.length q.buffer] is a power of 2, to speed-up modulo
+     - [Array.length q.buffer] is a power of 2, to speed up modulo
      - [0 <= q.size <= Array.length q.buffer]
   *)
 
-  (* The following code iterate on all queued elements:
+  (* The following code iterates on all queued elements:
 
      for i = 0 to q.size - 1 do
        f q.buffer.((q.first + i) mod (Array.length q.buffer))
