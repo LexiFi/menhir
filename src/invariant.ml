@@ -56,7 +56,10 @@ let () =
 
    (2) If a state [s] has an outgoing transition along nonterminal
    symbol [nt], and if the [goto] table for symbol [nt] has more than
-   one target, then state [s] is represented.
+   one target, then state [s] is represented. (When the [goto] table
+   has only one target, this means that all [goto] transitions labeled
+   [nt] lead to the same state, so the [goto] function can jump to
+   this state without performing a case analysis.)
 
    (3) If a stack cell contains more than one state and if at least
    one of these states is able to handle the [error] token, then these
