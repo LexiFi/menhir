@@ -46,11 +46,12 @@ let is_empty q =
 let add x q =
   let buffer = q.buffer in
   let length = Array.length buffer in
-  if q.size < length then (
+  if q.size < length then begin
     (* Queue still has some room left *)
     buffer.((q.first + q.size) land (length - 1)) <- x;
     q.size <- q.size + 1
-  ) else if length > 0 then (
+  end
+  else if length > 0 then begin
     (* Buffer is full *)
     (* 1. Reallocate a buffer twice the size *)
     let buffer' = Array.make (length * 2) x in
@@ -61,11 +62,12 @@ let add x q =
     q.buffer <- buffer';
     q.first <- 0;
     q.size <- length + 1;
-  ) else (
+  end
+  else begin
     (* Queue has a buffer of size 0. Allocate an initial array. *)
     q.buffer <- Array.make 8 x;
     q.size <- 1;
-  )
+  end
 
 exception Empty
 

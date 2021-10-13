@@ -165,10 +165,10 @@ module ForCustomMaps
      not. *)
 
   let schedule var =
-    if not (B.get var) then (
+    if not (B.get var) then begin
       B.set var true;
       CompactQueue.add var queue
-    )
+    end
 
   (* [update x' p'] ensures that the property associated with the variable [x']
      is at least [p']. If this causes a change in the property at [x'], then
