@@ -78,10 +78,23 @@ type cell = private {
 type word =
   cell array
 
+(**[present cell] determines whether at least one of the four fields
+   [state], [semv], [startp] or [endp] is present in the cell [cell]. *)
+val present: cell -> bool
+
 (**[similar] determines whether two stack cells have the same layout in
    memory, that is, the same OCaml type. This is equivalent to comparing
    all fields except [states]. *)
 val similar: cell -> cell -> bool
+
+(**[meet w1 w2] is the meet of the two stacks [w1] and [w2], that is, the
+   logical conjunction of the information contained in [w1] and [w2]. If [w1]
+   and [w2] contradict one another, then their meet is bottom, and [meet w1
+   w2] is [None]. Caveat: all [states] fields are ignored in this computation;
+   the [states] fields of the result are not as accurate as they could be, and
+   some opportunities to return [None], based on an inspection of the [states]
+   fields, are missed. *)
+val meet: word -> word -> word option
 
 (**[pop w] is the stack [w], deprived of its top element (if it exists). *)
 val pop: word -> word

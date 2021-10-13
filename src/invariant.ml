@@ -445,6 +445,9 @@ let cell symbol states =
 
 (* Accessors. *)
 
+let present cell =
+  cell.holds_state || cell.holds_semv || cell.holds_startp || cell.holds_endp
+
 let similar cell1 cell2 =
   Symbol.equal cell1.symbol cell2.symbol &&
   cell1.holds_state = cell2.holds_state
@@ -453,6 +456,21 @@ let similar cell1 cell2 =
        by the field [symbol]. The field [states] does not need
        to be compared because it does not influence the layout
        of the cell; comparing the field [holds_state] suffices. *)
+
+let meet w1 w2 =
+  let n1, n2 = Array.length w1, Array.length w2 in
+  let n = min n1 n2 in
+  let suffix1, suffix2 = MArray.suffix w1 n, MArray.suffix w2 n in
+  if MArray.for_all2 similar suffix1 suffix2 then
+    (* [w1] and [w2] agree on their common suffix. The meet is
+       then the longest of the two words. (We could compute the
+       intersection of the [states] fields, but we assume that
+       the caller is not interested in this information.) *)
+    Some (if n1 < n2 then w2 else w1)
+  else
+    (* [w1] and [w2] disagree on their common suffix. This implies
+        that their meet is bottom. *)
+    None
 
 let pop =
   MArray.pop
