@@ -111,15 +111,11 @@ let () =
 
 let () =
   Nonterminal.iter (fun nt ->
-    let count =
-      Lr1.targets (fun count _ _ ->
-        count + 1
-      ) 0 (Symbol.N nt)
-    in
-    if count > 1 then
+    let symbol = Symbol.N nt in
+    if Lr1.ntargets symbol > 1 then
       Lr1.targets (fun () sources _ ->
         List.iter represent sources
-      ) () (Symbol.N nt)
+      ) () symbol
   )
 
 (* Enforce condition (3) above. *)
