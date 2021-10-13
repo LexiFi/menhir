@@ -19,8 +19,9 @@
 
    The distribution of sentences is *not* uniform.
 
-   The goal length is not necessarily obeyed exactly; the generator produces a
-   sentence whose length is at most [goal].
+   The goal length is not necessarily obeyed exactly; the generator normally
+   produces a sentence whose length is at most [goal], unless [goal] is so
+   small that no sentence of length [goal] exists.
 
    The time complexity is roughly linear with respect to the goal length.
 
