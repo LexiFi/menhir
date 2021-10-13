@@ -57,14 +57,15 @@ val annotate: expr -> typ -> expr
 (** Projecting out of a [PVar] pattern. *)
 val pat2var: pattern -> string
 
-(* Building a [let] construct, with on-the-fly simplification. These two
-   functions construct a nested sequence of [let] definitions. *)
-
+(** This function constructs a nested sequence of [let] definitions.
+   Certain simplifications are performed on the fly. *)
 val blet: (pattern * expr) list * expr -> expr
+
+(** [mlet] is like [blet], but takes separate lists of patterns and
+    expressions *)
 val mlet: pattern list -> expr list -> expr -> expr
 
-(* Simulating a [let/and] construct. *)
-
+(** Simulating a [let/and] construct. *)
 val eletand: (pattern * expr) list * expr -> expr
 
 (** [eraisenotfound] is an expression that raises [Not_found]. *)
