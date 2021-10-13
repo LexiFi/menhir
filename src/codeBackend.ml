@@ -1499,7 +1499,9 @@ let errorcasedef =
    symbol keeps track of its start or end position, or if [s] can reduce any
    production that mentions [$endpos($0)], then the initial stack should contain
    a sentinel cell with a valid [endp] field at offset 1. For simplicity, we
-   always create a sentinel cell. *)
+   always create a sentinel cell. The position held in this sentinel cell is
+   *not* a dummy position; it is the lexer's current position at the beginning
+   of the parsing process. *)
 
 (* When we allocate a fresh parser environment, the [token] field receives a
    dummy value. It will be overwritten by the first call to [run], which will
