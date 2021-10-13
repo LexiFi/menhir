@@ -17,8 +17,7 @@
 open Positions
 open IL
 
-(* A smart constructor for [PVarLocated]. *)
-
+(** A smart constructor for [PVarLocated]. *)
 val pvarlocated: string located -> pattern
 
 (* Tuples. *)
@@ -49,12 +48,10 @@ val tlocation: typ
 val tlexbuf: typ
 val tobj : typ
 
-(* Building a type variable. *)
-
+(** Building a type variable. *)
 val tvar: string -> typ
 
-(* Building a type scheme. *)
-
+(** Building a type scheme. *)
 val scheme: string list -> typ -> typescheme
 val type2scheme: typ -> typescheme
 
@@ -76,17 +73,14 @@ val mlet: pattern list -> expr list -> expr -> expr
 
 val eletand: (pattern * expr) list * expr -> expr
 
-(* [eraisenotfound] is an expression that raises [Not_found]. *)
-
+(** [eraisenotfound] is an expression that raises [Not_found]. *)
 val eraisenotfound: expr
 
-(* [eassert] builds a runtime assertion [assert e]. *)
-
+(** [eassert] builds a runtime assertion [assert e]. *)
 val eassert: expr -> expr
 
-(* [bottom] is an expression that has every type. Its semantics is
-   irrelevant. *)
-
+(** [bottom] is an expression that has every type. Its semantics is
+    irrelevant. *)
 val bottom: expr
 
 (* Boolean constants. *)
@@ -133,19 +127,19 @@ val prefix: string -> string
 val dataprefix: string -> string
 val tvprefix: string -> string
 
-(* Converting an interface to a structure. Only exception and type definitions
-   go through. *)
+(** Converting an interface to a structure. Only exception and type definitions
+    go through. *)
 val interface_to_structure: interface -> structure
 
-(* Constructing a named module type together with a list of "with type"
-   constraints. *)
+(** Constructing a named module type together with a list of "with type"
+    constraints. *)
 val with_types: with_kind -> string -> (string list * string * typ) list -> module_type
 
-(* Functor applications. *)
+(** Functor applications. *)
 val mapp: modexpr -> modexpr list -> modexpr
 
-(* Record fields. *)
+(** Record fields. *)
 val field: bool -> string -> typ -> fielddef
 
-(* Branches. *)
+(** Branches. *)
 val branch: pattern -> expr -> branch
