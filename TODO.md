@@ -1,6 +1,24 @@
 # TODO
 
-## Preparations for upcoming work on the back-end
+## Work on the new code back-end
+
+* Unit production elimination. We have a chain where `goto` calls `run`, which
+  performs a default reduction, thus calls `reduce` (of a unit production),
+  which calls another `goto` function. Inlining these three calls would
+  reveal that the last `goto` function is called with a known state, so
+  the `match` construct can be eliminated. Experiment with `calc-ast`.
+
+* A related optimization: if a nonterminal symbol has been defined as an
+  abbreviation for a sequence of symbols, then by inlining a `run`
+  function we should also see push/pop elimination followed with
+  a call to `goto` with a known state as an argument. Test.
+
+* Avoid the dependency on `feat` except possibly for testing.
+  Note that a dependency can be marked `{with-test}`.
+
+* Can we avoid generating `match` constructs with only one branch? This
+  requires ensuring that all of the required type information is available
+  beforehand. This may require the use of the long invariant.
 
 * A missed optimization in the current code back-end: reducing an epsilon
   production goes through a generic `reduce` function, thus forgetting the
