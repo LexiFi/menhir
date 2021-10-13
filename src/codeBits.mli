@@ -56,14 +56,16 @@ val tvar: string -> typ
 
 (** Building a type scheme. *)
 val scheme: string list -> typ -> typescheme
+
+(** Building a locally abstract type scheme. *)
+val local_scheme: string list -> typ -> typescheme
+
 val type2scheme: typ -> typescheme
 
-(* Constraining an expression to have a (monomorphic) type. *)
-
+(** Constraining an expression to have a (monomorphic) type. *)
 val annotate: expr -> typ -> expr
 
-(* Projecting out of a [PVar] pattern. *)
-
+(** Projecting out of a [PVar] pattern. *)
 val pat2var: pattern -> string
 
 (* Building a [let] construct, with on-the-fly simplification. These two

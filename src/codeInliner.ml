@@ -141,6 +141,10 @@ let inline_valdefs (defs : valdef list) : valdef list =
 
   (* Taking a fresh instance of a type scheme. Ugly. *)
 
+  (* At this time, this function does not support locally abstract type
+     schemes. It would be possible to support them, keeping in mind that
+     in that case one must look for [TypApp] nodes, not [TyVar] nodes. *)
+
   let instance =
     let count = ref 0 in
     let fresh tv =
@@ -148,6 +152,7 @@ let inline_valdefs (defs : valdef list) : valdef list =
       tv, Printf.sprintf "freshtv%d" !count
     in
     fun scheme ->
+      assert (not scheme.locally_abstract);
       let mapping = List.map fresh scheme.quantifiers in
       let rec sub typ =
         match typ with

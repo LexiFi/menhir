@@ -312,17 +312,26 @@ let rec exprlet k pes f e2 =
   | [] ->
       exprk k f e2
   | (PUnit, e1) :: pes ->
-      fprintf f "%a%t%a" (exprk AllButLetFunTryMatch) e1 seminl (exprlet k pes) e2
+      fprintf f "%a%t%a"
+        (exprk AllButLetFunTryMatch) e1
+        seminl
+        (exprlet k pes) e2
   | (PVar id1, EAnnot (e1, ts1)) :: pes ->
-      (* TEMPORARY current ocaml does not support type schemes here; drop quantifiers, if any *)
-      fprintf f "let %s : %a = %a in%t%a" id1 typ ts1.body (* scheme ts1 *) expr e1 nl (exprlet k pes) e2
+      fprintf f "let %s : %a = %a in%t%a"
+        id1 scheme ts1
+        expr e1 nl (exprlet k pes) e2
   | (PVar id1, EFun (ps1, e1)) :: pes ->
       fprintf f "let %s%a = %a in%t%t%a"
-        id1 (list pat0 space) ps1 (indent 2 expr) e1 nl nl (exprlet k pes) e2
+        id1 (list pat0 space) ps1
+        (indent 2 expr) e1 nl nl (exprlet k pes) e2
   | (p1, (ELet _ as e1)) :: pes ->
-      fprintf f "let %a =%a%tin%t%a" pat p1 (indent 2 expr) e1 nl nl (exprlet k pes) e2
+      fprintf f "let %a =%a%tin%t%a"
+        pat p1 (indent 2 expr) e1 nl nl
+        (exprlet k pes) e2
   | (p1, e1) :: pes ->
-      fprintf f "let %a = %a in%t%a" pat p1 expr e1 nl (exprlet k pes) e2
+      fprintf f "let %a = %a in%t%a"
+        pat p1 expr e1 nl
+        (exprlet k pes) e2
 
 and atom f e =
   exprk OnlyAtom f e
@@ -346,8 +355,8 @@ and exprk k f e =
           fprintf f "(* %s%a *)%t%a" s pat p nl (exprk k) e
         else
           exprk k f e
-    | ELet (pes, e2) ->
-        exprlet k pes f e2
+    | ELet (pes, body) ->
+        exprlet k pes f body
     | ERecordWrite (e1, field, e2) ->
         fprintf f "%a.%s <- %a" atom e1 field (exprk (andNotSeq k)) e2
     | EMatch (_, []) ->
@@ -361,8 +370,11 @@ and exprk k f e =
     | EIfThen (e1, e2) ->
         fprintf f "if %a then%a" expr e1 (indent 2 (exprk (andNotSeq k))) e2
     | EIfThenElse (e0, e1, e2) ->
-        fprintf f "if %a then%a%telse%a"
-          expr e0 (indent 2 (exprk AllButIfThenSeq)) e1 nl (indent 2 (exprk (andNotSeq k))) e2
+        fprintf f "if %a then%a%telse%a" expr e0
+          (indent 2 (exprk AllButIfThenSeq))
+          e1 nl
+          (indent 2 (exprk (andNotSeq k)))
+          e2
     | EFun (ps, e) ->
         fprintf f "fun%a ->%a" (list pat0 space) ps (indent 2 (exprk k)) e
     | EApp (EVar op, [ e1; e2 ])
@@ -406,8 +418,7 @@ and exprk k f e =
     | ETuple (_ :: _ :: _ as es) ->
         fprintf f "(%a)" (seplist app comma) es
     | EAnnot (e, s) ->
-        (* TEMPORARY current ocaml does not support type schemes here; drop quantifiers, if any *)
-        fprintf f "(%a : %a)" app e typ s.body (* should be scheme s *)
+        fprintf f "(%a : %a)" app e scheme_without_quantifiers s
     | ERecordAccess (e, field) ->
         fprintf f "%a.%s" atom e field
     | ERecord fs ->
@@ -518,10 +529,14 @@ and typevar f = function
   | v ->
       fprintf f "'%s" v
 
+and quote_less_typevar f = function
+  | "_" ->
+      fprintf f "_"
+  | v ->
+      fprintf f "%s" v
+
 and typ0 f = function
   | TypTextual (Stretch.Declared ocamltype) ->
-      (* Parentheses are necessary to avoid confusion between 1 - ary
-         data constructor with n arguments and n - ary data constructor. *)
       fprintf f "(%a)" (stretch true) ocamltype
   | TypTextual (Stretch.Inferred t) ->
       line := !line + LineCount.count 0 (Lexing.from_string t);
@@ -555,7 +570,22 @@ and scheme f scheme =
   | [] ->
       typ f scheme.body
   | qs ->
-      fprintf f "%a. %a" (list typevar space) qs typ scheme.body
+      if scheme.locally_abstract then
+        fprintf f "type %a. %a"
+          (list quote_less_typevar space)
+          qs typ scheme.body
+      else
+        fprintf f "%a. %a" (list typevar space) qs typ scheme.body
+
+(* [scheme_without_quantifiers] is used in places where the IL AST allows
+   a type scheme, but the OCaml syntax requires a monotype. *)
+
+and scheme_without_quantifiers f scheme =
+  match scheme.quantifiers with
+  | [] ->
+      typ f scheme.body
+  | _ ->
+      assert false (* AST cannot be printed *)
 
 (* ------------------------------------------------------------------------- *)
 (* Toplevel definition printer. *)
@@ -642,8 +672,7 @@ let rec pdefs pdef sep1 sep2 f = function
 
 let valdef f = function
   | { valpat = PVar id; valval = EAnnot (e, ts) } ->
-      (* TEMPORARY current ocaml does not support type schemes here; drop quantifiers, if any *)
-      fprintf f "%s : %a =%a" id typ ts.body (* scheme ts *) (indent 2 expr) e
+      fprintf f "%s : %a =%a" id scheme ts (indent 2 expr) e
   | { valpat = p; valval = e } ->
       fprintf f "%a =%a" pat p (indent 2 expr) e
 
