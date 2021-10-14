@@ -17,7 +17,7 @@ module Run
        val verbose : bool
      end)
     () :
-  LRijkstra.REACHABILITY_ALGORITHM
+  LRijkstra.REACHABILITY_RESULT
 =
 struct
   open Grammar

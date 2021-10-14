@@ -45,9 +45,9 @@ let () =
     end in
     let (module Alg) = match Settings.list_errors_algorithm with
       | `Fast | `Validate ->
-        (module LRijkstraFast.Run(X) : LRijkstra.REACHABILITY_FUNCTOR)
+        (module LRijkstraFast.Run(X) : LRijkstra.REACHABILITY_ALGORITHM)
       | `Classic ->
-        (module LRijkstraClassic.Run(X) : LRijkstra.REACHABILITY_FUNCTOR)
+        (module LRijkstraClassic.Run(X) : LRijkstra.REACHABILITY_ALGORITHM)
     in
     let module L = struct
       include LRijkstra.Run(X)(Alg)()

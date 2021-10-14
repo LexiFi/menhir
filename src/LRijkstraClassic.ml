@@ -97,7 +97,7 @@ module Run (X : sig
   (* If [verbose] is set, produce various messages on [stderr]. *)
   val verbose: bool
 end)() : sig
-  include LRijkstra.REACHABILITY_ALGORITHM
+  include LRijkstra.REACHABILITY_RESULT
 
   val query :
     Lr1.node -> Nonterminal.t -> Terminal.t ->

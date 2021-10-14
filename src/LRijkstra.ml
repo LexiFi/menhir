@@ -34,7 +34,7 @@ x   removes some (shift or reduce) actions, hence may suppress the shortest
 
 open Grammar
 
-module type REACHABILITY_ALGORITHM = sig
+module type REACHABILITY_RESULT = sig
   module Word : sig
     type t
     val singleton : Terminal.t -> t
@@ -71,7 +71,7 @@ module type REACHABILITY_ALGORITHM = sig
   end
 end
 
-module type REACHABILITY_FUNCTOR = functor () -> REACHABILITY_ALGORITHM
+module type REACHABILITY_ALGORITHM = functor () -> REACHABILITY_RESULT
 
 (* ------------------------------------------------------------------------ *)
 
@@ -87,7 +87,7 @@ module Run
           a file to which one line of statistics is appended. *)
        val statistics: string option
      end)
-    (Alg : REACHABILITY_FUNCTOR)
+    (Alg : REACHABILITY_ALGORITHM)
     () =
 struct
 

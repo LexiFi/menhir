@@ -33,7 +33,7 @@ module Run
 sig
   open Grammar
 
-  include LRijkstra.REACHABILITY_ALGORITHM
+  include LRijkstra.REACHABILITY_RESULT
 
   val query :
     Lr1.node -> Nonterminal.t -> Terminal.t ->
