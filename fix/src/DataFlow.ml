@@ -92,7 +92,6 @@ module Run
      Its outgoing transitions are inspected and its successors are updated. *)
 
   let examine (x : variable) =
-    (* [x] is dirty, so a property must have been associated with it. *)
     let p = try M.find x properties with Not_found -> assert false in
     G.foreach_successor x p update
 
@@ -185,18 +184,18 @@ module ForCustomMaps
       schedule x'
     end
 
-  (* [examine] examines a variable that has just been taken out of the stack.
+  (* [examine] examines a variable that has just been taken out of the queue.
      Its outgoing transitions are inspected and its successors are updated. *)
 
   let examine (x : variable) =
     (* [x] is dirty, so a property must have been associated with it. *)
     G.foreach_successor x (V.get x) update
 
-  (* Populate the stack with the root variables. *)
+  (* Populate the queue with the root variables. *)
 
   let () = G.foreach_root (fun x p -> V.set x p; schedule x)
 
-  (* As long as the stack is nonempty, take a variable and examine it. *)
+  (* As long as the queue is nonempty, take a variable and examine it. *)
 
   let () =
     while not (CompactQueue.is_empty queue) do
