@@ -58,21 +58,22 @@ module Typed : sig
 
   (** A value of type [c : n cardinal] witnesses the fact that the set [n] has
       cardinal [c].
-      A [cardinal] is always greather than or equal to 0.
+      A [cardinal] is always greater than or equal to 0.
   *)
-  type 'n cardinal = private int lazy_t
+  type 'n cardinal
   val cardinal : 'n cardinal -> int
 
   (** A value of type [i : n index] is an integer that is guaranteed to belong
       to the set [n].
       If [c : n cardinal], then [0 <= i < c].
 
-      Note: element of a finite set are called [index] because their main
-      purpose is to index information in fixed-size vectors. See [Vector].
+      Note: elements of a finite set are called [index] because their main
+      purpose is to index information in fixed-size vectors.
+      See [Vector] sub-module below.
   *)
   type 'n index = private int
 
-  (** Type-level sets are introduced by modules (to create fresh type names)
+  (** Type-level sets are introduced by modules (to create fresh type names).
       A new set is represented by a pair of a fresh abstract type [n] and a
       [cardinal] value that represents the cardinal of the set.  *)
   module type CARDINAL = sig type n val n : n cardinal end
@@ -91,14 +92,14 @@ module Typed : sig
     include CARDINAL
 
     (** Add a new element is the set if [cardinal] has not been forced yet.
-        Raise a [Failure] otherwise. *)
+        It is forbidden to call [fresh] after forcing the cardinal. *)
     val fresh : unit -> n index
   end
 
   (** Sum of two sets.
       These definitions implements the disjoint union operator L + R. *)
 
-  (** The either type is used to tell whether a value belongs to the left or
+  (** The type [either] is used to tell whether a value belongs to the left or
       the right set *)
   type ('l, 'r) either =
     | L of 'l
@@ -116,9 +117,10 @@ module Typed : sig
   end
 
   (** Introduce a new set that is the sum of [L] and [R].
-      It is strict in [L.cardinal] but not [R.cardinal]: if [R] is a set issued
-      by [Gensym()] that has not been forced, new elements can be added even
-      after computing a [Sum] *)
+      It is strict in [L.cardinal] but not [R.cardinal]: if [R] is an instance
+      of [Gensym()] that has not been forced, new elements can still be added.
+      Forcing the resulting cardinal forces [R.cardinal] too.
+  *)
   module Sum(L : CARDINAL)(R : CARDINAL) :
     SUM with type l := L.n
          and type r := R.n
