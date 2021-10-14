@@ -138,7 +138,8 @@ module Index = struct
 
   exception End_of_set
 
-  let enumerate (lazy c : 'n cardinal) =
+  let enumerate (c : 'n cardinal) =
+    let c = cardinal c in
     let k = ref 0 in
     (fun () ->
        let result = !k in
@@ -170,13 +171,19 @@ module Vector = struct
   let empty = [||]
 
   let make (n : _ cardinal) v =
-    let lazy n = n in
+    let n = cardinal n in
     Array.make n v
 
   let make' (n : _ cardinal) f =
-    let lazy n = n in
-    if n = 0 then empty else Array.make n (f ())
+    let n = cardinal n in
+    if n = 0 then
+      empty
+    else
+      Array.make n (f ())
 
-  let init (n : _ cardinal) f = let lazy n = n in Array.init n f
+  let init (n : _ cardinal) f =
+    let n = cardinal n in
+    Array.init n f
+
   let map = Array.map
 end
