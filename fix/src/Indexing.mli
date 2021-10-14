@@ -92,10 +92,19 @@ val sum : 'l cardinal -> 'r cardinal ->
 (** Manipulate elements from a finite set *)
 module Index : sig
   type 'n t = 'n index
+
+  (** [of_int cardinal n] returns [n] at a finer index type, witnessing that
+      the value belongs to the finite set defined by [ 0 .. cardinal [.
+      It is forbidden to call [of_int] when [n] is outside of this interval. *)
   val of_int : 'n cardinal -> int -> 'n index
+
   val to_int : 'n index -> int
 
+  (** [enumerate cardinal] returns an imperative iterator, that will returns
+      indexes from 0 to cardinal-1, increasing after each call.
+      Further calls after reaching cardinal-1 raises [End_of_set]. *)
   val enumerate : 'n cardinal -> (unit -> 'n index)
+  exception End_of_set
 
   val iter : 'n cardinal -> ('n index -> unit) -> unit
 end
