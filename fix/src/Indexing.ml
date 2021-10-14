@@ -35,14 +35,14 @@ type 'n index = int
 module type CARDINAL = sig type n val n : n cardinal end
 
 (** Create a new type for a set with a determined cardinal. *)
-module Const(X : sig val cardinal : int end) : CARDINAL =
+module Const(X : sig val cardinal : int end) =
 struct
   type n
   let () = assert (X.cardinal >= 0)
   let n = lazy X.cardinal
 end
 
-module Empty : CARDINAL = struct
+module Empty = struct
   type n
   let n = lazy 0
 end
@@ -127,16 +127,7 @@ let sum (type l r)
   (module Sum(L)(R) : SUM with type l = l and type r = r)
 
 (** Manipulate elements from a finite set *)
-module Index : sig
-  type 'n t = 'n index
-  val of_int : 'n cardinal -> int -> 'n index
-  val to_int : 'n index -> int
-
-  exception End_of_set
-  val enumerate : 'n cardinal -> (unit -> 'n index)
-
-  val iter : 'n cardinal -> ('n index -> unit) -> unit
-end = struct
+module Index = struct
   type 'n t = 'n index
 
   let of_int (c : _ cardinal) i =
@@ -165,21 +156,7 @@ end
 (** Manipulate fixed-size vectors, whose domain is a type-level [set] *)
 type ('n, 'a) vector = 'a array
 
-module Vector : sig
-  type ('n, 'a) t = ('n, 'a) vector
-
-  val get : ('n, 'a) t -> 'n index -> 'a
-  val set : ('n, 'a) t -> 'n index -> 'a -> unit
-  val set_cons : ('n, 'a list) t -> 'n index -> 'a -> unit
-
-  val length : ('n, 'a) t -> 'n cardinal
-  val empty : (Empty.n, _) t
-
-  val make : 'n cardinal -> 'a -> ('n, 'a) t
-  val make' : 'n cardinal -> (unit -> 'a) -> ('n, 'a) t
-  val init : 'n cardinal -> ('n index -> 'a) -> ('n, 'a) t
-  val map : ('a -> 'b) -> ('n, 'a) t -> ('n, 'b) t
-end = struct
+module Vector = struct
   type ('n, 'a) t = ('n, 'a) vector
 
   (* Modular abstraction should guarantee that get and set calls are always
