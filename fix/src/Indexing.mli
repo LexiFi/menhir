@@ -22,6 +22,12 @@
       A [cardinal] is always greater than or equal to 0.
 *)
 type 'n cardinal
+
+(** The [cardinal] function returns the cardinal of a set as an integer.
+    If the set is potentially-growing (produced by the [Gensym] functor below),
+    calling [cardinal] has the side-effect of fixing the cardinal:
+    no new elements can be added, calling the [fresh] function is forbidden.
+*)
 val cardinal : 'n cardinal -> int
 
 (** A value of type [i : n index] is an integer that is guaranteed to belong
@@ -100,9 +106,9 @@ module Index : sig
 
   val to_int : 'n index -> int
 
-  (** [enumerate cardinal] returns an imperative iterator, that will returns
+  (** [enumerate cardinal] returns an imperative iterator, that will return
       indexes from 0 to cardinal-1, increasing after each call.
-      Further calls after reaching cardinal-1 raises [End_of_set]. *)
+      Calling again after reaching cardinal-1 raises [End_of_set]. *)
   val enumerate : 'n cardinal -> (unit -> 'n index)
   exception End_of_set
 

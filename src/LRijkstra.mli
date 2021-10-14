@@ -25,7 +25,21 @@
 
 open Grammar
 
+(* The output of reachability algorithms.
+
+   The core part is the [Graph] sub-module: reachability results are given as a
+   graph whose nodes and transitions refine the LR(1) automaton states.
+
+   The refinement keeps track of lookahead dependencies. Edges (transitions)
+   are labelled with the shortest word that permit following them.
+   Shortest sentences are found by running a Dijkstra's shortest path algorithm
+   on the graph.
+*)
 module type REACHABILITY_RESULT = sig
+
+  (* A Word is a sequence of terminals with an abstract representation.
+     This is useful for LRijkstraClassic that uses a specialized
+     representation. *)
   module Word : sig
     type t
     val singleton : Terminal.t -> t
@@ -62,6 +76,7 @@ module type REACHABILITY_RESULT = sig
   end
 end
 
+(* Run the reachability algorithm *)
 module type REACHABILITY_ALGORITHM = functor () -> REACHABILITY_RESULT
 
 module Run
@@ -73,7 +88,16 @@ module Run
           a file to which one line of statistics is appended. *)
        val statistics: string option
      end)
+
+    (* We have two algorithms to compute reachability.
+       The original one is LRijsktraClassic, LRijsktraFast is a faster
+       alternative.
+       The two are still provided for testing purposes and backward
+       compatibility, so LRijkstra is now parameterized by the chosen
+       algorithm.
+    *)
     (Alg : REACHABILITY_ALGORITHM)
+
     ()
   :
 sig

@@ -46,7 +46,8 @@ struct
     let to_g lr1 = Lr1.of_number (Index.to_int lr1)
   end
 
-  (* Transitions are represented *)
+  (* Transitions are represented as finite sets with auxiliary functions
+     to get the predecessors, successors and labels. *)
   module Transition : sig
     (* Abstract types used as index to represent the different sets of
        transitions.
@@ -835,8 +836,13 @@ struct
       | Pre_identity
       | Pre_singleton of int
 
-    (* Compute the pre-coercion from two partitions
-         first(cost(s, A)) and first(ccost(𝑠, 𝐴 → 𝜖•𝛼))) *)
+    (* Compute the pre coercion from a partition of the form
+         P = first(cost(s, A))
+       to a partition of the form
+         Q = first(ccost(𝑠, 𝐴 → 𝜖•𝛼)))
+
+       If 𝛼 starts with a terminal, we look only for the
+    *)
     let pre outer inner =
       if outer == inner then
         Some (Pre_identity)

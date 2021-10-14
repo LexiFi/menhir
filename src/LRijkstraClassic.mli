@@ -15,7 +15,9 @@
    constructed, this (expensive) analysis determines exactly under which
    conditions each nonterminal edge in the automaton can be taken. This
    information can then be used to determine how to reach certain states
-   in the automaton; see, e.g., [LRijkstra]. *)
+   in the automaton; see, e.g., [LRijkstra].
+
+   [LRijsktraFast] implements a faster alternative.  *)
 
 (* In this analysis, we explicitly ignore the [error] token. (We display a
    warning if the grammar uses this token.) Thus, we disregard any reductions
@@ -35,8 +37,15 @@ sig
 
   include LRijkstra.REACHABILITY_RESULT
 
-  val query :
-    Lr1.node -> Nonterminal.t -> Terminal.t ->
-    (Word.t -> Terminal.t -> unit) ->
-    unit
+  (* [query s nt a] enumerates all words [w] and all symbols [z] such that, in
+     state [s], the outgoing edge labeled [nt] can be taken by consuming the
+     word [w], under the assumption that the next symbol is [z], and the first
+     symbol of the word [w.z] is [a]. *)
+  val query:
+    (* s:  *) Lr1.node ->
+    (* nt: *) Nonterminal.t ->
+    (* a:  *) Terminal.t ->
+    (* f:  *) (Word.t -> Terminal.t -> unit) ->
+              unit
+
 end

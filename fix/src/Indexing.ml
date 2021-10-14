@@ -12,29 +12,14 @@
 
 open Sigs
 
-(** A value of type [c : n cardinal] witnesses the fact that the set [n] has
-      cardinal [c].
-      A [cardinal] is always greater than or equal to 0.
-*)
 type 'n cardinal = int lazy_t
+
 let cardinal (lazy x : 'n cardinal) : int = x
 
-(** A value of type [i : n index] is an integer that is guaranteed to belong
-    to the set [n].
-    If [c : n cardinal], then [0 <= i < c].
-
-    Note: elements of a finite set are called [index] because their main
-    purpose is to index information in fixed-size vectors.
-    See [Vector] sub-module below.
-*)
 type 'n index = int
 
-(** Type-level sets are introduced by modules (to create fresh type names).
-    A new set is represented by a pair of a fresh abstract type [n] and a
-    [cardinal] value that represents the cardinal of the set.  *)
 module type CARDINAL = sig type n val n : n cardinal end
 
-(** Create a new type for a set with a determined cardinal. *)
 module Const(X : sig val cardinal : int end) =
 struct
   type n
@@ -51,16 +36,7 @@ let const c : (module CARDINAL) =
   assert (c >= 0);
   (module struct type n let n = lazy c end)
 
-(** "Gensym", for sets whose cardinality is not yet known.
-    Creates a new set to which elements can be added as long as its cardinal
-    has not been observed. *)
-module Gensym() : sig
-  include CARDINAL
-
-  (** Add a new element is the set if [cardinal] has not been forced yet.
-      It is forbidden to call [fresh] after forcing the cardinal. *)
-  val fresh : unit -> n index
-end = struct
+module Gensym() = struct
   type n
   let counter = ref 0
   let n = lazy !counter
@@ -75,15 +51,10 @@ end
 (** Sum of two sets.
     These definitions implements the disjoint union operator L + R. *)
 
-(** The type [either] is used to tell whether a value belongs to the left or
-    the right set *)
 type ('l, 'r) either =
   | L of 'l
   | R of 'r
 
-(** The SUM module type.
-    It defines a set [n] and exposes the isomorphism between [n] and [l + r].
-*)
 module type SUM = sig
   type l and r
   include CARDINAL
@@ -92,11 +63,6 @@ module type SUM = sig
   val prj : n index -> (l index, r index) either
 end
 
-(** Introduce a new set that is the sum of [L] and [R].
-    It is strict in [L.cardinal] but not [R.cardinal]: if [R] is an instance
-    of [Gensym()] that has not been forced, new elements can still be added.
-    Forcing the resulting cardinal forces [R.cardinal] too.
-*)
 module Sum(L : CARDINAL)(R : CARDINAL) =
 struct
   type n = unit
@@ -160,8 +126,7 @@ type ('n, 'a) vector = 'a array
 module Vector = struct
   type ('n, 'a) t = ('n, 'a) vector
 
-  (* Modular abstraction should guarantee that get and set calls are always
-     safe. *)
+  (* Modular abstraction guarantee that get and set calls are always safe. *)
   let get = Array.unsafe_get
   let set = Array.unsafe_set
   let set_cons t i x = set t i (x :: get t i)

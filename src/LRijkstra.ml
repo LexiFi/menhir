@@ -29,7 +29,7 @@
    difficulties arise, including the fact that reductions are subject to a
    lookahead hypothesis; the fact that some states have a default reduction,
    hence will never trigger an error; the fact that conflict resolution
-x   removes some (shift or reduce) actions, hence may suppress the shortest
+   removes some (shift or reduce) actions, hence may suppress the shortest
    path. *)
 
 open Grammar
