@@ -29,7 +29,7 @@ struct
   let terminal_partition =
     let module TerminalPartition = Refine.Make(TerminalSet) in
     fun sets ->
-      (* Removing duplicates can speed-up partitioning significantly *)
+      (* Removing duplicates can speed up partitioning significantly *)
       let sets = List.sort_uniq TerminalSet.compare sets in
       TerminalPartition.partition sets
 
@@ -79,9 +79,7 @@ struct
        labelled by [nt], or raise [Not_found].  *)
     val find_goto : Lr1C.n index -> Nonterminal.t -> goto index
 
-    (*val find : Lr1C.n index -> Symbol.t -> any index*)
-
-    (* Get the source source of a transition *)
+    (* Get the source state of a transition *)
     val source : any index -> Lr1C.n index
 
     (* Get the target state of a transition *)
@@ -145,8 +143,8 @@ struct
 
     (* Vectors to store information on states and transitions.
 
-       We allocate a bunch of datastructures (sources, targets, t_symbols,
-       nt_symbols and predecessors vectors, t_table and nt_table hashtables),
+       We allocate a bunch of data structures (sources, targets, t_symbols,
+       nt_symbols and predecessors vectors, t_table and nt_table hash tables),
        and then populate them by iterating over all transitions.
     *)
 
@@ -156,7 +154,7 @@ struct
     let t_symbols = Vector.make' shift (fun () -> Terminal.i2t 0)
     let nt_symbols = Vector.make' goto (fun () -> Nonterminal.i2n 0)
 
-    (* Hashtables to associate information to the pair of
+    (* Hash tables to associate information to the pair of
        a transition and a symbol.
     *)
 
@@ -180,7 +178,7 @@ struct
     let predecessors = Vector.make Lr1C.n []
 
     let successors =
-      (* We populate all the data structure allocated above, i.e.
+      (* We populate all the data structures allocated above, i.e.
          the vectors t_sources, t_symbols, t_targets, nt_sources, nt_symbols,
          nt_targets and predecessors, as well as the tables t_table and
          nt_table, by iterating over all successors. *)
@@ -189,27 +187,27 @@ struct
       Vector.init Lr1C.n begin fun source ->
         SymbolMap.fold begin fun sym target acc ->
           match sym with
-          | Symbol.T t when not (Terminal.real t) ->
-            (* Ignore pseudo-terminals *)
-            acc
-          | _ ->
-            let target = Lr1C.of_g target in
-            let index = match sym with
-              | Symbol.T t ->
-                let index = next_shift () in
-                Vector.set t_symbols index t;
-                Hashtbl.add t_table (t_pack source t) index;
-                of_shift index
-              | Symbol.N nt ->
-                let index = next_goto () in
-                Vector.set nt_symbols index nt;
-                Hashtbl.add nt_table (nt_pack source nt) index;
-                of_goto index
-            in
-            Vector.set sources index source;
-            Vector.set targets index target;
-            Vector.set_cons predecessors target index;
-            index :: acc
+            | Symbol.T t when not (Terminal.real t) ->
+              (* Ignore pseudo-terminals *)
+              acc
+            | _ ->
+              let target = Lr1C.of_g target in
+              let index = match sym with
+                | Symbol.T t ->
+                  let index = next_shift () in
+                  Vector.set t_symbols index t;
+                  Hashtbl.add t_table (t_pack source t) index;
+                  of_shift index
+                | Symbol.N nt ->
+                  let index = next_goto () in
+                  Vector.set nt_symbols index nt;
+                  Hashtbl.add nt_table (nt_pack source nt) index;
+                  of_goto index
+              in
+              Vector.set sources index source;
+              Vector.set targets index target;
+              Vector.set_cons predecessors target index;
+              index :: acc
         end (Lr1.transitions (Lr1C.to_g source)) []
       end
 
@@ -217,12 +215,6 @@ struct
     let predecessors lr1 = Vector.get predecessors lr1
 
     let find_goto source nt = Hashtbl.find nt_table (nt_pack source nt)
-
-    (* Unused
-       let find source = function
-         | Symbol.T t -> of_shift (Hashtbl.find t_table (t_pack source t))
-         | Symbol.N nt -> of_goto (Hashtbl.find nt_table (nt_pack source nt))
-    *)
 
     let source i = Vector.get sources i
 
@@ -270,7 +262,7 @@ struct
       state: Lr1C.n index;
     }
 
-    (* [goto_transition tr] list all the reductions that ends up
+    (* [goto_transition tr] lists all the reductions that ends up
        following [tr]. *)
     val goto_transition: Transition.goto index -> t list
   end = struct
@@ -284,7 +276,7 @@ struct
 
     let table = Vector.make Transition.goto []
 
-    (* [add_reduction lr1 (production, lookahead)] populate [table] by
+    (* [add_reduction lr1 (production, lookahead)] populates [table] by
        simulating the reduction [production], starting from [lr1] when
        lookahead is in [lookahead] *)
     let add_reduction lr1 (production, lookahead) =
@@ -671,7 +663,7 @@ struct
      memory is consumed by cost matrices.
 
      Therefore we want a rather compact encoding.
-     We use an encoding with two-levels:
+     We use a two-level encoding:
      - first the [table] vector maps a node index to a "compact cost matrix"
      - each "compact cost matrix" is represented as a 1-dimensional array of
        integers, of dimension |classes_before n| * |classes_after n|
@@ -689,15 +681,15 @@ struct
   *)
   module Cells : sig
 
-    (* The table that store all compact cost matrices.
-       [Vector.get table n] is the matrix of node [n], represented as a linear array
-       of length |before(n)| * |after(n)|.
+    (* The table that stores all compact cost matrices.
+       [Vector.get table n] is the matrix of node [n], represented as a linear
+       array of length |before(n)| * |after(n)|.
     *)
     val table : (Tree.n, int array) vector
 
-    (* A value of type t identify a single cell. It is an integer that encodes
-       the node index and the offset of the cell inside the matrix of that
-       node.
+    (* A value of type t identifies a single cell. It is an integer that
+       encodes the node index and the offset of the cell inside the matrix of
+       that node.
     *)
     type t = private int
 
@@ -822,14 +814,14 @@ struct
      Therefore, we never need to represent the rows and columns that correspond
      to the missing class; by construction we know they have infinite cost.
      For instance for shift transitions, it means we only have a 1x1 matrix:
-     the two-classes are the terminal being shifted, with a cost of one, and
+     the two classes are the terminal being shifted, with a cost of one, and
      its complement, with an infinite cost, that is omitted.
 
      Our coercion functions are augmented to handle this special case.
   *)
   module Coercion = struct
 
-    (* Pre-coercion are used to handle the minimum in equation (7):
+    (* Pre coercions are used to handle the minimum in equation (7):
        ccost(𝑠, 𝐴 → 𝜖•𝛼) · creduce(𝑠, 𝐴 → 𝛼)
 
        If 𝛼 begins with a terminal, it will have only one class.
@@ -863,7 +855,7 @@ struct
           None
       )
 
-    (* The infix is the general representation for the coercion matrices
+    (* The type infix is the general representation for the coercion matrices
        coerce(𝑃, 𝑄) appearing in 𝑀1 · coerce(𝑃, 𝑄) · 𝑀2
 
        Since Q is finer than P, a class of P maps to multiple classes of Q.
@@ -933,9 +925,9 @@ struct
            coercion matrix. *)
         Inner of Tree.Inner.n index * Coercion.infix
 
-    let dependants : (Tree.n, reverse_dependency list) vector =
+    let dependents : (Tree.n, reverse_dependency list) vector =
       (* Store enough information with each node of the tree to compute
-         which cells are affected if a cell of this node change.
+         which cells are affected if a cell of this node changes.
 
          Because of sharing, a node can have multiple parents.
       *)
@@ -980,7 +972,7 @@ struct
         | Some pre ->
           let after' = Tree.classes_after node' in
           let coe = Coercion.infix after' after ~lookahead in
-          Vector.set_cons dependants node'
+          Vector.set_cons dependents node'
             (Leaf (tr, pre, coe.Coercion.forward))
       end non_nullable
 
@@ -994,11 +986,11 @@ struct
       let coercion = Coercion.infix c1 c2 in
       let dep = Inner (node, coercion) in
       assert (Array.length c2 = Array.length coercion.Coercion.backward);
-      Vector.set_cons dependants l dep;
-      Vector.set_cons dependants r dep
+      Vector.set_cons dependents l dep;
+      Vector.set_cons dependents r dep
 
     let () =
-      (* Visit all nodes to populate the [dependants] vector *)
+      (* Visit all nodes to populate the [dependents] vector *)
       Index.iter Transition.shift record_shift;
       Index.iter Transition.goto record_goto;
       Index.iter Tree.Inner.n record_inner
@@ -1059,7 +1051,7 @@ struct
             (* This change updates the cost of an occurrence of equation 8,
                of the form l . coercion . r
                We have to find whether the change comes from the [l] or the [r]
-               node to update the right cells of the parent *)
+               node to update the right-hand cells of the parent *)
             let l, r = Tree.define parent in
             let parent_index = Cells.encode (Tree.inject parent) in
             if l = node then (
@@ -1092,7 +1084,7 @@ struct
                 done
             )
         in
-        List.iter update_dep (Vector.get dependants node)
+        List.iter update_dep (Vector.get dependents node)
     end
 
     module Property = struct
@@ -1114,7 +1106,7 @@ struct
     end
 
     module MarkMap = struct
-      (* Associate a boolean to each cell.
+      (* Associate a boolean value to each cell.
          For efficiency, we use a "bytes" for each node, each cell
          corresponding to a single byte.
          We could instead use bits, encoding 8 cells per byte, but the gain is
@@ -1145,7 +1137,7 @@ struct
 
   module Word = struct
     (* We don't need any optimization for representing words,
-       a list of terminal is enough. *)
+       a list of terminals is enough. *)
 
     type t = Terminal.t list
     let singleton x = [x]
@@ -1244,8 +1236,8 @@ struct
         end
       | R inner ->
         (* It is an inner node.
-           We decompose the problem in a left and a right sub-problem,
-           and find sub-solutions of minimal cost *)
+           We decompose the problem in a left-hand and a right-hand
+           sub-problems, and find sub-solutions of minimal cost *)
         let current_cost = Cells.cost cell in
         let l, r = Tree.define inner in
         let coercion =
@@ -1374,7 +1366,7 @@ struct
        In a partition, there is always one class that we can deduce from the
        other ones by removing all other classes from T.
        The algorithm is crafted such that this class contains all unreachable
-       configuration.
+       configurations.
        For instance, for a shift transition on a, the partition {{a}, T/{a}} is
        simply represented as [TerminalSet.singleton a]. The
 
@@ -1387,7 +1379,7 @@ struct
     let validate () =
       (* A flag to remember if we found an error.
          We could print the first error and exit immediately, but debugging was
-         much nicer when accumulating errors and failing after.
+         much nicer when accumulating errors and failing afterwards.
          This helped to find patterns in the errors that made fixing easier.
       *)
       let failed = ref false in
@@ -1400,7 +1392,7 @@ struct
         let tr = Transition.of_goto tr in
         let node = Tree.leaf tr in
         let lr1 = Lr1C.to_g (Transition.source tr) in
-        (* Check that the classical algorithm agree that the node is
+        (* Check that the classical algorithm agrees that the node is
            unreachable when the lookahead before is in the missing class *)
         let missing_before = missing (Tree.classes_before node) in
         TerminalSet.iter begin fun t ->
@@ -1413,15 +1405,15 @@ struct
               failed := true;
             )
         end missing_before;
-        (* Check that the classical algorithm agree on the minimum cost, and
+        (* Check that the classical algorithm agrees on the minimum cost, and
            on the unreachable configurations after following the transition. *)
         let missing_after = missing (Tree.classes_after node) in
         Array.iteri begin fun i_b s_b ->
           (* We can visit the classes before the transition in order,
-             but the classes after are visited in an unpredictable order
-             (determined by the Classic algorithm.
-             We use a hashtable to store temporary results,
-             then visit the hashtable in an order convenient for comparing the
+             but the classes after the transition are visited in an
+             unpredictable order (determined by the Classic algorithm).
+             We use a hash table to store temporary results, then visit the
+             hash table in an order convenient for comparing the
              "after classes". *)
           let min_table = Hashtbl.create 7 in
           TerminalSet.iter begin fun t ->

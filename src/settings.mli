@@ -204,10 +204,11 @@ type list_errors_algorithm = [
 
 (** When using --list-errors, this setting determines which algorithm is used
    to produce a list of erroneous input sentences.
-   Fast is the default one, described in SLE 2021 paper.
-   Classic was the default before september 2021, described in CC 2016 paper.
-   Validate runs both algorithms and check they agree on their output.  *)
-val list_errors_algorithm : list_errors_algorithm
+   Fast is the default, described in the SLE 2021 paper by Bour and Pottier.
+   Classic is described in the CC 2016 paper by Pottier and was default
+   before september 2021.
+   Validate runs both algorithms and checks they agree on their output.  *)
+val list_errors_algorithm: list_errors_algorithm
 
 (** This flag causes Menhir to read the error message descriptions stored in
    [filename] and compile them to OCaml code. *)
