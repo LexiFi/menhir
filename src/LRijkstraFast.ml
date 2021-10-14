@@ -37,7 +37,7 @@ struct
   let quick_subset = TerminalSet.quick_subset
 
   (* The algorithm uses many typed vectors (provided by Fix.Numbering.Typed) *)
-  open Fix.Numbering.Typed
+  open Fix.Indexing
   open Infix
 
   (* [Lr1C] represents Lr1 states as elements of a [Numbering.Typed] set *)
