@@ -38,7 +38,6 @@ struct
 
   (* The algorithm uses many typed vectors (provided by Fix.Numbering.Typed) *)
   open Fix.Indexing
-  open Infix
 
   (* [Lr1C] represents Lr1 states as elements of a [Numbering.Typed] set *)
   module Lr1C = struct
@@ -198,24 +197,24 @@ struct
             let index = match sym with
               | Symbol.T t ->
                 let index = next_shift () in
-                t_symbols.%(index) <- t;
+                Vector.set t_symbols index t;
                 Hashtbl.add t_table (t_pack source t) index;
                 of_shift index
               | Symbol.N nt ->
                 let index = next_goto () in
-                nt_symbols.%(index) <- nt;
+                Vector.set nt_symbols index nt;
                 Hashtbl.add nt_table (nt_pack source nt) index;
                 of_goto index
             in
-            sources.%(index) <- source;
-            targets.%(index) <- target;
-            predecessors.%::(target) <- index;
+            Vector.set sources index source;
+            Vector.set targets index target;
+            Vector.set_cons predecessors target index;
             index :: acc
         end (Lr1.transitions (Lr1C.to_g source)) []
       end
 
-    let successors lr1 = successors.%(lr1)
-    let predecessors lr1 = predecessors.%(lr1)
+    let successors lr1 = Vector.get successors lr1
+    let predecessors lr1 = Vector.get predecessors lr1
 
     let find_goto source nt = Hashtbl.find nt_table (nt_pack source nt)
 
@@ -225,17 +224,17 @@ struct
          | Symbol.N nt -> of_goto (Hashtbl.find nt_table (nt_pack source nt))
     *)
 
-    let source i = sources.%(i)
+    let source i = Vector.get sources i
 
     let symbol i =
       match split i with
-      | L i -> Symbol.N nt_symbols.%(i)
-      | R i -> Symbol.T t_symbols.%(i)
+      | L i -> Symbol.N (Vector.get nt_symbols i)
+      | R i -> Symbol.T (Vector.get t_symbols i)
 
-    let goto_symbol i = nt_symbols.%(i)
-    let shift_symbol i = t_symbols.%(i)
+    let goto_symbol i = Vector.get nt_symbols i
+    let shift_symbol i = Vector.get t_symbols i
 
-    let target i = targets.%(i)
+    let target i = Vector.get targets i
 
     let () = Time.tick "LRijkstraFast: populate transition table"
 
@@ -303,7 +302,7 @@ struct
             ) rhs [lr1, []]
         in
         List.iter (fun (source, steps) ->
-            table.%::(Transition.find_goto source lhs) <-
+            Vector.set_cons table (Transition.find_goto source lhs)
               { production; lookahead; steps; state=lr1 }
           ) states
       end
@@ -341,7 +340,7 @@ struct
       Index.iter Lr1C.n
         (fun lr1 -> List.iter (add_reduction lr1) (get_reductions lr1))
 
-    let goto_transition tr = table.%(tr)
+    let goto_transition tr = Vector.get table tr
 
     let () = Time.tick "LRijkstraFast: populate reduction table"
   end
@@ -406,10 +405,10 @@ struct
       let acc = ref acc in
       begin match Node.prj node with
         | L lr1 ->
-          Gr.visit_lr1 (fun n -> acc := classes.%(n) @ !acc) lr1
+          Gr.visit_lr1 (fun n -> acc := Vector.get classes n @ !acc) lr1
         | R edge ->
           List.iter (fun {Unreduce. lookahead; state; _} ->
-              let base = classes.%(Node.inj_l state) in
+              let base = Vector.get classes (Node.inj_l state) in
               let base =
                 if lookahead != all_terminals
                 then List.map (TerminalSet.inter lookahead) base
@@ -426,7 +425,7 @@ struct
         terminal_partition (List.fold_left classes_of [] nodes)
       in
       match nodes with
-      | [node] -> classes.%(node) <- coarse_classes
+      | [node] -> Vector.set classes node coarse_classes
       | nodes ->
         List.iter begin fun node ->
           match Node.prj node with
@@ -437,18 +436,19 @@ struct
               (fun {Unreduce. lookahead; _} ->
                  coarse := TerminalSet.union lookahead !coarse)
               (Unreduce.goto_transition e);
-            classes.%(node) <-
+            Vector.set classes node (
               coarse_classes
               |> List.map (TerminalSet.inter !coarse)
               |> terminal_partition
+            )
         end nodes;
         List.iter begin fun node ->
           match Node.prj node with
           | R _ -> ()
           | L lr1 ->
             let acc = ref [] in
-            Gr.visit_lr1 (fun n -> acc := classes.%(n) @ !acc) lr1;
-            classes.%(node) <- terminal_partition !acc
+            Gr.visit_lr1 (fun n -> acc := Vector.get classes n @ !acc) lr1;
+            Vector.set classes node (terminal_partition !acc)
         end nodes
 
     let () = Scc.rev_topological_iter visit_scc
@@ -459,7 +459,7 @@ struct
         match Lr1.incoming_symbol (Lr1C.to_g lr1) with
         | Some (Symbol.N _) -> ()
         | None | Some (Symbol.T _) ->
-          classes.%(Node.inj_l lr1) <- [all_terminals]
+          Vector.set classes (Node.inj_l lr1) [all_terminals]
       )
 
     (* We now have the final approximation.
@@ -469,10 +469,10 @@ struct
     let classes = Vector.map Array.of_list classes
 
     let for_edge nte =
-      classes.%(Node.inj_r nte)
+      Vector.get classes (Node.inj_r nte)
 
     let for_lr1 st =
-      classes.%(Node.inj_l st)
+      Vector.get classes (Node.inj_l st)
 
     (* Precompute the singleton partitions, e.g. { {t}, T/{t} } for each t *)
     let t_singletons =
@@ -580,11 +580,11 @@ struct
       let rev_index = Vector.make' Inner.n
           (fun () -> let dummy = Index.of_int n 0 in (dummy, dummy))
 
-      let define ix = rev_index.%(ix)
+      let define ix = Vector.get rev_index ix
 
       let () =
         Hashtbl.iter
-          (fun pair index -> rev_index.%(index) <- unpack pair)
+          (fun pair index -> Vector.set rev_index index (unpack pair))
           node_table
     end
   end
@@ -647,19 +647,19 @@ struct
 
     let classes_before t = match split t with
       | L tr -> Classes.before_transition tr
-      | R ix -> table_before.%(ix)
+      | R ix -> Vector.get table_before ix
 
     let classes_after t = match split t with
       | L tr -> Classes.after_transition tr
-      | R ix -> table_after.%(ix)
+      | R ix -> Vector.get table_after ix
 
     let () =
       (* Nodes are allocated in topological order.
          When iterating over all nodes, children are visited before parents. *)
       Index.iter Inner.n @@ fun node ->
       let l, r = define node in
-      table_before.%(node) <- classes_before l;
-      table_after.%(node) <- classes_after r;
+      Vector.set table_before node (classes_before l);
+      Vector.set table_after node (classes_after r)
   end
 
   let () = Time.tick "LRijkstraFast: built equation tree"
@@ -690,8 +690,8 @@ struct
   module Cells : sig
 
     (* The table that store all compact cost matrices.
-       [table.%(n)] is the matrix of node [n] of size before(n) by after(n),
-       represented as a single array of length |before(n)| * |after(n)|.
+       [Vector.get table n] is the matrix of node [n], represented as a linear array
+       of length |before(n)| * |after(n)|.
     *)
     val table : (Tree.n, int array) vector
 
@@ -808,7 +808,7 @@ struct
 
     let cost t =
       let node, offset = decode_offset t in
-      table.%(node).(offset)
+      (Vector.get table node).(offset)
   end
 
   (* This module implements efficient representations of the coerce matrices,
@@ -947,18 +947,18 @@ struct
       let node = Tree.leaf (Transition.of_shift tr) in
       (*sanity*)assert (Array.length (Tree.classes_before node) = 1);
       (*sanity*)assert (Array.length (Tree.classes_after node) = 1);
-      Cells.table.%(node).(0) <- 1
+      (Vector.get Cells.table node).(0) <- 1
 
     (* Record dependencies on a goto transition.  *)
     let record_goto tr =
       let node = Tree.leaf (Transition.of_goto tr) in
       let before = Tree.classes_before node in
       let after = Tree.classes_after node in
-      let nullable, non_nullable = Tree.goto_equations.%(tr) in
+      let nullable, non_nullable = Vector.get Tree.goto_equations tr in
       (* Set matrix cells corresponding to nullable reductions to 0 *)
       if not (TerminalSet.is_empty nullable) then (
         let offset_of = Cells.offset node in
-        let costs = Cells.table.%(node) in
+        let costs = Vector.get Cells.table node in
         (* We use:
            - [a] and [i_a] for a class in the after partition and its index
            - [b] and [i_b] for a class in the before partition and its index
@@ -980,7 +980,8 @@ struct
         | Some pre ->
           let after' = Tree.classes_after node' in
           let coe = Coercion.infix after' after ~lookahead in
-          dependants.%::(node') <- Leaf (tr, pre, coe.Coercion.forward)
+          Vector.set_cons dependants node'
+            (Leaf (tr, pre, coe.Coercion.forward))
       end non_nullable
 
     (* Record dependencies on a inner node. *)
@@ -993,8 +994,8 @@ struct
       let coercion = Coercion.infix c1 c2 in
       let dep = Inner (node, coercion) in
       assert (Array.length c2 = Array.length coercion.Coercion.backward);
-      dependants.%::(l) <- dep;
-      dependants.%::(r) <- dep
+      Vector.set_cons dependants l dep;
+      Vector.set_cons dependants r dep
 
     let () =
       (* Visit all nodes to populate the [dependants] vector *)
@@ -1021,7 +1022,7 @@ struct
           let before = Tree.classes_before node in
           let after = Tree.classes_after node in
           let count = Array.length before * Array.length after in
-          let cells = Cells.table.%(node) in
+          let cells = Vector.get Cells.table node in
           for i = 0 to count - 1 do
             let p = cells.(i) in
             if p < max_int then f (Cells.encode_offset node i) p
@@ -1063,7 +1064,7 @@ struct
             let parent_index = Cells.encode (Tree.inject parent) in
             if l = node then (
               (* The left term has been updated *)
-              let r_costs = Cells.table.%(r) in
+              let r_costs = Vector.get Cells.table r in
               let offset_of = Cells.offset r in
               for i_after' = 0 to Array.length (Tree.classes_after r) - 1 do
                 let r_cost = Array.fold_left
@@ -1081,7 +1082,7 @@ struct
               match inner.Coercion.backward.(i_before) with
               | -1 -> ()
               | l_post ->
-                let l_costs = Cells.table.%(l) in
+                let l_costs = Vector.get Cells.table l in
                 let offset_of = Cells.offset l in
                 for i_before = 0 to Array.length (Tree.classes_before l) - 1 do
                   let l_cost = l_costs.(offset_of i_before l_post) in
@@ -1091,7 +1092,7 @@ struct
                 done
             )
         in
-        List.iter update_dep dependants.%(node)
+        List.iter update_dep (Vector.get dependants node)
     end
 
     module Property = struct
@@ -1105,11 +1106,11 @@ struct
       (* Access the cost table using cells *)
       let get index =
         let node, offset = Cells.decode_offset index in
-        Cells.table.%(node).(offset)
+        (Vector.get Cells.table node).(offset)
 
       let set index v =
         let node, offset = Cells.decode_offset index in
-        Cells.table.%(node).(offset) <- v
+        (Vector.get Cells.table node).(offset) <- v
     end
 
     module MarkMap = struct
@@ -1128,11 +1129,12 @@ struct
 
       let get var =
         let node, cell = Cells.decode_offset var in
-        Bytes.get data.%(node) cell <> '\x00'
+        Bytes.get (Vector.get data node) cell <> '\x00'
 
       let set var value =
         let node, cell = Cells.decode_offset var in
-        Bytes.set data.%(node) cell (if value then '\x01' else '\x00')
+        Bytes.set (Vector.get data node) cell
+          (if value then '\x01' else '\x00')
     end
 
     (* Run the solver *)
@@ -1188,7 +1190,7 @@ struct
             Transition.shift_symbol shift :: acc
           | L goto ->
             (* It is a goto transition *)
-            let nullable, non_nullable = Tree.goto_equations.%(goto) in
+            let nullable, non_nullable = Vector.get Tree.goto_equations goto in
             let b = (Tree.classes_before node).(i_b) in
             let a = (Tree.classes_after node).(i_a) in
             if not (TerminalSet.is_empty nullable) &&
@@ -1207,7 +1209,7 @@ struct
                          permit reducing this production *)
                       None
                     else
-                      let costs = Cells.table.%(node') in
+                      let costs = Vector.get Cells.table node' in
                       match Tree.classes_before node' with
                       | [|b'|] when TerminalSet.disjoint b' b ->
                         (* The lookahead class before the transition does not

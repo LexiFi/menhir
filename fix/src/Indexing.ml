@@ -203,22 +203,3 @@ end = struct
   let init (n : _ cardinal) f = let lazy n = n in Array.init n f
   let map = Array.map
 end
-
-(** Syntactic sugar to manipulate finite vectors *)
-
-module Infix : sig
-
-  (** [v.%(i)] is [Vector.get v i] *)
-  val (.%())   : ('n, 'a) vector -> 'n index -> 'a
-
-  (** [v.%(i) <- x] is [Vector.set v i x] *)
-  val (.%()<-) : ('n, 'a) vector -> 'n index -> 'a -> unit
-
-  (** A shortcut for consing an element in a vector of list.
-      [v.%::(i) <- x] cons [x] to the list at index [i] in [v] *)
-  val (.%::()<-) : ('n, 'a list) vector -> 'n index -> 'a -> unit
-end = struct
-  let (.%()) = Array.unsafe_get
-  let (.%()<-) = Array.unsafe_set
-  let (.%::()<-) vec i x = vec.%(i) <- x :: vec.%(i)
-end

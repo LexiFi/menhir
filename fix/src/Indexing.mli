@@ -108,6 +108,7 @@ module Vector : sig
 
   val get : ('n, 'a) t -> 'n index -> 'a
   val set : ('n, 'a) t -> 'n index -> 'a -> unit
+  val set_cons : ('n, 'a list) t -> 'n index -> 'a -> unit
 
   val length : ('n, 'a) t -> 'n cardinal
   val empty : (_, _) t
@@ -116,19 +117,4 @@ module Vector : sig
   val make' : 'n cardinal -> (unit -> 'a) -> ('n, 'a) t
   val init : 'n cardinal -> ('n index -> 'a) -> ('n, 'a) t
   val map : ('a -> 'b) -> ('n, 'a) t -> ('n, 'b) t
-end
-
-(** Syntactic sugar to manipulate finite vectors *)
-
-module Infix : sig
-
-  (** [v.%(i)] is [Vector.get v i] *)
-  val (.%())   : ('n, 'a) vector -> 'n index -> 'a
-
-  (** [v.%(i) <- x] is [Vector.set v i x] *)
-  val (.%()<-) : ('n, 'a) vector -> 'n index -> 'a -> unit
-
-  (** A shortcut for consing an element in a vector of list.
-      [v.%::(i) <- x] cons [x] to the list at index [i] in [v] *)
-  val (.%::()<-) : ('n, 'a list) vector -> 'n index -> 'a -> unit
 end
