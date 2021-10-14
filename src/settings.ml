@@ -408,7 +408,7 @@ let options = Arg.align [
   "--interpret-error", Arg.Set interpret_error, " Interpret an error sentence";
   "--lalr", Arg.Unit (fun () -> construction_mode := ModeLALR), " Construct an LALR(1) automaton";
   "--list-errors", Arg.Set list_errors, " Produce a list of erroneous inputs";
-  "--list-errors-algorithm", Arg.String set_list_errors_algorithm, " <fast|classic|validate> Algorithm used to produce erroneous inputs (default: fast, validate compares both algorithms)";
+  "--list-errors-algorithm", Arg.String set_list_errors_algorithm, " (undocumented)";
   "--log-automaton", Arg.Set_int logA, "<level> Log information about the automaton";
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
