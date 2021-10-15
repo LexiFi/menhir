@@ -560,9 +560,8 @@ let rewind node : instruction =
   let rec rewind w =
     if Array.length w = 0 then
 
-      (* I believe that every stack description either is definite
-         (that is, ends with [TailEmpty]) or contains at least one
-         represented state. Thus, if we find an empty [w], this
+      (* I believe that every stack either is definitely empty or contains
+         at least one represented state. Thus, if we find an empty [w], this
          means that the stack is definitely empty. *)
 
       Die
