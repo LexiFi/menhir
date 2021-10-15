@@ -38,92 +38,125 @@ open S
 (* We now wish to compute, at each state [s], a vector of sets of states,
    whose length is [stack_height s].  *)
 
-(* Vectors of sets of states. *)
-
-module StateSetVector = struct
-
-  (* We use arrays whose right end represents the top of the stack. *)
-
-  (* The index 0 corresponds to the cell that lies deepest in the stack. *)
-
-  let empty, push =
-    MArray.(empty, push)
-
-  let truncate k v =
-    assert (k <= Array.length v);
-    MArray.truncate k v
-
-  type property =
-    Lr1.NodeSet.t array
-
-  let bottom height =
-    Array.make height Lr1.NodeSet.empty
-
-  let leq_join v1 v2 =
-    MArray.leq_join Lr1.NodeSet.leq_join v1 v2
-    (* Because all heights are known ahead of time, we are able (and careful)
-       to compare and join only vectors of equal length. *)
-
-end
-
-open StateSetVector
-
 (* Define the data flow graph. *)
 
-(* Its vertices are the nodes of the LR(1) automaton. *)
+(* Its vertices are the stack cells of interest. (2021/10/15) Defining a
+   data flow graph where vertices are individual stack cells and properties
+   are sets of states is preferable to one where vertices are nodes and
+   properties are vectors of sets of states. On large automata, the speed
+   difference can be more than 2x. *)
 
 module G = struct
 
-  type variable = Lr1.node
+  (* A stack cell is identified by a node [s] in the LR(1) automaton and
+     an index [i] into the known suffix of the stack at state [s]. This
+     index is comprised between 0 and [stack_height s], excluded. *)
 
-  type property = StateSetVector.property
+  (* Unlike our usual convention, here, the top stack cell is numbered 0,
+     the next cell is numbered 1, and so on. (That is, we count from the
+     right towards the left.) *)
 
-  (* At each start state of the automaton, the stack is empty. *)
+  type variable =
+    Lr1.node * int
+
+  (* To each cell, we wish to associate a set of states. *)
+
+  type property =
+    Lr1.NodeSet.t
+
+  let leq_join =
+    Lr1.NodeSet.leq_join
+
+  (* For each transition in the automaton, the cell at index 0 in the target
+     node is a root of the data flow analysis. *)
 
   let foreach_root contribute =
-    Lr1.entry |> ProductionMap.iter (fun _prod root ->
-      assert (stack_height root = 0);
-      contribute root empty
+    Lr1.iter (fun source ->
+      let property = Lr1.NodeSet.singleton source in
+      Lr1.transitions source |> SymbolMap.iter (fun _symbol target ->
+        assert (0 < stack_height target);
+        contribute (target, 0) property
+      )
     )
 
-  (* The edges of the data flow graph are the transitions of the automaton. *)
+  (* The edges of the data flow graph are the transitions of the automaton.
+     Along each transition, the cell at index [i] at the source node flows
+     into the cell at index [i+1] at the target node, provided the latter
+     cell exists. (The stack at the target is truncated so as to avoid
+     obtaining a vector that is longer than expected/necessary.) *)
 
-  let foreach_successor source stack contribute =
+  (* It is interesting to note that the property flows, but is not
+     transformed: this is a graph reachability problem in disguise.
+     It is really just a matter of computing which PUSHes reach which
+     stack cells. *)
+
+  let foreach_successor (source, i) states contribute =
     Lr1.transitions source |> SymbolMap.iter (fun _symbol target ->
-      (* The contribution of [source], through this edge, to [target], is the
-         stack at [source], extended with a new cell for this transition, and
-         truncated to the stack height at [target], so as to avoid obtaining a
-         vector that is longer than expected/necessary. *)
-      let cell = Lr1.NodeSet.singleton source
-      and height = stack_height target in
-      let stack = push stack cell in
-      contribute target (truncate height stack)
+      if i + 1 < stack_height target then
+        contribute (target, i + 1) states
     )
 
 end
 
+(* Maps. *)
+
+module M =
+  Fix.Glue.HashTablesAsImperativeMaps(struct
+    type t = G.variable
+    let equal (t1 : t) (t2 : t) = (t1 = t2)
+    let hash (t : t) = Hashtbl.hash t
+  end)
+
 (* Compute the least fixed point. *)
 
-let stack_states : Lr1.node -> property option =
-  let module F = Fix.DataFlow.Run(Lr1.ImperativeNodeMap)(StateSetVector)(G) in
+let stack_states : G.variable -> G.property option =
+  let module F = Fix.DataFlow.Run(M)(G)(G) in
   F.solution
 
 (* If every state is reachable, then the least fixed point must be non-[None]
    everywhere, so we may view it as a function that produces a vector of sets
    of states. *)
 
-let stack_states (node : Lr1.node) : property =
-  match stack_states node with
+let stack_states (cell : G.variable) : G.property =
+  assert (let (s, i) = cell in 0 <= i && i < stack_height s);
+  match stack_states cell with
   | None ->
       (* Apparently this node is unreachable. *)
       assert false
-  | Some v ->
-      v
+  | Some states ->
+      states
+
+(* To the end user, we want to propose an API that is based on vectors of
+   sets of states. *)
+
+type property =
+  Lr1.NodeSet.t array
+
+(* Adapt [stack_states] to the external API. *)
+
+let stack_states : Lr1.node -> property =
+  Lr1.tabulate (fun node ->
+    let n = stack_height node in
+    Array.init n (fun i ->
+      let i = n - 1 - i in
+      stack_states (node, i)
+    )
+  )
 
 (* [truncate_join height f nodes] computes a join of the images through [f] of
    the nodes in the set [nodes], truncated at height [height]. *)
 
-let truncate_join height f nodes =
+let bottom height : property =
+  Array.make height Lr1.NodeSet.empty
+
+let truncate k (v : property) : property =
+  assert (k <= Array.length v);
+  MArray.truncate k v
+
+let leq_join (v1 : property) (v2 : property) : property =
+  MArray.leq_join Lr1.NodeSet.leq_join v1 v2
+
+let truncate_join height (f : Lr1.node -> property) nodes =
   Lr1.NodeSet.fold (fun node accu ->
     leq_join (truncate height (f node)) accu
   ) nodes (bottom height)
@@ -156,9 +189,6 @@ let goto_states : Nonterminal.t -> property =
     let height = goto_height nt in
     truncate_join height stack_states targets
   )
-
-type property =
-  Lr1.NodeSet.t array
 
 (* Debugging output. *)
 
