@@ -536,6 +536,11 @@ let gotostack : Nonterminal.t -> word =
   publish Nonterminal.tabulate goto_symbols goto_states cell
 
 (* ------------------------------------------------------------------------ *)
+
+let () =
+  Time.tick "Constructing the invariant"
+
+(* ------------------------------------------------------------------------ *)
 (* Explain how the stack should be deconstructed when an error is found.
 
    We sometimes have a choice as to how many stack cells should be popped.
@@ -627,7 +632,7 @@ let universal symbol =
    new version of the code below relies on the same approximation, but uses
    two successive loops instead of two nested loops. *)
 
-let errorpeekers =
+let errorpeekers = lazy (
   (* First compute a set of symbols [nt]... *)
   let nts : SymbolSet.t =
     Lr1.fold (fun nts node ->
@@ -642,17 +647,18 @@ let errorpeekers =
   in
   (* ... then compute the set of all target states of all transitions
      labeled by some symbol in the set [nt]. *)
-  SymbolSet.fold (fun nt errorpeekers ->
-    Lr1.NodeSet.union errorpeekers (Lr1.all_targets nt)
-  ) nts Lr1.NodeSet.empty
+  let errorpeekers =
+    SymbolSet.fold (fun nt errorpeekers ->
+      Lr1.NodeSet.union errorpeekers (Lr1.all_targets nt)
+    ) nts Lr1.NodeSet.empty
+  in
+  (* Done. *)
+  Time.tick "Computing errorpeekers";
+  errorpeekers
+)
 
 let errorpeeker node =
-  Lr1.NodeSet.mem node errorpeekers
-
-(* ------------------------------------------------------------------------ *)
-
-let () =
-  Time.tick "Constructing the invariant"
+  Lr1.NodeSet.mem node (Lazy.force errorpeekers)
 
 (* ------------------------------------------------------------------------ *)
 
