@@ -59,6 +59,11 @@ end
    state: it is the maximum position of the bullet over all items. *)
 module Short () : STACK_SYMBOLS
 
+(* The functor [Short] is used by [Dump]; this call can take place either
+   after or before conflicts have been resolved. Regardless of this, one
+   call to [Short()] is performed in [StackSymbolsShort], after conflicts
+   have been resolved. *)
+
 (**This module computes the known suffix of the stack, a sequence of
    symbols, in each of the automaton's states. The length of this
    sequence is determined by an analysis of the paths in the LR(0)

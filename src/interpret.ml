@@ -199,12 +199,6 @@ let interpret_error_aux log poss ((_, terminals) as sentence) fail succeed =
 let default_message =
   "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
 
-(* This is needed in the following function. If [print_messages_auto] is never
-   called, then we end up needlessly performing this analysis. Fortunately, it
-   is extremely cheap. *)
-
-module SS = StackSymbols.Short()
-
 (* [print_messages_auto (nt, sentence, target)] displays the sentence
    defined by [nt] and [sentence], leading to the state [target]. It
    then displays a bunch of auto-generated comments. *)
@@ -247,7 +241,7 @@ let print_messages_auto (nt, sentence, target) : unit =
     "## The known suffix of the stack is as follows:\n\
      ##%s\n\
      ##\n"
-    (StackSymbols.print_symbols (SS.stack_symbols s'))
+    (StackSymbols.print_symbols (StackSymbolsShort.stack_symbols s'))
   ;
 
   (* If interpreting this sentence causes spurious reductions (that is,

@@ -17,18 +17,11 @@
 open Grammar
 
 (* ------------------------------------------------------------------------ *)
-(* An artificial dependency. We must ensure that [Conflict] runs first, so
-   that the automaton is in its definitive shape, before we analyze it. *)
-
-module C =
-  Conflict
-
-(* ------------------------------------------------------------------------ *)
 (* Compute the known suffix of the stack, a sequence of symbols,
    at every state. This is the "short invariant". *)
 
 module SSy =
-  StackSymbols.Short()
+  StackSymbolsShort
 
 open SSy
 

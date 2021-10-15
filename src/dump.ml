@@ -113,6 +113,7 @@ let dump_node out stack_symbols node =
   fprintf out "\n"
 
 let dump filename =
+  (* Do not use StackSymbolsShort here! *)
   let module SS = StackSymbols.Short() in
   let out = open_out filename in
   Lr1.iter (dump_node out SS.stack_symbols);
