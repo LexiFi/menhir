@@ -28,7 +28,7 @@ module C =
    at every state. This is the "short invariant". *)
 
 module SSy =
-  StackSymbols.Run()
+  StackSymbols.Short()
 
 open SSy
 

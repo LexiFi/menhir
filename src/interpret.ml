@@ -203,7 +203,7 @@ let default_message =
    called, then we end up needlessly performing this analysis. Fortunately, it
    is extremely cheap. *)
 
-module SS = StackSymbols.Run()
+module SS = StackSymbols.Short()
 
 (* [print_messages_auto (nt, sentence, target)] displays the sentence
    defined by [nt] and [sentence], leading to the state [target]. It

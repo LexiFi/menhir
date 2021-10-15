@@ -75,7 +75,7 @@ end
 (* This analysis is extremely fast: on an automaton with over 100,000 states,
    it takes under 0.01 second. *)
 
-module Run () = struct
+module Short () = struct
 
   type property =
     Symbol.t array

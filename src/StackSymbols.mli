@@ -57,12 +57,12 @@ end
    symbols, in each of the automaton's states. The length of this
    sequence can be predicted based on the LR(0) items present in this
    state: it is the maximum position of the bullet over all items. *)
-module Run () : STACK_SYMBOLS
+module Short () : STACK_SYMBOLS
 
 (**This module computes the known suffix of the stack, a sequence of
    symbols, in each of the automaton's states. The length of this
    sequence is determined by an analysis of the paths in the LR(0)
-   automaton. At each state, the sequence computed by [Run] is always
+   automaton. At each state, the sequence computed by [Short] is
    a suffix of the sequence computed by [Long]. *)
 module Long () : STACK_SYMBOLS
 
