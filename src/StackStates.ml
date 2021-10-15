@@ -27,6 +27,10 @@ module Run (S : sig
      state where an edge labeled [nt] has just been followed. *)
   val goto_height: Nonterminal.t -> int
 
+  (**The string [variant] should be "short" or "long" and is printed
+     when --timings is enabled. *)
+  val variant: string
+
 end) = struct
 
 open S
@@ -177,5 +181,8 @@ let dump (prefix : string) f =
       (Production.print prod)
       (print (production_states prod))
   )
+
+let () =
+  Time.tick (Printf.sprintf "Computing stack states (%s)" variant)
 
 end (* Run *)

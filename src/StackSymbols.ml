@@ -47,6 +47,10 @@ module type STACK_SYMBOLS = sig
   (**[goto_height nt] is [Array.length (goto_symbols nt)]. *)
   val goto_height: Nonterminal.t -> int
 
+  (**The string [variant] is "short" or "long" and is printed when
+     --timings is enabled. *)
+  val variant: string
+
 end
 
 (* We compute a lower bound on the height of the stack at every state, and at
@@ -113,6 +117,12 @@ module Run () = struct
 
   let goto_height nt =
     Array.length (goto_symbols nt)
+
+  let variant =
+    "short"
+
+  let () =
+    Time.tick "Computing stack symbols (short)"
 
 end
 
@@ -263,6 +273,12 @@ module Long () = struct
 
   let goto_height nt =
     Array.length (goto_symbols nt)
+
+  let variant =
+    "long"
+
+  let () =
+    Time.tick "Computing stack symbols (long)"
 
 end
 

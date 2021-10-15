@@ -201,6 +201,9 @@ let () =
     )
   )
 
+let () =
+  Time.tick "Computing which states must be represented"
+
 (* ------------------------------------------------------------------------ *)
 
 (* Machinery for the computation of which symbols must keep track of their
@@ -408,6 +411,9 @@ let () =
         (sum_over_every_symbol startp) (Terminal.n + Nonterminal.n)
         (sum_over_every_symbol endp) (Terminal.n + Nonterminal.n))
 
+let () =
+  Time.tick "Computing which positions must be tracked"
+
 (* ------------------------------------------------------------------------ *)
 (* Constructors and accessors for information about the stack. *)
 
@@ -541,10 +547,8 @@ let prodstack : Production.index -> word =
 let gotostack : Nonterminal.t -> word =
   publish Nonterminal.tabulate goto_symbols goto_states cell
 
-(* ------------------------------------------------------------------------ *)
-
 let () =
-  Time.tick "Constructing the invariant"
+  Time.tick "Publishing the invariant (short)"
 
 (* ------------------------------------------------------------------------ *)
 (* Explain how the stack should be deconstructed when an error is found.
@@ -739,7 +743,7 @@ module Long () = struct
     publish Nonterminal.tabulate goto_symbols goto_states cell
 
   let () =
-    Time.tick "Constructing the long invariant"
+    Time.tick "Publishing the invariant (long)"
 
 end (* Long *)
 
@@ -830,6 +834,7 @@ end
 let solution : (G.variable -> P.property option) Lazy.t =
   lazy (
     let module D = Fix.DataFlow.ForType(G)(P)(G) in
+    Time.tick "Computing origins";
     D.solution
   )
 

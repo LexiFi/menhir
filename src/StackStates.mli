@@ -37,6 +37,10 @@ module Run (S : sig
      state where an edge labeled [nt] has just been followed. *)
   val goto_height: Nonterminal.t -> int
 
+  (**The string [variant] should be "short" or "long" and is printed
+     when --timings is enabled. *)
+  val variant: string
+
 end) : sig
 
   (**A property is a description of the known suffix of the stack at state
