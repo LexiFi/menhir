@@ -1210,7 +1210,8 @@ let reducebody prod =
   let symbol = Symbol.N nt in
 
   let posbindings action =
-    let bind_startp = Invariant.startp symbol in
+    let bind_startp = Invariant.startp symbol
+    and bind_endp = Invariant.endp symbol in
     if1 (Action.has_beforeend action)
       ( extract beforeendp
       ) @
@@ -1221,11 +1222,15 @@ let reducebody prod =
         else
           extract startp
       ) @
-    if1 (Invariant.endp symbol)
+    if1 bind_endp
       ( if length > 0 then
           PVar endp,
           EVar (Printf.sprintf "_endpos_%s_" ids.(length - 1))
         else if bind_startp then
+          (* [startp] has already been bound by [extract startp]. Instead
+             of [extract endp], which would cause a redundant read of the
+             top stack cell, we can just define [endp] as an alias for
+             [startp]. *)
           PVar endp,
           EVar startp
         else
