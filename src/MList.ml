@@ -62,3 +62,11 @@ let rec take k xs =
       []
   | _, x :: xs ->
       x :: take (k - 1) xs
+
+let leq_join leq_join xs1 xs2 =
+  try
+    let xs = List.map2 leq_join xs1 xs2 in
+    if for_all2 (==) xs2 xs then xs2 else xs
+  with Invalid_argument _ ->
+    (* The lists have different lengths. *)
+    assert false

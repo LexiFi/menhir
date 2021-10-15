@@ -38,3 +38,9 @@ val drop : int -> 'a list -> 'a list
 
 (** [take k xs] is the list of the first [k] elements of the list [xs]. *)
 val take : int -> 'a list -> 'a list
+
+(**Given a [leq_join] function on elements, [leq_join] constructs a [leq_join]
+   function on lists. The two lists must have the same length. The
+   specification of a [leq_join] is defined by the signature
+   [Fix.MINIMAL_SEMI_LATTICE]. *)
+val leq_join : ('a -> 'b -> 'b) -> 'a list -> 'b list -> 'b list
