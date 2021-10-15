@@ -98,11 +98,11 @@ module Run
 
   (* Populate the stack with the root variables. *)
 
+  (* Our use of [update] here means that it is permitted for [foreach_root]
+     to seed several properties at a single root. *)
+
   let () =
-    G.foreach_root (fun x p ->
-      M.add x p properties;
-      schedule x
-    )
+    G.foreach_root update
 
   (* As long as the stack is nonempty, pop a variable and examine it. *)
 

@@ -262,7 +262,10 @@ end
     problem. It is used to describe the input to [Fix.DataFlow]. *)
 
 (**The function [foreach_root] describes the root nodes of the data flow graph
-    as well as the properties associated with them. *)
+   as well as the properties associated with them. [foreach_call contribute]
+   is expected to call [contribute x p] to indicate that [x] is a root and
+   that [p] is a lower bound on the solution at [x]. It is permitted to call
+   [contribute x _] several times at a root [x]. *)
 
 (**The function [foreach_successor] describes the edges of the data flow graph
     as well as the manner in which a property at the source of an edge is
