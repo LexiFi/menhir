@@ -15,7 +15,13 @@
     in each of the automaton's states. *)
 
 open Grammar
-module C = Conflict (* artificial dependency; ensures that [Conflict] runs first *)
+
+(* The following is an artificial dependency. We must ensures that [Conflict]
+   runs first, so that the automaton is in its definitive shape, before we
+   analyze it. *)
+
+module C =
+  Conflict
 
 (* ------------------------------------------------------------------------ *)
 (* Compute the known suffix of the stack, a sequence of symbols,
