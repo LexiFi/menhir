@@ -171,9 +171,8 @@ let inline_valdefs (defs : valdef list) : valdef list =
         | TypArrow (typ1, typ2) ->
             TypArrow (sub typ1, sub typ2)
         | TypAs (typ, v) ->
-            (* Not sure what to do here. Anyway, [TypAs] is used only
-               by the new code back-end, which probably will not need
-               this inliner. *)
+            (* Not sure what to do here. Anyway, [TypAs] is used only by the
+               new code back-end, which does not use this inliner. *)
             TypAs (sub typ, v)
       in
       sub scheme.body
