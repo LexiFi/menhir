@@ -131,7 +131,7 @@ end
 (* The submodule [Long] computes the known suffix of the stack in each state,
    as a vector of symbols, and it computes a suffix that is as long as
    possible, in contrast with the above code, which computes a suffix whose
-   length can be predicted by based on the LR(0) items in each state. *)
+   length can be predicted based on the LR(0) items in each state. *)
 
 module Long () = struct
 
