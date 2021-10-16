@@ -105,13 +105,14 @@ following order:
 | TokenType             | deals with `--only-tokens` and exits |
 | Front                 | deals with `--depend`, `--infer`, `--only-preprocess`, and exits |
 | Grammar               | performs a number of analyses of the grammar |
-| Middle                | deals with `--random-sentence` |
+| Middle                | deals with `--random-sentence` and exits |
 | Lr0                   | constructs the LR(0) automaton |
 | Slr                   | determines whether the grammar is SLR |
 | Lr1                   | constructs the LR(1) automaton |
 | Conflict              | performs default conflict resolution and explains conflicts |
-| Invariant             | performs a number of analyses of the automaton |
 | Interpret             | deals with `--interpret` and exits |
+| Freeze                | deals with `--list-errors`, etc. and exits |
+| Invariant             | performs a number of analyses of the automaton |
 | Back                  | produces the output and exits |
 
 It is particularly important to note that conflict resolution, performed
