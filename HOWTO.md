@@ -59,13 +59,14 @@ The demos in the directory `demos` also contain tests.
 
 Prior to making a release, please take the following actions:
 
-* Make sure `CHANGES.md` has been properly updated.
+* Make sure `CHANGES.md` and `coq-menhirlib/CHANGES.md` have been properly updated.
 
 * Make sure that you are on the `master` branch and have
   committed everything. No uncommitted files should remain.
 
-* Run `make test` and `make versions` to make sure that Menhir can be compiled
-  and passes all tests under all supported versions of OCaml.
+* Run `make test` and `make demos` and `make versions`
+  to make sure that the tests succeed
+  and that Menhir can be compiled under all supported versions of OCaml.
 
 * Run `make speed` and have a look at the performance figures to
   make sure that they are still in the right ballpark.
@@ -104,6 +105,7 @@ following order:
 | TokenType             | deals with `--only-tokens` and exits |
 | Front                 | deals with `--depend`, `--infer`, `--only-preprocess`, and exits |
 | Grammar               | performs a number of analyses of the grammar |
+| Middle                | deals with `--random-sentence` |
 | Lr0                   | constructs the LR(0) automaton |
 | Slr                   | determines whether the grammar is SLR |
 | Lr1                   | constructs the LR(1) automaton |
@@ -112,5 +114,9 @@ following order:
 | Interpret             | deals with `--interpret` and exits |
 | Back                  | produces the output and exits |
 
-A few artificial dependencies have been added in the code in order
-to ensure that this ordering is respected by `ocamlbuild`.
+It is particularly important to note that conflict resolution, performed
+inside `Conflict`, alters the LR(1) automaton.
+
+A few artificial dependencies have been added in the code in order to ensure
+that this ordering is respected by `dune`. This is admittedly not very pretty
+and should be fixed someday, but that may be trickier than it seems.
