@@ -17,6 +17,12 @@
 open Grammar
 
 (* ------------------------------------------------------------------------ *)
+(* This artificial dependency ensures that Freeze runs before we execute
+   the costly analyses that follow. *)
+
+module _ = Freeze
+
+(* ------------------------------------------------------------------------ *)
 (* Compute the known suffix of the stack, a sequence of symbols,
    at every state. This is the "short invariant". *)
 
