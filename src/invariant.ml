@@ -23,19 +23,14 @@ open Grammar
 module _ = Freeze
 
 (* ------------------------------------------------------------------------ *)
-(* Compute the known suffix of the stack, a sequence of symbols,
-   at every state. This is the "short invariant". *)
 
-module SSy =
-  StackSymbolsShort
+(* The known suffix of the stack, a sequence of symbols, has already been
+   computed at every state. This is the "short invariant". *)
 
-open SSy
-
-(* ------------------------------------------------------------------------ *)
 (* Now, compute which states may be held in the known suffix of the stack. *)
 
 module SSt =
-  StackStates.Run(SSy)
+  StackStates.Run(StackSymbolsShort)
 
 open SSt
 
@@ -538,13 +533,22 @@ let publish tabulate foo bar cell =
   )
 
 let stack : Lr1.node -> word =
-  publish Lr1.tabulate stack_symbols stack_states cell
+  publish Lr1.tabulate
+    StackSymbolsShort.stack_symbols
+    stack_states
+    cell
 
 let prodstack : Production.index -> word =
-  publish Production.tabulate production_symbols production_states cell
+  publish Production.tabulate
+    StackSymbolsShort.production_symbols
+    production_states
+    cell
 
 let gotostack : Nonterminal.t -> word =
-  publish Nonterminal.tabulate goto_symbols goto_states cell
+  publish Nonterminal.tabulate
+    StackSymbolsShort.goto_symbols
+    goto_states
+    cell
 
 let () =
   Time.tick "Publishing the invariant (short)"
