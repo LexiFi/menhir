@@ -351,7 +351,7 @@ module Run (T: sig end) = struct
     fprintf f "Definition past_symb_of_non_init_state (noninitstate:noninitstate) : list symbol :=\n";
     fprintf f "  match noninitstate with\n";
     lr1_iterx_nonfinal (fun node ->
-      let w = Invariant.(pop (stack node)) in
+      let w = Invariant.(pop (Short.stack node)) in
       fprintf f "  | %s => %s\n"
         (print_nis node) (print_word print_cell_symbol w)
     );
@@ -387,7 +387,7 @@ module Run (T: sig end) = struct
     bprintf b "Definition past_state_of_non_init_state (s:noninitstate) : list (state -> bool) :=\n";
     bprintf b "  match s with\n";
     lr1_iterx_nonfinal (fun node ->
-      let w = Invariant.stack node in
+      let w = Invariant.Short.stack node in
       bprintf b "  | %s => %s\n"
         (print_nis node) (print_word print_cell_stateset_id w)
     );

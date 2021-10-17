@@ -127,7 +127,10 @@ module type STACK = sig
 
 end
 
-include STACK
+(* In the short invariant, the length of the known suffix of the stack is
+   the one reported by [StackSymbols.Short()]. *)
+
+module Short : STACK
 
 (* ------------------------------------------------------------------------- *)
 (* Information about error handling. *)

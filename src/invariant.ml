@@ -529,20 +529,24 @@ let publish tabulate symbols states =
     Array.init k (fun i -> cell symbols.(i) states.(i))
   )
 
-let stack : Lr1.node -> word =
-  publish Lr1.tabulate
-    StackSymbolsShort.stack_symbols
-    StackStatesShort.stack_states
+module Short = struct
 
-let prodstack : Production.index -> word =
-  publish Production.tabulate
-    StackSymbolsShort.production_symbols
-    StackStatesShort.production_states
+  let stack : Lr1.node -> word =
+    publish Lr1.tabulate
+      StackSymbolsShort.stack_symbols
+      StackStatesShort.stack_states
 
-let gotostack : Nonterminal.t -> word =
-  publish Nonterminal.tabulate
-    StackSymbolsShort.goto_symbols
-    StackStatesShort.goto_states
+  let prodstack : Production.index -> word =
+    publish Production.tabulate
+      StackSymbolsShort.production_symbols
+      StackStatesShort.production_states
+
+  let gotostack : Nonterminal.t -> word =
+    publish Nonterminal.tabulate
+      StackSymbolsShort.goto_symbols
+      StackStatesShort.goto_states
+
+end
 
 let () =
   Time.tick "Publishing the invariant (short)"
@@ -567,7 +571,7 @@ type instruction =
   | DownTo of word * state
 
 let rewind node : instruction =
-  let w = stack node in
+  let w = Short.stack node in
 
   let rec rewind w =
     if Array.length w = 0 then

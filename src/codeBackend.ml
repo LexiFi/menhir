@@ -16,7 +16,7 @@
 module Run (T : sig end) = struct
 
 open Grammar
-open Invariant (* only to access [cell] fields *)
+open Invariant
 open IL
 open CodeBits
 open CodePieces
@@ -573,13 +573,13 @@ let celltype tailtype cell =
    description of the stack provided by module [Invariant]. *)
 
 let stacktype s =
-  Array.fold_left celltype ttail (Invariant.stack s)
+  Array.fold_left celltype ttail (Short.stack s)
 
 let reducestacktype prod =
-  Array.fold_left celltype ttail (Invariant.prodstack prod)
+  Array.fold_left celltype ttail (Short.prodstack prod)
 
 let gotostacktype nt =
-  Array.fold_left celltype ttail (Invariant.gotostack nt)
+  Array.fold_left celltype ttail (Short.gotostack nt)
 
 (* The type of the [run] function. As announced earlier, if [s] is the
    target of shift transitions, the type of the stack is curried, that
@@ -609,7 +609,7 @@ let gototypescheme nt =
 let reduce_expects_state_param prod =
   let nt = Production.nt prod in
   Production.length prod = 0 &&
-  Invariant.((gotostack nt).(0).holds_state)
+  (Short.gotostack nt).(0).holds_state
 
 (* The type of the [reduce] function. If shiftreduce optimization
    is performed for this production, then the top stack cell is
@@ -749,7 +749,7 @@ let errorcellparams (i, pat) cell =
 let runparams s : xparams =
   xvar env ::
   xmagic (xvar stack) ::
-  ifn (runpushes s) (runcellparams (Invariant.stack s))
+  ifn (runpushes s) (runcellparams (Short.stack s))
 
 let call_run s actuals =
   EApp (EVar (run s), actuals)
@@ -766,7 +766,7 @@ let reduceparams prod =
   ifn (shiftreduce prod) (
     Invariant.fold_top
       (reducecellparams prod (Production.length prod - 1))
-    [] (Invariant.prodstack prod)
+    [] (Short.prodstack prod)
   ) @
   if1 (reduce_expects_state_param prod) (PVar state)
 
@@ -780,7 +780,7 @@ let call_reduce prod s =
     (EVar env) ::
     (EMagic (EVar stack)) ::
     ifn (shiftreduce prod)
-      (xparams2exprs (runcellparams (Invariant.stack s)))
+      (xparams2exprs (runcellparams (Short.stack s)))
       (* compare with [runpushcell s] *) @
     if1 (reduce_expects_state_param prod) (estatecon s)
   in
@@ -791,7 +791,7 @@ let call_reduce prod s =
 let gotoparams nt : xparams =
   xvar env ::
   xvar stack ::
-  runcellparams (Invariant.gotostack nt)
+  runcellparams (Short.gotostack nt)
 
 let call_goto nt =
   EApp (EVar (goto nt), xparams2exprs (gotoparams nt))
@@ -878,7 +878,7 @@ let shiftbranchbody s tok s' =
       if1 holds_state (estatecon s) @
       if1 holds_semv (EVar semv) @
       if1 holds_startp getstartp
-    ) [] (Invariant.stack s')
+    ) [] (Short.stack s')
   in
 
   (* Call [run s']. *)
@@ -910,7 +910,7 @@ let shiftbranch s tok s' =
 
 let runpushcell s e =
   if runpushes s then
-    let contents = xvar stack :: runcellparams (Invariant.stack s) in
+    let contents = xvar stack :: runcellparams (Short.stack s) in
     mlet [ PVar stack ] [ etuple (xparams2exprs contents) ] e
   else
     e
@@ -1169,7 +1169,7 @@ let reducebody prod =
         pat
       else
         ptuple (pat :: reducecellparams prod i cell)
-    ) (0, PVar stack) (Invariant.prodstack prod)
+    ) (0, PVar stack) (Short.prodstack prod)
   in
 
   (* If any identifiers refer to terminal symbols without a semantic
@@ -1301,7 +1301,7 @@ let reducedef prod =
 
 let gotopushcell nt e =
   if gotopushes nt then
-    let contents = xvar stack :: runcellparams (Invariant.gotostack nt) in
+    let contents = xvar stack :: runcellparams (Short.gotostack nt) in
     mlet [ PVar stack ] [ etuple (xparams2exprs contents) ] e
   else
     e
@@ -1406,7 +1406,7 @@ let errorbody s =
 
       let extrapop e =
         if shiftreduce prod then
-          let contents = xvar stack :: runcellparams (Invariant.stack s) in
+          let contents = xvar stack :: runcellparams (Short.stack s) in
           let pat = ptuple (xparams2pats contents) in
           blet ([ pat, EVar stack ], e)
         else
