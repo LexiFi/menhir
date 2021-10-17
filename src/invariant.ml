@@ -693,14 +693,11 @@ module Long () = struct
 
   (* Compute. *)
 
-  module SSy =
+  module StackSymbolsLong =
     StackSymbols.Long()
 
-  module SSt =
-    StackStates.Run(SSy)
-
-  open SSy
-  open SSt
+  module StackStatesLong =
+    StackStates.Run(StackSymbolsLong)
 
   (* Validate. *)
 
@@ -715,29 +712,35 @@ module Long () = struct
     MArray.greatest_suffix_forall equi_represented states
 
   let stack_states s =
-    validate @@ stack_states s
+    validate @@ StackStatesLong.stack_states s
 
   let production_states prod =
-    validate @@ production_states prod
+    validate @@ StackStatesLong.production_states prod
 
   let goto_states nt =
-    validate @@ goto_states nt
+    validate @@ StackStatesLong.goto_states nt
 
   (* Dump. *)
 
   let () =
-    Error.logC 3 (dump "long")
+    Error.logC 3 (StackStatesLong.dump "long")
 
   (* Publish. *)
 
   let stack : Lr1.node -> word =
-    publish Lr1.tabulate stack_symbols stack_states
+    publish Lr1.tabulate
+      StackSymbolsLong.stack_symbols
+      stack_states
 
   let prodstack : Production.index -> word =
-    publish Production.tabulate production_symbols production_states
+    publish Production.tabulate
+      StackSymbolsLong.production_symbols
+      production_states
 
   let gotostack : Nonterminal.t -> word =
-    publish Nonterminal.tabulate goto_symbols goto_states
+    publish Nonterminal.tabulate
+      StackSymbolsLong.goto_symbols
+      goto_states
 
   let () =
     Time.tick "Publishing the invariant (long)"
