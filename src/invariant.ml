@@ -24,21 +24,19 @@ module _ = Freeze
 
 (* ------------------------------------------------------------------------ *)
 
-(* The known suffix of the stack, a sequence of symbols, has already been
-   computed at every state. This is the "short invariant". *)
+(* The known suffix of the stack at every state, a sequence of symbols, has
+   already been computed by [StackSymbolsShort]. It is the short invariant. *)
 
 (* Now, compute which states may be held in the known suffix of the stack. *)
 
-module SSt =
+module StackStatesShort =
   StackStates.Run(StackSymbolsShort)
-
-open SSt
 
 (* ------------------------------------------------------------------------ *)
 (* If requested, print the information that has been computed above. *)
 
 let () =
-  Error.logC 3 (dump "short")
+  Error.logC 3 (StackStatesShort.dump "short")
 
 (* ------------------------------------------------------------------------ *)
 (* We now determine which states must be represented, that is,
@@ -91,7 +89,7 @@ let represents states =
 
 (* Enforce condition (1) above. *)
 
-let share (v : property) =
+let share (v : StackStatesShort.property) =
   Array.iter (fun states ->
     let dummy = UnionFind.fresh false in
     Lr1.NodeSet.iter (fun state ->
@@ -101,10 +99,10 @@ let share (v : property) =
 
 let () =
   Lr1.iter (fun node ->
-    share (stack_states node)
+    share (StackStatesShort.stack_states node)
   );
   Production.iter (fun prod ->
-    share (production_states prod)
+    share (StackStatesShort.production_states prod)
   )
 
 (* Enforce condition (2) above. *)
@@ -136,7 +134,7 @@ let handlers states =
 
 let () =
   Lr1.iter (fun node ->
-    let v = stack_states node in
+    let v =StackStatesShort.stack_states node in
     Array.iter (fun states ->
       if Lr1.NodeSet.cardinal states >= 2 && handlers states then
         represents states
@@ -153,7 +151,7 @@ let () =
       if length = 0 then
         Lr1.NodeSet.iter represent sites
       else
-        let states = (production_states prod).(0) in
+        let states = (StackStatesShort.production_states prod).(0) in
         represents states
   )
 
@@ -534,17 +532,17 @@ let publish tabulate symbols states =
 let stack : Lr1.node -> word =
   publish Lr1.tabulate
     StackSymbolsShort.stack_symbols
-    stack_states
+    StackStatesShort.stack_states
 
 let prodstack : Production.index -> word =
   publish Production.tabulate
     StackSymbolsShort.production_symbols
-    production_states
+    StackStatesShort.production_states
 
 let gotostack : Nonterminal.t -> word =
   publish Nonterminal.tabulate
     StackSymbolsShort.goto_symbols
-    goto_states
+    StackStatesShort.goto_states
 
 let () =
   Time.tick "Publishing the invariant (short)"
@@ -701,8 +699,8 @@ module Long () = struct
   module SSt =
     StackStates.Run(SSy)
 
-  open SSy (* crucial! shadows the short invariant *)
-  open SSt (* crucial! shadows the short invariant *)
+  open SSy
+  open SSt
 
   (* Validate. *)
 
