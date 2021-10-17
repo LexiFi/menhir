@@ -518,7 +518,7 @@ end
    Then, we want to construct and tabulate a function that maps things to
    vectors of cells. *)
 
-let publish tabulate symbols states cell =
+let publish tabulate symbols states =
   tabulate (fun thing ->
     let symbols, states = symbols thing, states thing in
     assert (Array.length symbols >= Array.length states);
@@ -535,19 +535,16 @@ let stack : Lr1.node -> word =
   publish Lr1.tabulate
     StackSymbolsShort.stack_symbols
     stack_states
-    cell
 
 let prodstack : Production.index -> word =
   publish Production.tabulate
     StackSymbolsShort.production_symbols
     production_states
-    cell
 
 let gotostack : Nonterminal.t -> word =
   publish Nonterminal.tabulate
     StackSymbolsShort.goto_symbols
     goto_states
-    cell
 
 let () =
   Time.tick "Publishing the invariant (short)"
@@ -736,13 +733,13 @@ module Long () = struct
   (* Publish. *)
 
   let stack : Lr1.node -> word =
-    publish Lr1.tabulate stack_symbols stack_states cell
+    publish Lr1.tabulate stack_symbols stack_states
 
   let prodstack : Production.index -> word =
-    publish Production.tabulate production_symbols production_states cell
+    publish Production.tabulate production_symbols production_states
 
   let gotostack : Nonterminal.t -> word =
-    publish Nonterminal.tabulate goto_symbols goto_states cell
+    publish Nonterminal.tabulate goto_symbols goto_states
 
   let () =
     Time.tick "Publishing the invariant (long)"
