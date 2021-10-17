@@ -513,23 +513,22 @@ module type STACK = sig
 
 end
 
-(* Suppose we have a function [foo] that maps things to vectors of foos and
-   a function [bar] that maps things to vectors of bars. Suppose we have a
-   function [cell] that builds a cell out of a foo and a bar. Then, we want
-   to construct and tabulate a function that maps things to vectors of
-   cells. This is done in a generic way as follows. *)
+(* Suppose we have a function [symbols] that maps things to vectors of symbols
+   and a function [states] that maps things to vectors of sets of states.
+   Then, we want to construct and tabulate a function that maps things to
+   vectors of cells. *)
 
-let publish tabulate foo bar cell =
+let publish tabulate symbols states cell =
   tabulate (fun thing ->
-    let foos, bars = foo thing, bar thing in
-    assert (Array.length foos >= Array.length bars);
-    (* We allow [bars] to be shorter than [foos]. This is required in the
-       computation of the long invariant, where [validate] can reject sets
-       of states that are not equi-represented. In that case, we truncate
-       [foos] to match [bars]. *)
-    let k = Array.length bars in
-    let foos = MArray.truncate k foos in
-    Array.init k (fun i -> cell foos.(i) bars.(i))
+    let symbols, states = symbols thing, states thing in
+    assert (Array.length symbols >= Array.length states);
+    (* We allow [states] to be shorter than [symbols]. This is required in the
+       computation of the long invariant, where [validate] can reject sets of
+       states that are not equi-represented. In that case, we truncate
+       [symbols] to match [states]. *)
+    let k = Array.length states in
+    let symbols = MArray.truncate k symbols in
+    Array.init k (fun i -> cell symbols.(i) states.(i))
   )
 
 let stack : Lr1.node -> word =
