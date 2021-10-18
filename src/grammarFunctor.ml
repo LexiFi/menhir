@@ -542,6 +542,10 @@ module Symbol = struct
     | [], _ :: _ ->
         false
 
+  let iter f =
+    Terminal.iter (fun t -> f (T t));
+    Nonterminal.iter (fun nt -> f (N nt))
+
   let non_error sym =
     match sym with
     | T tok ->

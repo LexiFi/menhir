@@ -324,6 +324,10 @@ module Symbol : sig
   val equal: t -> t -> bool
   val lequal: t list -> t list -> bool
 
+  (* Iteration. *)
+
+  val iter: (t -> unit) -> unit
+
   (* [non_error] returns [true] if its argument is not the [error] token. *)
 
   val non_error: t -> bool
