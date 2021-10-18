@@ -29,8 +29,35 @@ module _ = Freeze
 
 (* Now, compute which states may be held in the known suffix of the stack. *)
 
-module StackStatesShort =
-  StackStates.Run(StackSymbolsShort)
+(* This computation may be required for one of two reasons:
+
+   1. We need this information below to compute which states must be
+      represented. In other words, this information is needed if
+      [--represent-states] is false.
+
+   2. The Coq back-end needs this information, which it passes on to the
+      Coq validator. Thus, this information is needed if [--coq] is on.
+
+   For large automata, computing this information can be somewhat costly;
+   e.g., about 1.5 seconds for cca_cpp, an automaton with 10,000 states.
+   So, if possible, we skip this computation. *)
+
+module StackStatesShort = struct
+
+  let analysis_needed =
+    (not Settings.represent_states) || Settings.coq
+
+  open StackStates
+
+  include
+    (val
+      if analysis_needed then
+        (module Run(StackSymbolsShort) : STACK_STATES)
+      else
+        (module Dummy(StackSymbolsShort) : STACK_STATES)
+    )
+
+end
 
 (* ------------------------------------------------------------------------ *)
 
