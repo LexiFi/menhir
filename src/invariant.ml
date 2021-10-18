@@ -45,15 +45,8 @@ let () =
    or a reduction on [error]. *)
 
 let handler state =
-  try
-    let _ = SymbolMap.find (Symbol.T Terminal.error) (Lr1.transitions state) in
-    true
-  with Not_found ->
-    try
-      let _ = TerminalMap.lookup Terminal.error (Lr1.reductions state) in
-      true
-    with Not_found ->
-      false
+  SymbolMap.mem (Symbol.T Terminal.error) (Lr1.transitions state) ||
+  TerminalMap.mem Terminal.error (Lr1.reductions state)
 
 (* [handlers state] determines whether a least one state in the set [states]
    can handle the token [error]. *)
