@@ -20,7 +20,7 @@ open Grammar
 (* This artificial dependency ensures that Freeze runs before we execute
    the costly analyses that follow. *)
 
-module _ = Freeze
+module F = Freeze
 
 (* ------------------------------------------------------------------------ *)
 
