@@ -39,6 +39,29 @@ let () =
   Error.logC 3 (StackStatesShort.dump "short")
 
 (* ------------------------------------------------------------------------ *)
+
+(* [handler state] determines whether the state [state] can handle the
+   token [error], that is, whether it has either an outgoing transition
+   or a reduction on [error]. *)
+
+let handler state =
+  try
+    let _ = SymbolMap.find (Symbol.T Terminal.error) (Lr1.transitions state) in
+    true
+  with Not_found ->
+    try
+      let _ = TerminalMap.lookup Terminal.error (Lr1.reductions state) in
+      true
+    with Not_found ->
+      false
+
+(* [handlers state] determines whether a least one state in the set [states]
+   can handle the token [error]. *)
+
+let handlers states =
+  Lr1.NodeSet.exists handler states
+
+(* ------------------------------------------------------------------------ *)
 (* We now determine which states must be represented, that is,
    explicitly pushed onto the stack. For simplicity, a state is either
    always represented or never represented. More fine-grained
@@ -68,6 +91,10 @@ let () =
    (that is, the state that initiated the recognition of this
    production) is represented. (Indeed, it will be passed as an
    argument to [errorcase].) *)
+
+module RepresentedStates () : sig
+  val represented : Lr1.node -> bool
+end = struct
 
 (* Data. *)
 
@@ -118,20 +145,6 @@ let () =
 
 (* Enforce condition (3) above. *)
 
-let handler state =
-  try
-    let _ = SymbolMap.find (Symbol.T Terminal.error) (Lr1.transitions state) in
-    true
-  with Not_found ->
-    try
-      let _ = TerminalMap.lookup Terminal.error (Lr1.reductions state) in
-      true
-    with Not_found ->
-      false
-
-let handlers states =
-  Lr1.NodeSet.exists handler states
-
 let () =
   Lr1.iter (fun node ->
     let v = StackStatesShort.stack_states node in
@@ -155,21 +168,10 @@ let () =
         represents states
   )
 
-(* Define accessors. *)
-
-(* If [--represent-states] is passed on the command line, then every state is
-   represented. The above computation is still performed. *)
+(* Define an accessor. *)
 
 let represented state =
-  Settings.represent_states ||
   UnionFind.get (represented state)
-
-let representeds states =
-  Settings.represent_states ||
-  if Lr1.NodeSet.is_empty states then
-    false
-  else
-    represented (Lr1.NodeSet.choose states)
 
 (* Statistics. *)
 
@@ -192,6 +194,25 @@ let () =
         (Lr1.print node) (represented node)
     )
   )
+
+end (* RepresentedStates *)
+
+(* If [--represent-states] is passed on the command line, then every state is
+   represented, and the above computation is skipped. *)
+
+let represented : Lr1.node -> bool =
+  if Settings.represent_states then
+    fun _state -> true
+  else
+    let module RS = RepresentedStates() in
+    RS.represented
+
+let representeds states =
+  Settings.represent_states ||
+  if Lr1.NodeSet.is_empty states then
+    false
+  else
+    represented (Lr1.NodeSet.choose states)
 
 let () =
   Time.tick "Computing which states must be represented"
