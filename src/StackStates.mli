@@ -11,12 +11,37 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Grammar
-
 (**This module performs a static analysis of the LR(1) automaton in order to
    determine which states might possibly be held in the known suffix of the
    stack at every state. *)
 
+open Grammar
+
+(**The functors [Run] and [Dummy] assume that the height of the known suffix
+   of the stack is known at every state. This height information must be
+   consistent: the height at a state [s] must be no greater than the minimum
+   of the height at the predecessors of [s], plus one. *)
+module type STACK_HEIGHTS = sig
+
+  (**[stack_height s] is the height of the known suffix of the stack
+     at state [s]. *)
+  val stack_height: Lr1.node -> int
+
+  (**[production_height prod] is the height of the known suffix of the stack
+     at a state where production [prod] can be reduced. *)
+  val production_height: Production.index -> int
+
+  (**[goto_height nt] is the height of the known suffix of the stack at a
+     state where an edge labeled [nt] has just been followed. *)
+  val goto_height: Nonterminal.t -> int
+
+  (**The string [variant] should be "short" or "long" and is printed
+     when --timings is enabled. *)
+  val variant: string
+
+end
+
+(**This signature describes the output of the functors [Run] and [Dummy]. *)
 module type STACK_STATES = sig
 
   (**A property is a description of the known suffix of the stack at state
@@ -46,28 +71,9 @@ module type STACK_STATES = sig
 
 end
 
-(**We assume that the known suffix of the stack, a sequence of symbols, has
-   already been computed at every state. All that is needed, actually, is
-   the size of the known suffix, given by the function [stack_height]. This
-   size information must be consistent: the size at a state [s] must be no
-   greater than the minimum of the sizes at the predecessors of [s], plus
-   one. *)
-module Run (S : sig
+(**The functor [Run] performs a simple data flow analysis to determine
+   which states may appear in each stack cell. *)
+module Run (S : STACK_HEIGHTS) : STACK_STATES
 
-  (**[stack_height s] is the height of the known suffix of the stack
-     at state [s]. *)
-  val stack_height: Lr1.node -> int
-
-  (**[production_height prod] is the height of the known suffix of the stack
-     at a state where production [prod] can be reduced. *)
-  val production_height: Production.index -> int
-
-  (**[goto_height nt] is the height of the known suffix of the stack at a
-     state where an edge labeled [nt] has just been followed. *)
-  val goto_height: Nonterminal.t -> int
-
-  (**The string [variant] should be "short" or "long" and is printed
-     when --timings is enabled. *)
-  val variant: string
-
-end) : STACK_STATES
+(**The dummy module [Dummy] is used to skip the above computation. *)
+module Dummy (S : STACK_HEIGHTS) : STACK_STATES
