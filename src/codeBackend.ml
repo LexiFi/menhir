@@ -22,7 +22,7 @@ open CodeBits
 open CodePieces
 open TokenType
 open Interface
-let if1, ifn = MList.(if1, ifn)
+let if1, ifnlazy = MList.(if1, ifnlazy)
 
 (* ------------------------------------------------------------------------ *)
 (* Here is a description of our code generation mechanism.
@@ -749,7 +749,7 @@ let errorcellparams (i, pat) cell =
 let runparams s : xparams =
   xvar env ::
   xmagic (xvar stack) ::
-  ifn (runpushes s) (runcellparams (Short.stack s))
+  ifnlazy (runpushes s) (fun () -> runcellparams (Short.stack s))
 
 let call_run s actuals =
   EApp (EVar (run s), actuals)
@@ -763,7 +763,7 @@ let call_run s actuals =
 let reduceparams prod =
   PVar env ::
   PVar stack ::
-  ifn (shiftreduce prod) (
+  ifnlazy (shiftreduce prod) (fun () ->
     Invariant.fold_top
       (reducecellparams prod (Production.length prod - 1))
     [] (Short.prodstack prod)
@@ -779,8 +779,8 @@ let call_reduce prod s =
   let actuals =
     (EVar env) ::
     (EMagic (EVar stack)) ::
-    ifn (shiftreduce prod)
-      (xparams2exprs (runcellparams (Short.stack s)))
+    ifnlazy (shiftreduce prod)
+      (fun () -> xparams2exprs (runcellparams (Short.stack s)))
       (* compare with [runpushcell s] *) @
     if1 (reduce_expects_state_param prod) (estatecon s)
   in
