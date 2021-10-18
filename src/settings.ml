@@ -558,15 +558,6 @@ let noprefix =
 let code_inlining =
   !code_inlining
 
-let represent_positions =
-  !represent_positions
-
-let represent_states =
-  !represent_states
-
-let represent_values =
-  !represent_values
-
 let inline =
   !inline
 
@@ -727,3 +718,20 @@ let infer =
       IMNone
   | _ ->
       infer
+
+(* [--table] or [--coq] implies [--represent-everything]. Indeed, only the
+   code back-ends need clever computations of which states, values, and
+   positions are represented as part of stack cells. *)
+
+let () =
+  if table || coq then
+    represent_everything()
+
+let represent_positions =
+  !represent_positions
+
+let represent_states =
+  !represent_states
+
+let represent_values =
+  !represent_values
