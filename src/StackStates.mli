@@ -15,33 +15,9 @@ open Grammar
 
 (**This module performs a static analysis of the LR(1) automaton in order to
    determine which states might possibly be held in the known suffix of the
-   stack at every state.
+   stack at every state. *)
 
-   We assume that the known suffix of the stack, a sequence of symbols, has
-   already been computed at every state. All that is needed, actually, is
-   the size of the known suffix, given by the function [stack_height]. This
-   size information must be consistent: the size at a state [s] must be no
-   greater than the minimum of the sizes at the predecessors of [s], plus
-   one. *)
-module Run (S : sig
-
-  (**[stack_height s] is the height of the known suffix of the stack
-     at state [s]. *)
-  val stack_height: Lr1.node -> int
-
-  (**[production_height prod] is the height of the known suffix of the stack
-     at a state where production [prod] can be reduced. *)
-  val production_height: Production.index -> int
-
-  (**[goto_height nt] is the height of the known suffix of the stack at a
-     state where an edge labeled [nt] has just been followed. *)
-  val goto_height: Nonterminal.t -> int
-
-  (**The string [variant] should be "short" or "long" and is printed
-     when --timings is enabled. *)
-  val variant: string
-
-end) : sig
+module type STACK_STATES = sig
 
   (**A property is a description of the known suffix of the stack at state
      [s]. It is represented as an array. By convention, the top of the stack
@@ -69,3 +45,29 @@ end) : sig
      unspecified format. *)
 
 end
+
+(**We assume that the known suffix of the stack, a sequence of symbols, has
+   already been computed at every state. All that is needed, actually, is
+   the size of the known suffix, given by the function [stack_height]. This
+   size information must be consistent: the size at a state [s] must be no
+   greater than the minimum of the sizes at the predecessors of [s], plus
+   one. *)
+module Run (S : sig
+
+  (**[stack_height s] is the height of the known suffix of the stack
+     at state [s]. *)
+  val stack_height: Lr1.node -> int
+
+  (**[production_height prod] is the height of the known suffix of the stack
+     at a state where production [prod] can be reduced. *)
+  val production_height: Production.index -> int
+
+  (**[goto_height nt] is the height of the known suffix of the stack at a
+     state where an edge labeled [nt] has just been followed. *)
+  val goto_height: Nonterminal.t -> int
+
+  (**The string [variant] should be "short" or "long" and is printed
+     when --timings is enabled. *)
+  val variant: string
+
+end) : STACK_STATES
