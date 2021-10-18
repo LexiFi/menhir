@@ -188,6 +188,9 @@ let () =
     )
   )
 
+let () =
+  Time.tick "Computing which states must be represented"
+
 end (* RepresentedStates *)
 
 (* If [--represent-states] is passed on the command line, then every state is
@@ -209,9 +212,6 @@ let representeds states =
     false
   else
     represented (Lr1.NodeSet.choose states)
-
-let () =
-  Time.tick "Computing which states must be represented"
 
 (* ------------------------------------------------------------------------ *)
 
