@@ -1210,8 +1210,8 @@ let reducebody prod =
   let symbol = Symbol.N nt in
 
   let posbindings action =
-    let bind_startp = Invariant.startp symbol
-    and bind_endp = Invariant.endp symbol in
+    let bind_startp = Invariant.track_startp symbol
+    and bind_endp = Invariant.track_endp symbol in
     if1 (Action.has_beforeend action)
       ( extract beforeendp
       ) @

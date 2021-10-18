@@ -424,7 +424,7 @@ let () =
 
 end (* TrackPositions *)
 
-let startp, endp =
+let track_startp, track_endp =
   if Settings.represent_positions then
     always, always
   else
@@ -469,7 +469,7 @@ let has_semv symbol =
 let cell symbol states =
   let holds_semv = has_semv symbol in
   let holds_state = representeds states in
-  let holds_startp, holds_endp = startp symbol, endp symbol in
+  let holds_startp, holds_endp = track_startp symbol, track_endp symbol in
   { symbol; states; holds_semv; holds_state; holds_startp; holds_endp }
 
 (* Accessors. *)

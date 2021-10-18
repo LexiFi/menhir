@@ -167,13 +167,13 @@ val errorpeeker: Lr1.node -> bool
    representation, that is, whether it is pushed onto the stack. *)
 val represented: Lr1.node -> bool
 
-(**[startp symbol] tells whether a start position must be recorded for
-   the symbol [symbol]. *)
-val startp: Symbol.t -> bool
+(**[track_startp symbol] tells whether a start position must be
+   recorded for the symbol [symbol]. *)
+val track_startp: Symbol.t -> bool
 
-(**[endp symbol] tells whether an end position must be recorded for
-   the symbol [symbol]. *)
-val endp: Symbol.t -> bool
+(**[track_endp symbol] tells whether an end position must be recorded
+   for the symbol [symbol]. *)
+val track_endp: Symbol.t -> bool
 
 (**[universal symbol] tells whether every represented state has an
    outgoing transition along [symbol]. *)
