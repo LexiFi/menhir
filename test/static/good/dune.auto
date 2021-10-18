@@ -12372,7 +12372,9 @@
 (rule (target wasm.1.0-parser.opp.out) (deps wasm.1.0-parser.mly)
   (action
     (with-outputs-to wasm.1.0-parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:wasm.1.0-parser.flags}
+          %{deps})))))
 
 (rule (alias wasm.1.0-parser)
   (action (diff wasm.1.0-parser.opp.exp wasm.1.0-parser.opp.out)))
@@ -12386,7 +12388,8 @@
     (with-outputs-to wasm.1.0-parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to wasm.1.0-parser.timings %{deps})))))
+          --timings-to wasm.1.0-parser.timings
+          %{read-lines:wasm.1.0-parser.flags} %{deps})))))
 
 (rule (alias wasm.1.0-parser)
   (action (diff wasm.1.0-parser.exp wasm.1.0-parser.out)))
