@@ -50,9 +50,6 @@ end) : sig
   type property =
     Lr1.NodeSet.t array
 
-  (**[print] prints a property. *)
-  val print: property -> string
-
   (**[stack_states s] is the known suffix of the stack at state [s]. *)
   val stack_states: Lr1.node -> property
 
