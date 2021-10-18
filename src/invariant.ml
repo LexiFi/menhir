@@ -134,7 +134,7 @@ let handlers states =
 
 let () =
   Lr1.iter (fun node ->
-    let v =StackStatesShort.stack_states node in
+    let v = StackStatesShort.stack_states node in
     Array.iter (fun states ->
       if Lr1.NodeSet.cardinal states >= 2 && handlers states then
         represents states
