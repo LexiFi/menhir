@@ -20,7 +20,6 @@ val project: 'a option -> 'a (* careful: calls [exit 1] in case of failure *)
 val equal: ('a -> 'b -> bool) -> 'a option -> 'b option -> bool
 val hash: ('a -> int) -> 'a option -> int
 val value: 'a option -> default:'a -> 'a
-val first_value: 'a option list -> 'a option
 val split: ('a * 'b) option -> 'a option * 'b option
 val sub: ('a -> 'b -> bool) -> 'a option -> 'b option -> bool (* None <= Some *)
 val elements: 'a option -> 'a list

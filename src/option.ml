@@ -82,14 +82,6 @@ let value o ~default =
   | None ->
       default
 
-let rec first_value = function
-| Some e :: _ ->
-    Some e
-| None :: li ->
-    first_value li
-| [] ->
-    None
-
 let split o =
   match o with
   | None ->
