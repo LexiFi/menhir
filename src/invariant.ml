@@ -525,12 +525,8 @@ let meet w1 w2 =
 let pop =
   MArray.pop
 
-let fold_top f _default w =
-  let n = Array.length w in
-  if n = 0 then
-    assert false
-  else
-    f w.(n-1)
+let top =
+  MArray.last
 
 (* ------------------------------------------------------------------------ *)
 

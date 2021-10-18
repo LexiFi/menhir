@@ -99,9 +99,8 @@ val meet: word -> word -> word option
 (**[pop w] is the stack [w], deprived of its top element (if it exists). *)
 val pop: word -> word
 
-(**[fold_top f default w] returns [f cell], where [cell] is the top cell
-   in the stack [w], if [w] is nonempty. Otherwise, it returns [default]. *)
-val fold_top: (cell -> 'a) -> 'a -> word -> 'a
+(**[top w] is the top element of the stack [w]. This stack must be nonempty. *)
+val top: word -> cell
 
 (* ------------------------------------------------------------------------- *)
 (* Information about the stack. *)

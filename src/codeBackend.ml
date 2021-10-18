@@ -683,13 +683,12 @@ let letunless e x e1 e2 =
    choice of identifiers is suitable for use in the definition of [run]. *)
 
 let runcellparams stack : xparams =
-  Invariant.fold_top (fun cell ->
-    let { holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
-    if1 holds_endp (xvar endp) @
-    if1 holds_state (xvar state) @
-    if1 holds_semv (xvar semv) @
-    if1 holds_startp (xvar startp)
-  ) [] stack
+  let cell = Invariant.top stack in
+  let { holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
+  if1 holds_endp (xvar endp) @
+  if1 holds_state (xvar state) @
+  if1 holds_semv (xvar semv) @
+  if1 holds_startp (xvar startp)
 
 (* May the semantic action associated with production [prod] refer to the
    variable [ids.(i)]? *)
@@ -764,9 +763,8 @@ let reduceparams prod =
   PVar env ::
   PVar stack ::
   ifnlazy (shiftreduce prod) (fun () ->
-    Invariant.fold_top
-      (reducecellparams prod (Production.length prod - 1))
-    [] (Short.prodstack prod)
+    let cell = Invariant.top (Short.prodstack prod) in
+    reducecellparams prod (Production.length prod - 1) cell
   ) @
   if1 (reduce_expects_state_param prod) (PVar state)
 
@@ -872,13 +870,12 @@ let shiftbranchbody s tok s' =
   let actuals =
     (EVar env) ::
     (EMagic (EVar stack)) ::
-    Invariant.fold_top (fun cell ->
-      let { holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
-      if1 holds_endp getendp @
-      if1 holds_state (estatecon s) @
-      if1 holds_semv (EVar semv) @
-      if1 holds_startp getstartp
-    ) [] (Short.stack s')
+    let cell = Invariant.top (Short.stack s') in
+    let { holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
+    if1 holds_endp getendp @
+    if1 holds_state (estatecon s) @
+    if1 holds_semv (EVar semv) @
+    if1 holds_startp getstartp
   in
 
   (* Call [run s']. *)
