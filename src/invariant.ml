@@ -193,9 +193,12 @@ end (* RepresentedStates *)
 (* If [--represent-states] is passed on the command line, then every state is
    represented, and the above computation is skipped. *)
 
+let always _ =
+  true
+
 let represented : Lr1.node -> bool =
   if Settings.represent_states then
-    fun _state -> true
+    always
   else
     let module RS = RepresentedStates() in
     RS.represented
