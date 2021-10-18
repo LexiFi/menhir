@@ -33,12 +33,6 @@ module StackStatesShort =
   StackStates.Run(StackSymbolsShort)
 
 (* ------------------------------------------------------------------------ *)
-(* If requested, print the information that has been computed above. *)
-
-let () =
-  Error.logC 3 (StackStatesShort.dump "short")
-
-(* ------------------------------------------------------------------------ *)
 
 (* [handler state] determines whether the state [state] can handle the
    token [error], that is, whether it has either an outgoing transition
@@ -748,11 +742,6 @@ module Long () = struct
 
   let goto_states nt =
     validate @@ StackStatesLong.goto_states nt
-
-  (* Dump. *)
-
-  let () =
-    Error.logC 3 (StackStatesLong.dump "long")
 
   (* Publish. *)
 

@@ -68,9 +68,7 @@ end) : sig
      greater. *)
   val goto_states: Nonterminal.t -> property
 
-  (**[dump prefix f] dumps the result of the analysis to the output
-     channel [f], in an unspecified format. The string [prefix] is
-     emitted at the beginning of every line of output. *)
-  val dump: string -> out_channel -> unit
+  (* At log level [-lc 3], the result of the analysis is logged, in an
+     unspecified format. *)
 
 end

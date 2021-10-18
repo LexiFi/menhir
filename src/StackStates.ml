@@ -198,18 +198,22 @@ let print (v : property) =
   else
     Misc.separated_list_to_string Lr1.NodeSet.print "; " (Array.to_list v)
 
-let dump (prefix : string) f =
-  Lr1.iter (fun node ->
-    Printf.fprintf f "%sstack(%s) = %s\n"
-      prefix
-      (Lr1.print node)
-      (print (stack_states node))
-  );
-  Production.iterx (fun prod ->
-    Printf.fprintf f "%sprodstack(%s) = %s\n"
-      prefix
-      (Production.print prod)
-      (print (production_states prod))
+(* Dump. *)
+
+let () =
+  Error.logC 3 (fun f ->
+    Lr1.iter (fun node ->
+      Printf.fprintf f "%sstack(%s) = %s\n"
+        variant
+        (Lr1.print node)
+        (print (stack_states node))
+    );
+    Production.iterx (fun prod ->
+      Printf.fprintf f "%sprodstack(%s) = %s\n"
+        variant
+        (Production.print prod)
+        (print (production_states prod))
+    )
   )
 
 let () =
