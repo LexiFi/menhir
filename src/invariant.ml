@@ -300,8 +300,13 @@ end
    property -- in particular, I would like to keep track of no positions at all,
    if the user doesn't use any position keyword. But I am suffering. *)
 
-(* If [--represent-positions] is passed on the command line, then every position
-   is stored. *)
+(* If [--represent-positions] is passed on the command line, then this
+   computation is skipped and every position is tracked. *)
+
+module TrackPositions () : sig
+  val track_startp: Symbol.t -> bool
+  val track_endp: Symbol.t -> bool
+end = struct
 
 module F =
   FixSolver.Make(M)(Fix.Prop.Boolean)
@@ -395,21 +400,15 @@ let track : variable -> bool option =
 let track : variable -> bool =
   fun x -> Option.value (track x) ~default:false
 
-let startp symbol =
-  Settings.represent_positions ||
+let track_startp symbol =
   track (symbol, WhereStart)
 
-let endp symbol =
-  Settings.represent_positions ||
+let track_endp symbol =
   track (symbol, WhereEnd)
-
-let for_every_symbol (f : Symbol.t -> unit) : unit =
-  Terminal.iter (fun t -> f (Symbol.T t));
-  Nonterminal.iter (fun nt -> f (Symbol.N nt))
 
 let sum_over_every_symbol (f : Symbol.t -> bool) : int =
   let c = ref 0 in
-  for_every_symbol (fun sym -> if f sym then c := !c + 1);
+  Symbol.iter (fun sym -> if f sym then c := !c + 1);
   !c
 
 let () =
@@ -417,11 +416,20 @@ let () =
     Printf.fprintf f
       "%d out of %d symbols keep track of their start position.\n\
        %d out of %d symbols keep track of their end position.\n"
-        (sum_over_every_symbol startp) (Terminal.n + Nonterminal.n)
-        (sum_over_every_symbol endp) (Terminal.n + Nonterminal.n))
+        (sum_over_every_symbol track_startp) (Terminal.n + Nonterminal.n)
+        (sum_over_every_symbol track_endp) (Terminal.n + Nonterminal.n))
 
 let () =
   Time.tick "Computing which positions must be tracked"
+
+end (* TrackPositions *)
+
+let startp, endp =
+  if Settings.represent_positions then
+    always, always
+  else
+    let module T = TrackPositions() in
+    T.track_startp, T.track_endp
 
 (* ------------------------------------------------------------------------ *)
 (* Constructors and accessors for information about the stack. *)
