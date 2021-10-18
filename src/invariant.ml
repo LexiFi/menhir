@@ -42,16 +42,16 @@ module F = Freeze
    e.g., about 1.5 seconds for cca_cpp, an automaton with 10,000 states.
    So, if possible, we skip this computation. *)
 
-module StackStatesShort = struct
+let states_needed =
+  (not Settings.represent_states) || Settings.coq
 
-  let analysis_needed =
-    (not Settings.represent_states) || Settings.coq
+module StackStatesShort = struct
 
   open StackStates
 
   include
     (val
-      if analysis_needed then
+      if states_needed then
         (module Run(StackSymbolsShort) : STACK_STATES)
       else
         (module Dummy(StackSymbolsShort) : STACK_STATES)
@@ -460,11 +460,31 @@ let track_startp, track_endp =
 type cell = {
   symbol: Symbol.t;
   states: Lr1.NodeSet.t;
+    (* If [states_needed] is false, then the [states] field contains
+       a dummy value, an empty set of states. *)
   holds_semv: bool;
   holds_state: bool;
   holds_startp: bool;
   holds_endp: bool;
 }
+
+let symbol cell =
+  cell.symbol
+
+let states cell =
+  cell.states
+
+let holds_semv cell =
+  cell.holds_semv
+
+let holds_state cell =
+  cell.holds_state
+
+let holds_startp cell =
+  cell.holds_startp
+
+let holds_endp cell =
+  cell.holds_endp
 
 type word =
   cell array
@@ -744,6 +764,7 @@ module Long () = struct
 
   module StackStatesLong =
     StackStates.Run(StackSymbolsLong)
+      (* TODO use Dummy if [states_needed] is false *)
 
   (* Validate. *)
 

@@ -39,7 +39,7 @@ module Run (T: sig end) = struct
     | Symbol.T t -> sprintf "T %s" (print_term t)
 
   let print_cell_symbol cell =
-    print_symbol cell.Invariant.symbol
+    print_symbol (Invariant.symbol cell)
 
   let print_word print_cell w =
     (* Convert to a list whose head is the top of the stack. *)
@@ -381,7 +381,7 @@ module Run (T: sig end) = struct
            id
     in
     let print_cell_stateset_id cell =
-      get_stateset_id cell.Invariant.states
+      get_stateset_id (Invariant.states cell)
     in
     let b = Buffer.create 256 in
     bprintf b "Definition past_state_of_non_init_state (s:noninitstate) : list (state -> bool) :=\n";

@@ -34,42 +34,39 @@ open Grammar
 (* A representation of stack shapes. *)
 
 (**A cell is a representation of a stack cell. *)
-type cell = private {
+type cell
 
-  symbol: Symbol.t;
-  (**The symbol associated with this cell. This symbol determines the
-     presence and the type of the semantic value stored in this cell.
-     It also determines whether a start position and an end position
-     are stored in this cell. *)
+(**[symbol cell] is the symbol associated with the cell [cell]. This
+   symbol determines the presence and the type of the semantic value stored
+   in this cell. It also determines whether a start position and an end
+   position are stored in this cell; see [track_startp] and [track_endp]. *)
+val symbol: cell -> Symbol.t
 
-  states: Lr1.NodeSet.t;
-  (**A set of possible states such that the state that is stored in this
-     cell (or would be stored in this cell) must be a member of this set.
-     The states in this set have the property that either all of them are
-     represented, in which case [holds_state] is [true], or none of them is
-     represented, in which case [holds_state] is [false]. *)
+(**[states cell] is the set of the states that might be stored at runtime
+   in this cell. The states in this set have the property that either all
+   of them are represented, in which case [holds_state] is [true], or none
+   of them is represented, in which case [holds_state] is [false]. *)
+val states: cell -> Lr1.NodeSet.t
 
-  holds_semv: bool;
-  (**Whether a semantic value is stored in this cell. By convention, if
-     [symbol] is a nonterminal symbol, then a semantic value is stored.
-     (We do not attempt to detect the situation where the semantic value
-     could be omitted because it has type [unit], or the situation where
-     it could be omitted because it is never used.) If [symbol] is a
-     terminal symbol, then a semantic value is stored if and only if
-     the [%token] declaration was annotated with a type. *)
+(**[holds_semv cell] tells whether a semantic value is stored in the cell
+   [cell]. By convention, if [symbol cell] is a nonterminal symbol, then a
+   semantic value is stored. (We do not attempt to detect the situation where
+   the semantic value could be omitted because it has type [unit], or the
+   situation where it could be omitted because it is never used.) If [symbol
+   cell] is a terminal symbol, then a semantic value is stored if and only if
+   the [%token] declaration was annotated with a type. *)
+val holds_semv: cell -> bool
 
-  holds_state: bool;
-  (**Whether a state is stored in this cell. *)
+(**[holds_state cell] tells whether a state is stored in the cell [cell]. *)
+val holds_state: cell -> bool
 
-  holds_startp: bool;
-  (**Whether a start position is stored in this cell. This decision
-     is a function of [symbol]. *)
+(**[holds_startp cell] tells whether a start position is stored in the cell
+   [cell]. It is equivalent to [track_startp (symbol cell)]. *)
+val holds_startp: cell -> bool
 
-  holds_endp: bool;
-  (**Whether an end position is stored in this cell. This decision
-     is a function of [symbol]. *)
-
-}
+(**[holds_endp cell] tells whether a start position is stored in the cell
+   [cell]. It is equivalent to [track_endp (symbol cell)]. *)
+val holds_endp: cell -> bool
 
 (**A word is a representation of a stack suffix. A word is an immutable
    array of cells, whose right end represents the top of the stack. Thus,

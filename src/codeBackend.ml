@@ -468,7 +468,7 @@ let statetypedef = {
   typeparams =     [];
   typerhs =        TDefSum (
                      Lr1.fold (fun defs s ->
-                       if Invariant.represented s then {
+                       if represented s then {
                          dataname =       statecon s;
                          datavalparams =  [];
                          datatypeparams = None;
@@ -550,13 +550,12 @@ let curryif flag t =
    singleton tuple cell. *)
 
 let celltype tailtype cell =
-  let { symbol; holds_state; holds_startp; holds_endp; _ } = cell in
   TypTuple (
     tailtype ::
-    if1 holds_endp tposition @
-    if1 holds_state tstate @
-    semvtype symbol @
-    if1 holds_startp tposition
+    if1 (holds_endp cell) tposition @
+    if1 (holds_state cell) tstate @
+    semvtype (symbol cell) @
+    if1 (holds_startp cell) tposition
   )
 
 (* Types for stacks.
@@ -609,7 +608,9 @@ let gototypescheme nt =
 let reduce_expects_state_param prod =
   let nt = Production.nt prod in
   Production.length prod = 0 &&
-  (Short.gotostack nt).(0).holds_state
+  let stack = Short.gotostack nt in
+  assert (Array.length stack = 1);
+  holds_state (top stack)
 
 (* The type of the [reduce] function. If shiftreduce optimization
    is performed for this production, then the top stack cell is
@@ -683,12 +684,11 @@ let letunless e x e1 e2 =
    choice of identifiers is suitable for use in the definition of [run]. *)
 
 let runcellparams stack : xparams =
-  let cell = Invariant.top stack in
-  let { holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
-  if1 holds_endp (xvar endp) @
-  if1 holds_state (xvar state) @
-  if1 holds_semv (xvar semv) @
-  if1 holds_startp (xvar startp)
+  let cell = top stack in
+  if1 (holds_endp cell) (xvar endp) @
+  if1 (holds_state cell) (xvar state) @
+  if1 (holds_semv cell) (xvar semv) @
+  if1 (holds_startp cell) (xvar startp)
 
 (* May the semantic action associated with production [prod] refer to the
    variable [ids.(i)]? *)
@@ -708,7 +708,6 @@ let action_may_refer_to_value prod i =
    symbol this stack cell is associated with. *)
 
 let reducecellparams prod i cell =
-  let { symbol; holds_state; holds_startp; holds_endp; _ } = cell in
   let ids = Production.identifiers prod in
   (* The semantic value is bound to the variable [ids.(i)]. Its type is [t]. As
      of 2016/03/11, we generate a type annotation. Indeed, because of our use of
@@ -723,24 +722,23 @@ let reducecellparams prod i cell =
     else
       PWildcard
   in
-  if1 holds_endp (PVar (Printf.sprintf "_endpos_%s_" ids.(i))) @
-  if1 holds_state (if i = 0 then PVar state else PWildcard) @
-  List.map semvpat (semvtype symbol) @
-  if1 holds_startp (PVar (Printf.sprintf "_startpos_%s_" ids.(i)))
+  if1 (holds_endp cell) (PVar (Printf.sprintf "_endpos_%s_" ids.(i))) @
+  if1 (holds_state cell) (if i = 0 then PVar state else PWildcard) @
+  List.map semvpat (semvtype (symbol cell)) @
+  if1 (holds_startp cell) (PVar (Printf.sprintf "_startpos_%s_" ids.(i)))
 
 (* The contents of a stack cell, exposed as individual parameters,
    again. The choice of identifiers is suitable for use in the
    definition of [error]. *)
 
 let errorcellparams (i, pat) cell =
-  let { holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
   i + 1,
   ptuple (
     pat ::
-    if1 holds_endp PWildcard @
-    if1 holds_state (if i = 0 then PVar state else PWildcard) @
-    if1 holds_semv PWildcard @
-    if1 holds_startp PWildcard
+    if1 (holds_endp cell) PWildcard @
+    if1 (holds_state cell) (if i = 0 then PVar state else PWildcard) @
+    if1 (holds_semv cell) PWildcard @
+    if1 (holds_startp cell) PWildcard
   )
 
 (* Calls to [run]. *)
@@ -763,7 +761,7 @@ let reduceparams prod =
   PVar env ::
   PVar stack ::
   ifnlazy (shiftreduce prod) (fun () ->
-    let cell = Invariant.top (Short.prodstack prod) in
+    let cell = top (Short.prodstack prod) in
     reducecellparams prod (Production.length prod - 1) cell
   ) @
   if1 (reduce_expects_state_param prod) (PVar state)
@@ -817,7 +815,7 @@ let call_error s =
    of functions that we produce. *)
 
 let call_error s =
-  if Invariant.represented s then
+  if represented s then
     EApp (EVar errorcase, [ EVar env; EMagic (EVar stack); estatecon s ])
       (* TEMPORARY use [let] binding and reduce duplication *)
   else
@@ -833,7 +831,7 @@ let call_assertfalse =
 
 (* Count how many states actually can peek at an error token. This
    figure is, in general, inferior or equal to the number of states at
-   which [Invariant.errorpeeker] is true, because some of these states
+   which [errorpeeker] is true, because some of these states
    have a default reduction and will not consult the lookahead
    token. *)
 
@@ -870,12 +868,11 @@ let shiftbranchbody s tok s' =
   let actuals =
     (EVar env) ::
     (EMagic (EVar stack)) ::
-    let cell = Invariant.top (Short.stack s') in
-    let { holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
-    if1 holds_endp getendp @
-    if1 holds_state (estatecon s) @
-    if1 holds_semv (EVar semv) @
-    if1 holds_startp getstartp
+    let cell = top (Short.stack s') in
+    if1 (holds_endp cell) getendp @
+    if1 (holds_state cell) (estatecon s) @
+    if1 (holds_semv cell) (EVar semv) @
+    if1 (holds_startp cell) getstartp
   in
 
   (* Call [run s']. *)
@@ -982,7 +979,7 @@ let gettoken s defred e =
          by reading [env.token], unless the token might be [error]:
          then, we check [env.error] first. *)
 
-      if Invariant.errorpeeker s then begin
+      if errorpeeker s then begin
         incr errorpeekers;
         EIfThenElse (
           ERecordAccess (EVar env, ferror),
@@ -1207,8 +1204,8 @@ let reducebody prod =
   let symbol = Symbol.N nt in
 
   let posbindings action =
-    let bind_startp = Invariant.track_startp symbol
-    and bind_endp = Invariant.track_endp symbol in
+    let bind_startp = track_startp symbol
+    and bind_endp = track_endp symbol in
     if1 (Action.has_beforeend action)
       ( extract beforeendp
       ) @
@@ -1352,7 +1349,7 @@ let gotobody nt =
       let default = branch PWildcard call_assertfalse in
       EMatch (
         EVar state,
-        branches @ (if Invariant.universal (Symbol.N nt) then [] else [ default ])
+        branches @ (if universal (Symbol.N nt) then [] else [ default ])
       )
 
 (* This the [goto] function associated with nonterminal [nt]. *)
@@ -1422,18 +1419,18 @@ let errorbody s =
          a state that does handle errors, a state that can further pop
          the stack, or die. *)
 
-      match Invariant.rewind s with
-      | Invariant.Die ->
+      match rewind s with
+      | Die ->
           can_die := true;
           ERaise errorval
-      | Invariant.DownTo (w, st) ->
+      | DownTo (w, st) ->
           let _, pat = Array.fold_left errorcellparams (0, PVar stack) w in
           blet (
             [ pat, EVar stack ],
             match st with
-            | Invariant.Represented ->
+            | Represented ->
                 call_errorcase
-            | Invariant.UnRepresented s ->
+            | UnRepresented s ->
                 call_error s
           )
 
@@ -1460,7 +1457,7 @@ let errordef s = {
 let errorcasedef =
   let branches =
     Lr1.fold (fun branches s ->
-      if Invariant.represented s then
+      if represented s then
         branch
           (pstatecon s)
           (EApp (EVar (error s), [ EVar env; EMagic (EVar stack) ]))
