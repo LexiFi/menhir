@@ -608,7 +608,9 @@
 (rule (target astrada_css.opp.out) (deps astrada_css.mly)
   (action
     (with-outputs-to astrada_css.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:astrada_css.flags}
+          %{deps})))))
 
 (rule (alias astrada_css)
   (action (diff astrada_css.opp.exp astrada_css.opp.out)))
@@ -621,7 +623,8 @@
     (with-outputs-to astrada_css.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to astrada_css.timings %{deps})))))
+          --timings-to astrada_css.timings %{read-lines:astrada_css.flags}
+          %{deps})))))
 
 (rule (alias astrada_css) (action (diff astrada_css.exp astrada_css.out)))
 
