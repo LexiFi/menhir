@@ -554,7 +554,7 @@ let similar cell1 cell2 =
   cell1.holds_state = cell2.holds_state
     (* The fields [holds_semv], [holds_startp] and [holds_endp]
        do not need to be compared, because they are determined
-       by the field [symbol]. The field [states] does not need
+       by the field [symbol]. The field [ostates] does not need
        to be compared because it does not influence the layout
        of the cell; comparing the field [holds_state] suffices. *)
 
@@ -565,7 +565,7 @@ let meet w1 w2 =
   if MArray.for_all2 similar suffix1 suffix2 then
     (* [w1] and [w2] agree on their common suffix. The meet is
        then the longest of the two words. (We could compute the
-       intersection of the [states] fields, but we assume that
+       intersection of the [ostates] fields, but we assume that
        the caller is not interested in this information.) *)
     Some (if n1 < n2 then w2 else w1)
   else
@@ -604,10 +604,10 @@ module type STACK = sig
 
 end
 
-(* Suppose we have a function [symbols] that maps things to vectors of symbols
-   and a function [states] that maps things to vectors of sets of states.
-   Then, we want to construct and tabulate a function that maps things to
-   vectors of cells. *)
+(* Suppose we have a function [symbols] that maps things to vectors of
+   symbols and a function [states] that maps things to vectors of sets of
+   states. Then, we want to construct and tabulate a function that maps
+   things to vectors of cells. *)
 
 let publish (long : bool) tabulate symbols states =
   tabulate (fun thing ->
