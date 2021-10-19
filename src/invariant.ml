@@ -767,7 +767,6 @@ module Long () = struct
 
   module StackStatesLong =
     StackStates.Run(StackSymbolsLong)
-      (* TODO use Dummy if [states_needed] is false *)
 
   (* Validate. *)
 
@@ -780,6 +779,14 @@ module Long () = struct
 
   let validate states =
     MArray.greatest_suffix_forall equi_represented states
+
+  let validate states =
+    if Settings.represent_states then
+      (* If every state must be represented, then every set of states is
+         equi-represented, so validation always succeeds. *)
+      states
+    else
+      validate states
 
   let stack_states s =
     validate @@ StackStatesLong.stack_states s
