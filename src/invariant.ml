@@ -493,30 +493,6 @@ type cell = {
   holds_endp: bool;
 }
 
-let symbol cell =
-  cell.symbol
-
-let states cell =
-  match cell.ostates with
-  | Some states ->
-      states
-  | None ->
-      (* Someone wants a piece of information that we have not computed.
-         This should not happen. *)
-      assert false
-
-let holds_semv cell =
-  cell.holds_semv
-
-let holds_state cell =
-  cell.holds_state
-
-let holds_startp cell =
-  cell.holds_startp
-
-let holds_endp cell =
-  cell.holds_endp
-
 type word =
   cell array
 
@@ -545,6 +521,30 @@ let cell symbol ostates =
   { symbol; ostates; holds_semv; holds_state; holds_startp; holds_endp }
 
 (* Accessors. *)
+
+let symbol cell =
+  cell.symbol
+
+let states cell =
+  match cell.ostates with
+  | Some states ->
+      states
+  | None ->
+      (* Someone wants a piece of information that we have not computed.
+         This should not happen. *)
+      assert false
+
+let holds_semv cell =
+  cell.holds_semv
+
+let holds_state cell =
+  cell.holds_state
+
+let holds_startp cell =
+  cell.holds_startp
+
+let holds_endp cell =
+  cell.holds_endp
 
 let present cell =
   cell.holds_state || cell.holds_semv || cell.holds_startp || cell.holds_endp
