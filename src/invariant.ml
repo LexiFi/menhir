@@ -31,12 +31,15 @@ module F = Freeze
 
 (* This computation may be required for one of two reasons:
 
-   1. We need this information below to compute which states must be
-      represented. In other words, this information is needed if
-      [--represent-states] is false.
+   1. When [--represent-states] is false (which is the default), we need
+      this information in order to compute which states must be represented.
+      More precisely, we use [StackStates.Short] while deciding which states
+      must be represented, and after these decisions have been made, we use
+      [StackStates.Long] to decide where to truncate the stack in the long
+      invariant.
 
-   2. The Coq back-end needs this information, which it passes on to the
-      Coq validator. Thus, this information is needed if [--coq] is on.
+   2. When [--coq] is true, this information is needed by the Coq back-end,
+      which passes it on to the Coq validator.
 
    For large automata, computing this information can be somewhat costly;
    e.g., about 1.5 seconds for cca_cpp, an automaton with 10,000 states.
