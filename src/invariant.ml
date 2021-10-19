@@ -573,14 +573,23 @@ let meet w1 w2 =
         that their meet is bottom. *)
     None
 
-let pop =
-  MArray.pop
+let push, pop, top, suffix, filter =
+  MArray.(push, pop, last, suffix, filter)
 
-let top =
-  MArray.last
+let get, length, fold_left, append =
+  Array.(get, length, fold_left, append)
 
-let length, fold_left =
-  Array.(length, fold_left)
+let split w k =
+  let n = Array.length w in
+  assert (0 <= k && k <= n);
+  let lower = Array.sub w 0 (n - k) in
+  let upper = MArray.suffix w k in
+  lower, upper
+
+let print w =
+  w
+  |> Array.map symbol
+  |> Symbol.printa
 
 (* ------------------------------------------------------------------------ *)
 

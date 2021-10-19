@@ -80,8 +80,12 @@ val similar: cell -> cell -> bool
 (**A word is a representation of a stack suffix. A word is an immutable
    array of cells, whose right end represents the top of the stack. Thus,
    the index 0 in the array corresponds to the cell that lies deepest in
-   the stack. *)
+   the stack. Many of the functions that follow are just copies of the
+   functions by the same names in the modules Array or MArray. *)
 type word
+
+(**[get w i] is the [i]-th cell in the word [w]. *)
+val get: word -> int -> cell
 
 (**[length w] is the length of the word [w]. *)
 val length: word -> int
@@ -89,6 +93,34 @@ val length: word -> int
 (**[fold_left] performs left-to-right iteration, with an accumulator,
    over a word. *)
 val fold_left: ('a -> cell -> 'a) -> 'a -> word -> 'a
+
+(**[append w1 w2] is the concatenation of the words [w1] and [w2]. *)
+val append: word -> word -> word
+
+(**[filter p w] is the subsequence of the cells in the word [w] that satisfy
+   the predicate [p]. *)
+val filter: (cell -> bool) -> word -> word
+
+(**[suffix w k] is the suffix of length [k] of the word [w]. The length of
+   [w] must be at least [k]. *)
+val suffix: word -> int -> word
+
+(**[push w cell] is the stack [w], onto which the cell [cell] has been
+   pushed. *)
+val push: word -> cell -> word
+
+(**[pop w] is the stack [w], deprived of its top element. The stack [w]
+   must be nonempty. *)
+val pop: word -> word
+
+(**[top w] is the top element of the stack [w]. The stack [w] must be
+   nonempty. *)
+val top: word -> cell
+
+(**[split w k] splits the word [w] into two parts: a lower part of length
+   [length w - k] and an upper part of length [k]. The length of [w] must be
+   at least [k]. *)
+val split: word -> int -> word * word
 
 (**[meet w1 w2] is the meet of the two stacks [w1] and [w2], that is, the
    logical conjunction of the information contained in [w1] and [w2]. If [w1]
@@ -99,11 +131,10 @@ val fold_left: ('a -> cell -> 'a) -> 'a -> word -> 'a
    fields, are missed. *)
 val meet: word -> word -> word option
 
-(**[pop w] is the stack [w], deprived of its top element (if it exists). *)
-val pop: word -> word
-
-(**[top w] is the top element of the stack [w]. This stack must be nonempty. *)
-val top: word -> cell
+(**[print w] prints the sequence of symbols associated with the word [w].
+   This is used is the code back-end to generate comments in the definition
+   of the algebraic data type [state]. *)
+val print: word -> string
 
 (* ------------------------------------------------------------------------- *)
 (* Information about the stack. *)
