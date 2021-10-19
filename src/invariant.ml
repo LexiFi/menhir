@@ -41,11 +41,17 @@ module F = Freeze
    2. When [--coq] is true, this information is needed by the Coq back-end,
       which passes it on to the Coq validator.
 
-   For large automata, computing this information can be somewhat costly;
-   e.g., about 1.5 seconds for cca_cpp, an automaton with 10,000 states.
-   So, if possible, we skip this computation. *)
+   For large automata, this computation can be somewhat costly; e.g., about
+   1.5 seconds for cca_cpp, a 10,000-state automaton. So, if possible, we
+   skip it. In particular, because [--table] implies [--represent-states],
+   this computation is skipped in [--table] mode.
 
-let states_needed =
+   Skipping this computation is a bit fragile / risky / inelegant, but it
+   should be entirely internal to this module. In the definition of the
+   type [cell], we use an [option] type in order to try and detect attempts
+   to use a piece of information that has not been computed. *)
+
+let short_states_needed =
   (not Settings.represent_states) || Settings.coq
 
 module StackStatesShort = struct
@@ -54,7 +60,7 @@ module StackStatesShort = struct
 
   include
     (val
-      if states_needed then
+      if short_states_needed then
         (module Run(StackSymbolsShort) : STACK_STATES)
       else
         (module Dummy(StackSymbolsShort) : STACK_STATES)
@@ -112,6 +118,9 @@ let handlers states =
 module RepresentedStates () : sig
   val represented : Lr1.node -> bool
 end = struct
+
+let () =
+  assert short_states_needed
 
 (* Data. *)
 
@@ -236,6 +245,19 @@ let representeds states =
     false
   else
     represented (Lr1.NodeSet.choose states)
+
+let representedo ostates =
+  match ostates with
+  | Some states ->
+      representeds states
+  | None ->
+      (* If this set of states is missing, then [short_states_needed] must
+         be false, which implies that [--represent-states] must be true,
+         which implies that every state is represented, so the correct
+         result is [true]. *)
+      assert (not short_states_needed);
+      assert Settings.represent_states;
+      true
 
 (* ------------------------------------------------------------------------ *)
 
@@ -462,9 +484,9 @@ let track_startp, track_endp =
 
 type cell = {
   symbol: Symbol.t;
-  states: Lr1.NodeSet.t;
-    (* If [states_needed] is false, then the [states] field contains
-       a dummy value, an empty set of states. *)
+  ostates: Lr1.NodeSet.t option;
+  (* If [short_states_needed] is false and if this cell is part of the short
+     invariant, then [ostates] is [None]. *)
   holds_semv: bool;
   holds_state: bool;
   holds_startp: bool;
@@ -475,7 +497,13 @@ let symbol cell =
   cell.symbol
 
 let states cell =
-  cell.states
+  match cell.ostates with
+  | Some states ->
+      states
+  | None ->
+      (* Someone wants a piece of information that we have not computed.
+         This should not happen. *)
+      assert false
 
 let holds_semv cell =
   cell.holds_semv
@@ -510,11 +538,11 @@ let has_semv symbol =
       | Some _ocamltype ->
           true
 
-let cell symbol states =
+let cell symbol ostates =
   let holds_semv = has_semv symbol in
-  let holds_state = representeds states in
+  let holds_state = representedo ostates in
   let holds_startp, holds_endp = track_startp symbol, track_endp symbol in
-  { symbol; states; holds_semv; holds_state; holds_startp; holds_endp }
+  { symbol; ostates; holds_semv; holds_state; holds_startp; holds_endp }
 
 (* Accessors. *)
 
@@ -581,7 +609,7 @@ end
    Then, we want to construct and tabulate a function that maps things to
    vectors of cells. *)
 
-let publish tabulate symbols states =
+let publish (long : bool) tabulate symbols states =
   tabulate (fun thing ->
     let symbols, states = symbols thing, states thing in
     assert (Array.length symbols >= Array.length states);
@@ -591,23 +619,30 @@ let publish tabulate symbols states =
        [symbols] to match [states]. *)
     let k = Array.length states in
     let symbols = MArray.truncate k symbols in
-    Array.init k (fun i -> cell symbols.(i) states.(i))
+    Array.init k (fun i ->
+      let ostates =
+        if long || short_states_needed then Some states.(i) else None
+      in
+      cell symbols.(i) ostates
+    )
   )
 
 module Short = struct
 
+  let long = false
+
   let stack : Lr1.node -> word =
-    publish Lr1.tabulate
+    publish long Lr1.tabulate
       StackSymbolsShort.stack_symbols
       StackStatesShort.stack_states
 
   let prodstack : Production.index -> word =
-    publish Production.tabulate
+    publish long Production.tabulate
       StackSymbolsShort.production_symbols
       StackStatesShort.production_states
 
   let gotostack : Nonterminal.t -> word =
-    publish Nonterminal.tabulate
+    publish long Nonterminal.tabulate
       StackSymbolsShort.goto_symbols
       StackStatesShort.goto_states
 
@@ -648,17 +683,17 @@ let rewind node : instruction =
       Die
 
     else
-      let { states; _ } as cell = MArray.last w in
+      let { ostates; _ } as cell = MArray.last w in
       let w = MArray.pop w in
 
-      if representeds states then
+      if representedo ostates then
 
         (* Here is a represented state. We will pop this
            cell and no more. *)
 
         DownTo ([| cell |], Represented)
 
-      else if handlers states then begin
+      else let states = Option.force ostates in if handlers states then begin
 
         (* Here is an unrepresented state that can handle
            errors. The cell must hold a singleton set of states, so
@@ -799,18 +834,20 @@ module Long () = struct
 
   (* Publish. *)
 
+  let long = true
+
   let stack : Lr1.node -> word =
-    publish Lr1.tabulate
+    publish long Lr1.tabulate
       StackSymbolsLong.stack_symbols
       stack_states
 
   let prodstack : Production.index -> word =
-    publish Production.tabulate
+    publish long Production.tabulate
       StackSymbolsLong.production_symbols
       production_states
 
   let gotostack : Nonterminal.t -> word =
-    publish Nonterminal.tabulate
+    publish long Nonterminal.tabulate
       StackSymbolsLong.goto_symbols
       goto_states
 
