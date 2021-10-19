@@ -572,13 +572,13 @@ let celltype tailtype cell =
    description of the stack provided by module [Invariant]. *)
 
 let stacktype s =
-  Array.fold_left celltype ttail (Short.stack s)
+  fold_left celltype ttail (Short.stack s)
 
 let reducestacktype prod =
-  Array.fold_left celltype ttail (Short.prodstack prod)
+  fold_left celltype ttail (Short.prodstack prod)
 
 let gotostacktype nt =
-  Array.fold_left celltype ttail (Short.gotostack nt)
+  fold_left celltype ttail (Short.gotostack nt)
 
 (* The type of the [run] function. As announced earlier, if [s] is the
    target of shift transitions, the type of the stack is curried, that
@@ -609,7 +609,7 @@ let reduce_expects_state_param prod =
   let nt = Production.nt prod in
   Production.length prod = 0 &&
   let stack = Short.gotostack nt in
-  assert (Array.length stack = 1);
+  assert (length stack = 1);
   holds_state (top stack)
 
 (* The type of the [reduce] function. If shiftreduce optimization
@@ -1157,7 +1157,7 @@ let reducebody prod =
      it in the pattern that is built. *)
 
   let (_ : int), pat =
-    Array.fold_left (fun (i, pat) cell ->
+    fold_left (fun (i, pat) cell ->
       i + 1,
       if i = length - 1 && shiftreduce prod then
         pat
@@ -1424,7 +1424,7 @@ let errorbody s =
           can_die := true;
           ERaise errorval
       | DownTo (w, st) ->
-          let _, pat = Array.fold_left errorcellparams (0, PVar stack) w in
+          let _, pat = fold_left errorcellparams (0, PVar stack) w in
           blet (
             [ pat, EVar stack ],
             match st with

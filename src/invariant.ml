@@ -579,6 +579,9 @@ let pop =
 let top =
   MArray.last
 
+let length, fold_left =
+  Array.(length, fold_left)
+
 (* ------------------------------------------------------------------------ *)
 
 (* Publish the short invariant. *)

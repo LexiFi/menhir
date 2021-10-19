@@ -68,13 +68,6 @@ val holds_startp: cell -> bool
    [cell]. It is equivalent to [track_endp (symbol cell)]. *)
 val holds_endp: cell -> bool
 
-(**A word is a representation of a stack suffix. A word is an immutable
-   array of cells, whose right end represents the top of the stack. Thus,
-   the index 0 in the array corresponds to the cell that lies deepest in
-   the stack. *)
-type word =
-  cell array
-
 (**[present cell] determines whether at least one of the four fields
    [state], [semv], [startp] or [endp] is present in the cell [cell]. *)
 val present: cell -> bool
@@ -83,6 +76,19 @@ val present: cell -> bool
    memory, that is, the same OCaml type. This is equivalent to comparing
    all fields except [states]. *)
 val similar: cell -> cell -> bool
+
+(**A word is a representation of a stack suffix. A word is an immutable
+   array of cells, whose right end represents the top of the stack. Thus,
+   the index 0 in the array corresponds to the cell that lies deepest in
+   the stack. *)
+type word
+
+(**[length w] is the length of the word [w]. *)
+val length: word -> int
+
+(**[fold_left] performs left-to-right iteration, with an accumulator,
+   over a word. *)
+val fold_left: ('a -> cell -> 'a) -> 'a -> word -> 'a
 
 (**[meet w1 w2] is the meet of the two stacks [w1] and [w2], that is, the
    logical conjunction of the information contained in [w1] and [w2]. If [w1]

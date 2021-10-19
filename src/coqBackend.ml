@@ -43,7 +43,7 @@ module Run (T: sig end) = struct
 
   let print_word print_cell w =
     (* Convert to a list whose head is the top of the stack. *)
-    Array.fold_left (fun accu cell -> print_cell cell :: accu) [] w
+    Invariant.fold_left (fun accu cell -> print_cell cell :: accu) [] w
     |> String.concat "; "
     |> sprintf "[%s]%%list"
 
