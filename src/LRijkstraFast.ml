@@ -479,21 +479,21 @@ struct
       [|all_terminals|]
 
     (* Just before taking a transition [tr], the lookahead has to belong to
-       one of the classes in [before_transition tr].
+       one of the classes in [pre_transition tr].
 
-       [before_transition tr] indexes the rows of cost matrix for [tr].
+       [pre_transition tr] indexes the rows of cost matrix for [tr].
     *)
-    let before_transition tr =
+    let pre_transition tr =
       match Transition.symbol tr with
       | Symbol.T t -> t_singletons t
       | Symbol.N _ -> for_lr1 (Transition.source tr)
 
     (* Just after taking a transition [tr], the lookahead has to belong to
-       one of the classes in [after_transition tr].
+       one of the classes in [post_transition tr].
 
-       [after_transition tr] indexes the columns of cost matrix for [tr].
+       [post_transition tr] indexes the columns of cost matrix for [tr].
     *)
-    let after_transition tr =
+    let post_transition tr =
       match Transition.split tr with
       | L edge -> for_edge edge
       | R _ -> all_terminals
@@ -604,11 +604,11 @@ struct
       Vector.init Transition.goto @@ fun tr ->
       (* Number of rows in the compact cost matrix for tr *)
       let first_dim =
-        Array.length (Classes.before_transition (Transition.of_goto tr))
+        Array.length (Classes.pre_transition (Transition.of_goto tr))
       in
       (* Number of columns in the compact cost matrix for a transition tr' *)
       let transition_size tr' =
-        Array.length (Classes.after_transition tr')
+        Array.length (Classes.post_transition tr')
       in
       (* Import the solution to a matrix-chain ordering problem as a sub-tree *)
       let rec import_mcop = function
@@ -633,26 +633,26 @@ struct
 
     include FreezeTree()
 
-    (* Pre-compute classes before and after a node *)
+    (* Pre-compute classes before (pre) and after (post) a node *)
 
-    let table_before = Vector.make Inner.n [||]
-    let table_after = Vector.make Inner.n [||]
+    let table_pre = Vector.make Inner.n [||]
+    let table_post = Vector.make Inner.n [||]
 
-    let classes_before t = match split t with
-      | L tr -> Classes.before_transition tr
-      | R ix -> Vector.get table_before ix
+    let pre_classes t = match split t with
+      | L tr -> Classes.pre_transition tr
+      | R ix -> Vector.get table_pre ix
 
-    let classes_after t = match split t with
-      | L tr -> Classes.after_transition tr
-      | R ix -> Vector.get table_after ix
+    let post_classes t = match split t with
+      | L tr -> Classes.post_transition tr
+      | R ix -> Vector.get table_post ix
 
     let () =
       (* Nodes are allocated in topological order.
          When iterating over all nodes, children are visited before parents. *)
       Index.iter Inner.n @@ fun node ->
       let l, r = define node in
-      Vector.set table_before node (classes_before l);
-      Vector.set table_after node (classes_after r)
+      Vector.set table_pre node (pre_classes l);
+      Vector.set table_post node (post_classes r)
   end
 
   let () = Time.tick "LRijkstraFast: built equation tree"
@@ -667,7 +667,7 @@ struct
      We use a two-level encoding:
      - first the [table] vector maps a node index to a "compact cost matrix"
      - each "compact cost matrix" is represented as a 1-dimensional array of
-       integers, of dimension |classes_before n| * |classes_after n|
+       integers, of dimension |pre_classes n| * |post_classes n|
 
      This module defines conversion functions between three different
      representations of cells:
@@ -684,7 +684,7 @@ struct
 
     (* The table that stores all compact cost matrices.
        [Vector.get table n] is the matrix of node [n], represented as a linear
-       array of length |before(n)| * |after(n)|.
+       array of length |pre(n)| * |post(n)|.
     *)
     val table : (Tree.n, int array) vector
 
@@ -696,20 +696,20 @@ struct
 
     (* A value of type offset represents an index of a compact cost matrix.
        An offset of node [n] belongs to the interval
-         0 .. Array.length (Tree.classes_before n) *
-              Array.length (Tree.classes_after n) - 1
+         0 .. Array.length (Tree.pre_classes n) *
+              Array.length (Tree.post_classes n) - 1
     *)
     type offset = int
 
     (* A value of type row represents the index of a row of a matrix.
        A row of node [n] belongs to the interval
-         0 .. Array.length (Tree.classes_before n) - 1
+         0 .. Array.length (Tree.pre_classes n) - 1
     *)
     type row = int
 
     (* A value of type column represents the index of a column of a matrix.
        A column of node [n] belongs to the interval
-         0 .. Array.length (Tree.classes_after n) - 1
+         0 .. Array.length (Tree.post_classes n) - 1
     *)
     type column = int
 
@@ -746,8 +746,8 @@ struct
     let table =
       let init_node node =
         let node_count =
-          Array.length (Tree.classes_before node) *
-          Array.length (Tree.classes_after node)
+          Array.length (Tree.pre_classes node) *
+          Array.length (Tree.post_classes node)
         in
         count := !count + node_count;
         Array.make node_count max_int
@@ -770,12 +770,12 @@ struct
       Index.to_int node lor (cell lsl shift)
 
     let offset node =
-      let sz = Array.length (Tree.classes_after node) in
-      fun i_b i_a -> (i_b * sz + i_a)
+      let sz = Array.length (Tree.post_classes node) in
+      fun i_pre i_post -> (i_pre * sz + i_post)
 
     let encode node =
       let offset_of = offset node in
-      fun i_b i_a -> encode_offset node (offset_of i_b i_a)
+      fun i_pre i_post -> encode_offset node (offset_of i_pre i_post)
 
     let decode_offset i =
       let node = Index.of_int Tree.n (i land (1 lsl shift - 1)) in
@@ -783,7 +783,7 @@ struct
 
     let decode i =
       let node, offset = decode_offset i in
-      let sz = Array.length (Tree.classes_after node) in
+      let sz = Array.length (Tree.post_classes node) in
       (node, offset / sz, offset mod sz)
 
     (* Sanity checks
@@ -793,9 +793,9 @@ struct
         assert (i = encode n b a);
         result
 
-      and encode node i_before i_after =
-        let result = encode node i_before i_after in
-        assert (decode result = (node, i_before, i_after));
+      and encode node i_pre i_post =
+        let result = encode node i_pre i_post in
+        assert (decode result = (node, i_pre, i_post));
         result
     *)
 
@@ -845,20 +845,20 @@ struct
     *)
     let pre outer inner =
       if outer == inner then
-        Some (Pre_identity)
+        Pre_identity
       else (
         assert (Array.length inner = 1);
         assert (TerminalSet.is_singleton inner.(0));
         let t = TerminalSet.choose inner.(0) in
         match MArray.findi (fun _ ts -> TerminalSet.mem t ts) 0 outer with
-        | i -> Some (Pre_singleton i)
+        | i -> Pre_singleton i
         | exception Not_found ->
           Printf.eprintf "WARNING: Missing transition on %s; partitions:\n"
             (Terminal.print t);
           Array.iter (fun ts ->
               Printf.eprintf "- %s\n" (TerminalSet.print ts)
             ) outer;
-          None
+          exit 1
       )
 
     (* The type infix is the general representation for the coercion matrices
@@ -885,8 +885,8 @@ struct
        certain set of terminals, exactly like the ↓ operator on partitions.
        This is used to implement creduce operator.
     *)
-    let infix ?lookahead before after =
-      let forward_size = Array.make (Array.length before) 0 in
+    let infix ?lookahead pre_classes post_classes =
+      let forward_size = Array.make (Array.length pre_classes) 0 in
       let backward =
         Array.map (fun ca ->
             let keep = match lookahead with
@@ -895,19 +895,19 @@ struct
             in
             if keep then (
               match
-                MArray.findi (fun _ cb -> quick_subset ca cb) 0 before
+                MArray.findi (fun _ cb -> quick_subset ca cb) 0 pre_classes
               with
               | exception Not_found -> -1
               | i -> forward_size.(i) <- 1 + forward_size.(i); i
             ) else (-1)
-          ) after
+          ) post_classes
       in
       let forward = Array.map (fun sz -> Array.make sz 0) forward_size in
-      Array.iteri (fun i_b i_f ->
+      Array.iteri (fun i_pre i_f ->
           if i_f <> -1 then (
             let pos = forward_size.(i_f) - 1 in
             forward_size.(i_f) <- pos;
-            forward.(i_f).(pos) <- i_b
+            forward.(i_f).(pos) <- i_pre
           )
         ) backward;
       { forward; backward }
@@ -943,51 +943,50 @@ struct
        constant.  However we initialize it to 1. *)
     let record_shift ~visit_root tr =
       let node = Tree.leaf (Transition.of_shift tr) in
-      (*sanity*)assert (Array.length (Tree.classes_before node) = 1);
-      (*sanity*)assert (Array.length (Tree.classes_after node) = 1);
+      (*sanity*)assert (Array.length (Tree.pre_classes node) = 1);
+      (*sanity*)assert (Array.length (Tree.post_classes node) = 1);
       visit_root (Cells.encode_offset node 0) 1
 
     (* Record dependencies on a goto transition.  *)
     let record_goto ~visit_root tr =
       let node = Tree.leaf (Transition.of_goto tr) in
-      let before = Tree.classes_before node in
-      let after = Tree.classes_after node in
+      let pre = Tree.pre_classes node in
+      let post = Tree.post_classes node in
       let nullable, non_nullable = Vector.get Tree.goto_equations tr in
       (* Set matrix cells corresponding to nullable reductions to 0 *)
       if not (TerminalSet.is_empty nullable) then (
         let offset_of = Cells.offset node in
         (* We use:
-           - [a] and [i_a] for a class in the after partition and its index
-           - [b] and [i_b] for a class in the before partition and its index
+           - [c_pre] and [i_pre] for a class in the pre partition and its index
+           - [c_post] and [i_post] for a class in the post partition and its
+             index
         *)
-        let update_cell i_a a i_b b =
-          if not (TerminalSet.disjoint b a) then
-            visit_root (Cells.encode_offset node (offset_of i_b i_a)) 0
+        let update_cell i_post c_post i_pre c_pre =
+          if not (TerminalSet.disjoint c_pre c_post) then
+            visit_root (Cells.encode_offset node (offset_of i_pre i_post)) 0
         in
-        let update_col i_a a =
-          if quick_subset a nullable then
-            Array.iteri (update_cell i_a a) before
+        let update_col i_post c_post =
+          if quick_subset c_post nullable then
+            Array.iteri (update_cell i_post c_post) pre
         in
-        Array.iteri update_col after
+        Array.iteri update_col post
       );
       (* Register dependencies to other reductions *)
       List.iter begin fun (node', lookahead) ->
-        match Coercion.pre before (Tree.classes_before node') with
-        | None -> ()
-        | Some pre ->
-          let after' = Tree.classes_after node' in
-          let coe = Coercion.infix after' after ~lookahead in
-          Vector.set_cons dependents node'
-            (Leaf (tr, pre, coe.Coercion.forward))
+        let coerce_pre = Coercion.pre pre (Tree.pre_classes node') in
+        let post' = Tree.post_classes node' in
+        let coerce_post = Coercion.infix post' post ~lookahead in
+        Vector.set_cons dependents node'
+          (Leaf (tr, coerce_pre, coerce_post.Coercion.forward))
       end non_nullable
 
     (* Record dependencies on a inner node. *)
     let record_inner node =
       let (l, r) = Tree.define node in
-      (*(*sanity*)assert (Tree.classes_before l == Tree.classes_before node);*)
-      (*(*sanity*)assert (Tree.classes_after r == Tree.classes_after node);*)
-      let c1 = Tree.classes_after l in
-      let c2 = Tree.classes_before r in
+      (*(*sanity*)assert (Tree.pre_classes l == Tree.pre_classes node);*)
+      (*(*sanity*)assert (Tree.post_classes r == Tree.post_classes node);*)
+      let c1 = Tree.post_classes l in
+      let c2 = Tree.pre_classes r in
       let coercion = Coercion.infix c1 c2 in
       let dep = Inner (node, coercion) in
       assert (Array.length c2 = Array.length coercion.Coercion.backward);
@@ -1027,21 +1026,21 @@ struct
            in relaxing the node.
            This guarantees that the additions below do not overflow. *)
         assert (cost < max_int);
-        let node, i_before, i_after = Cells.decode index in
+        let node, i_pre, i_post = Cells.decode index in
         let update_dep = function
           | Leaf (parent, pre, post) ->
             (* This change might improve one of the cost(s,x) *)
             let parent = Tree.leaf (Transition.of_goto parent) in
             (* If the production begins with a terminal,
                we have to map the class *)
-            let i_before' = match pre with
+            let i_pre' = match pre with
               | Coercion.Pre_singleton i -> i
-              | Coercion.Pre_identity -> i_before
+              | Coercion.Pre_identity -> i_pre
             in
             let parent_index = Cells.encode parent in
             Array.iter
-              (fun i_after' -> f (parent_index i_before' i_after') cost)
-              post.(i_after)
+              (fun i_post' -> f (parent_index i_pre' i_post') cost)
+              post.(i_post)
           | Inner (parent, inner) ->
             (* This change updates the cost of an occurrence of equation 8,
                of the form l . coercion . r
@@ -1053,28 +1052,28 @@ struct
               (* The left term has been updated *)
               let r_costs = Vector.get Cells.table r in
               let offset_of = Cells.offset r in
-              for i_after' = 0 to Array.length (Tree.classes_after r) - 1 do
+              for i_post' = 0 to Array.length (Tree.post_classes r) - 1 do
                 let r_cost = Array.fold_left
-                    (fun r_cost i_before' ->
-                       min_cost r_cost r_costs.(offset_of i_before' i_after'))
-                    max_int inner.Coercion.forward.(i_after)
+                    (fun r_cost i_pre' ->
+                       min_cost r_cost r_costs.(offset_of i_pre' i_post'))
+                    max_int inner.Coercion.forward.(i_post)
                 in
                 if r_cost < max_int then (
-                  f (parent_index i_before i_after') (cost + r_cost)
+                  f (parent_index i_pre i_post') (cost + r_cost)
                 )
               done
             ) else (
               (* The right term has been updated *)
               (*sanity*)assert (r = node);
-              match inner.Coercion.backward.(i_before) with
+              match inner.Coercion.backward.(i_pre) with
               | -1 -> ()
               | l_post ->
                 let l_costs = Vector.get Cells.table l in
                 let offset_of = Cells.offset l in
-                for i_before = 0 to Array.length (Tree.classes_before l) - 1 do
-                  let l_cost = l_costs.(offset_of i_before l_post) in
+                for i_pre = 0 to Array.length (Tree.pre_classes l) - 1 do
+                  let l_cost = l_costs.(offset_of i_pre l_post) in
                   if l_cost < max_int then (
-                    f (parent_index i_before i_after) (l_cost + cost)
+                    f (parent_index i_pre i_post) (l_cost + cost)
                   )
                 done
             )
@@ -1167,7 +1166,7 @@ struct
        The length of the word is exactly [Cells.cost cell].
     *)
     let rec append_word cell acc =
-      let node, i_b, i_a = Cells.decode cell in
+      let node, i_pre, i_post = Cells.decode cell in
       match Tree.split node with
       | L tr ->
         (* The node corresponds to a transition *)
@@ -1178,11 +1177,11 @@ struct
           | L goto ->
             (* It is a goto transition *)
             let nullable, non_nullable = Vector.get Tree.goto_equations goto in
-            let b = (Tree.classes_before node).(i_b) in
-            let a = (Tree.classes_after node).(i_a) in
+            let c_pre = (Tree.pre_classes node).(i_pre) in
+            let c_post = (Tree.post_classes node).(i_post) in
             if not (TerminalSet.is_empty nullable) &&
-               quick_subset a nullable &&
-               not (TerminalSet.disjoint b a) then
+               quick_subset c_post nullable &&
+               not (TerminalSet.disjoint c_pre c_post) then
               (* If a nullable reduction is possible, don't do anything *)
               acc
             else
@@ -1191,30 +1190,33 @@ struct
               let current_cost = Cells.cost cell in
               match
                 MList.find_map (fun (node', lookahead) ->
-                    if TerminalSet.disjoint a lookahead then
-                      (* The lookahead class after the transition does not
-                         permit reducing this production *)
+                    if TerminalSet.disjoint c_post lookahead then
+                      (* The post lookahead class does not permit reducing this
+                         production *)
                       None
                     else
                       let costs = Vector.get Cells.table node' in
-                      match Tree.classes_before node' with
-                      | [|b'|] when TerminalSet.disjoint b' b ->
-                        (* The lookahead class before the transition does not
-                           allow to enter this branch. *)
+                      match Tree.pre_classes node' with
+                      | [|c_pre'|] when TerminalSet.disjoint c_pre' c_pre ->
+                        (* The pre lookahead class does not allow to enter this
+                           branch. *)
                         None
-                      | b' ->
-                        (* Visit all lookahead classes before and after and
-                           find the mapping between the parent node and this
+                      | pre' ->
+                        (* Visit all lookahead classes, pre and post, and find
+                           the mapping between the parent node and this
                            sub-node *)
+                        let pred_pre _ c_pre' =
+                          quick_subset c_pre' c_pre
+                        and pred_post _ c_post' =
+                          quick_subset c_post c_post'
+                        in
                         match
-                          MArray.findi (fun _ b' -> quick_subset b' b)
-                            0 b',
-                          MArray.findi (fun _ a' -> quick_subset a a')
-                            0 (Tree.classes_after node')
+                          MArray.findi pred_pre 0 pre',
+                          MArray.findi pred_post 0 (Tree.post_classes node')
                         with
                         | exception Not_found -> None
-                        | i_b', i_a' ->
-                          let offset = Cells.offset node' i_b' i_a' in
+                        | i_pre', i_post' ->
+                          let offset = Cells.offset node' i_pre' i_post' in
                           if costs.(offset) = current_cost then
                             (* We found a candidate of minimal cost *)
                             Some (Cells.encode_offset node' offset)
@@ -1236,22 +1238,22 @@ struct
         let current_cost = Cells.cost cell in
         let l, r = Tree.define inner in
         let coercion =
-          Coercion.infix (Tree.classes_after l) (Tree.classes_before r)
+          Coercion.infix (Tree.post_classes l) (Tree.pre_classes r)
         in
         let exception Break of Terminal.t list in
         let l_index = Cells.encode l in
         let r_index = Cells.encode r in
         begin try
-            Array.iteri (fun i_al i_brs ->
-                let l_cost = Cells.cost (l_index i_b i_al) in
-                Array.iter (fun i_br ->
-                    let r_cost = Cells.cost (r_index i_br i_a) in
+            Array.iteri (fun i_post_l all_pre_r ->
+                let l_cost = Cells.cost (l_index i_pre i_post_l) in
+                Array.iter (fun i_pre_r ->
+                    let r_cost = Cells.cost (r_index i_pre_r i_post) in
                     if l_cost + r_cost = current_cost then (
-                      let acc = append_word (r_index i_br i_a) acc in
-                      let acc = append_word (l_index i_b i_al) acc in
+                      let acc = append_word (r_index i_pre_r i_post) acc in
+                      let acc = append_word (l_index i_pre i_post_l) acc in
                       raise (Break acc)
                     )
-                  ) i_brs
+                  ) all_pre_r
               ) coercion.Coercion.forward;
             assert false
           with Break acc -> acc
@@ -1270,29 +1272,31 @@ struct
       end Lr1.entry
 
     (* The successors of [s, zs] are defined as follows. *)
-    let successors (source, i_b : node) (edge : label -> int -> node -> unit) =
-      let before = Classes.for_lr1 source in
+    let successors (source, i_pre : node) (edge : label -> int -> node -> unit) =
+      let pre = Classes.for_lr1 source in
       List.iter begin fun tr ->
         match
-          match Classes.before_transition tr with
-          | [|b|] when TerminalSet.is_singleton b ->
-            if TerminalSet.disjoint b before.(i_b) then
+          match Classes.pre_transition tr with
+          | [|c_pre|] when TerminalSet.is_singleton c_pre ->
+            if TerminalSet.disjoint c_pre pre.(i_pre) then
               None
             else
               Some 0
-          | _ -> Some i_b
+          | _ -> Some i_pre
         with
         | None -> ()
-        | Some i_b ->
-          let after = Classes.after_transition tr in
+        | Some i_pre ->
+          let post = Classes.post_transition tr in
           let target = Transition.target tr in
-          let after' = Classes.for_lr1 target in
-          let coercion = Coercion.infix after after' in
-          Array.iteri begin fun i_a i_a's ->
-            let cell = Cells.encode (Tree.leaf tr) i_b i_a in
+          let post' = Classes.for_lr1 target in
+          let coercion = Coercion.infix post post' in
+          Array.iteri begin fun i_post all_post' ->
+            let cell = Cells.encode (Tree.leaf tr) i_pre i_post in
             let cost = Cells.cost cell in
-            if cost < max_int then
-              Array.iter (fun i_a' -> edge cell cost (target, i_a')) i_a's
+            if cost < max_int then (
+              let visit_post' i_post' = edge cell cost (target, i_post') in
+              Array.iter visit_post' all_post'
+            );
           end coercion.Coercion.forward
       end (Transition.successors source)
   end
@@ -1388,8 +1392,8 @@ struct
         let node = Tree.leaf tr in
         let lr1 = Lr1C.to_g (Transition.source tr) in
         (* Check that the classical algorithm agrees that the node is
-           unreachable when the lookahead before is in the missing class *)
-        let missing_before = missing (Tree.classes_before node) in
+           unreachable when the pre-lookahead is in the missing class *)
+        let pre_missing = missing (Tree.pre_classes node) in
         TerminalSet.iter begin fun t ->
           Classic.query lr1 nt t (fun _ _ ->
               Printf.eprintf "fast algorithm determined that state %d is \
@@ -1399,39 +1403,39 @@ struct
                 (Terminal.print t);
               failed := true;
             )
-        end missing_before;
+        end pre_missing;
         (* Check that the classical algorithm agrees on the minimum cost, and
            on the unreachable configurations after following the transition. *)
-        let missing_after = missing (Tree.classes_after node) in
-        Array.iteri begin fun i_b s_b ->
-          (* We can visit the classes before the transition in order,
-             but the classes after the transition are visited in an
-             unpredictable order (determined by the Classic algorithm).
+        let post_missing = missing (Tree.post_classes node) in
+        Array.iteri begin fun i_pre c_pre ->
+          (* We can visit the pre-classes in order, but the post classes are
+             visited in an unpredictable order (determined by the Classic
+             algorithm).
              We use a hash table to store temporary results, then visit the
-             hash table in an order convenient for comparing the
-             "after classes". *)
+             hash table in an order convenient for comparing the post classes.
+          *)
           let min_table = Hashtbl.create 7 in
           TerminalSet.iter begin fun t ->
             Classic.query lr1 nt t begin fun w t' ->
               (* Check unreachability *)
-              if TerminalSet.mem t' missing_after then (
+              if TerminalSet.mem t' post_missing then (
                 Printf.eprintf "not expecting %s in {%s}\n%!"
                   (Terminal.print t')
-                  (TerminalSet.print missing_after);
+                  (TerminalSet.print post_missing);
                 failed := true;
               );
               let n = Classic.Word.length w in
-              (* Remember the word of minimal length for this "after"
-                 lookahead symbol *)
+              (* Remember the word of minimal length for this
+                 post-transition lookahead symbol *)
               match Hashtbl.find_opt min_table t' with
               | Some (_, n') when n' <= n -> ()
               | _ -> Hashtbl.replace min_table t' (w, n)
             end
-          end s_b;
+          end c_pre;
           (* Now checks that both algorithms agree on the minimal length
-             for each "after" class *)
-          Array.iteri begin fun i_a s_a ->
-            let cell = Cells.encode node i_b i_a in
+             for each post class *)
+          Array.iteri begin fun i_post c_post ->
+            let cell = Cells.encode node i_pre i_post in
             let cost = Cells.cost cell in
             TerminalSet.iter begin fun t ->
               match Hashtbl.find min_table t with
@@ -1439,17 +1443,19 @@ struct
                 let word ts = String.concat " " (List.map Terminal.print ts) in
                 if n <> cost then (
                   Printf.eprintf "  lengths differ: %d <> %d\n" n cost;
-                  Printf.eprintf "    before: {%s}\n" (TerminalSet.print s_b);
-                  Printf.eprintf "    after: {%s}\n" (TerminalSet.print s_a);
+                  Printf.eprintf "    pre-class: {%s}\n"
+                    (TerminalSet.print c_pre);
+                  Printf.eprintf "    post-class: {%s}\n"
+                    (TerminalSet.print c_post);
                   Printf.eprintf "    Classic: %s\n\
                                  \    Fast: %s\n%!"
                     (word (Classic.Word.elements w))
                     (word (Graph.append_word cell []))
                 )
               | exception Not_found -> ()
-            end s_a
-          end (Tree.classes_after node)
-        end (Tree.classes_before node)
+            end c_post
+          end (Tree.post_classes node)
+        end (Tree.pre_classes node)
       end;
       if !failed then exit 1
 
