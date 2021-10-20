@@ -853,12 +853,19 @@ struct
         match MArray.findi (fun _ ts -> TerminalSet.mem t ts) 0 outer with
         | i -> Pre_singleton i
         | exception Not_found ->
-          Printf.eprintf "WARNING: Missing transition on %s; partitions:\n"
-            (Terminal.print t);
-          Array.iter (fun ts ->
-              Printf.eprintf "- %s\n" (TerminalSet.print ts)
-            ) outer;
-          exit 1
+          (* There should always be a class that contains the terminal we are
+             shifting.
+             In theory, if the production that starts with the 'inner'
+             partition cannot be reduced (for instance because of conflict
+             resolution), it is correct to remove the terminal from the
+             explicitly represented classes since the transition is
+             unreachable.
+             This is not the case in practice, therefore this code is
+             unreachable.
+             If in the future, it starts happening, the correct behavior is to
+             consider that the coercion returns no class.
+          *)
+          assert false
       )
 
     (* The type infix is the general representation for the coercion matrices
