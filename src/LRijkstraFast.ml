@@ -356,7 +356,7 @@ struct
     (* Represents the dependency graph of Equation 7-9, to compute the SCCs *)
     module Gr = struct
       type node = Node.n index
-      let n = (cardinal Node.n)
+      let n = cardinal Node.n
 
       let index = Index.to_int
 
@@ -941,14 +941,14 @@ struct
 
     (* No need to record dependencies on a shift transition: its cost is
        constant.  However we initialize it to 1. *)
-    let record_shift tr =
+    let record_shift ~visit_root tr =
       let node = Tree.leaf (Transition.of_shift tr) in
       (*sanity*)assert (Array.length (Tree.classes_before node) = 1);
       (*sanity*)assert (Array.length (Tree.classes_after node) = 1);
-      (Vector.get Cells.table node).(0) <- 1
+      visit_root (Cells.encode_offset node 0) 1
 
     (* Record dependencies on a goto transition.  *)
-    let record_goto tr =
+    let record_goto ~visit_root tr =
       let node = Tree.leaf (Transition.of_goto tr) in
       let before = Tree.classes_before node in
       let after = Tree.classes_after node in
@@ -956,14 +956,13 @@ struct
       (* Set matrix cells corresponding to nullable reductions to 0 *)
       if not (TerminalSet.is_empty nullable) then (
         let offset_of = Cells.offset node in
-        let costs = Vector.get Cells.table node in
         (* We use:
            - [a] and [i_a] for a class in the after partition and its index
            - [b] and [i_b] for a class in the before partition and its index
         *)
         let update_cell i_a a i_b b =
           if not (TerminalSet.disjoint b a) then
-            costs.(offset_of i_b i_a) <- 0
+            visit_root (Cells.encode_offset node (offset_of i_b i_a)) 0
         in
         let update_col i_a a =
           if quick_subset a nullable then
@@ -995,12 +994,6 @@ struct
       Vector.set_cons dependents l dep;
       Vector.set_cons dependents r dep
 
-    let () =
-      (* Visit all nodes to populate the [dependents] vector *)
-      Index.iter Transition.shift record_shift;
-      Index.iter Transition.goto record_goto;
-      Index.iter Tree.Inner.n record_inner
-
     let () = Time.tick "LRijkstraFast: reverse dependencies"
 
     (* A graph representation suitable for the DataFlow solver *)
@@ -1014,18 +1007,14 @@ struct
          Rather than duplicating the code for exactly computing those cells, we
          visit all transitions and consider every non-infinite cell a root.
       *)
-      let foreach_root f =
-        Index.iter Transition.any begin fun tr ->
-          let node = Tree.leaf tr in
-          let before = Tree.classes_before node in
-          let after = Tree.classes_after node in
-          let count = Array.length before * Array.length after in
-          let cells = Vector.get Cells.table node in
-          for i = 0 to count - 1 do
-            let p = cells.(i) in
-            if p < max_int then f (Cells.encode_offset node i) p
-          done
-        end
+      let foreach_root visit_root =
+        (* Visit all nodes:
+           - call [visit_root] on roots
+           - populate the [dependents] vector for inner nodes.
+        *)
+        Index.iter Transition.shift (record_shift ~visit_root);
+        Index.iter Transition.goto (record_goto ~visit_root);
+        Index.iter Tree.Inner.n record_inner
 
       (* Visit all the successors of a cell.
          This amounts to:
