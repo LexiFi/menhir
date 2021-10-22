@@ -39,6 +39,13 @@ struct
   (* The algorithm uses many typed vectors (provided by Fix.Numbering.Typed) *)
   open Fix.Indexing
 
+  (* Produce a warning if the grammar uses the [error] pseudo-token. *)
+
+  let () =
+    if grammar_uses_error_token then
+      Error.warning [] "The reachability analysis ignores all productions \
+                        that involve the error token."
+
   (* [Lr1C] represents Lr1 states as elements of a [Numbering.Typed] set *)
   module Lr1C = struct
     include (val const Lr1.n)
