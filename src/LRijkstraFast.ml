@@ -22,6 +22,10 @@ module Run
 struct
   open Grammar
 
+  (* ---------------------------------------------------------------------- *)
+
+  (* Useful definitions *)
+
   (* The set of all real terminals, useful for encoding default reduction *)
   let all_terminals = TerminalSet.universe
 
@@ -39,6 +43,8 @@ struct
   (* The algorithm uses many typed vectors (provided by Fix.Numbering.Typed) *)
   open Fix.Indexing
 
+  (* ---------------------------------------------------------------------- *)
+
   (* Produce a warning if the grammar uses the [error] pseudo-token. *)
 
   let () =
@@ -46,12 +52,16 @@ struct
       Error.warning [] "The reachability analysis ignores all productions \
                         that involve the error token."
 
+  (* ---------------------------------------------------------------------- *)
+
   (* [Lr1C] represents Lr1 states as elements of a [Numbering.Typed] set *)
   module Lr1C = struct
     include (val const Lr1.n)
     let of_g lr1 = Index.of_int n (Lr1.number lr1)
     let to_g lr1 = Lr1.of_number (Index.to_int lr1)
   end
+
+  (* ---------------------------------------------------------------------- *)
 
   (* Transitions are represented as finite sets with auxiliary functions
      to get the predecessors, successors and labels. *)
@@ -244,6 +254,8 @@ struct
           Terminal.n Lr1.n (cardinal any)
   end
 
+  (* ---------------------------------------------------------------------- *)
+
   (* Compute the inverse of the reduction relation.
      It lists the different reductions that lead to following a goto
      transition, reversing the effect of a single reduction.
@@ -344,6 +356,8 @@ struct
 
     let () = Time.tick "LRijkstraFast: populate reduction table"
   end
+
+  (* ---------------------------------------------------------------------- *)
 
   (* Compute classes refinement.
 
@@ -508,12 +522,14 @@ struct
     let () = Time.tick "LRijkstraFast: token classes for each transition"
   end
 
+  (* ---------------------------------------------------------------------- *)
+
   (* We now construct the DAG (as a tree with hash-consing) of all matrix
      products.
 
      Each occurrence of [ccost(s,x)] is mapped to a leaf.
-     Occurrences of [(ccost(𝑠, 𝐴 → 𝛼•𝑥𝛽)] are mapped to inner nodes, except that
-     the chain of multiplication are re-associated.
+     Occurrences of [(ccost(𝑠, 𝐴 → 𝛼•𝑥𝛽)] are mapped to inner nodes, except
+     that the chain of multiplication are re-associated.
   *)
   module ConsedTree () : sig
     (* The finite set of nodes of the tree.
@@ -588,6 +604,8 @@ struct
           node_table
     end
   end
+
+  (* ---------------------------------------------------------------------- *)
 
   (* The hash-consed tree of all matrix equations (products and minimums). *)
   module Tree = struct
@@ -664,7 +682,7 @@ struct
 
   let () = Time.tick "LRijkstraFast: built equation tree"
 
-  let () = Time.tick "LRijkstraFast: classes for each tree node"
+  (* ---------------------------------------------------------------------- *)
 
   (* Representation of matrix cells, the variables of the data flow problem.
      There will be a lot of them. Actually, on large grammars, most of the
@@ -811,6 +829,8 @@ struct
       (Vector.get table node).(offset)
   end
 
+  (* ---------------------------------------------------------------------- *)
+
   (* This module implements efficient representations of the coerce matrices,
      as mentioned in section 6.5.
 
@@ -926,6 +946,8 @@ struct
         ) backward;
       { forward; backward }
   end
+
+  (* ---------------------------------------------------------------------- *)
 
   (* Represent the data flow problem to solve *)
   module Solver = struct
@@ -1143,6 +1165,8 @@ struct
     let () = Time.tick "LRijkstraFast: data flow solution"
   end
 
+  (* ---------------------------------------------------------------------- *)
+
   module Word = struct
     (* We don't need any optimization for representing words,
        a list of terminals is enough. *)
@@ -1315,6 +1339,8 @@ struct
       end (Transition.successors source)
   end
 
+  (* ---------------------------------------------------------------------- *)
+
   (* Print some statistics on the execution of the algorithm for the current
      grammar *)
   module Statistics = struct
@@ -1368,6 +1394,8 @@ struct
           !count
         end
   end
+
+  (* ---------------------------------------------------------------------- *)
 
   (* Optional code to validate the minimal costs.
      It runs LRijkstraClassic and then check that for each class, the minimal
