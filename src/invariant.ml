@@ -93,10 +93,18 @@ let handlers states =
    being taken, are conceivable, but quite tricky, and probably not
    worth the trouble.
 
+   The conditions listed here are designed to allow the code back-end
+   to perform a case analysis on a state, when needed. Thus, it is
+   necessary to have detailed knowledge of the code back-end in order
+   to understand why these conditions are necessary and sufficient.
+   This is not ideal, but the alternative (which would be to generate
+   code first and deduce, by analysis of the code, which states must
+   be represented) would be complex as well.
+
    (1) If two states are liable to appear within a single stack cell,
-   then one is represented if and only if the other is
-   represented. This ensures that the structure of stacks is known
-   everywhere and that we can propose types for stacks.
+   then one is represented if and only if the other is represented.
+   This ensures that the structure of stacks is known everywhere and
+   that we can propose types for stacks.
 
    (2) If a state [s] has an outgoing transition along nonterminal
    symbol [nt], and if the [goto] table for symbol [nt] has more than
