@@ -106,12 +106,19 @@ let handlers states =
    This ensures that the structure of stacks is known everywhere and
    that we can propose types for stacks.
 
-   (2) If a state [s] has an outgoing transition along nonterminal
+   (2a) If a state [s] has an outgoing transition along nonterminal
    symbol [nt], and if the [goto] table for symbol [nt] has more than
    one target, then state [s] is represented. (When the [goto] table
    has only one target, this means that all [goto] transitions labeled
    [nt] lead to the same state, so the [goto] function can jump to
    this state without performing a case analysis.)
+
+   (2b) If a non-initial state [s] has an outgoing transition along
+   nonterminal symbol [nt], and if one of the productions associated
+   with [nt] is non-epsilon and needs [beforeendp], then [s] must be
+   represented. This caters for the (rare) situation where the new code
+   back-end must perform a case analysis of the current state in order
+   to peek at the top stack cell.
 
    (3) If a stack cell contains more than one state and if at least
    one of these states is able to handle the [error] token, then these
@@ -166,7 +173,7 @@ let () =
     share (StackStatesShort.production_states prod)
   )
 
-(* Enforce condition (2) above. *)
+(* Enforce condition (2a) above. *)
 
 let () =
   Nonterminal.iter (fun nt ->
@@ -174,6 +181,22 @@ let () =
     if Lr1.ntargets symbol > 1 then
       Lr1.targets (fun () sources _ ->
         List.iter represent sources
+      ) () symbol
+  )
+
+(* Enforce condition (2b) above. *)
+
+let () =
+  Production.iterx (fun prod ->
+    let n = Production.length prod in
+    if n > 0 && Action.has_beforeend (Production.action prod) then
+      let nt = Production.nt prod in
+      let symbol = Symbol.N nt in
+      Lr1.targets (fun () sources _ ->
+        sources |> List.iter (fun source ->
+          if not (Lr1.is_start source) then
+            represent source
+        )
       ) () symbol
   )
 
