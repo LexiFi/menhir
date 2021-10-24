@@ -113,12 +113,11 @@ let handlers states =
    [nt] lead to the same state, so the [goto] function can jump to
    this state without performing a case analysis.)
 
-   (2b) If a non-initial state [s] has an outgoing transition along
-   nonterminal symbol [nt], and if one of the productions associated
-   with [nt] is non-epsilon and needs [beforeendp], then [s] must be
-   represented. This caters for the (rare) situation where the new code
-   back-end must perform a case analysis of the current state in order
-   to peek at the top stack cell.
+   (2b) If a state [s] has an outgoing transition labeled [nt], and if
+   one of the productions associated with [nt] is non-epsilon and needs
+   [beforeendp], then [s] must be represented. This caters for the (rare)
+   situation where the new code back-end must perform a case analysis of
+   the current state in order to peek at the top stack cell.
 
    (3) If a stack cell contains more than one state and if at least
    one of these states is able to handle the [error] token, then these
@@ -194,8 +193,7 @@ let () =
       let symbol = Symbol.N nt in
       Lr1.targets (fun () sources _ ->
         sources |> List.iter (fun source ->
-          if not (Lr1.is_start source) then
-            represent source
+          represent source
         )
       ) () symbol
   )
