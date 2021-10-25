@@ -2,4 +2,4 @@
 
 .PHONY: test
 test:
-	@ dune runtest
+	@ dune build @test
