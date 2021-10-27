@@ -1068,6 +1068,10 @@ module GenericAnalysis
        for [conjunction]. *)
     val epsilon: property
 
+    (* The Boolean flag [ignore_error_productions] indicates whether the
+       productions that mention the [error] token should be ignored. *)
+    val ignore_error_productions: bool
+
   end)
 : sig
   open P
@@ -1106,6 +1110,7 @@ end = struct
   (* Analysis of (a suffix of) a production [prod], starting at index [i]. *)
 
   let production prod i get : property =
+    assert (not S.ignore_error_productions || Production.error_free prod);
     let rhs = Production.rhs prod in
     let n = Array.length rhs in
     (* Conjunction over all symbols in the right-hand side. This can be viewed
@@ -1134,9 +1139,12 @@ end = struct
     | None ->
         (* Disjunction over all productions for this nonterminal symbol. *)
         Production.foldnt_lazy nt (fun prod rest ->
-          S.disjunction
-            (production prod 0 get)
-            rest
+          if S.ignore_error_productions && not (Production.error_free prod) then
+            rest()
+          else
+            S.disjunction
+              (production prod 0 get)
+              rest
         ) P.bottom
 
   (* The least fixed point is taken as follows. Note that it is computed
@@ -1181,6 +1189,7 @@ module NONEMPTY =
       (* The sequence epsilon is nonempty. It generates the singleton
          language {epsilon}. *)
       let epsilon = true
+      let ignore_error_productions = false
      end)
 
 module NULLABLE =
@@ -1196,6 +1205,7 @@ module NULLABLE =
       let conjunction _ p q = p && q()
       (* The sequence epsilon is nullable. *)
       let epsilon = true
+      let ignore_error_productions = false
      end)
 
 (* ------------------------------------------------------------------------ *)
@@ -1220,6 +1230,7 @@ module FIRST =
           p
       (* The FIRST set of the empty sequence is empty. *)
       let epsilon = TerminalSet.empty
+      let ignore_error_productions = false
      end)
 
 (* ------------------------------------------------------------------------ *)
@@ -1250,6 +1261,8 @@ module MINIMAL =
       let conjunction _ = add_lazy
       (* The epsilon sequence has length 0. *)
       let epsilon = epsilon
+      (* The productions that contain [error] are ignored. *)
+      let ignore_error_productions = true
      end)
 
 (* ------------------------------------------------------------------------ *)
@@ -1358,6 +1371,8 @@ module MAXIMAL =
       let conjunction _ = add_lazy
       (* The epsilon sequence has length 0. *)
       let epsilon = bottom
+      (* The productions that contain [error] are ignored. *)
+      let ignore_error_productions = true
      end)
 
 (* ------------------------------------------------------------------------ *)
