@@ -2,6 +2,12 @@
 
 ## 2021/XX/XX
 
+* Better document the restricted way in which the `error` token must be
+  used when using `--strategy simplified`. Menhir now checks that this
+  token is used only at the end of a production, and warns if this is
+  not the case. (Better yet, our suggestion is to not use the `error`
+  token at all!)
+
 * Disable OCaml warnings 4 (fragile match) and 39 (unused rec flag) in
   the generated code. (Reported by Armaël Guéneau.)
 
