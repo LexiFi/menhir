@@ -139,7 +139,7 @@ module T = struct
         Array.make n CstError (* dummy *)
       and startp =
         ref Lexing.dummy_pos
-      and endp=
+      and endp =
         ref Lexing.dummy_pos
       and current =
         ref env.current
