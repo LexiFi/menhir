@@ -116,6 +116,7 @@ module T = struct
   open MenhirLib.EngineTypes
 
   exception Error
+  exception Abort
 
   (* By convention, a semantic action returns a new stack. It does not
      affect [env]. *)
@@ -182,6 +183,15 @@ module T = struct
       done;
 
       (* Done popping. *)
+
+      (* As a special case, under the simplified strategy, if the production
+         that we are reducing involves the [error] token, then we assume that
+         the semantic action aborts the parser. We might otherwise enter an
+         infinite loop. *)
+
+      if Settings.strategy = `Simplified
+      && not (Production.error_free prod) then
+        raise Abort;
 
       (* Construct and push a new stack cell. The associated semantic
          value is a new concrete syntax tree. *)
@@ -270,7 +280,7 @@ let interpret nt log lexer lexbuf =
 
   try
     Some (E.entry strategy (Lr1.entry_of_nt nt) lexer lexbuf)
-  with T.Error ->
+  with T.Error | T.Abort ->
     None
 
 (* ------------------------------------------------------------------------ *)
