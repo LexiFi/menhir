@@ -125,29 +125,8 @@ let () =
 (* If [--strategy simplified] has been selected, then check that the [error]
    token is used only at the end of productions (2021/10/31). *)
 
-(* The simplified strategy does not query the lexer for a new token after
-   shifting the [error] token. This implies that the [error] token remains
-   on the stream. If the [error] token is used at the end of a production,
-   then this is not a problem; after we shift, a reduction must take place,
-   whose semantic action will abort the parser. However, if the [error]
-   token was used inside a production, then we could very well fall into
-   an endless shift cycle. *)
-
-let () =
-  if Settings.strategy = `Simplified then
-    let open BasicSyntax in
-    grammar.rules |> StringMap.iter begin fun _nt rule ->
-      rule.branches |> List.iter begin fun branch ->
-        let n = List.length branch.producers in
-        branch.producers |> List.iteri begin fun i producer ->
-          if i < n - 1 && producer.producer_symbol = "error" then
-            Error.grammar_warning [branch.branch_position]
-              "when --strategy simplified is selected,\n\
-               the error token may appear only at the end of a production\n\
-               (and the semantic action must abort the parser)."
-        end
-      end
-    end
+let grammar =
+  CheckErrorTokenUsage.filter_grammar grammar
 
 (* ------------------------------------------------------------------------- *)
 
