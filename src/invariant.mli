@@ -132,7 +132,7 @@ val split: word -> int -> word * word
 val meet: word -> word -> word option
 
 (**[print w] prints the sequence of symbols associated with the word [w].
-   This is used is the code back-end to generate comments in the definition
+   This is used in the code back-end to generate comments in the definition
    of the algebraic data type [state]. *)
 val print: word -> string
 
