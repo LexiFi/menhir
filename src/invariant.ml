@@ -605,8 +605,8 @@ let meet w1 w2 =
 let push, pop, top, suffix, filter =
   MArray.(push, pop, last, suffix, filter)
 
-let get, length, fold_left, append =
-  Array.(get, length, fold_left, append)
+let get, length, fold_left, append, to_list =
+  Array.(get, length, fold_left, append, to_list)
 
 let split w k =
   let n = Array.length w in

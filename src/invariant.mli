@@ -136,6 +136,9 @@ val meet: word -> word -> word option
    of the algebraic data type [state]. *)
 val print: word -> string
 
+(**[to_list w] converts the word [w] to a list. *)
+val to_list: word -> cell list
+
 (* ------------------------------------------------------------------------- *)
 (* Information about the stack. *)
 
