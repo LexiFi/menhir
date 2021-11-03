@@ -265,5 +265,3 @@ x = X
 %public %inline append(XS, YS):
   xs = XS ys = YS
     { xs @ ys }
-
-%%
