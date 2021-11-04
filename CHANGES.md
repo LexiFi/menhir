@@ -8,6 +8,9 @@
   not the case. (Better yet, our suggestion is to not use the `error`
   token at all!)
 
+* The `$syntaxerror` keyword is now forbidden when using
+  `--strategy simplified`.
+
 * Disable OCaml warnings 4 (fragile match) and 39 (unused rec flag) in
   the generated code. (Reported by Armaël Guéneau.)
 
