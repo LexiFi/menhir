@@ -443,14 +443,10 @@ module_identifier:
       ( Identifier.Module(sg, data) )}
 | pos = Argument sg = signature_identifier _4 = CLOSE
     {let data =       ( "" ) in
-      ( match pos with
-        | None -> (raise _eRR)
-        | Some pos -> Identifier.Argument(sg, pos, data) )}
+      ( Identifier.Argument(sg, pos, data) )}
 | pos = Argument sg = signature_identifier data = Data _4 = CLOSE
     {let data =       ( data) in
-      ( match pos with
-        | None -> (raise _eRR)
-        | Some pos -> Identifier.Argument(sg, pos, data) )}
+      ( Identifier.Argument(sg, pos, data) )}
 
 module_type_identifier:
   _1 = MODULE_TYPE sg = signature_identifier _4 = CLOSE
@@ -1505,9 +1501,7 @@ tag:
 
 int:
   data = Data
-    {    ( try
-        int_of_string data
-      with Failure _ -> (raise _eRR) )}
+    {    ( int_of_string data )}
 
 line:
   _1 = LINE line = int _3 = CLOSE
@@ -1828,9 +1822,7 @@ signature_item:
 
 digest:
   _1 = DIGEST data = Data _3 = CLOSE
-    {      ( try
-          Digest.from_hex data
-        with Invalid_argument _ -> (raise _eRR) )}
+    {      ( Digest.from_hex data )}
 
 unit_import:
   _1 = IMPORT data = Data digest = option_digest_ _4 = CLOSE
