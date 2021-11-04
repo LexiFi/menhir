@@ -93,6 +93,9 @@ type monster = {
 
 }
 
+(* The reason why we parameterize [check] over [Settings.dollars], instead
+   of reading this setting directly, is that [NewRuleSyntax] calls [check]
+   and wants to disallow dollars. *)
 and check =
   Settings.dollars -> string option array -> unit
 
