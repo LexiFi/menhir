@@ -13,6 +13,16 @@
 
 include List
 
+let rec init_aux i n f =
+  if n <= i then []
+  else
+    let r = f i in
+    r :: init_aux (i+1) n f
+
+let init n f =
+  assert (0 <= n);
+  init_aux 0 n f
+
 (** A list subject to a condition. (Be careful, though: the list is
    of course constructed even if the condition is false.) *)
 let ifn condition xs =

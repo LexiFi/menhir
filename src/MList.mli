@@ -15,6 +15,9 @@
 
 include module type of List
 
+(** An alias for [List.init], when it exists. *)
+val init : int -> (int -> 'a) -> 'a list
+
 (** A list subject to a condition. (Be careful, though: the list is of course
     constructed even if the condition is false.) *)
 val ifn : bool -> 'a list -> 'a list
