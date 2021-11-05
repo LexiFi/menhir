@@ -380,9 +380,6 @@ let count = function
   | 3 -> "three"
   | i -> Printf.sprintf "%d" i
 
-let rec list_make n x =
-  if n = 0 then [] else x :: list_make (n - 1) x
-
 (* [digits n] computes how many decimal digits are involved in the
    decimal representation of the integer [n]. *)
 

@@ -185,10 +185,6 @@ val count: int -> string
 
 val nth: int -> string
 
-(* [List.make] *)
-
-val list_make: int -> 'a -> 'a list
-
 (* [padded_index n i] produces a padded string representation of the index
    [i], which must lie in the semi-open interval [0, n). It is defined in such
    a way that all indices are mapped to strings of equal length. This ensures
