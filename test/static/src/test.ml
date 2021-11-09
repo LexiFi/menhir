@@ -117,9 +117,9 @@ let threshold =
 let menhir_args base flags =
   base @ flags @ A"%{deps}" :: []
 
-let menhir (impose_timeout : bool) base flags =
+let menhir impose_timeout base flags =
   match impose_timeout, threshold with
-  | true, Some threshold ->
+  | `WithTimeout, Some threshold ->
       (* We must use a [system] action. *)
       system
         "timeout %d %%{bin:menhir}%s || \
@@ -128,7 +128,8 @@ let menhir (impose_timeout : bool) base flags =
           threshold
           (show_list (menhir_args base flags))
           threshold
-  | _, _ ->
+  | `NoTimeout, _
+  | _, None ->
       (* We can use a [run] action. *)
       L(A"run" :: A"menhir" :: menhir_args base flags)
 
@@ -148,14 +149,21 @@ let menhir (impose_timeout : bool) base flags =
    If this is a positive test, then a timeout is imposed. *)
 
 let run positive basenames outputs flags =
+  (* The first output file is the redirection target. *)
   let output = hd outputs in
+  (* Impose a timeout if necessary. *)
+  let impose_timeout =
+    match positive with
+    | `Positive -> `WithTimeout
+    | `Negative -> `NoTimeout
+  in
   (* Run Menhir. *)
   print (rule
     outputs
     (mlys basenames)
     (redirect_both output (
       possibly_expecting_failure positive (
-        menhir positive (base basenames) flags
+        menhir impose_timeout (base basenames) flags
   ))))
 
 (* -------------------------------------------------------------------------- *)
@@ -173,7 +181,7 @@ let process_negative_test basenames : unit =
   let output = id ^ ".out" in
   let expected = id ^ ".exp" in
   let flags = extra id in
-  run false basenames [output] flags;
+  run `Negative basenames [output] flags;
   (* Check that the output coincides with what was expected. *)
   print (phony id (diff expected output))
 
@@ -198,7 +206,7 @@ let process_positive_test basenames : unit =
   (* Run menhir --only-preprocess. *)
   let output = id ^ ".opp.out" in
   let expected = id ^ ".opp.exp" in
-  run true basenames [output] (atoms [
+  run `Positive basenames [output] (atoms [
     "--only-preprocess";
   ] @ flags);
   (* Check that the output coincides with what was expected. *)
@@ -210,7 +218,7 @@ let process_positive_test basenames : unit =
   let conflicts = id ^ ".conflicts" in
   let timings = id ^ ".timings" in
   let targets = [output;automaton;automaton_resolved;conflicts;timings] in
-  run true basenames targets (atoms [
+  run `Positive basenames targets (atoms [
     "--dump";
     "--dump-resolved";
     "--explain";
