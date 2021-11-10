@@ -201,14 +201,7 @@
 
 ## Tests
 
-* Adapt the code in `StackLangTester` to test the reference interpreter.
-  I suspect that it can diverge when the grammar uses the `error` token.
-  Investigate.
-
-* In the reference interpreter, if the error handling strategy is
-  `simplified`, then, when reducing a production that involves the `error`
-  token, we could assume that the semantic action raises an exception,
-  and stop there. Do this, and add tests in `test/dynamic/semantics`.
+* Add proper test cases for `--list-errors`.
 
 ## Major new features
 
