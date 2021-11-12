@@ -72,10 +72,11 @@ module Nonterminal : sig
 
   val print: bool -> t -> string
 
-  (* This is the OCaml type associated with a nonterminal
-     symbol. It is known only if a %type declaration was provided.
-     This function is not applicable to the internally generated
-     nonterminals. *)
+  (* This is the OCaml type associated with a nonterminal symbol. It is known
+     only if a %type declaration was provided. (When --infer is used, the
+     result of the type inference process is used to augment the grammar with
+     %type declarations.) This function is not applicable to the internally
+     generated nonterminals. *)
 
   val ocamltype: t -> Stretch.ocamltype option
 
@@ -83,6 +84,11 @@ module Nonterminal : sig
      a simplified version of [ocamltype] for start symbols. *)
 
   val ocamltype_of_start_symbol: t -> Stretch.ocamltype
+
+  (* [symbols_without_ocamltype()] returns a list of the nonterminal symbols
+     that do not have a known OCaml type. *)
+
+  val symbols_without_ocamltype: unit -> t list
 
   (* Creation of a table indexed by nonterminals. *)
 

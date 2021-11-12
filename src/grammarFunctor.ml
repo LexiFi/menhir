@@ -185,6 +185,15 @@ module Nonterminal = struct
         (* Every start symbol has a type. *)
         assert false
 
+  let symbols_without_ocamltype () =
+    foldx (fun nt accu ->
+      match ocamltype nt with
+      | Some _ ->
+          accu
+      | None ->
+          nt :: accu
+    ) []
+
   let tabulate f =
     Array.get (Array.init n f)
 
