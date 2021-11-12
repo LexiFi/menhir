@@ -14,8 +14,8 @@ Warning: the token Space is unused.
 %token Colon
 %token Comma
 %token Dollar
+%token ERROR
 %token Eof
-%token Error
 %token Lbracket
 %token <string> Lname
 %token Loop_plus
@@ -121,7 +121,7 @@ pattern:
 	pat_modifier = Repetition;
       }
     )}
-| _1 = symbol _2 = Error
+| _1 = symbol _2 = ERROR
     {    ( { pat_symbol = _1;
 	pat_modifier = Option;
       }
@@ -159,7 +159,7 @@ comma_actual_arguments:
     {    ( _2 :: _3 )}
 
 opt_error_handler:
-  _1 = Error _2 = Code
+  _1 = ERROR _2 = Code
     {    ( Some _2 )}
 | 
     {    ( None )}
