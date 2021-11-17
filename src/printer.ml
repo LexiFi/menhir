@@ -292,6 +292,7 @@ let rec member e k =
             true
       end
   | EVar _
+  | EDead
   | ETextual _
   | EApp (_, [])
   | EData (_, [])
@@ -363,6 +364,8 @@ and exprk k f e =
         assert false
     | EMatch (e, brs) ->
         fprintf f "match %a with%a" expr e (branches k) brs
+    | EDead ->
+        fprintf f ". (* a dead branch *)"
     | ETry (_, []) ->
         assert false
     | ETry (e, brs) ->

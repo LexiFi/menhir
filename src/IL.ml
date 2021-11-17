@@ -179,6 +179,9 @@ and expr =
   | EIfThen of expr * expr
   | EIfThenElse of expr * expr * expr
 
+  (* An expression that claims to be dead code. *)
+  | EDead
+
   (* Raising exceptions. *)
   | ERaise of expr
 
