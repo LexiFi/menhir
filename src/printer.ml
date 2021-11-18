@@ -73,9 +73,10 @@ let indentation =
 let line =
   ref 1
 
-(* [rawnl] is, in principle, the only place where writing a newline
-   character to the output channel is permitted. This ensures that the
-   line counter remains correct. But see also [stretch] and [typ0]. *)
+(* [rawnl] should ideally be the only place where writing a newline character
+   to the output channel is permitted. This ensures that the line counter
+   remains correct. However, [line] is also updated in a few other auxiliary
+   functions, such as [stretch] and [typ0] and [exprk] and [datadefcomment]. *)
 
 let rawnl f =
   incr line;
@@ -347,8 +348,10 @@ and exprk k f e =
   if member e k then
     match e with
     | EComment (c, e) ->
-        if Settings.comment then
+        if Settings.comment then begin
+          line := !line + LineCount.count 0 (Lexing.from_string c);
           fprintf f "(* %s *)%t%a" c nl (exprk k) e
+        end
         else
           exprk k f e
     | EPatComment (s, p, e) ->
@@ -610,6 +613,7 @@ let datavalparams f params =
 
 let datadefcomment f ocomment =
   Option.iter (fun comment ->
+      line := !line + LineCount.count 0 (Lexing.from_string comment);
     fprintf f "%t    (** %s *)%t" nl comment rawnl
       (* The trailing [rawnl] creates an empty line after the comment. *)
   ) ocomment
