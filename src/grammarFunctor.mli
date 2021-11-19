@@ -339,15 +339,14 @@ module Symbol : sig
 
   val non_error: t -> bool
 
-  (* These produce a string representation of a symbol, of a list of
-     symbols, or of an array of symbols. The symbols are simply listed
-     one after the other and separated with spaces. [printao] prints
-     an array of symbols, starting at a particular offset. [printaod]
-     is analogous, but can also print a single dot at a particular
-     position between two symbols. *)
+  (* These produce a string representation of a symbol or of an array
+     of symbols. The symbols are simply listed one after the other and
+     separated with spaces. [printao] prints an array of symbols,
+     starting at a particular offset. [printaod] is analogous, but can
+     also print a single dot at a particular position between two
+     symbols. *)
 
   val print: t -> string
-  val printl: t list -> string
   val printa: t array -> string
   val printao: int -> t array -> string
   val printaod: int -> int -> t array -> string
