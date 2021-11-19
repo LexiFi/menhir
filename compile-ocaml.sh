@@ -134,6 +134,7 @@ ls -l ocamlc
 
 if false ; then
   echo -n "Testing OCaml..."
+  execute "make ocamltest"
   execute "make -C testsuite parallel"
 fi
 
