@@ -291,6 +291,8 @@ and structure_item =
   | SIInclude of modexpr
     (* Comment. *)
   | SIComment of string
+    (* Toplevel attribute. *)
+  | SIAttribute of (* attribute: *) string * (* payload: *) string
 
 (* A type of parameters, with injections both into patterns (formal parameters)
    and into expressions (actual parameters). *)

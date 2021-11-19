@@ -744,6 +744,9 @@ let rec structure_item f item =
         fprintf f "include %a" modexpr e
     | SIComment comment ->
         fprintf f "(* %s *)" comment
+    | SIAttribute (attribute, payload) ->
+        (* We assume that the payload does not contain newlines. *)
+        fprintf f "[@@@%s \"%s\"]" attribute payload
     end;
     nl f
 

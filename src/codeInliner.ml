@@ -308,8 +308,9 @@ let rec inline_structure_item item =
   | SITypeDefs _
   | SIValDefs (false, _)
   | SIStretch _
-  | SIComment _ ->
-      item
+  | SIComment _
+  | SIAttribute _
+      -> item
 
 and inline_structure s =
   List.map inline_structure_item s
