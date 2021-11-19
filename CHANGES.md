@@ -11,8 +11,9 @@
 * The `$syntaxerror` keyword is now forbidden when using
   `--strategy simplified`.
 
-* Disable OCaml warnings 4 (fragile match) and 39 (unused rec flag) in
-  the generated code. (Reported by Armaël Guéneau.)
+* Disable OCaml warning 39 (unused rec flag) in the OCaml code produced
+  by Menhir's code back-end. This does not affect the table back-end.
+  (Reported by Armaël Guéneau.)
 
 * Fix a bug in `--random-*` which could cause Menhir to diverge if the
   grammar uses the `error` token.
