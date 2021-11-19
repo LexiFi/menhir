@@ -291,7 +291,7 @@ let buffer =
 
 let print_symbols symbols =
   symbols |> Array.iter (fun symbol ->
-    Printf.bprintf buffer " %s" (Symbol.print symbol)
+    Printf.bprintf buffer " %s" (Symbol.print false symbol)
   );
   let s = Buffer.contents buffer in
   Buffer.clear buffer;

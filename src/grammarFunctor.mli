@@ -347,12 +347,16 @@ module Symbol : sig
      [printao o] prints an array of symbols, starting at offset [o].
 
      [printaod o d] prints an array of symbols, starting at offset [o],
-     and prints a single dot at offset [d], between two symbols. *)
+     and prints a single dot at offset [d], between two symbols.
 
-  val print: t -> string
-  val printa: t array -> string
-  val printao: int -> t array -> string
-  val printaod: int -> int -> t array -> string
+     In each of these functions, the Boolean parameter [normalize] has the
+     same effect as in [Nonterminal.print]. If it is [true], parentheses
+     and commas are replaced with underscores. *)
+
+  val print:                  bool -> t       -> string
+  val printa:                 bool -> t array -> string
+  val printao:         int -> bool -> t array -> string
+  val printaod: int -> int -> bool -> t array -> string
 
 end
 

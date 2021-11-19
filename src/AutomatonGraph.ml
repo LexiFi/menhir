@@ -23,7 +23,7 @@ module P = Dot.Print (struct
 
   let successors (f : ?style:Dot.style -> label:string -> vertex -> unit) source =
     SymbolMap.iter (fun symbol target ->
-      let label = Symbol.print symbol in
+      let label = Symbol.print false symbol in
       f ~label target
     ) (Lr1.transitions source)
 

@@ -100,7 +100,9 @@ let startnt t =
 
 let print item =
   let _, nt, rhs, pos, _ = def item in
-  Printf.sprintf "%s -> %s" (Nonterminal.print false nt) (Symbol.printaod 0 pos rhs)
+  Printf.sprintf "%s -> %s"
+    (Nonterminal.print false nt)
+    (Symbol.printaod 0 pos false rhs)
 
 (* Classifying items. *)
 

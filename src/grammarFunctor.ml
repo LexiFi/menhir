@@ -562,9 +562,9 @@ module Symbol = struct
     | N _ ->
         true
 
-  let print = function
+  let print normalize = function
     | N nt ->
-        Nonterminal.print false nt
+        Nonterminal.print normalize nt
     | T tok ->
         Terminal.print tok
 
@@ -582,7 +582,7 @@ module Symbol = struct
   let buffer =
     Buffer.create 1024
 
-  let printaod offset dot symbols =
+  let printaod offset dot normalize symbols =
     let length = Array.length symbols in
     let first = ref true in
     let separate () =
@@ -596,21 +596,22 @@ module Symbol = struct
       end;
       if i < length then begin
         separate();
-        Printf.bprintf buffer "%s" (print symbols.(i))
+        Printf.bprintf buffer "%s" (print normalize symbols.(i))
       end
     done;
     let s = Buffer.contents buffer in
     Buffer.clear buffer;
     s
 
-  let printao offset symbols =
-    printaod offset (-1) symbols
+  let printao offset normalize symbols =
+    printaod offset (-1) normalize symbols
 
-  let printa symbols =
-    printao 0 symbols
+  let printa normalize symbols =
+    printao 0 normalize symbols
 
   let printl symbols =
-    printa (Array.of_list symbols)
+    let normalize = false in
+    printa normalize (Array.of_list symbols)
 
   let lookup name =
     try
@@ -908,9 +909,12 @@ module Production = struct
     let nt, rhs = table.(prod) in
     if Array.length rhs = 0 then
       (* Avoid producing a trailing space. *)
-      Printf.sprintf "%s ->" (Nonterminal.print false nt)
+      Printf.sprintf "%s ->"
+        (Nonterminal.print false nt)
     else
-      Printf.sprintf "%s -> %s" (Nonterminal.print false nt) (Symbol.printao 0 rhs)
+      Printf.sprintf "%s -> %s"
+        (Nonterminal.print false nt)
+        (Symbol.printao 0 false rhs)
 
   let describe gerund prod =
     match classify prod with

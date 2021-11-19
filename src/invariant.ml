@@ -618,7 +618,7 @@ let split w k =
 let print w =
   w
   |> Array.map symbol
-  |> Symbol.printa
+  |> Symbol.printa false
 
 (* ------------------------------------------------------------------------ *)
 
