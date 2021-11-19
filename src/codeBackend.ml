@@ -1640,6 +1640,12 @@ let program =
 
     SIStretch grammar.preludes ::
 
+    (* 2021/11/19 Disable the "fragile match" warning (4) and the "unused rec
+       flag" warning (39), which can otherwise be triggered by the generated
+       code. This is not 100% good, as it can influence the semantic actions,
+       which are embedded in the [reduce] functions. Never mind. *)
+    SIAttribute ("ocaml.warning", "-4-39") ::
+
     SIValDefs (true,
       ProductionMap.fold (fun _ s defs ->
         entrydef s :: defs
