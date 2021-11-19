@@ -60,6 +60,7 @@ let nonterminalgadtdef grammar =
           datavalparams = [];
           datatypeparams = Some [ index ];
           comment = None;
+          unboxed = false;
         }
       ) (nonterminals grammar)
 

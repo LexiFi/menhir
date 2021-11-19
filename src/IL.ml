@@ -104,6 +104,12 @@ and datadef = {
     (* A comment about this data constructor. *)
     comment: string option;
 
+    (* An optional [@@unboxed] attribute. This attribute can be used only
+       if there is a single data constructor and it carries a single field.
+       This attribute is recognized by OCaml 4.04 and ignored by earlier
+       versions of OCaml. *)
+    unboxed: bool;
+
   }
 
 and typ =

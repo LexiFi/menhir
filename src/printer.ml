@@ -638,6 +638,7 @@ let datadef typename f def =
         datavalparams def.datavalparams
         (typeparams typ0 typ) indices typename
   end;
+  if def.unboxed then fprintf f " [@@unboxed]";
   datadefcomment f def.comment
 
 let fielddef f def =

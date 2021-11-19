@@ -62,6 +62,7 @@ let tokentypedef grammar =
             datavalparams = (match typo with None -> [] | Some t -> [ TypTextual t ]);
             datatypeparams = None;
             comment = None;
+            unboxed = false;
           }) (typed_tokens grammar)
         )
 
@@ -120,14 +121,16 @@ let tokengadtdef grammar =
             dataname = ttokengadtdata "error";
             datavalparams = [];
             datatypeparams = Some [ tunit ];
-            comment = None;
               (* the [error] token has a semantic value of type [unit] *)
+            comment = None;
+            unboxed = false;
           } ::
           List.map (fun (token, typo) -> {
             dataname = ttokengadtdata token;
             datavalparams = [];
             datatypeparams = Some [ match typo with None -> tunit | Some t -> TypTextual t ];
-            comment = None
+            comment = None;
+            unboxed = false;
           }) (typed_tokens grammar)
         )
 
@@ -213,4 +216,3 @@ let tokendata =
 
 let tokengadtdata token =
   tokenprefix (ttokengadtdata token)
-

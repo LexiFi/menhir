@@ -473,6 +473,7 @@ let statetypedef = {
                          datavalparams =  [];
                          datatypeparams = None;
                          comment =        None;
+                         unboxed =        false;
                        } :: defs
                        else defs
                      ) []
