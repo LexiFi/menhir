@@ -233,4 +233,14 @@ end) = struct
   let rev_topological_iter action =
     MArray.iter_rev (yield action) representatives
 
+  let map action =
+    Array.map (yield action) representatives |> Array.to_list
+
+  let rev_map action =
+    let accu = ref [] in
+    rev_topological_iter (fun repr labels ->
+      accu := action repr labels :: !accu
+    );
+    !accu
+
 end
