@@ -49,7 +49,7 @@ module F = Freeze
    to use a piece of information that has not been computed. *)
 
 let short_states_needed =
-  (not Settings.represent_states) || Settings.coq
+  (not Settings.represent_states) || Settings.backend = `CoqBackend
 
 module StackStatesShort = struct
 
@@ -118,7 +118,9 @@ let handlers states =
 
    (3) If a stack cell contains more than one state and if at least
    one of these states is able to handle the [error] token, then these
-   states are represented. *)
+   states are represented. (Old code back-end only. This is required by
+   the stack inspection that takes place in the legacy error-handling
+   strategy.) *)
 
 module RepresentedStates () : sig
   val represented : Lr1.node -> bool
@@ -192,13 +194,14 @@ let () =
 (* Enforce condition (3) above. *)
 
 let () =
-  Lr1.iter (fun node ->
-    let v = StackStatesShort.stack_states node in
-    Array.iter (fun states ->
-      if Lr1.NodeSet.cardinal states >= 2 && handlers states then
-        represents states
-    ) v
-  )
+  if Settings.backend = `OldCodeBackend then
+    Lr1.iter (fun node ->
+      let v = StackStatesShort.stack_states node in
+      Array.iter (fun states ->
+        if Lr1.NodeSet.cardinal states >= 2 && handlers states then
+          represents states
+      ) v
+    )
 
 (* Define an accessor. *)
 
@@ -336,6 +339,11 @@ end
    2- This happens if the semantic action explicitly mentions the keyword
       [$endpos($0)].
 
+   In the new code back-end, this happens only if [prod] is not an epsilon
+   production and only if the current state is not an initial state. Indeed,
+   for epsilon productions, we read the register [endp] instead of peeking
+   at the top stack cell, and at initial states, we read the register [initp].
+
    Now, if this happens, what should we do?
 
    a- If this happens in a state [s] whose incoming symbol is [sym], then [sym]
@@ -379,18 +387,21 @@ let () =
 
       (* An epsilon production. *)
 
-      (* Condition (1) in the long comment above (2015/11/11). If [prod] is an
-         epsilon production, and if it can be reduced in a state [s] whose
-         incoming symbol is [sym], then emit the following constraint: if the
-         left-hand side [nt] keeps track of its start or end position, then
-         [sym] must keep track of its end position. *)
+      (* Condition (1) in the long comment above (2015/11/11). If [prod] can
+         be reduced in a state [s] whose incoming symbol is [sym], then emit
+         the following constraint: if the left-hand side [nt] keeps track of
+         its start or end position, then [sym] must keep track of its end
+         position. *)
 
-      Lr1.production_where prod |> Lr1.NodeSet.iter begin fun s ->
-        Lr1.incoming_symbol s |> Option.iter begin fun sym ->
-          F.record_VarVar (Symbol.N nt, WhereStart) (sym, WhereEnd);
-          F.record_VarVar (Symbol.N nt, WhereEnd)   (sym, WhereEnd)
+      (* This constraint concerns the old code back-end only. *)
+
+      if Settings.backend = `OldCodeBackend then
+        Lr1.production_where prod |> Lr1.NodeSet.iter begin fun s ->
+          Lr1.incoming_symbol s |> Option.iter begin fun sym ->
+            F.record_VarVar (Symbol.N nt, WhereStart) (sym, WhereEnd);
+            F.record_VarVar (Symbol.N nt, WhereEnd)   (sym, WhereEnd)
+          end
         end
-      end
 
     end
     else begin
@@ -416,12 +427,15 @@ let () =
              carries the outgoing edge labeled [nt]. The condition is as follows:
              if [prod] refers to [$endpos($0)], if the state [s] carries an
              outgoing transition labeled [nt], and if the incoming symbol of [s]
-             is [sym], then [sym] must keep track of its end position. *)
-          Lr1.all_sources (Symbol.N nt) |> Lr1.NodeSet.iter begin fun s ->
-            Lr1.incoming_symbol s |> Option.iter begin fun sym ->
-              F.record_ConVar true (sym, WhereEnd)
+             is [sym], then [sym] must keep track of its end position. In the new
+             code back-end, we impose this constraint only if [prod] is not an
+             epsilon production. *)
+          if Settings.backend = `OldCodeBackend || length > 0 then
+            Lr1.all_sources (Symbol.N nt) |> Lr1.NodeSet.iter begin fun s ->
+              Lr1.incoming_symbol s |> Option.iter begin fun sym ->
+                F.record_ConVar true (sym, WhereEnd)
+              end
             end
-          end
       | Position (Left, _, _) ->
           (* [$startpos] and [$endpos] have been expanded away. *)
           assert false

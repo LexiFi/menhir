@@ -10,8 +10,6 @@
 
 (* The code generator. *)
 
-module Run (T : sig end) = struct
-
 open Grammar
 open Invariant
 open IL
@@ -108,21 +106,6 @@ let if1, ifnlazy = MList.(if1, ifnlazy)
    fact dead. It would be nice (but difficult) to exploit types
    to prove that. However, one could at least replace the code of
    that branch with a simple [assert false]. TEMPORARY do it *)
-
-(* ------------------------------------------------------------------------ *)
-
-(* At this time, the code back-end supports only the legacy error handling
-   strategy. It does not (yet?) support the simplified strategy. Let the
-   user know about this. *)
-
-let () =
-  match Settings.strategy with
-  | `Legacy ->
-      ()
-  | `Simplified ->
-      Error.error []
-        "The code back-end does not support --strategy simplified.\n\
-         Please use either --strategy legacy or --table."
 
 (* ------------------------------------------------------------------------ *)
 (* Here is a description of our error handling mechanism.
@@ -310,6 +293,62 @@ let getstartp =
 
 let getendp =
   ERecordAccess (ERecordAccess (EVar env, flexbuf), "Lexing.lex_curr_p")
+
+(* ------------------------------------------------------------------------ *)
+
+(* Code production for a few auxiliary functions. *)
+
+(* This is [assertfalse], used when internal failure is detected.
+   This should never happen if our tool is correct. *)
+
+let internal_failure =
+  "Internal failure -- please contact the parser generator's developers."
+
+let assertfalsedef = {
+  valpublic = false;
+  valpat = PVar assertfalse;
+  valval =
+    EAnnot (
+      EFun ([ PUnit ],
+        blet (
+          [ PUnit, eprintf internal_failure []],
+          eassert efalse
+        )
+      ),
+      scheme [ "a" ] (arrow tunit (tvar "a"))
+    )
+}
+
+(* Calls to [assertfalse]. *)
+
+let call_assertfalse =
+  EApp (EVar assertfalse, [ EUnit ])
+
+(* This is [print_token], used to print tokens in [--trace] mode. *)
+
+let printtokendef =
+  destructuretokendef
+    print_token
+    tstring
+    false
+    (fun tok -> EStringConst (Terminal.print tok))
+
+(* ------------------------------------------------------------------------ *)
+
+(* At this time, the code back-end supports only the legacy error handling
+   strategy. It does not (yet?) support the simplified strategy. Let the
+   user know about this. *)
+
+module Run (T : sig end) = struct
+
+let () =
+  match Settings.strategy with
+  | `Legacy ->
+      ()
+  | `Simplified ->
+      Error.error []
+        "The code back-end does not support --strategy simplified.\n\
+         Please use either --strategy legacy or --table."
 
 (* ------------------------------------------------------------------------ *)
 (* Determine whether the [goto] function for nonterminal [nt] will push
@@ -799,11 +838,6 @@ let call_error s =
       (* TEMPORARY use [let] binding and reduce duplication *)
   else
     call_error s
-
-(* Calls to [assertfalse]. *)
-
-let call_assertfalse =
-  EApp (EVar assertfalse, [ EUnit ])
 
 (* ------------------------------------------------------------------------ *)
 (* Code production for the automaton functions. *)
@@ -1513,36 +1547,6 @@ let entrydef s =
 
 (* ------------------------------------------------------------------------ *)
 (* Code production for auxiliary functions. *)
-
-(* This is [assertfalse], used when internal failure is detected.
-   This should never happen if our tool is correct. *)
-
-let internal_failure =
-  "Internal failure -- please contact the parser generator's developers."
-
-let assertfalsedef = {
-  valpublic = false;
-  valpat = PVar assertfalse;
-  valval =
-    EAnnot (
-      EFun ([ PUnit ],
-        blet (
-          [ PUnit, eprintf internal_failure []],
-          eassert efalse
-        )
-      ),
-      scheme [ "a" ] (arrow tunit (tvar "a"))
-    )
-}
-
-(* This is [print_token], used to print tokens in [--trace] mode. *)
-
-let printtokendef =
-  destructuretokendef
-    print_token
-    tstring
-    false
-    (fun tok -> EStringConst (Terminal.print tok))
 
 (* This is [discard], used to take a token off the input stream and
    query the lexer for a new one. The code queries the lexer for a new

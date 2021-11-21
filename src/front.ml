@@ -26,7 +26,7 @@ let load_grammar_from_contents filename contents =
   )
 
 let check_filename filename =
-  let validExt = if Settings.coq then ".vy" else ".mly" in
+  let validExt = Settings.extension in
   if not (Filename.check_suffix filename validExt) then
     Error.error []
       "argument file names should end in %s. \"%s\" is not accepted."
@@ -49,7 +49,7 @@ let grammars () : Syntax.partial_grammar list =
   List.map load_grammar_from_file Settings.filenames
 
 let grammars : Syntax.partial_grammar list =
-  if Settings.no_stdlib || Settings.coq then
+  if Settings.no_stdlib || Settings.backend = `CoqBackend then
     grammars()
   else
     (* As 20190924, the standard library is no longer actually read from a

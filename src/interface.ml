@@ -169,7 +169,7 @@ let incremental_api grammar () : interface =
 let interface grammar = [
   IIFunctor (grammar.parameters,
     monolithic_api grammar @
-    MList.ifnlazy Settings.table (incremental_api grammar)
+    MList.ifnlazy (Settings.backend = `TableBackend) (incremental_api grammar)
   )
 ]
 
