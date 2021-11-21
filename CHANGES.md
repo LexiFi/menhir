@@ -1,5 +1,10 @@
 # Changes
 
+## 2021/12/YY
+
+* A new "code" back-end, which produces efficient and well-typed OCaml
+  code, has been introduced.
+
 ## 2021/12/XX
 
 * The `$syntaxerror` keyword is no longer supported.
