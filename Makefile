@@ -42,6 +42,17 @@ export CDPATH=
 test:
 	@ dune build --display short @test @runtest
 
+# [make quick] runs a subset of [make test]. One difference is that
+# [make quick] runs Menhir only, whereas [make test] runs Menhir and
+# compiles the code produced by Menhir's code back-end using [ocamlc].
+# Also, [make quick] focuses on test/static/good, whereas [make test]
+# includes tests in all directories (test/static, test/dynamic, demos,
+# etc.)
+
+.PHONY: quick
+quick:
+	@ dune build --display short @quick
+
 # [make demos] compiles the demos.
 
 # Some demos require coq-menhirlib to be installed.
@@ -110,11 +121,17 @@ plot:
 clean::
 	@ rm -f analysis/*.pdf
 
-# [make speed] runs the speed test in test/dynamic/speed.
+# [make benchmarks] runs the benchmarks.
 
-.PHONY: speed
-speed:
-	@ dune build --force --no-buffer @speed
+.PHONY: benchmarks
+benchmarks:
+	@ make -C benchmarks
+
+# [make houblix] runs just the tests in test/dynamic/houblix.
+
+.PHONY: houblix
+houblix:
+	@ dune build @test_houblix
 
 # [make versions] compiles and tests Menhir under many versions of
 # OCaml, whose list is specified below.
@@ -170,7 +187,8 @@ promote:
 
 # [make depend] regenerates the files dune.auto. This command should
 # be run every time some tests are added or removed or renamed in the
-# subdirectories test/static/{good,bad} and test/dynamic/semantics/data.
+# subdirectories test/static/{good,bad} and test/dynamic/semantics/data
+# and test/dynamic/houblix/{tests,backends}.
 
 .PHONY: depend
 depend:
@@ -277,7 +295,7 @@ WWW     := www
 # 4. Run [make demos] to make sure that the demos can be compiled.
 # 5. Run [make versions] to make sure that Menhir can be compiled
 #    under all supported versions of OCaml.
-# 6. Run [make speed] and have a look at the performance figures to make
+# 6. Run [make benchmarks] and have a look at the performance figures to make
 #    sure that they are in the right ballpark.
 
 # You may wish to test the opam package by running [make pin]. (This
