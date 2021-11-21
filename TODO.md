@@ -1,60 +1,9 @@
 # TODO
 
-## Work on the new code back-end
-
-* Unit production elimination. We have a chain where `goto` calls `run`, which
-  performs a default reduction, thus calls `reduce` (of a unit production),
-  which calls another `goto` function. Inlining these three calls would
-  reveal that the last `goto` function is called with a known state, so
-  the `match` construct can be eliminated. Experiment with `calc-ast`.
-
-* A related optimization: if a nonterminal symbol has been defined as an
-  abbreviation for a sequence of symbols, then by inlining a `run`
-  function we should also see push/pop elimination followed with
-  a call to `goto` with a known state as an argument. Test.
-
-* Avoid the dependency on `feat` except possibly for testing.
-  Note that a dependency can be marked `{with-test}`.
-
-* Can we avoid generating `match` constructs with only one branch? This
-  requires ensuring that all of the required type information is available
-  beforehand. This may require the use of the long invariant.
-
-* A missed optimization in the current code back-end: reducing an epsilon
-  production goes through a generic `reduce` function, thus forgetting the
-  identity of the current state, and through a generic `goto` function, which
-  performs a case analysis to rediscover this information. Specializing the
-  `reduce` function per state, for epsilon productions only, would avoid this
-  inefficiency. (One should ideally avoid duplicating semantic actions,
-  though.)
-
-* The code back-end currently does not exploit the fact that the target state
-  of a reduction is sometimes statically known (that is, determined either by
-  the production alone, or by the production and current state). Taking this
-  into account could allow us to avoid going through the generic `goto`
-  function in some cases. This in turn could allow us to decrease the set
-  of states that must be represented.
-
-* Build a performance test suite. For this purpose, use a small number of
-  well-chosen parsers (among which OCaml and CompCert C) for which we have a
-  large amount of well-formed input data. In one variant, try to measure just
-  the parsing time: store tokens in memory ahead of time so as to eliminate
-  the cost of lexical analysis; use unit semantic actions so as to eliminate
-  the cost of semantic actions. In another variant, use a normal lexer and
-  normal semantic actions (which build an AST). Parse each file multiple times
-  in the same process so as to diminish the influence of GC effects. Perhaps
-  use `perf` to measure not just time, but also a dynamic instruction
-  execution count, etc. Arrange to *not* blow up the size of the repository
-  with the input data.
-
 ## Automaton
 
-* After confirming that the short and long invariants agree, we could obtain
-  the short invariant simply by truncating the long invariant at the desired
-  length.
-
 * When displaying the known suffix of the stack in a `.messages` file and/or
-  in an `.automaton` file, use the *long* invariant.
+  in an `.automaton` file, use the *long* invariant?
 
 ## Performance
 
@@ -182,13 +131,6 @@
   to build its functionality directly into Menhir.
 
 ## Minor bugs
-
-* If the minimum or maximum lengths computed by Menhir can be reached only via
-  a production that involves the `error` token, then the random sentence
-  generator could fail. Fix this. The analyses `Minimal` and `Maximal` should
-  ignore the productions that involve the `error` token. This implies that
-  they should not rely on the FIRST sets, which do take these productions
-  into account.
 
 * A drawback of point-free semantic actions: if the application of the OCaml
   identifier to the tuple is ill-typed, then we get a type error in the mock
