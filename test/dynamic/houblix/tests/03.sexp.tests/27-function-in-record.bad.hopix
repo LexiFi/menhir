@@ -1,0 +1,11 @@
+type f<`a, `b> = { apply : `a -> `b }
+
+fun : int -> int
+    f (x : int) = x + 1
+
+let boxed_f : f<int, int> = { apply = f }<int, int>
+
+fun : [`a `b] f<`a, `b> * `a -> `b
+    apply_boxed_f ((boxed_f : f<`a, `b>), (a : `a)) = boxed_f.apply (a)
+
+let main : int = apply_boxed_f<int>(boxed_f, 42)
