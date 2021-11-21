@@ -29,8 +29,9 @@ val pop : 'a array -> 'a array
     [push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]] *)
 val push : 'a array -> 'a -> 'a array
 
-(**If the array [a] has length at least [k], then [truncate k a] is the suffix
-   of length [k] of the array [a]. Otherwise, [truncate k a] is [a].
+(**If the array [a] has length greater than [k],
+   then [truncate k a] is the suffix of length [k] of the array [a].
+   Otherwise, [truncate k a] is [a].
    [truncate 3 [|1; 2; 3; 4; 5|] = [|3; 4; 5|]] *)
 val truncate : int -> 'a array -> 'a array
 
