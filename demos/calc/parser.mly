@@ -8,6 +8,7 @@
 %nonassoc UMINUS        /* highest precedence */
 
 %start <int> main
+%type  <int> expr
 
 %%
 
@@ -30,4 +31,3 @@ expr:
     { e1 / e2 }
 | MINUS e = expr %prec UMINUS
     { - e }
-
