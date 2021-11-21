@@ -609,11 +609,15 @@ let get, length, fold_left, append, to_list =
   Array.(get, length, fold_left, append, to_list)
 
 let split w k =
-  let n = Array.length w in
-  assert (0 <= k && k <= n);
-  let lower = Array.sub w 0 (n - k) in
-  let upper = MArray.suffix w k in
-  lower, upper
+  if k = 0 then
+    (* A fast path for the most common case. *)
+    w, [||]
+  else
+    let n = Array.length w in
+    assert (0 <= k && k <= n);
+    let lower = Array.sub w 0 (n - k) in
+    let upper = MArray.suffix w k in
+    lower, upper
 
 let print w =
   w
