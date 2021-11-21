@@ -204,50 +204,6 @@ module T = struct
   let may_reduce node prod =
     Lr1.NodeSet.mem node (Lr1.production_where prod)
 
-  (* The logging functions that follow are called only if [log] is [true]. *)
-
-  module Log = struct
-
-    open Printf
-
-    let state s =
-      fprintf stderr "State %d:" (Lr1.number s);
-      prerr_newline()
-
-    let shift tok s' =
-      fprintf stderr "Shifting (%s) to state %d" (Terminal.print tok) (Lr1.number s');
-      prerr_newline()
-
-    let reduce_or_accept prod =
-      match Production.classify prod with
-      | Some _ ->
-         fprintf stderr "Accepting";
-         prerr_newline()
-      | None ->
-         fprintf stderr "Reducing production %s" (Production.print prod);
-         prerr_newline()
-
-    let lookahead_token tok startp endp =
-      fprintf stderr "Lookahead token is now %s (%d-%d)"
-        (Terminal.print tok)
-        startp.Lexing.pos_cnum
-        endp.Lexing.pos_cnum;
-      prerr_newline()
-
-    let initiating_error_handling () =
-      fprintf stderr "Initiating error handling";
-      prerr_newline()
-
-    let resuming_error_handling () =
-      fprintf stderr "Resuming error handling";
-      prerr_newline()
-
-    let handling_error s =
-      fprintf stderr "Handling error in state %d" (Lr1.number s);
-      prerr_newline()
-
-  end
-
 end
 
 (* ------------------------------------------------------------------------ *)
@@ -269,14 +225,18 @@ let interpret nt log lexer lexbuf =
   let module E =
     MenhirLib.Engine.Make (struct
       include T
-      let log = log
+      (* The logging hooks. *)
+      module Log = (val log : Logging.LOG)
+      (* We want our logging hooks to be called. *)
+      let log = true
     end)
   in
 
   (* Run it. *)
 
   try
-    Some (E.entry strategy (Lr1.entry_of_nt nt) lexer lexbuf)
+    let cst = E.entry strategy (Lr1.entry_of_nt nt) lexer lexbuf in
+    Some cst
   with T.Error | T.Abort ->
     None
 
@@ -315,7 +275,10 @@ let check_error_path log nt input =
   let module E =
     MenhirLib.Engine.Make (struct
       include T
-      let log = log
+      (* The logging hooks. *)
+      module Log = (val log : Logging.LOG)
+      (* We want our logging hooks to be called. *)
+      let log = true
     end)
   in
 

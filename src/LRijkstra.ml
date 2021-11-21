@@ -131,7 +131,7 @@ let fail format =
 let validate nt s' elements : ReferenceInterpreter.target =
   let open ReferenceInterpreter in
   match
-    check_error_path false nt elements
+    check_error_path Logging.never nt elements
   with
   | OInputReadPastEnd ->
       fail "input was read past its end"
