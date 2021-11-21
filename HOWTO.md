@@ -33,13 +33,12 @@ stages:
 
 ## Testing
 
-To run all tests except the speed test, type `make test` in the root
-directory.
+To run all tests, type `make test` in the root directory.
 
-To run the speed test, type `make speed` in the root directory.
+To run the benchmarks, type `make benchmarks` in the root directory.
 
-The tests in the directory `test/static` test that Menhir seems to run properly,
-but do not test the generated parser.
+The tests in the directory `test/static` test that Menhir seems to run
+properly, but do not test the generated parser.
 
 * The subdirectory `test/static/good` contains a number of correct `.mly` files.
   We check that Menhir accepts these files and
@@ -68,7 +67,7 @@ Prior to making a release, please take the following actions:
   to make sure that the tests succeed
   and that Menhir can be compiled under all supported versions of OCaml.
 
-* Run `make speed` and have a look at the performance figures to
+* Run `make benchmarks` and have a look at the performance figures to
   make sure that they are still in the right ballpark.
 
 * Test the `opam` package by running `make pin`
