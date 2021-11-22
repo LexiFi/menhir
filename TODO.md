@@ -1,5 +1,21 @@
 # TODO
 
+## Hot Stuff (to be Done Soon)
+
+* Clarify the list of authors and the intellectual property.
+  Update the headers in all files.
+
+* In the code back-end, change the compilation of `$syntaxerr` to call
+  a toplevel function instead of raising `Error` directly; this should
+  result in smaller code.
+
+* Disallow grammars that have a token named `Error`.
+
+* Add `--strategy none` to guarantee that the `error` token is not used.
+
+* In `--table` mode, compute better timing information.
+  The time spent compressing tables should be isolated.
+
 ## Automaton
 
 * When displaying the known suffix of the stack in a `.messages` file and/or
