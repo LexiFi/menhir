@@ -9,12 +9,7 @@
   a toplevel function instead of raising `Error` directly; this should
   result in smaller code.
 
-* Disallow grammars that have a token named `Error`.
-
 * Add `--strategy none` to guarantee that the `error` token is not used.
-
-* In `--table` mode, compute better timing information.
-  The time spent compressing tables should be isolated.
 
 ## Automaton
 
