@@ -18,6 +18,9 @@
 * Fix a bug in `--random-*` which could cause Menhir to diverge if the
   grammar uses the `error` token.
 
+* Warn if a terminal symbol is named `Error`. This creates a name clash
+  in the public interface of the generated parser.
+
 ## 2021/10/12
 
 * Fix a bug in the code back-end which, in some rare cases, could lead to
