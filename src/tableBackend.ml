@@ -1123,6 +1123,6 @@ let program =
   [])]
 
 let () =
-  Time.tick "Producing abstract syntax"
+  Time.tick "Producing tables and abstract syntax"
 
 end
