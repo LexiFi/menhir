@@ -232,6 +232,20 @@ module Terminal = struct
   let equal (tok1 : t) (tok2 : t) =
     tok1 = tok2
 
+  (* 2021/11/23 If a token is named [Error], warn. This is undesirable,
+     as it creates a collision in the public interface of the generated
+     parser between the token [Error] and the exception [Error]. OCaml
+     itself may warn about this collision. *)
+  let () =
+    if verbose then try
+      let properties = StringMap.find "Error" grammar.tokens in
+      if properties.tk_is_declared then
+        let pos = properties.tk_position in
+        Error.grammar_warning [pos]
+          "please do not name a terminal symbol Error."
+    with Not_found ->
+      ()
+
   (* Determine how many terminals we have and build mappings
      both ways between names and indices. A new terminal "#"
      is created. A new terminal "error" is created. The fact
