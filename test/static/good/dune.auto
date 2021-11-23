@@ -1338,8 +1338,7 @@
 (rule (target calc.opp.out) (deps calc.mly)
   (action
     (with-outputs-to calc.opp.out
-      (with-accepted-exit-codes 0
-        (run menhir --only-preprocess %{read-lines:calc.flags} %{deps})))))
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
 
 (rule (alias calc) (action (diff calc.opp.exp calc.opp.out)))
 
@@ -1351,7 +1350,7 @@
     (with-outputs-to calc.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to calc.timings %{read-lines:calc.flags} %{deps})))))
+          --timings-to calc.timings %{deps})))))
 
 (rule (alias calc) (action (diff calc.exp calc.out)))
 
@@ -2645,9 +2644,7 @@
 (rule (target compcert_pre_parser.opp.out) (deps compcert_pre_parser.mly)
   (action
     (with-outputs-to compcert_pre_parser.opp.out
-      (with-accepted-exit-codes 0
-        (run menhir --only-preprocess %{read-lines:compcert_pre_parser.flags}
-          %{deps})))))
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
 
 (rule (alias compcert_pre_parser)
   (action (diff compcert_pre_parser.opp.exp compcert_pre_parser.opp.out)))
@@ -2661,8 +2658,7 @@
     (with-outputs-to compcert_pre_parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to compcert_pre_parser.timings
-          %{read-lines:compcert_pre_parser.flags} %{deps})))))
+          --timings-to compcert_pre_parser.timings %{deps})))))
 
 (rule (alias compcert_pre_parser)
   (action (diff compcert_pre_parser.exp compcert_pre_parser.out)))
