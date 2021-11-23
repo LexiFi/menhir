@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 171 distinct tests.
+;; 172 distinct tests.
 
 (rule (target a-rule-is-expected.out) (deps a-rule-is-expected.mly)
   (action
@@ -219,6 +219,15 @@
 
 (rule (alias declaration-error-b)
   (action (diff declaration-error-b.exp declaration-error-b.out)))
+
+(rule (target disallow_Error.out) (deps disallow_Error.mly)
+  (action
+    (with-outputs-to disallow_Error.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir %{read-lines:disallow_Error.flags} %{deps})))))
+
+(rule (alias disallow_Error)
+  (action (diff disallow_Error.exp disallow_Error.out)))
 
 (rule (target dont-use-private-symbol-1.out)
   (deps dont-use-private-symbol-1.mly dont-use-private-symbol-2.mly)
@@ -1471,6 +1480,7 @@
     (alias cyclic-parameterized-definition)
     (alias declaration-error-a)
     (alias declaration-error-b)
+    (alias disallow_Error)
     (alias dont-use-private-symbol-1)
     (alias double-equals)
     (alias duplicate-formal)
