@@ -1,0 +1,28 @@
+;; For the time being, this file is hand-written.
+;; If and when more tests are added, it should be generated.
+
+(rule
+  (targets ocaml.4.13.0.out ocaml.4.13.0.err)
+  (deps ocaml.4.13.0.mly)
+  (action
+    (with-stdout-to ocaml.4.13.0.out
+    (with-stderr-to ocaml.4.13.0.err
+    (with-accepted-exit-codes 0
+    (run menhir --unused-tokens --list-errors %{deps})
+)))))
+
+(rule
+  (alias test)
+  (deps
+    (:expected ocaml.4.13.0.out.exp)
+    (:result ocaml.4.13.0.out))
+  (action (diff %{expected} %{result}))
+)
+
+(rule
+  (alias test)
+  (deps
+    (:expected ocaml.4.13.0.err.exp)
+    (:result ocaml.4.13.0.err))
+  (action (diff %{expected} %{result}))
+)

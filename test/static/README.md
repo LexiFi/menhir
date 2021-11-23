@@ -27,7 +27,10 @@ should be fed together to Menhir.
 The subdirectory `merge/` contains a few tests of the `--merge-errors`
 facility.
 
-Two of the demos, `demos/calc` and `demos/calc-inspection`, are abused to
-also perform a simple regression test. If the code produced by Menhir's
-code back-end or table back-end changes, this is (likely to be) detected.
-This is intended to help avoid inadvertent changes.
+The subdirectory `reach/` contains a few tests of the `--list-errors`
+facility.
+
+Some of the demos, e.g. `demos/calc` and `demos/calc-inspection`, are abused
+to perform a simple regression test. If the code produced by Menhir's code
+back-end or table back-end changes, this is (likely to be) detected. This is
+intended to help avoid inadvertent changes.
