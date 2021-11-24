@@ -45,4 +45,6 @@ Frédéric Bour.
 
 Today, the principal maintainer of Menhir is François Pottier.
 
-The intellectual property of Menhir lies with Inria.
+The intellectual property of Menhir (including the OCaml libraries `menhirLib`
+and `menhirSdk`) lies with Inria. The intellectual property of the Coq library
+`coq-menhirlib` lies with Inria and CNRS.
