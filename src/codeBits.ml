@@ -163,7 +163,7 @@ let rec simplify = function
 
 (* Building a [let] construct, with on-the-fly simplification. *)
 
-let blet (bindings, body) =
+let rec blet (bindings, body) =
   let bindings = simplify bindings in
   match bindings, body with
   | [], _ ->
@@ -171,6 +171,9 @@ let blet (bindings, body) =
   | [ PVar x1, e ], EVar x2 when x1 = x2 ->
       (* Reduce [let x = e in x] to just [e]. *)
       e
+  | (PUnit, EUnit) :: bindings, _ ->
+      (* Reduce [let () = () in e] to just [e]. *)
+      blet (bindings, body)
   | _, _ ->
       ELet (bindings, body)
 
