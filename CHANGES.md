@@ -1,6 +1,13 @@
 # Changes
 
-## 2021/XX/XX
+## 2021/11/25
+
+* The command `menhir --list-errors` has been sped up by a factor of up
+  to x100, and requires up to x1000 less memory, thanks to a new LR(1)
+  reachability algorithm, which has been designed and implemented by
+  Frédéric Bour. This algorithm is described in the paper
+  [Faster Reachability Analysis for LR(1) Parsers](http://cambium.inria.fr/~fpottier/publis/bour-pottier-reachability.pdf)
+  by Frédéric Bour and François Pottier.
 
 * Better document the restricted way in which the `error` token must be
   used when using `--strategy simplified`. Menhir now checks that this
