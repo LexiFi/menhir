@@ -235,9 +235,9 @@ MENHIRLIB_FILES   := \
 # it easier to understand the line numbers that we sometimes receive as
 # part of bug reports.
 
-# Menhir's standard library (standard.mly) as well as the source files
-# in MenhirLib carry the "library" license, while every other file
-# carries the "regular" license.
+# The source files in lib/ carry the "library" header & license.
+# Those in coq-menhirlib/ carry the "Coq library" header & license.
+# Every other file carries the "regular" header & license.
 
 HEADACHE        := headache
 SRCHEAD         := $(CURRENT)/headers/regular-header
@@ -252,7 +252,7 @@ headache:
 	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
 	@ cd sdk && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
 	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
-	@ for file in src/standard.mly $(MENHIRLIB_FILES) ; do \
+	@ for file in $(MENHIRLIB_FILES) ; do \
 	    $(HEADACHE) -h $(LIBHEAD) $$file ; \
 	  done
 	@ for file in coq-menhirlib/src/*.v ; do \
