@@ -26,3 +26,29 @@
     (:result ocaml.4.13.0.err))
   (action (diff %{expected} %{result}))
 )
+
+(rule
+  (targets compcert_pre_parser.out compcert_pre_parser.err)
+  (deps compcert_pre_parser.mly)
+  (action
+    (with-stdout-to compcert_pre_parser.out
+    (with-stderr-to compcert_pre_parser.err
+    (with-accepted-exit-codes 0
+    (run menhir %{read-lines:compcert_pre_parser.flags} --list-errors %{deps})
+)))))
+
+(rule
+  (alias test)
+  (deps
+    (:expected compcert_pre_parser.out.exp)
+    (:result compcert_pre_parser.out))
+  (action (diff %{expected} %{result}))
+)
+
+(rule
+  (alias test)
+  (deps
+    (:expected compcert_pre_parser.err.exp)
+    (:result compcert_pre_parser.err))
+  (action (diff %{expected} %{result}))
+)
