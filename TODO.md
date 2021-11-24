@@ -1,16 +1,5 @@
 # TODO
 
-## Hot Stuff (to be Done Soon)
-
-* Clarify the list of authors and the intellectual property.
-  Update the headers in all files.
-
-* In the code back-end, change the compilation of `$syntaxerr` to call
-  a toplevel function instead of raising `Error` directly; this should
-  result in smaller code.
-
-* Add `--strategy none` to guarantee that the `error` token is not used.
-
 ## Automaton
 
 * When displaying the known suffix of the stack in a `.messages` file and/or
@@ -26,6 +15,8 @@
   Frédéric Bour.)
 
 ## Enhancements
+
+* Add `--strategy none` to guarantee that the `error` token is not used.
 
 * Offer a way of producing a de-lexer (`print_token_concrete`).
   When printing `.messages` files, after each sentence, as part
