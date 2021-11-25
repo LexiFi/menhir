@@ -29,10 +29,25 @@ let file_content filename =
   close_in cin;
   Buffer.contents b
 
+let zero_pos =
+  let open Lexing in {
+    pos_fname = "";
+    pos_lnum = 1;
+    pos_bol = 0;
+    pos_cnum = 0;
+  }
+
+let from_channel_with_positions f =
+  let lexbuf = Lexing.from_channel f in
+  lexbuf.lex_start_p <- zero_pos;
+  lexbuf.lex_curr_p <- zero_pos;
+  lexbuf
+
 let parse_filename ?(from_sexp = false) filename =
   if from_sexp then
     file_content filename |> Sexplib.Sexp.of_string |> AST.program_of_sexp
-  else parse (Lexing.from_channel ~with_positions:true) (open_in filename)
+  else
+    parse from_channel_with_positions (open_in filename)
 
 let extension = ".hopix"
 

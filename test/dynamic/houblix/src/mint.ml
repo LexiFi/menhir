@@ -1,9 +1,12 @@
+let stdlib_min_int = min_int
+let stdlib_max_int = max_int
+
 include Int64
 
 exception DoesNotFit
 
 let to_int n =
-  if n < of_int Stdlib.min_int || n > of_int Stdlib.max_int then
+  if n < of_int stdlib_min_int || n > of_int stdlib_max_int then
     raise DoesNotFit
   else to_int n
 
