@@ -1195,6 +1195,8 @@ struct
     (* An edge is labeled with a word. *)
     type label = Cells.t
 
+    exception Break of Terminal.t list
+
     (* [append_word cell acc] prepends to [acc] a word of minimal length
        that permits to follow the transition or the sequence of transitions
        represented by [cell].
@@ -1275,7 +1277,6 @@ struct
         let coercion =
           Coercion.infix (Tree.post_classes l) (Tree.pre_classes r)
         in
-        let exception Break of Terminal.t list in
         let l_index = Cells.encode l in
         let r_index = Cells.encode r in
         begin try
