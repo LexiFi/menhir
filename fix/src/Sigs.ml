@@ -80,10 +80,10 @@ module type IMPERATIVE_MAPS = sig
   val iter: (key -> 'data -> unit) -> 'data t -> unit
 end
 
-(**[ARRAY] is an alternative abstraction of Maps.
-   An instance of [ARRAY] directly represents a map, there is no separate
-   object of type ['a t].
-   The [value] type is fixed, allowing for specialized representations.
+(**An instance of the signature [ARRAY] represents one mutable map.
+   There is no type ['data t] and no [create] operation; there exists
+   just one map. Furthermore, the type [value], which corresponds to
+   ['data] in the previous signatures, is fixed.
 
    The domain of the map never changes:
    - [set] does not extend the map,

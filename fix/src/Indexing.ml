@@ -10,33 +10,44 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Sigs
+(* A suspension is used to represent a cardinal-that-may-still-be-unknown. *)
 
-type 'n cardinal = int lazy_t
+type 'n cardinal =
+  int Lazy.t
 
-let cardinal (lazy x : 'n cardinal) : int = x
+(* The function [cardinal] forces the cardinal to become fixed. *)
 
-type 'n index = int
+let cardinal =
+  Lazy.force
+
+type 'n index =
+  int
 
 module type CARDINAL = sig type n val n : n cardinal end
 
-module Const(X : sig val cardinal : int end) =
-struct
+(* [Empty] and [Const] produce sets whose cardinal is known. *)
+
+module Empty : CARDINAL = struct
+  type n
+  let n = lazy 0
+end
+
+module Const (X : sig val cardinal : int end) : CARDINAL = struct
   type n
   let () = assert (X.cardinal >= 0)
   let n = lazy X.cardinal
-end
-
-module Empty = struct
-  type n
-  let n = lazy 0
 end
 
 let const c : (module CARDINAL) =
   assert (c >= 0);
   (module struct type n let n = lazy c end)
 
-module Gensym() = struct
+(* [Gensym] produces a set whose cardinal is a priori unknown. A new reference
+   stores the current cardinal, which grows when [fresh()] is invoked. [fresh]
+   fails if the suspension [n] has been forced. *)
+
+module Gensym () = struct
+
   type n
   let counter = ref 0
   let n = lazy !counter
@@ -46,10 +57,8 @@ module Gensym() = struct
     let result = !counter in
     incr counter;
     result
-end
 
-(** Sum of two sets.
-    These definitions implements the disjoint union operator L + R. *)
+end
 
 type ('l, 'r) either =
   | L of 'l
@@ -63,92 +72,107 @@ module type SUM = sig
   val prj : n index -> (l index, r index) either
 end
 
-module Sum(L : CARDINAL)(R : CARDINAL) =
-struct
-  type n = unit
+module Sum (L : CARDINAL)(R : CARDINAL) = struct
+
+  type n
 
   type l = L.n
   type r = R.n
 
-  let l_n = cardinal L.n
-  let r_n = R.n
+  (* The cardinal [l] of the left-hand set becomes fixed now (if it
+     wasn't already). We need it to be fixed for our injections and
+     projections to make sense. *)
+  let l : int = cardinal L.n
+  (* The right-hand set can remain open-ended. *)
+  let r : int cardinal = R.n
 
   let n =
-    if Lazy.is_val r_n then
-      let n = l_n + cardinal r_n in
+    (* We optimize the case where [r] is fixed already, but the code
+       in the [else] branch would work always. *)
+    if Lazy.is_val r then
+      let n = l + cardinal r in
       lazy n
     else
-      lazy (l_n + cardinal r_n)
+      lazy (l + cardinal r)
 
+  (* Injections. The two sets are numbered side by side. *)
   let inj_l x = x
-  let inj_r y = l_n + y
-  let prj x = if x < l_n then L x else R (x - l_n)
+  let inj_r y = l + y
+
+  (* Projection. *)
+  let prj x = if x < l then L x else R (x - l)
+
 end
 
-let sum (type l r)
-    (l : l cardinal)
-    (r : r cardinal) =
+let sum (type l r) (l : l cardinal) (r : r cardinal) =
   let module L = struct type n = l let n = l end in
   let module R = struct type n = r let n = r end in
   (module Sum(L)(R) : SUM with type l = l and type r = r)
 
-(** Manipulate elements from a finite set *)
 module Index = struct
+
   type 'n t = 'n index
 
-  let of_int (c : _ cardinal) i =
-    let lazy c = c in
-    assert (i >= 0 && i < c); i
+  let of_int (n : 'n cardinal) i : 'n index =
+    let n = cardinal n in
+    assert (0 <= i && i < n);
+    i
 
   let to_int i = i
 
+  let iter (n : 'n cardinal) (yield : 'n index -> unit) =
+    let n = cardinal n in
+    for i = 0 to n - 1 do
+      yield i
+    done
+
   exception End_of_set
 
-  let enumerate (c : 'n cardinal) =
-    let c = cardinal c in
-    let k = ref 0 in
-    (fun () ->
-       let result = !k in
-       if result >= c then raise End_of_set;
-       incr k;
-       result)
+  let enumerate (n : 'n cardinal) : unit -> 'n index =
+    let n = cardinal n in
+    let next = ref 0 in
+    fun () ->
+      let i = !next in
+      if n <= i then raise End_of_set;
+      incr next;
+      i
 
-  let iter (c : 'n cardinal) f =
-    let lazy c = c in
-    for i = 0 to c - 1 do
-      f i
-    done
 end
 
-(** Manipulate fixed-size vectors, whose domain is a type-level [set] *)
-type ('n, 'a) vector = 'a array
+type ('n, 'a) vector =
+  'a array
 
 module Vector = struct
+
   type ('n, 'a) t = ('n, 'a) vector
 
-  (* Modular abstraction guarantee that get and set calls are always safe. *)
   let get = Array.unsafe_get
   let set = Array.unsafe_set
-  let set_cons t i x = set t i (x :: get t i)
 
-  let length vec = let c = Array.length vec in lazy c
+  let set_cons t i x =
+    set t i (x :: get t i)
+
+  let length a =
+    let n = Array.length a in
+    lazy n
 
   let empty = [||]
 
-  let make (n : _ cardinal) v =
+  let make (n : _ cardinal) x =
     let n = cardinal n in
-    Array.make n v
+    Array.make n x
 
   let make' (n : _ cardinal) f =
     let n = cardinal n in
     if n = 0 then
       empty
     else
-      Array.make n (f ())
+      Array.make n (f())
 
   let init (n : _ cardinal) f =
     let n = cardinal n in
     Array.init n f
 
   let map = Array.map
+
 end

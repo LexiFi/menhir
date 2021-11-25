@@ -80,13 +80,19 @@ module ForIntSegment
        with type variable = G.variable
         and type property = P.property option
 
-(**An alternative interface, allowing specialized (more efficient) maps.
+(**[ForCustomMaps] is a forward data flow analysis that is tuned for greater
+   performance. It internally relies on [CompactQueue], instead of [Queue].
+   Furthermore, instead of relying on a full-fledged implementation of maps
+   as described by [MINIMAL_IMPERATIVE_MAPS], it expects the user to create
+   and initialize two maps [V] and [B] that satisfy the signature [ARRAY].
+   This typically allows the user to choose an efficient, specialized data
+   representation.
 
-   The [V] map should be initialized with bottom everywhere.
-   The [B] map should initialized with [false] everywhere.
+   The map [V] must be initialized with [bottom] everywhere.
+   The map [B] must be initialized with [false] everywhere.
 
-   The functor returns nothing: map [V] is mutated and contains the resulting
-   fixed point. *)
+   The functor returns nothing: the map [V] is modified in place and can be
+   read by the user after the fixed point has been reached. *)
 
 module ForCustomMaps
   (P : MINIMAL_SEMI_LATTICE)

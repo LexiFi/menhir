@@ -32,6 +32,7 @@ module Tabulate       = Tabulate
 module Gensym         = Gensym
 module HashCons       = HashCons
 module DataFlow       = DataFlow
+module CompactQueue   = CompactQueue
 
 module Prop = struct
 
