@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 392 distinct tests.
+;; 393 distinct tests.
 
 (rule (target JSParse.opp.out) (deps JSParse.mly)
   (action
@@ -10100,6 +10100,34 @@
 
 (rule (alias photos) (action (diff photos.conflicts.exp photos.conflicts)))
 
+(rule (target phparser.opp.out) (deps phparser.mly)
+  (action
+    (with-outputs-to phparser.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias phparser) (action (diff phparser.opp.exp phparser.opp.out)))
+
+(rule
+  (targets phparser.out phparser.automaton phparser.automaton.resolved
+    phparser.conflicts phparser.timings)
+  (deps phparser.mly)
+  (action
+    (with-outputs-to phparser.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to phparser.timings %{deps})))))
+
+(rule (alias phparser) (action (diff phparser.exp phparser.out)))
+
+(rule (alias phparser)
+  (action (diff phparser.automaton.exp phparser.automaton)))
+
+(rule (alias phparser)
+  (action (diff phparser.automaton.resolved.exp phparser.automaton.resolved)))
+
+(rule (alias phparser)
+  (action (diff phparser.conflicts.exp phparser.conflicts)))
+
 (rule (target phpparser.opp.out) (deps phpparser.mly)
   (action
     (with-outputs-to phpparser.opp.out
@@ -13220,6 +13248,7 @@
     (alias pfff_python)
     (alias pfff_sql)
     (alias photos)
+    (alias phparser)
     (alias phpparser)
     (alias pippijn)
     (alias pre_parser)
