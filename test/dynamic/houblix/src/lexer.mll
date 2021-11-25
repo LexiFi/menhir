@@ -75,14 +75,15 @@ rule comment depth = parse
                   ( comment (depth  - 1) lexbuf ) }
   | _         { comment depth lexbuf              }
 
-and string accumulator = parse
- | "\""        { STRING(
-                  String.of_seq 
-                    (List.to_seq 
-                      (List.map (char_of_atom lexbuf)
-                        (List.rev accumulator))))                                    }
- | string_atom { string ((Lexing.lexeme lexbuf) :: accumulator) lexbuf               }
- | eof         { error "during lexing" (Position.cpos lexbuf) "Unterminated string." }
+and string buffer = parse
+ | "\""        { STRING (Buffer.contents buffer)  }
+ | string_atom
+     { let atom = Lexing.lexeme lexbuf in
+       let c = char_of_atom lexbuf atom in
+       Buffer.add_char buffer c;
+       string buffer lexbuf }
+ | eof
+     { error "during lexing" (Position.cpos lexbuf) "Unterminated string." }
 
 and token = parse
   (** Layout *)
@@ -91,7 +92,7 @@ and token = parse
   | open_com              { comment 0 lexbuf           }
   (* char *)
   | "'" atom "'"          { CHAR (char_of_atom lexbuf (unqote(Lexing.lexeme lexbuf)))  }
-  | "\""                  { string [] lexbuf                                           }
+  | "\""                  { string (Buffer.create 32) lexbuf                           }
   | number                { try
                               INT(Int64.of_int (int_of_string (Lexing.lexeme lexbuf)))  
                             with
