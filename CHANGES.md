@@ -16,7 +16,10 @@
   token at all!)
 
 * The `$syntaxerror` keyword is now forbidden when using
-  `--strategy simplified`.
+  `--strategy simplified`. This keyword will be entirely removed
+  in the next release. Incidentally, we have just found out that
+  it behaves differently under the code back-end and under the
+  table back-end.
 
 * Disable OCaml warning 39 (unused rec flag) in the OCaml code produced
   by Menhir's code back-end. This does not affect the table back-end.
@@ -27,6 +30,9 @@
 
 * Warn if a terminal symbol is named `Error`. This creates a name clash
   in the public interface of the generated parser.
+
+* Menhir now requires OCaml 4.03.0 (instead of 4.02.3)
+  and Dune 2.8.0 (instead of 2.0.0).
 
 ## 2021/10/12
 
