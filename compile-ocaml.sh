@@ -19,17 +19,17 @@ else
   opam install --yes dune ;
 fi
 
-eval $(opam env --set-switch --switch test-menhir)
+eval "$(opam env --set-switch --switch test-menhir)"
 
 # Uninstall Menhir if it is installed.
 
 # We are not sure whether it was installed via opam or directly
 # via [make install], so we try both uninstallation methods.
 
-echo "Removing menhir if already installed..."
+echo "Attempting to remove menhir if already installed..."
 #   read -p "Can I remove it [Enter/^C]?" -n 1 -r ;
-(opam remove menhir menhirLib menhirSdk || /bin/true) >/dev/null 2>&1
-make -C $MENHIR_ROOT uninstall >/dev/null 2>&1
+(opam remove menhir menhirLib menhirSdk || true) >/dev/null 2>&1
+(make -C "$MENHIR_ROOT" uninstall || true) >/dev/null 2>&1
 
 # Check if everything has been committed.
 # This seems required for [opam pin] to work properly.
@@ -38,7 +38,7 @@ if git status --porcelain | grep -v compile-ocaml ; then
   echo "Error: there remain uncommitted changes." ;
   git status ;
   exit 1 ;
-  fi
+fi
 
 # This function runs a command silently, and prints its execution time.
 
@@ -102,7 +102,7 @@ else
   # Installation via [make install].
   execute "make -C $MENHIR_ROOT install"
 fi
-ls -l `which menhir`
+ls -l "$(which menhir)"
 
 # Re-compile OCaml's parser using Menhir.
 
