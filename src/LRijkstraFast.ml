@@ -1467,7 +1467,10 @@ struct
               let n = Classic.Word.length w in
               (* Remember the word of minimal length for this
                  post-transition lookahead symbol *)
-              match Hashtbl.find_opt min_table t' with
+              let data =
+                try Some (Hashtbl.find min_table t') with Not_found -> None
+              in
+              match data with
               | Some (_, n') when n' <= n -> ()
               | _ -> Hashtbl.replace min_table t' (w, n)
             end
