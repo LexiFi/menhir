@@ -95,6 +95,8 @@ class virtual ['env] map = object (self)
           self#eifthenelse env e e1 e2
       | EDead ->
           self#edead env
+      | EBottom ->
+          self#ebottom env
       | ERaise e ->
           self#eraise env e
       | ETry (e, bs) ->
@@ -186,6 +188,9 @@ class virtual ['env] map = object (self)
       EIfThenElse (e', e1', e2')
 
   method edead _env =
+    raise NoChange
+
+  method ebottom _env =
     raise NoChange
 
   method eraise env e =
@@ -380,6 +385,8 @@ class virtual ['env, 'a] fold = object (self)
         self#eifthenelse env accu e e1 e2
     | EDead ->
         self#edead env accu
+    | EBottom ->
+        self#ebottom env accu
     | ERaise e ->
         self#eraise env accu e
     | ETry (e, bs) ->
@@ -451,6 +458,9 @@ class virtual ['env, 'a] fold = object (self)
     accu
 
   method edead (_env : 'env) (accu : 'a) =
+    accu
+
+  method ebottom (_env : 'env) (accu : 'a) =
     accu
 
   method eraise (env : 'env) (accu : 'a) e =

@@ -291,6 +291,7 @@ let rec member e k =
       end
   | EVar _
   | EDead
+  | EBottom
   | ETextual _
   | EApp (_, [])
   | EData (_, [])
@@ -366,6 +367,8 @@ and exprk k f e =
         fprintf f "match %a with%a" expr e (branches k) brs
     | EDead ->
         fprintf f ". (* a dead branch *)"
+    | EBottom ->
+        fprintf f "(let rec diverge() = diverge() in diverge())"
     | ETry (_, []) ->
         assert false
     | ETry (e, brs) ->

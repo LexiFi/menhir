@@ -185,6 +185,9 @@ and expr =
   (* An expression that claims to be dead code. *)
   | EDead
 
+  (* A divergent expression. *)
+  | EBottom
+
   (* Raising exceptions. *)
   | ERaise of expr
 
