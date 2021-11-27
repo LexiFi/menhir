@@ -207,8 +207,12 @@ let eassert e =
 (* [bottom] is an expression that has every type. Its semantics is
    irrelevant. *)
 
+(* We used to use [raise Not_found], but this causes a problem in Facebook's
+   Infer project, where this triggers a deprecation warning. So, we define
+   a divergent function insteead. *)
+
 let bottom =
-  eraisenotfound
+  EBottom
 
 (* Boolean constants. *)
 
