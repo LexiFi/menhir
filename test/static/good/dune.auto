@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 393 distinct tests.
+;; 394 distinct tests.
 
 (rule (target JSParse.opp.out) (deps JSParse.mly)
   (action
@@ -132,6 +132,32 @@
 (rule (alias KaSim.4.0.0-kparser4)
   (action
     (diff KaSim.4.0.0-kparser4.conflicts.exp KaSim.4.0.0-kparser4.conflicts)))
+
+(rule (target RedTT.opp.out) (deps RedTT.mly)
+  (action
+    (with-outputs-to RedTT.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias RedTT) (action (diff RedTT.opp.exp RedTT.opp.out)))
+
+(rule
+  (targets RedTT.out RedTT.automaton RedTT.automaton.resolved RedTT.conflicts
+    RedTT.timings)
+  (deps RedTT.mly)
+  (action
+    (with-outputs-to RedTT.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to RedTT.timings %{deps})))))
+
+(rule (alias RedTT) (action (diff RedTT.exp RedTT.out)))
+
+(rule (alias RedTT) (action (diff RedTT.automaton.exp RedTT.automaton)))
+
+(rule (alias RedTT)
+  (action (diff RedTT.automaton.resolved.exp RedTT.automaton.resolved)))
+
+(rule (alias RedTT) (action (diff RedTT.conflicts.exp RedTT.conflicts)))
 
 (rule (target acgtk1.opp.out)
   (deps acgtk1.mly acgtk2.mly acgtk3.mly acgtk4.mly acgtk5.mly)
@@ -12945,6 +12971,7 @@
     (alias K3Parser)
     (alias KaSim.4.0.0-kappaParser)
     (alias KaSim.4.0.0-kparser4)
+    (alias RedTT)
     (alias acgtk1)
     (alias albatross)
     (alias alphaCaml)
