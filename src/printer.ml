@@ -587,7 +587,11 @@ and scheme f scheme =
           (list quote_less_typevar space)
           qs typ scheme.body
       else
-        fprintf f "%a. %a" (list typevar space) qs typ scheme.body
+        (* A bug in OCaml 4.07-4.10 creates trouble with type schemes
+           whose quantifiers are type variables. For now, let us not
+           print the quantifiers. Things seem to work this way. *)
+        (* fprintf f "%a. %a" (list typevar space) qs typ scheme.body *)
+        fprintf f "%a" typ scheme.body
 
 (* [scheme_without_quantifiers] is used in places where the IL AST allows
    a type scheme, but the OCaml syntax requires a monotype. *)
