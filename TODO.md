@@ -198,8 +198,6 @@
 
 ## Documentation
 
-* The `man` page is out of date.
-
 * Document the `.messages` workflow by publishing a tutorial (perhaps a blog
   post). Add build system support (examples of `dune` rules). Try to make
   maintenance easy by offering one command to auto-update a `.messages` file
