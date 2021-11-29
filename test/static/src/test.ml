@@ -1,4 +1,4 @@
-(* This script produces a file [dune.auto], which describes the tests we
+(* This script produces a file [dune.auto], which describes the tests wexclude
    would like dune to execute. It is used to produce [../good/dune.auto]
    and [../bad/dune.auto]. *)
 
@@ -13,6 +13,46 @@ open Printf
 open Auxiliary
 open PrintSExp
 open DuneRule
+
+(* -------------------------------------------------------------------------- *)
+
+(* A list of tests which we know cannot be compiled using the code back-end,
+   e.g., because the code is too large to be processed by the OCaml compiler. *)
+
+let exclude = [
+  (* a pathological grammar with very long productions: *)
+  "partest";
+  (* large grammars: *)
+  "cca_cpp";
+  "cca_verilog";
+  "mezzo_canonical";
+  "sysver";
+  "verilog";
+]
+
+(* The extension used to identify the copy of the grammar where the semantic
+   actions have been removed. *)
+
+let stripped =
+  "_stripped"
+
+(* OCaml does not tolerate a dot in a filename, so we normalize this. *)
+
+let normalize c =
+  if c = '.' then '_' else c
+
+let normalize s =
+  String.map normalize s
+
+(* We distinguish two targets, [test] and [quick]. The latter is a subset of
+   the former. [quicktest] runs Menhir only, whereas [test] runs Menhir and
+   the OCaml compiler. *)
+
+let test =
+  "test"
+
+let quick =
+  "quick"
 
 (* -------------------------------------------------------------------------- *)
 
@@ -136,6 +176,7 @@ let menhir impose_timeout base flags =
 (* Constructing and printing a rule to run Menhir.
 
    [positive]   positive or negative test?
+   [redirect]   what redirection is desired?
    [basenames]  base names of the .mly files
    [outputs]    names of the files created by this command
    [flags]      flags for Menhir
@@ -143,14 +184,20 @@ let menhir impose_timeout base flags =
    There can be several output files in the list [outputs], in
    which case all of them are declared to [dune] as targets.
 
-   The first file named in this list is used as the target of
-   the redirection of Menhir's output channels.
-
    If this is a positive test, then a timeout is imposed. *)
 
-let run positive basenames outputs flags =
-  (* The first output file is the redirection target. *)
-  let output = hd outputs in
+type destination =
+  | File of string
+
+let redirect (out, err : destination * destination) =
+  match out, err with
+  | File out, File err when out = err ->
+      redirect_both out
+  | File out, File err ->
+      fun action ->
+        action |> redirect_stdout out |> redirect_stderr err
+
+let run positive out err basenames outputs flags =
   (* Impose a timeout if necessary. *)
   let impose_timeout =
     match positive with
@@ -161,10 +208,60 @@ let run positive basenames outputs flags =
   print (rule
     outputs
     (mlys basenames)
-    (redirect_both output (
+    (redirect (out, err) (
       possibly_expecting_failure positive (
         menhir impose_timeout (base basenames) flags
   ))))
+
+(* -------------------------------------------------------------------------- *)
+
+(* Running the OCaml compiler. *)
+
+(* We enable all warnings and make them errors,
+   as we want to be aware of them. *)
+
+(* Warning 24 (invalid module names) must be disabled. *)
+
+let ocamlc source =
+  L (atoms [
+    "run"; "ocamlc";
+    "-w"; "A-24";
+    "-warn-error"; "A";
+    "-dtimings";
+    "-c"; source;
+  ])
+
+let compile ocamlbase =
+  (* Compile the .mli file first. *)
+  let source = ocamlbase ^ ".mli"
+  and cmi = ocamlbase ^ ".cmi"
+  and out = ocamlbase ^ ".mli.dtimings"
+  and log = ocamlbase ^ ".mli.log" in
+  print (rule
+    [cmi; log]
+    [source]
+    (redirect_stdout out
+    (redirect_stderr log
+      (ocamlc source)))
+  );
+  (* Then, compile the .ml file. *)
+  let source = ocamlbase ^ ".ml"
+  and cmo = ocamlbase ^ ".cmo"
+  and out = ocamlbase ^ ".ml.dtimings"
+  and log = ocamlbase ^ ".ml.log" in
+  print (rule
+    [cmo; log]
+    [source; cmi]
+    (redirect_stdout out
+    (redirect_stderr log
+      (ocamlc source)))
+  );
+  (* Compare the log file with an expected result. *)
+  (* If the file [expected] does not exist, then Dune apparently behaves as if
+     this file exists and is empty, which is fine; we expect the compiler log
+     to be empty. *)
+  let expected = log ^ ".exp" in
+  print (phony test (diff expected log))
 
 (* -------------------------------------------------------------------------- *)
 
@@ -181,9 +278,10 @@ let process_negative_test basenames : unit =
   let output = id ^ ".out" in
   let expected = id ^ ".exp" in
   let flags = extra id in
-  run `Negative basenames [output] flags;
+  let out, err = File output, File output in
+  run `Negative out err basenames [output] flags;
   (* Check that the output coincides with what was expected. *)
-  print (phony id (diff expected output))
+  print (phony test (diff expected output))
 
 (* -------------------------------------------------------------------------- *)
 
@@ -200,25 +298,35 @@ let process_negative_test basenames : unit =
    Because the performance data is not perfectly reproducible,
    it is not compared against a reference. *)
 
+(* The file %.stripped.mly stores the output of menhir --only-preprocess-uu. *)
+
 let process_positive_test basenames : unit =
   let id = id basenames in
   let flags = extra id in
+
   (* Run menhir --only-preprocess. *)
   let output = id ^ ".opp.out" in
   let expected = id ^ ".opp.exp" in
-  run `Positive basenames [output] (atoms [
+  let out, err = File output, File output in
+  run `Positive out err basenames [output] (atoms [
     "--only-preprocess";
   ] @ flags);
   (* Check that the output coincides with what was expected. *)
-  print (phony id (diff expected output));
-  (* Run menhir. *)
+  print (phony quick (diff expected output));
+
+  (* Run menhir in --table mode. We cannot use the (new) code back-end, in
+     general, because it requires type inference, which we cannot do here
+     because the semantic actions contain references to external modules. We
+     use the code back-end, below, after stripping the semantic actions. *)
   let output = id ^ ".out" in
   let automaton = id ^ ".automaton" in
   let automaton_resolved = id ^ ".automaton.resolved" in
   let conflicts = id ^ ".conflicts" in
   let timings = id ^ ".timings" in
   let targets = [output;automaton;automaton_resolved;conflicts;timings] in
-  run `Positive basenames targets (atoms [
+  let out, err = File output, File output in
+  run `Positive out err basenames targets (atoms [
+    "--table";
     "--dump";
     "--dump-resolved";
     "--explain";
@@ -228,11 +336,56 @@ let process_positive_test basenames : unit =
     "--timings-to"; timings;
   ] @ flags);
   (* Check that the output coincides with what was expected. *)
-  print (phony id (diff (id ^ ".exp") output));
+  print (phony quick (diff (id ^ ".exp") output));
   (* Check the .automaton and .conflicts files. *)
-  print (phony id (diff (id ^ ".automaton.exp") automaton));
-  print (phony id (diff (id ^ ".automaton.resolved.exp") automaton_resolved));
-  print (phony id (diff (id ^ ".conflicts.exp") conflicts))
+  print (phony quick (diff (id ^ ".automaton.exp") automaton));
+  print (phony quick (diff (id ^ ".automaton.resolved.exp") automaton_resolved));
+  print (phony quick (diff (id ^ ".conflicts.exp") conflicts));
+
+  if not (List.mem id exclude) then begin
+  let ocamlbase = normalize (id ^ stripped) in
+
+  (* Run menhir --only-preprocess-uu to remove the semantic actions. *)
+  let output = ocamlbase ^ ".mly" in
+  let ignored = ocamlbase ^ ".ignored" in
+  let out, err = File output, File ignored in
+  run `Positive out err basenames [output] (atoms [
+    "--only-preprocess-uu";
+  ] @ flags);
+
+  (* Run menhir again to compile *.stripped.mly using the new code back-end.
+     [--infer] is required. Take this opportunity to pass [--stacklang-test]
+     and [--stacklang-dump] and other flags. *)
+  let basenames = [ocamlbase ^ ""] in
+  let log = ocamlbase ^ ".log"
+  and ml = ocamlbase ^ ".ml"
+  and mli = ocamlbase ^ ".mli"
+  and stacklang = ocamlbase ^ ".stacklang"
+  and timings = ocamlbase ^ ".timings"
+  and scount = ocamlbase ^ ".scount"
+  and dcount = ocamlbase ^ ".dcount" in
+  let outputs = [ log; mli; ml; stacklang; timings; scount; dcount ] in
+  let out, err = File log, File log in
+  run `Positive out err basenames outputs (atoms [
+    "--infer";
+    "--stacklang-test";
+    "--stacklang-dump";
+    "-lg"; "2";
+    "-la"; "2";
+    "-lc"; "2";
+    "--timings-to"; timings;
+  ] @ flags);
+
+  (* Force the previous commands to be run as part of quicktest. *)
+  print (conjunction quick [stacklang]);
+
+  (* Compile the file produced by --only-preprocess-uu. Since the semantic
+     actions have been removed, this file should be well-typed and
+     stand-alone. Thus, we check that the code produced by the new code
+     back-end is accepted by OCaml. *)
+  compile ocamlbase
+
+  end
 
 (* -------------------------------------------------------------------------- *)
 
@@ -245,12 +398,6 @@ let process input =
   | PositiveTest basenames ->
       process_positive_test basenames
 
-let id input =
-  match input with
-  | NegativeTest basenames
-  | PositiveTest basenames ->
-      id basenames
-
 (* -------------------------------------------------------------------------- *)
 
 (* [run] runs a bunch of tests in parallel. *)
@@ -258,9 +405,8 @@ let id input =
 let run (inputs : inputs) =
   printf ";; %d distinct tests.\n\n" (List.length inputs);
   iter process inputs;
-  let ids = map id inputs in
-  let ids = sort_uniq Stdlib.compare ids in
-  print (alias "test" ids)
+  if Settings.kind = "good" then
+    print (alias test [quick])
 
 (* -------------------------------------------------------------------------- *)
 
@@ -279,6 +425,9 @@ let header () =
    files have the same name up to a numeric suffix, then they belong in a
    single group and should be fed together to Menhir. *)
 
+(* We ignore the file %.stripped.mly, which is produced out of %.mly as part
+   of the test. *)
+
 let tag basenames =
   match Settings.kind with
   | "good" ->
@@ -291,7 +440,7 @@ let tag basenames =
 let good_or_bad () =
      readdir Settings.source
   |> to_list
-  |> filter (has_suffix ".mly")
+  |> filter (fun f -> has_suffix ".mly" f && not (has_suffix (stripped ^ ".mly") f))
   |> map Filename.chop_extension
   |> sort Stdlib.compare
   |> groups equal_up_to_numeric_suffix
@@ -329,8 +478,8 @@ let merge mly lhs rhs out err xout xerr =
     redirect_stdout out (
       system "sed -e '/^##/d'"
   ))));
-  print (phony "test" (diff xout out));
-  print (phony "test" (diff xerr err))
+  print (phony test (diff xout out));
+  print (phony test (diff xerr err))
 
 let merge () =
      List.init n (fun i -> i + 1)

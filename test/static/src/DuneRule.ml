@@ -91,7 +91,12 @@ let possibly_expecting_failure positive action =
 
 (* Constructing a target that is an alias for a conjunction of targets. *)
 
-let alias target deps =
+let conjunction target (* targets: *) deps =
+  L[A"alias";
+    L[A"name"; A target];
+    Lnewline(A"deps" :: atoms deps)]
+
+let alias target (* aliases: *) deps =
   L[A"alias";
     L[A"name"; A target];
     Lnewline(A"deps" :: List.map (fun dep -> L[A"alias"; A dep]) deps)]
