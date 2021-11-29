@@ -6,6 +6,13 @@ File "reason.3.3.7-reason_parser.mly", line 1179, characters 19-28:
 Warning: the token NATIVEINT is unused.
 File "reason.3.3.7-reason_parser.mly", line 1201, characters 7-15:
 Warning: the token SEMISEMI is unused.
+File "reason.3.3.7-reason_parser.mly", line 1666, characters 4-42:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "reason.3.3.7-reason_parser.mly", line 4907, characters 8-14:
+Warning: symbol as_loc(structure_item) is unreachable from any of the start symbol(s).
 %{
 open Migrate_parsetree.OCaml_404.Ast
 open Reason_syntax_util
@@ -2407,17 +2414,6 @@ in
       match menhirError with
       | MenhirMessagesError errMessage -> (syntax_error_str errMessage.loc errMessage.msg) :: _3
       | _ -> (syntax_error_str _1.loc "Invalid statement") :: _3
-    )}
-| x = structure_item _2 = error _3 = structure
-    {let _1 =
-  let _endpos = _endpos_x_ in
-  let _symbolstartpos = _startpos_x_ in
-    ( mkloc x (mklocation _symbolstartpos _endpos) )
-in
-    ( let menhirError = Reason_syntax_util.findMenhirErrorMessage _1.loc in
-      match menhirError with
-      | MenhirMessagesError errMessage -> (syntax_error_str errMessage.loc errMessage.msg) :: _3
-      | _ -> (syntax_error_str _1.loc "Statement has to end with a semicolon") :: _3
     )}
 
 opt_LET_MODULE_ident:

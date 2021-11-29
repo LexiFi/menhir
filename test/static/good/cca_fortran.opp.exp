@@ -1,3 +1,8 @@
+File "cca_fortran.mly", line 2091, characters 5-19:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
 %parameter<Stat : Parser_aux.STATE_T>
 %{
 module P = Printer
@@ -8223,10 +8228,6 @@ let _startpos = _startpos_o_ in
     {                                    ( l )}
 | sps = STMT
     {                                    ( let sp, s = sps in check_error s; s )}
-| _1 = error _2 = stmt_end
-    {let _endpos = _endpos__2_ in
-let _startpos = _startpos__1_ in
-                                    ( parse_error _startpos _endpos "syntax error" )}
 
 program_stmt:
   p = _program_stmt _2 = stmt_end

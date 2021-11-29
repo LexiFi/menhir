@@ -1,3 +1,49 @@
+File "cca_verilog.mly", line 2335, characters 5-30:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 2362, characters 5-45:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 2368, characters 5-45:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 1788, characters 5-29:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 1047, characters 5-22:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 2496, characters 5-22:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 2497, characters 5-20:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 2498, characters 5-24:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 2339, characters 0-17:
+Warning: symbol cellpin_item_tail is unreachable from any of the start symbol(s).
+File "cca_verilog.mly", line 1792, characters 0-16:
+Warning: symbol module_item_tail is unreachable from any of the start symbol(s).
+File "cca_verilog.mly", line 1051, characters 0-9:
+Warning: symbol port_tail is unreachable from any of the start symbol(s).
 %parameter<Stat : Parser_aux.STATE_T>
 %{
 module P = Printer
@@ -2114,12 +2160,6 @@ let _startpos = _startpos__1_ in
                                      ( mknode _startpos _endpos L.PortMulti _2 )}
 | _1 = PORT
     {          ( check_error _1; _1 )}
-| e = error _1 = RPAREN
-    {let _2 =               ( ) in
-                       ( ignore e; parse_error _startpos_e_ _endpos_e_ "syntax error" )}
-| e = error _1 = RBRACKET
-    {let _2 =               ( ) in
-                       ( ignore e; parse_error _startpos_e_ _endpos_e_ "syntax error" )}
 
 port_dir_net_opt:
   
@@ -4464,60 +4504,6 @@ let _startpos = _startpos_p_ in
     {                                  ( c )}
 | m = MODULE_ITEM
     {                                  ( check_error m; m )}
-| e = error _2 = module_item_tail
-    {                              ( ignore e; parse_error _startpos_e_ _endpos_e_ "syntax error" )}
-
-module_item_tail:
-  _1 = SEMICOLON
-    {                  ( )}
-| _1 = ENDTASK
-    {                  ( )}
-| _1 = ENDFUNCTION
-    {                  ( )}
-| _1 = ENDMODULE_
-    {                  ( )}
-| _1 = END_
-    {                  ( )}
-| _1 = ENDGENERATE
-    {                  ( )}
-| _1 = COLON lab = id_any
-    {let _1 =
-  let _1 =            ( context_stack#activate_top_no_delay ) in
-  let _endpos = _endpos_lab_ in
-  let _startpos = _startpos__1_ in
-                             ( mkleaf _startpos _endpos (L.EndLabel lab) )
-in
-                  ( )}
-| _1 = COLON _2 = NEW
-    {let _1 =
-  let _1 =            ( context_stack#activate_top_no_delay ) in
-  let _endpos = _endpos__2_ in
-  let _startpos = _startpos__1_ in
-                             ( mkleaf _startpos _endpos L.EndLabelNew )
-in
-                  ( )}
-| _1 = ENDCHECKER
-    {                  ( )}
-| _1 = RBRACE
-    {                  ( )}
-| _1 = ENDCLASS
-    {                  ( )}
-| _1 = ENDGROUP
-    {                  ( )}
-| _1 = ENDPROPERTY
-    {                  ( )}
-| _1 = ENDCLOCKING
-    {                  ( )}
-| _1 = ENDSPECIFY
-    {                  ( )}
-| _1 = ENDPROGRAM
-    {                  ( )}
-| _1 = ENDINTERFACE
-    {                  ( )}
-| _1 = ENDCASE
-    {                  ( )}
-| _1 = ENDSEQUENCE
-    {                  ( )}
 
 non_port_module_item:
   g = generate_region
@@ -6100,9 +6086,6 @@ let _startpos = _startpos_e1_ in
                                          ( mknode _startpos _endpos L.CellpinAnon [e1; e2; e3] )}
 | _1 = CELLPIN_ITEM
     {                  ( check_error _1; _1 )}
-| e = error _1 = RPAREN
-    {let _2 =                      ( ) in
-                               ( ignore e; parse_error _startpos_e_ _endpos_e_ "syntax error" )}
 
 event_control:
   _1 = AT _2 = LPAREN el = ev_expr_list _4 = RPAREN
@@ -6125,21 +6108,6 @@ let _startpos = _startpos__1_ in
     {let _endpos = _endpos_i_ in
 let _startpos = _startpos__1_ in
                                       ( mknode _startpos _endpos L.EventControl [i] )}
-| _1 = AT _2 = LPAREN el = ev_expr_list e = error _5 = RPAREN
-    {let _endpos = _endpos__5_ in
-let _startpos = _startpos__1_ in
-       ( 
-         ignore e;
-         parse_warning ~out:stdout _startpos_e_ _endpos_e_ "syntax error";
-         mknode _startpos _endpos L.EventControl el
-       )}
-| _1 = AT _2 = LPAREN e = error _4 = RPAREN
-    {let _endpos = _endpos__4_ in
-let _startpos = _startpos__1_ in
-       ( 
-         ignore e;
-         mknode _startpos _endpos L.EventControl [parse_error _startpos_e_ _endpos_e_ "syntax error"]
-       )}
 
 ev_expr_list:
   e = ev_expr
@@ -6422,12 +6390,6 @@ let _startpos = _startpos__1_ in
     {                       ( check_error s; s )}
 | c = compiler_directive
     {                          ( c )}
-| e = error _2 = SEMICOLON
-    {                         ( ignore e; parse_error _startpos_e_ _endpos_e_ "syntax error" )}
-| e = error _2 = ENDCASE
-    {                         ( ignore e; parse_error _startpos_e_ _endpos_e_ "syntax error" )}
-| e = error _2 = ENDSEQUENCE
-    {                         ( ignore e; parse_error _startpos_e_ _endpos_e_ "syntax error" )}
 
 stmt_non_block:
   s = statement_item_non_block

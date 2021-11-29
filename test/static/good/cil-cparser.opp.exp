@@ -8,6 +8,68 @@ File "cil-cparser.mly", line 269, characters 42-46:
 Warning: the token CAST is unused.
 File "cil-cparser.mly", line 199, characters 54-59:
 Warning: the token INT32 is unused.
+File "cil-cparser.mly", line 1087, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 1382, characters 5-40:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 1350, characters 3-27:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 734, characters 4-25:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 721, characters 2-25:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 706, characters 16-44:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 980, characters 4-50:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 391, characters 2-26:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 1354, characters 3-22:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 716, characters 2-21:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 823, characters 4-30:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 937, characters 3-60:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 344, characters 0-8:
+Warning: symbol location is unreachable from any of the start symbol(s).
 %{
 open Cabs
 module E = Errormsg
@@ -326,7 +388,6 @@ let trd3 (_, _, result) = result
 %type <Cabs.definition list> interpret
 %type <string list> local_label_names
 %type <string list> local_labels
-%type <Cabs.cabsloc> location
 %type <string list> old_parameter_list_ne
 %type <Cabs.name> old_proto_decl
 %type <Cabs.expression> opt_expression
@@ -358,10 +419,6 @@ globals:
     {                                        ( _1 :: _2 )}
 | _1 = SEMICOLON _2 = globals
     {                                        ( _2 )}
-
-location:
-   %prec IDENT
-    {                               ( currentLoc () )}
 
 global:
   _1 = declaration
@@ -405,8 +462,6 @@ global:
     checkConnective(fst _5);
     EXPRTRANSFORMER(fst _3, fst _7, _1)
   )}
-| _1 = location _2 = error _3 = SEMICOLON
-    {                           ( PRAGMA (VARIABLE "parse_error", _1) )}
 
 id_or_typename:
   _1 = IDENT
@@ -717,8 +772,6 @@ comma_expression:
     {                                           ([fst _1], snd _1)}
 | _1 = expression _2 = COMMA _3 = comma_expression
     {                                                  ( fst _1 :: fst _3, snd _1 )}
-| _1 = error _2 = COMMA _3 = comma_expression
-    {                                                  ( _3 )}
 
 comma_expression_opt:
   
@@ -729,14 +782,10 @@ comma_expression_opt:
 paren_comma_expression:
   _1 = LPAREN _2 = comma_expression _3 = RPAREN
     {                                                   ( _2 )}
-| _1 = LPAREN _2 = error _3 = RPAREN
-    {                                                   ( [], _1 )}
 
 bracket_comma_expression:
   _1 = LBRACKET _2 = comma_expression _3 = RBRACKET
     {                                                       ( fst _2 )}
-| _1 = LBRACKET _2 = error _3 = RBRACKET
-    {                                                       ( [] )}
 
 block:
   _1 = block_begin _2 = local_labels _3 = block_attrs _4 = block_element_list _5 = RBRACE
@@ -745,12 +794,6 @@ block:
                                             battrs = _3;
                                             bstmts = _4 },
 					    _1, _5
-                                         )}
-| _1 = error _2 = location _3 = RBRACE
-    {                                         ( { blabels = [];
-                                             battrs  = [];
-                                             bstmts  = [] },
-					     _2, _3
                                          )}
 
 block_begin:
@@ -842,8 +885,6 @@ statement:
                           if not !Cprint.msvcMode then
                             parse_error "try/finally in GCC code";
                           TRY_FINALLY (b, h, _1) )}
-| _1 = error _2 = location _3 = SEMICOLON
-    {                                 ( (NOP _2))}
 
 for_clause:
   _1 = opt_expression _2 = SEMICOLON
@@ -973,8 +1014,6 @@ struct_decl_list:
 | _1 = decl_spec_list _2 = field_decl_list _3 = SEMICOLON _4 = struct_decl_list
     {                                          ( (fst _1, _2)
                                             :: _4 )}
-| _1 = error _2 = SEMICOLON _3 = struct_decl_list
-    {                                          ( _3 )}
 
 field_decl_list:
   _1 = field_decl
@@ -1018,9 +1057,6 @@ direct_decl:
 | _1 = direct_decl _2 = LBRACKET _3 = attributes _4 = comma_expression_opt _5 = RBRACKET
     {                                   ( let (n, decl) = _1 in
                                      (n, ARRAY(decl, _3, _4)) )}
-| _1 = direct_decl _2 = LBRACKET _3 = attributes _4 = error _5 = RBRACKET
-    {                                   ( let (n, decl) = _1 in
-                                     (n, ARRAY(decl, _3, NOTHING)) )}
 | _1 = direct_decl _2 = parameter_list_startscope _3 = rest_par_list _4 = RPAREN
     {                                   ( let (n, decl) = _1 in
                                      let (params, isva) = _3 in
@@ -1135,8 +1171,6 @@ abs_direct_decl:
     {                                   ( let d, a = _3 in
                                      PARENTYPE (_2, d, a)
                                    )}
-| _1 = LPAREN _2 = error _3 = RPAREN
-    {                                   ( JUSTBASE )}
 | _1 = abs_direct_decl_opt _2 = LBRACKET _3 = comma_expression_opt _4 = RBRACKET
     {                                   ( ARRAY(_1, [], _3) )}
 | _1 = abs_direct_decl _2 = parameter_list_startscope _3 = rest_par_list _4 = RPAREN
@@ -1405,14 +1439,10 @@ attr_list_ne:
     {                                         ( [_1] )}
 | _1 = attr _2 = COMMA _3 = attr_list_ne
     {                                         ( _1 :: _3 )}
-| _1 = error _2 = COMMA _3 = attr_list_ne
-    {                                         ( _3 )}
 
 paren_attr_list_ne:
   _1 = LPAREN _2 = attr_list_ne _3 = RPAREN
     {                                         ( _2 )}
-| _1 = LPAREN _2 = error _3 = RPAREN
-    {                                         ( [] )}
 
 asmattr:
   
@@ -1450,8 +1480,6 @@ asmoperandsne:
 asmoperand:
   _1 = string_constant _2 = LPAREN _3 = expression _4 = RPAREN
     {                                                 ( (fst _1, fst _3) )}
-| _1 = string_constant _2 = LPAREN _3 = error _4 = RPAREN
-    {                                                 ( (fst _1, NOTHING ) )}
 
 asminputs:
   

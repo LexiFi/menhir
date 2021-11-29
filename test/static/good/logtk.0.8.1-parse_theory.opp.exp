@@ -1,3 +1,8 @@
+File "logtk.0.8.1-parse_theory.mly", line 120, characters 4-20:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
 %{
   open Logtk
 
@@ -136,13 +141,6 @@ statements:
     {        ( [] )}
 | s = statement l = statements
     {                             ( s :: l )}
-| _1 = error _2 = statements
-    {let _endpos = _endpos__2_ in
-let _startpos = _startpos__1_ in
-    (
-      let loc = L.mk_pos _startpos _endpos in
-      raise (Ast_theory.ParseError loc)
-    )}
 
 statement:
   t = theory

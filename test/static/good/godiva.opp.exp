@@ -1,3 +1,43 @@
+File "godiva.mly", line 224, characters 6-32:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 197, characters 6-31:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 230, characters 6-33:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 159, characters 6-31:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 171, characters 6-28:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 185, characters 6-30:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 191, characters 6-32:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 165, characters 6-30:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
 %{
 (* each spec_line has a *_line parsing rule *)
 type spec_line =
@@ -174,24 +214,18 @@ line:
 package_line:
   _1 = PACKAGE _2 = PKGNAME _3 = EOL
     {                            ( let (c, n) = _2 in Package (c, n) )}
-| _1 = PACKAGE _2 = PKGNAME _3 = error _4 = EOL
-    {                                ( trail 3 "package name" )}
 | _1 = PACKAGE _2 = EOL
     {                            ( missing "package name" )}
 
 version_line:
   _1 = VERSION _2 = STRING _3 = EOL
     {                            ( Version _2 )}
-| _1 = VERSION _2 = STRING _3 = error _4 = EOL
-    {                               ( trail 3 "version number" )}
 | _1 = VERSION _2 = EOL
     {                            ( missing "version number" )}
 
 revision_line:
   _1 = REVISION _2 = INT _3 = EOL
     {                            ( Revision _2 )}
-| _1 = REVISION _2 = INT _3 = error _4 = EOL
-    {                             ( trail 3 "revision number" )}
 | _1 = REVISION _2 = EOL
     {                             ( missing "revision number" )}
 
@@ -206,24 +240,18 @@ build_depends_line:
 sources_line:
   _1 = SOURCES _2 = STRING _3 = EOL
     {                            ( Sources _2 )}
-| _1 = SOURCES _2 = STRING _3 = error _4 = EOL
-    {                               ( trail 3 "sources url" )}
 | _1 = SOURCES _2 = EOL
     {                            ( missing "sources url" )}
 
 unpacksto_line:
   _1 = UNPACKSTO _2 = STRING _3 = EOL
     {                            ( Unpacks_To _2 )}
-| _1 = UNPACKSTO _2 = STRING _3 = error _4 = EOL
-    {                                 ( trail 3 "`unpacks to' directory" )}
 | _1 = UNPACKSTO _2 = EOL
     {                              ( missing "`unpacks to' directory" )}
 
 homepage_line:
   _1 = HOMEPAGE _2 = STRING _3 = EOL
     {                            ( Homepage _2 )}
-| _1 = HOMEPAGE _2 = STRING _3 = error _4 = EOL
-    {                                ( trail 3 "homepage url" )}
 | _1 = HOMEPAGE _2 = EOL
     {                             ( missing "homepage url" )}
 
@@ -250,16 +278,12 @@ confopts_line:
 bytecode_target_line:
   _1 = BC_TARGET _2 = STRING _3 = EOL
     {                            ( Bytecode_Target _2 )}
-| _1 = BC_TARGET _2 = STRING _3 = error _4 = EOL
-    {                                 ( trail 3 "bytecode target" )}
 | _1 = BC_TARGET _2 = EOL
     {                            ( missing "bytecode target" )}
 
 opt_target_line:
   _1 = OPT_TARGET _2 = STRING _3 = EOL
     {                            ( Opt_Target _2 )}
-| _1 = OPT_TARGET _2 = STRING _3 = error _4 = EOL
-    {                                  ( trail 3 "opt target" )}
 | _1 = OPT_TARGET _2 = EOL
     {                            ( missing "opt target" )}
 

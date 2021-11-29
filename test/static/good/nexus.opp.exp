@@ -1,3 +1,23 @@
+File "nexus.mly", line 250, characters 6-52:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "nexus.mly", line 252, characters 6-56:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "nexus.mly", line 255, characters 6-42:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "nexus.mly", line 718, characters 6-29:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
 %{
 
 let mesquite_error =
@@ -233,12 +253,6 @@ block:
     {        ( P.Sets _5 )}
 | _1 = BEGIN _2 = POY _3 = SEMICOLON _4 = poy_block _5 = ENDNEXUS _6 = SEMICOLON
     {        ( P.Poy _4 )}
-| _1 = BEGIN _2 = NOTES _3 = SEMICOLON _4 = error _5 = ENDNEXUS _6 = SEMICOLON
-    {        ( P.Error _2 )}
-| _1 = BEGIN _2 = DISTANCES _3 = SEMICOLON _4 = error _5 = ENDNEXUS _6 = SEMICOLON
-    {        ( P.Error _2 )}
-| _1 = BEGIN _2 = IDENT _3 = error _4 = ENDNEXUS _5 = SEMICOLON
-    {        ( P.Error _2 )}
 | _1 = header
     {        ( P.Error "File Contains Multiple Nexus Files; will try to append" )}
 
@@ -821,10 +835,6 @@ optional_format:
 format_items_list:
   _1 = format_items _2 = format_items_list
     {                                     ( _1 :: _2 )}
-| _1 = error _2 = format_items_list
-    {                              (
-        report_error "Format list" (Parsing.symbol_start_pos ()) (Parsing.symbol_end_pos ());
-        _2 )}
 | 
     {                ( [] )}
 

@@ -2,6 +2,41 @@ File "obc.mly", line 28, characters 9-15:
 Warning: the token BADTOK is unused.
 File "obc.mly", line 31, characters 48-54:
 Warning: the token IMPORT is unused.
+File "obc.mly", line 131, characters 4-14:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "obc.mly", line 255, characters 4-18:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "obc.mly", line 257, characters 4-30:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "obc.mly", line 167, characters 4-40:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "obc.mly", line 237, characters 4-38:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "obc.mly", line 239, characters 4-25:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "obc.mly", line 217, characters 4-22:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
 %{
 open Symtab
 open Dict
@@ -178,8 +213,6 @@ decl:
     {                     ( _2 )}
 | _1 = proc
     {           ( [_1] )}
-| _1 = error _2 = SEMI
-    {                  ( [] )}
 
 const_decls:
   _1 = const_decl
@@ -224,8 +257,6 @@ proc:
         ProcDecl (AbsMeth, _4, Heading (_3::ps, r), NoBlock) )}
 | _1 = PROCEDURE _2 = defid _3 = params _4 = IS _5 = STRING _6 = semi
     {      ( PrimDecl (_2, _3, _5) )}
-| _1 = PROCEDURE _2 = error _3 = block _4 = opt_ident _5 = semi
-    {      ( DummyDecl )}
 
 receiver:
   _1 = LPAR _2 = defid _3 = COLON _4 = typename _5 = RPAR
@@ -278,8 +309,6 @@ stmts_a:
     {                  ( _1 )}
 | _1 = stmts_b _2 = SEMI
     {                  ( _1 )}
-| _1 = stmts_b _2 = error _3 = SEMI
-    {                        ( _1 )}
 
 stmts_b:
   _1 = stmts_a _2 = stmt0
@@ -310,12 +339,8 @@ stmt1:
     {                             ( make_if _1 _3 )}
 | _1 = CASE _2 = expr _3 = OF _4 = case_arms _5 = else_part _6 = END
     {                                          ( CaseStmt (_2, _4, _5) )}
-| _1 = CASE _2 = error _3 = case_arms _4 = else_part _5 = END
-    {                                          ( ErrStmt )}
 | _1 = WHILE _2 = expr _3 = DO _4 = stmts _5 = END
     {                            ( WhileStmt (_2, _4) )}
-| _1 = WHILE _2 = error _3 = stmts _4 = END
-    {                          ( ErrStmt )}
 | _1 = REPEAT _2 = stmts _3 = UNTIL _4 = expr
     {                            ( RepeatStmt (_2, _4) )}
 | _1 = LOOP _2 = stmts _3 = END
@@ -334,12 +359,8 @@ stmt1:
 if_chain:
   _1 = IF _2 = expr _3 = THEN _4 = stmts
     {                        ( [(_2,_4)] )}
-| _1 = IF _2 = error _3 = stmts
-    {                    ( [] )}
 | _1 = if_chain _2 = ELSIF _3 = expr _4 = THEN _5 = stmts
     {                                    ( (_3,_5) :: _1 )}
-| _1 = if_chain _2 = ELSIF _3 = error _4 = stmts
-    {                               ( _1 )}
 
 else_part:
   

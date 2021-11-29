@@ -48,6 +48,136 @@ File "fsharp.mly", line 405, characters 10-32:
 Warning: the token prec_interaction_empty is unused.
 File "fsharp.mly", line 300, characters 18-35:
 Warning: the token prec_semiexpr_sep is unused.
+File "fsharp.mly", line 2606, characters 4-41:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2614, characters 4-68:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2135, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2234, characters 4-31:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2743, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1794, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2213, characters 4-19:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2270, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1311, characters 4-24:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1035, characters 4-26:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1949, characters 4-44:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1951, characters 4-25:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1956, characters 4-47:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1957, characters 4-51:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1972, characters 4-36:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 564, characters 4-32:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 566, characters 4-36:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 663, characters 4-31:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2588, characters 4-27:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2242, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2225, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1721, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 543, characters 4-37:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1011, characters 4-38:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 848, characters 4-38:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 674, characters 4-27:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
 %{
 (* (c) Microsoft Corporation. All rights reserved *)
 (*F# open Microsoft.Research.AbstractIL F#*)
@@ -548,8 +678,6 @@ specifications:
     {      ( _1 :: _3 )}
 | _1 = hashDirective _2 = top_sep _3 = specifications
     {      ( Spec_hash (_1,rhs2 1 1) :: _3 )}
-| _1 = error _2 = opt_top_seps _3 = specifications
-    {      ( (* silent recovery *) _3 )}
 | 
     {      ( [] )}
 
@@ -568,10 +696,6 @@ moduleOrNamespaceDefns:
     {      (  _1 @ _3 )}
 | _1 = hashDirective _2 = top_seps _3 = exprOrDefinitions
     {      ( Def_hash (_1,rhs2 1 1) :: _3 )}
-| _1 = error _2 = moduleOrNamespaceDefns
-    {      ( (* silent recovery *) _2 )}
-| _1 = error _2 = top_seps _3 = exprOrDefinitions
-    {      ( (* silent recovery *) _3 )}
 | 
     {      ( [] )}
 
@@ -641,8 +765,6 @@ namedModuleDefnBlock:
 | _1 = OBLOCKBEGIN _2 = moduleOrNamespaceDefns _3 = recover
     {       ( report_parse_error_at (rhs 1) "unclosed block in #light syntax";
          _2 )}
-| _1 = OBLOCKBEGIN _2 = error _3 = OBLOCKEND
-    {       ( [] )}
 | _1 = wrappedNamedModuleDefn
     {       ( _1 )}
 
@@ -652,8 +774,6 @@ wrappedNamedModuleDefn:
 | _1 = structOrBegin _2 = exprOrDefinitions _3 = recover
     {       ( report_parse_error_at (rhs 1) "unmatched 'begin' or 'struct'";
          _2 )}
-| _1 = structOrBegin _2 = error _3 = END
-    {       ( [] )}
 
 opt_signature:
   
@@ -823,8 +943,6 @@ tyconClassSpfn:
 | _1 = classOrInterfaceOrStruct _2 = classSpfnBlock _3 = recover
     {     ( report_parse_error_at (rhs 1) "unmatched 'class', 'interface' or 'struct'";
        (_1,_2) )}
-| _1 = classOrInterfaceOrStruct _2 = error _3 = END
-    {     ( (* silent recovery *) (_1,[]) )}
 
 classSpfnBlockKindUnspecified:
   _1 = OBLOCKBEGIN _2 = classSpfnMembers _3 = OBLOCKEND
@@ -976,8 +1094,6 @@ tyconClassDefn:
 | _1 = classOrInterfaceOrStruct _2 = classDefnBlock _3 = recover
     {     ( report_parse_error_at (rhs 1) "unmatched 'class', 'interface' or 'struct'";
        (_1,_2) )}
-| _1 = classOrInterfaceOrStruct _2 = error _3 = END
-    {     ( (* silent recovery *) (_1,[]) )}
 
 classDefnBlockKindUnspecified:
   _1 = OBLOCKBEGIN _2 = classDefnMembers _3 = OBLOCKEND
@@ -992,8 +1108,6 @@ classDefnBlock:
 classDefnMembers:
   _1 = classDefnMember _2 = opt_seps _3 = classDefnMembers
     {     ( _1 @  _3 )}
-| _1 = error _2 = classDefnMembers
-    {     ( _2 )}
 | 
     {     ( [] )}
 
@@ -1269,8 +1383,6 @@ braceFieldDeclList:
     {     ( matchPair 1 3;   _2 )}
 | _1 = LBRACE _2 = recdFieldDeclList _3 = recover
     {     ( _2 )}
-| _1 = LBRACE _2 = error _3 = RBRACE
-    {     ( matchPair 1 3;   [] )}
 
 inlineAssemblyTyconRepr:
   _1 = HASH _2 = STRING _3 = opt_HASH
@@ -1721,8 +1833,6 @@ simplePatterns:
     {                  ( [] )}
 | _1 = LPAREN _2 = simplePatternCommaList _3 = recover
     {                                          ( report_parse_error_at (rhs 1) "unmatched '('"; [] )}
-| _1 = LPAREN _2 = error _3 = RPAREN
-    {                        ( (* silent recovery *) [] )}
 | _1 = LPAREN _2 = recover
     {                   (  report_parse_error_at (rhs 1) "unmatched '('"; [] )}
 
@@ -1813,8 +1923,6 @@ atomicPattern:
     {                                   (  matchPair 1 3; let m = (lhs()) in Pat_paren(_2 m,m) )}
 | _1 = LPAREN _2 = parenPatternBody _3 = recover
     {                                    ( report_parse_error_at (rhs 1) "unmatched '('"; _2 (rhs2 1 2) )}
-| _1 = LPAREN _2 = error _3 = RPAREN
-    {                        ( (* silent recovery *) Pat_wild (lhs()) )}
 | _1 = LPAREN _2 = recover
     {                   (  report_parse_error_at (rhs 1) "unmatched '('"; Pat_wild (lhs()))}
 
@@ -1963,24 +2071,14 @@ declExpr:
     {                                                         ( Expr_while(_2,_4,lhs()) )}
 | _1 = WHILE _2 = declExpr _3 = do_or_odo _4 = typedSeqExprBlock _5 = recover
     {                                                       ( report_parse_error_at (rhs 4) "'done' expected after this expression" ;  arbExpr() )}
-| _1 = WHILE _2 = declExpr _3 = do_or_odo _4 = error _5 = done_term
-    {                                             ( (* silent recovery *) arbExpr() )}
 | _1 = WHILE _2 = declExpr _3 = recover
     {                           ( report_parse_error_at (rhs 2) "'do' expected after this expression" ; arbExpr() )}
-| _1 = WHILE _2 = error _3 = done_term
-    {                          ( (* silent recovery *) arbExpr()  )}
 | _1 = FOR _2 = forLoopBinder _3 = do_or_odo _4 = typedSeqExprBlock _5 = done_term
     {                                                            ( let (a,b) = _2 in Expr_foreach(a,b,_4,lhs()) )}
 | _1 = FOR _2 = forLoopRange _3 = do_or_odo _4 = typedSeqExprBlock _5 = done_term
     {                                                            ( let (a,b,c,d) = _2 in Expr_for(a,b,c,d,_4,lhs()) )}
 | _1 = FOR _2 = forLoopRange _3 = do_or_odo _4 = typedSeqExprBlock _5 = recover
     {                                                          (   report_parse_error_at (rhs 1) "unclosed 'for', e.g. no 'done' found to match this 'for'" ; arbExpr() )}
-| _1 = FOR _2 = forLoopRange _3 = do_or_odo _4 = error _5 = done_term
-    {                                                ( (* silent recovery *) arbExpr() )}
-| _1 = FOR _2 = error _3 = do_or_odo _4 = typedSeqExprBlock _5 = done_term
-    {                                                    ( (* silent recovery *) arbExpr() )}
-| _1 = FOR _2 = parenPattern _3 = error _4 = done_term
-    {                                     (  report_parse_error_at (rhs 3) "'=' expected"; arbExpr() )}
 | _1 = declExpr _2 = COLON_EQUALS _3 = declExpr
     {                                             ( mksyn_infix (rhs 2) (lhs()) _1 ":=" _3 )}
 | _1 = minusExpr _2 = LARROW _3 = declExpr
@@ -2168,10 +2266,6 @@ argExpr:
 | _1 = LBRACK _2 = listExprElements _3 = recover
     {      ( report_parse_error_at (rhs 1) "unmatched '['";
         _2 (rhs2 1 2) true, false )}
-| _1 = LBRACK _2 = error _3 = RBRACK
-    {      ( matchPair 1 3;
-        (* silent recovery *)
-        Expr_array_or_list(false,[ ], lhs()),false  )}
 | _1 = argExprAfterType
     {      ( _1,false )}
 
@@ -2247,8 +2341,6 @@ beginEndExpr:
     {      ( Expr_paren(_2,rhs2 1 3) )}
 | _1 = BEGIN _2 = typedSeqExpr _3 = recover
     {      ( report_parse_error_at (rhs 1) "unmatched 'begin'"; _2 )}
-| _1 = BEGIN _2 = error _3 = END
-    {      ( (* silent recovery *) arbExpr()  )}
 | _1 = BEGIN _2 = END
     {      ( mksyn_unit (lhs()) )}
 
@@ -2259,8 +2351,6 @@ quoteExpr:
         (Expr_quote(mksyn_item (lhs()) (compileOpName (fst _1)), snd _1,_2,lhs())) )}
 | _1 = LQUOTE _2 = typedSeqExpr _3 = recover
     {      ( report_parse_error_at (rhs 1) ("unmatched '"^fst _1^"'");  Expr_quote(mksyn_item (lhs()) (compileOpName (fst _1)),snd _1,_2,rhs2 1 2)  )}
-| _1 = LQUOTE _2 = error _3 = RQUOTE
-    {      ( matchPair 1 3; (* silent recovery *) Expr_quote(mksyn_item (lhs()) (compileOpName (fst _1)),snd _1,arbExpr(),lhs())  )}
 
 arrayExpr:
   _1 = LBRACK_BAR _2 = listExprElements _3 = BAR_RBRACK
@@ -2268,16 +2358,12 @@ arrayExpr:
 | _1 = LBRACK_BAR _2 = listExprElements _3 = recover
     {      ( report_parse_error_at (rhs 1) "unmatched '[|'";
         _2 (rhs2 1 2) false )}
-| _1 = LBRACK_BAR _2 = error _3 = BAR_RBRACK
-    {      (  matchPair 1 3; (* silent recovery *) Expr_array_or_list(true,[ ], lhs()) )}
 
 parenExpr:
   _1 = LPAREN _2 = parenExprBody _3 = RPAREN
     {      ( startParameters (rhspos 1); endParameters (rhspos 3); matchPair 1 3; _2 (rhs2 1 3) )}
 | _1 = LPAREN _2 = parenExprBody _3 = recover
     {      ( startParameters (rhspos 1); endParameters (rhspos 3); report_parse_error_at (rhs 1) "unmatched '('"; let lhsm = rhs2 1 2 in Expr_paren(_2 lhsm,lhsm) )}
-| _1 = LPAREN _2 = error _3 = RPAREN
-    {      ( startParameters (rhspos 1); endParameters (rhspos 3); matchPair 1 3; (* silent recovery *) arbExpr() )}
 | _1 = LPAREN _2 = recover %prec prec_atomexpr_lparen_error
     {      (  startParameters (rhspos 1); endParameters (rhspos 2); report_parse_error_at (rhs 1) "unmatched '('"; arbExpr()  )}
 
@@ -2306,8 +2392,6 @@ braceExpr:
     {     (  matchPair 1 3; _2 (lhs()) )}
 | _1 = LBRACE _2 = braceExprBody _3 = recover
     {     ( report_parse_error_at (rhs 1) "unmatched '{'" ; _2 (lhs()) )}
-| _1 = LBRACE _2 = error _3 = RBRACE
-    {     ( matchPair 1 3; (* silent recovery *) arbExpr()  )}
 
 braceExprBody:
   _1 = recdExpr
@@ -2605,8 +2689,6 @@ objExprInterfaces:
     {                                 ( [] )}
 | _1 = objExprInterface _2 = objExprInterfaces
     {                                       ( _1 :: _2 )}
-| _1 = error _2 = objExprInterfaces
-    {                            ( (* silent recovery *) _2 )}
 
 objExprInterface:
   _1 = interfaceMember _2 = appType _3 = opt_objExprBindings _4 = opt_decl_end _5 = opt_OBLOCKSEP
@@ -2625,17 +2707,12 @@ anonLambdaExpr:
     {     ( mksyn_match_lambdas false (lhs()) _2 (arbExpr()) )}
 | _1 = OFUN _2 = atomicPatterns _3 = RARROW _4 = typedSeqExprBlockR _5 = OEND
     {     ( mksyn_match_lambdas false (rhs2 1 4) _2 _4 )}
-| _1 = OFUN _2 = atomicPatterns _3 = RARROW _4 = error _5 = OEND
-    {     ( mksyn_match_lambdas false (rhs2 1 3) _2 (arbExpr()) )}
 
 anonMatchingExpr:
   _1 = FUNCTION _2 = opt_bar _3 = patternClauses %prec expr_function
     {      ( mksyn_match_lambda false false (lhs()) _3 )}
 | _1 = OFUNCTION _2 = opt_bar _3 = patternClauses _4 = OEND %prec expr_function
     {      ( mksyn_match_lambda false false (lhs()) _3 )}
-| _1 = OFUNCTION _2 = opt_bar _3 = patternClauses _4 = error _5 = OEND %prec expr_function
-    {      ( report_parse_error_at (rhs 1) "error in 'function' block";
-        mksyn_match_lambda false false (lhs()) _3 )}
 
 typeWithTypeConstraints:
   _1 = typ %prec prec_wheretyp_prefix
@@ -2772,8 +2849,6 @@ atomType:
     {     (  matchPair 1 3; _2 )}
 | _1 = LPAREN _2 = typ _3 = recover
     {     ( report_parse_error_at (rhs 1) "unmatched '('" ; _2 )}
-| _1 = LPAREN _2 = error _3 = RPAREN
-    {     ( (* silent recovery *) Type_anon (lhs()) )}
 | _1 = path %prec prec_atomtyp_path
     {     ( Type_app(_1,[],lhs()) )}
 | _1 = path _2 = typeArgs %prec prec_atomtyp_path

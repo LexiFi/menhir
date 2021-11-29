@@ -8,6 +8,68 @@ File "framac-cparser.mly", line 389, characters 42-46:
 Warning: the token CAST is unused.
 File "framac-cparser.mly", line 319, characters 59-64:
 Warning: the token INT32 is unused.
+File "framac-cparser.mly", line 1368, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 1748, characters 5-50:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 1707, characters 3-27:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 878, characters 4-25:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 865, characters 2-25:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 850, characters 16-44:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 515, characters 2-26:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 1719, characters 3-22:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 1715, characters 3-22:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 860, characters 2-21:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 1041, characters 4-30:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 1194, characters 3-60:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 463, characters 0-8:
+Warning: symbol location is unreachable from any of the start symbol(s).
 %{
 
 open Cabs
@@ -439,7 +501,6 @@ let in_block l =
 %type <(bool*Cabs.definition) list> interpret
 %type <string list> local_label_names
 %type <string list> local_labels
-%type <Cabs.cabsloc> location
 %type <string list> old_parameter_list_ne
 %type <Cabs.name> old_proto_decl
 %type <Cabs.expression> opt_expression
@@ -472,10 +533,6 @@ globals:
     {                                        ( _2 @ _3 )}
 | _1 = SEMICOLON _2 = globals
     {                                        ( _2 )}
-
-location:
-   %prec IDENT
-    {                               ( currentLoc () )}
 
 ghost_globals:
   _1 = declaration _2 = ghost_globals
@@ -523,8 +580,6 @@ global:
       doDeclaration None loc []
         [((_1, PROTO(JUSTBASE,[],false), [], loc), NO_INIT)]
     )}
-| _1 = location _2 = error _3 = SEMICOLON
-    {                           ( PRAGMA (make_expr (VARIABLE "parse_error"), _1) )}
 
 id_or_typename_as_id:
   _1 = IDENT
@@ -882,8 +937,6 @@ comma_expression:
     {                                           ( [_1] )}
 | _1 = expression _2 = COMMA _3 = comma_expression
     {                                                  ( _1 :: _3 )}
-| _1 = error _2 = COMMA _3 = comma_expression
-    {                                                  ( _3 )}
 
 comma_expression_opt:
   
@@ -894,14 +947,10 @@ comma_expression_opt:
 paren_comma_expression:
   _1 = LPAREN _2 = comma_expression _3 = RPAREN
     {                                                   ( _2 )}
-| _1 = LPAREN _2 = error _3 = RPAREN
-    {                                                   ( [] )}
 
 bracket_comma_expression:
   _1 = LBRACKET _2 = comma_expression _3 = RBRACKET
     {                                                       ( _2 )}
-| _1 = LBRACKET _2 = error _3 = RBRACKET
-    {                                                       ( [] )}
 
 block:
   _1 = block_begin _2 = local_labels _3 = block_attrs _4 = block_element_list _5 = RBRACE
@@ -911,12 +960,6 @@ block:
          bstmts = _4 },
        _1, _5
       )}
-| _1 = error _2 = location _3 = RBRACE
-    {                                         ( { blabels = [];
-                                             battrs  = [];
-                                             bstmts  = [] },
-					     _2, _3
-                                         )}
 
 block_begin:
   _1 = LBRACE
@@ -1087,8 +1130,6 @@ statement:
       if not !Cprint.msvcMode then parse_error "try/finally in GCC code";
       no_ghost [TRY_FINALLY (b, h, loc)]
     )}
-| _1 = error _2 = location _3 = SEMICOLON
-    {                                 ( no_ghost [NOP _2])}
 
 opt_loop_annotations:
   
@@ -1252,8 +1293,6 @@ struct_decl_list:
                                             :: _4 )}
 | _1 = pragma _2 = struct_decl_list
     {                                          ( _2 )}
-| _1 = error _2 = SEMICOLON _3 = struct_decl_list
-    {                                          ( _3 )}
 
 field_decl_list:
   _1 = field_decl
@@ -1432,8 +1471,6 @@ abs_direct_decl:
     {                                   ( let d, a = _3 in
                                      PARENTYPE (_2, d, a)
                                    )}
-| _1 = LPAREN _2 = error _3 = RPAREN
-    {                                   ( JUSTBASE )}
 | _1 = abs_direct_decl_opt _2 = LBRACKET _3 = comma_expression_opt _4 = RBRACKET
     {                                   ( ARRAY(_1, [], _3) )}
 | _1 = abs_direct_decl _2 = parameter_list_startscope _3 = rest_par_list _4 = RPAREN
@@ -1797,8 +1834,6 @@ attr_list_ne:
     {                                         ( [_1] )}
 | _1 = attr _2 = COMMA _3 = attr_list_ne
     {                                         ( _1 :: _3 )}
-| _1 = error _2 = COMMA _3 = attr_list_ne
-    {                                         ( _3 )}
 
 attr_list:
   
@@ -1809,14 +1844,10 @@ attr_list:
 paren_attr_list_ne:
   _1 = LPAREN _2 = attr_list_ne _3 = RPAREN
     {                                         ( _2 )}
-| _1 = LPAREN _2 = error _3 = RPAREN
-    {                                         ( [] )}
 
 paren_attr_list:
   _1 = LPAREN _2 = attr_list _3 = RPAREN
     {                                         ( _2 )}
-| _1 = LPAREN _2 = error _3 = RPAREN
-    {                                         ( [] )}
 
 asmattr:
   
@@ -1855,11 +1886,6 @@ asmoperandsne:
 asmoperand:
   _1 = asmopname _2 = string_constant _3 = LPAREN _4 = expression _5 = RPAREN
     {                                                           ( (_1, fst _2, _4) )}
-| _1 = asmopname _2 = string_constant _3 = LPAREN _4 = error _5 = RPAREN
-    {                                                           (
-       let loc = Parsing.rhs_start_pos 4, Parsing.rhs_end_pos 4 in
-       (_1, fst _2, { expr_loc = loc; expr_node = NOTHING} )
-     )}
 
 asminputs:
   

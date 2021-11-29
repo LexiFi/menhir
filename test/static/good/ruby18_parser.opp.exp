@@ -1,5 +1,15 @@
 File "ruby18_parser.mly", line 39, characters 16-19:
 Warning: the token EOF is unused.
+File "ruby18_parser.mly", line 88, characters 18-28:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "ruby18_parser.mly", line 1056, characters 18-28:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
 %{
   module Make (A : Ast.Annotation) = struct
     module Parser_helper = Parser_helper.Make (A)
@@ -189,8 +199,6 @@ stmts:
     {                    ( [_1] )}
 | _1 = stmts _2 = terms _3 = stmt
     {                    ( _1 @ _2 @ [_3] )}
-| _1 = error _2 = stmt
-    {                    ( [_2] )}
 
 stmt:
   _1 = K_ALIAS _2 = fitem _3 = stmt_e1 _4 = fitem
@@ -1325,8 +1333,6 @@ superclass:
     {                    ( None )}
 | _1 = LT _2 = superclass_e1 _3 = expr_value _4 = term
     {                    ( Some _3 )}
-| _1 = error _2 = term
-    {                    ( None )}
 
 superclass_e1:
   
