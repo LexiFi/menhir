@@ -8,7 +8,7 @@
     (with-outputs-to a-rule-is-expected.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias a-rule-is-expected)
+(rule (alias test)
   (action (diff a-rule-is-expected.exp a-rule-is-expected.out)))
 
 (rule (target actuals.out) (deps actuals.mly)
@@ -16,14 +16,14 @@
     (with-outputs-to actuals.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias actuals) (action (diff actuals.exp actuals.out)))
+(rule (alias test) (action (diff actuals.exp actuals.out)))
 
 (rule (target after-a-semicolon.out) (deps after-a-semicolon.mly)
   (action
     (with-outputs-to after-a-semicolon.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias after-a-semicolon)
+(rule (alias test)
   (action (diff after-a-semicolon.exp after-a-semicolon.out)))
 
 (rule (target another-rule-is-expected.out)
@@ -32,7 +32,7 @@
     (with-outputs-to another-rule-is-expected.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias another-rule-is-expected)
+(rule (alias test)
   (action (diff another-rule-is-expected.exp another-rule-is-expected.out)))
 
 (rule (target arity-error.out) (deps arity-error.mly)
@@ -40,50 +40,49 @@
     (with-outputs-to arity-error.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias arity-error) (action (diff arity-error.exp arity-error.out)))
+(rule (alias test) (action (diff arity-error.exp arity-error.out)))
 
 (rule (target arity-self.out) (deps arity-self.mly)
   (action
     (with-outputs-to arity-self.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias arity-self) (action (diff arity-self.exp arity-self.out)))
+(rule (alias test) (action (diff arity-self.exp arity-self.out)))
 
 (rule (target arity-split.out) (deps arity-split.mly)
   (action
     (with-outputs-to arity-split.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias arity-split) (action (diff arity-split.exp arity-split.out)))
+(rule (alias test) (action (diff arity-split.exp arity-split.out)))
 
 (rule (target bad-arity.out) (deps bad-arity.mly)
   (action
     (with-outputs-to bad-arity.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias bad-arity) (action (diff bad-arity.exp bad-arity.out)))
+(rule (alias test) (action (diff bad-arity.exp bad-arity.out)))
 
 (rule (target bad-dollar.out) (deps bad-dollar.mly)
   (action
     (with-outputs-to bad-dollar.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias bad-dollar) (action (diff bad-dollar.exp bad-dollar.out)))
+(rule (alias test) (action (diff bad-dollar.exp bad-dollar.out)))
 
 (rule (target bad_obc.out) (deps bad_obc.mly)
   (action
     (with-outputs-to bad_obc.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias bad_obc) (action (diff bad_obc.exp bad_obc.out)))
+(rule (alias test) (action (diff bad_obc.exp bad_obc.out)))
 
 (rule (target bad_uppercase.out) (deps bad_uppercase.mly)
   (action
     (with-outputs-to bad_uppercase.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias bad_uppercase)
-  (action (diff bad_uppercase.exp bad_uppercase.out)))
+(rule (alias test) (action (diff bad_uppercase.exp bad_uppercase.out)))
 
 (rule (target calc-no-dollars.out) (deps calc-no-dollars.mly)
   (action
@@ -91,15 +90,14 @@
       (with-accepted-exit-codes (not 0)
         (run menhir %{read-lines:calc-no-dollars.flags} %{deps})))))
 
-(rule (alias calc-no-dollars)
-  (action (diff calc-no-dollars.exp calc-no-dollars.out)))
+(rule (alias test) (action (diff calc-no-dollars.exp calc-no-dollars.out)))
 
 (rule (target choice-expression.out) (deps choice-expression.mly)
   (action
     (with-outputs-to choice-expression.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias choice-expression)
+(rule (alias test)
   (action (diff choice-expression.exp choice-expression.out)))
 
 (rule (target closing-paren-expected.out) (deps closing-paren-expected.mly)
@@ -107,7 +105,7 @@
     (with-outputs-to closing-paren-expected.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias closing-paren-expected)
+(rule (alias test)
   (action (diff closing-paren-expected.exp closing-paren-expected.out)))
 
 (rule (target colon.out) (deps colon.mly)
@@ -115,7 +113,7 @@
     (with-outputs-to colon.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias colon) (action (diff colon.exp colon.out)))
+(rule (alias test) (action (diff colon.exp colon.out)))
 
 (rule (target comma-delimited-list-expected.out)
   (deps comma-delimited-list-expected.mly)
@@ -123,7 +121,7 @@
     (with-outputs-to comma-delimited-list-expected.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias comma-delimited-list-expected)
+(rule (alias test)
   (action
     (diff comma-delimited-list-expected.exp
       comma-delimited-list-expected.out)))
@@ -133,7 +131,7 @@
     (with-outputs-to commabar.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias commabar) (action (diff commabar.exp commabar.out)))
+(rule (alias test) (action (diff commabar.exp commabar.out)))
 
 (rule (target constant-arity-in-multiple-def-1.out)
   (deps constant-arity-in-multiple-def-1.mly
@@ -143,7 +141,7 @@
       (with-accepted-exit-codes (not 0)
         (run menhir --base constant-arity-in-multiple-def-1 %{deps})))))
 
-(rule (alias constant-arity-in-multiple-def-1)
+(rule (alias test)
   (action
     (diff constant-arity-in-multiple-def-1.exp
       constant-arity-in-multiple-def-1.out)))
@@ -156,7 +154,7 @@
       (with-accepted-exit-codes (not 0)
         (run menhir --base constant-inline-in-multiple-def-1 %{deps})))))
 
-(rule (alias constant-inline-in-multiple-def-1)
+(rule (alias test)
   (action
     (diff constant-inline-in-multiple-def-1.exp
       constant-inline-in-multiple-def-1.out)))
@@ -166,7 +164,7 @@
     (with-outputs-to crazy_long_production.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias crazy_long_production)
+(rule (alias test)
   (action (diff crazy_long_production.exp crazy_long_production.out)))
 
 (rule (target cycle-length-one.out) (deps cycle-length-one.mly)
@@ -174,15 +172,14 @@
     (with-outputs-to cycle-length-one.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias cycle-length-one)
-  (action (diff cycle-length-one.exp cycle-length-one.out)))
+(rule (alias test) (action (diff cycle-length-one.exp cycle-length-one.out)))
 
 (rule (target cycle-length-three.out) (deps cycle-length-three.mly)
   (action
     (with-outputs-to cycle-length-three.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias cycle-length-three)
+(rule (alias test)
   (action (diff cycle-length-three.exp cycle-length-three.out)))
 
 (rule (target cycle-length-two.out) (deps cycle-length-two.mly)
@@ -190,8 +187,7 @@
     (with-outputs-to cycle-length-two.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias cycle-length-two)
-  (action (diff cycle-length-two.exp cycle-length-two.out)))
+(rule (alias test) (action (diff cycle-length-two.exp cycle-length-two.out)))
 
 (rule (target cyclic-parameterized-definition.out)
   (deps cyclic-parameterized-definition.mly)
@@ -199,7 +195,7 @@
     (with-outputs-to cyclic-parameterized-definition.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias cyclic-parameterized-definition)
+(rule (alias test)
   (action
     (diff cyclic-parameterized-definition.exp
       cyclic-parameterized-definition.out)))
@@ -209,7 +205,7 @@
     (with-outputs-to declaration-error-a.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias declaration-error-a)
+(rule (alias test)
   (action (diff declaration-error-a.exp declaration-error-a.out)))
 
 (rule (target declaration-error-b.out) (deps declaration-error-b.mly)
@@ -217,7 +213,7 @@
     (with-outputs-to declaration-error-b.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias declaration-error-b)
+(rule (alias test)
   (action (diff declaration-error-b.exp declaration-error-b.out)))
 
 (rule (target disallow_Error.out) (deps disallow_Error.mly)
@@ -226,8 +222,7 @@
       (with-accepted-exit-codes (not 0)
         (run menhir %{read-lines:disallow_Error.flags} %{deps})))))
 
-(rule (alias disallow_Error)
-  (action (diff disallow_Error.exp disallow_Error.out)))
+(rule (alias test) (action (diff disallow_Error.exp disallow_Error.out)))
 
 (rule (target dont-use-private-symbol-1.out)
   (deps dont-use-private-symbol-1.mly dont-use-private-symbol-2.mly)
@@ -236,7 +231,7 @@
       (with-accepted-exit-codes (not 0)
         (run menhir --base dont-use-private-symbol-1 %{deps})))))
 
-(rule (alias dont-use-private-symbol-1)
+(rule (alias test)
   (action (diff dont-use-private-symbol-1.exp dont-use-private-symbol-1.out)))
 
 (rule (target double-equals.out) (deps double-equals.mly)
@@ -244,16 +239,14 @@
     (with-outputs-to double-equals.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias double-equals)
-  (action (diff double-equals.exp double-equals.out)))
+(rule (alias test) (action (diff double-equals.exp double-equals.out)))
 
 (rule (target duplicate-formal.out) (deps duplicate-formal.mly)
   (action
     (with-outputs-to duplicate-formal.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias duplicate-formal)
-  (action (diff duplicate-formal.exp duplicate-formal.out)))
+(rule (alias test) (action (diff duplicate-formal.exp duplicate-formal.out)))
 
 (rule (target either-a-semantic-action.out)
   (deps either-a-semantic-action.mly)
@@ -261,7 +254,7 @@
     (with-outputs-to either-a-semantic-action.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias either-a-semantic-action)
+(rule (alias test)
   (action (diff either-a-semantic-action.exp either-a-semantic-action.out)))
 
 (rule (target either-another-production.out)
@@ -270,7 +263,7 @@
     (with-outputs-to either-another-production.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias either-another-production)
+(rule (alias test)
   (action (diff either-another-production.exp either-another-production.out)))
 
 (rule (target either-another-rule.out) (deps either-another-rule.mly)
@@ -278,7 +271,7 @@
     (with-outputs-to either-another-rule.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias either-another-rule)
+(rule (alias test)
   (action (diff either-another-rule.exp either-another-rule.out)))
 
 (rule (target either-public.out) (deps either-public.mly)
@@ -286,31 +279,28 @@
     (with-outputs-to either-public.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias either-public)
-  (action (diff either-public.exp either-public.out)))
+(rule (alias test) (action (diff either-public.exp either-public.out)))
 
 (rule (target equals-expected.out) (deps equals-expected.mly)
   (action
     (with-outputs-to equals-expected.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias equals-expected)
-  (action (diff equals-expected.exp equals-expected.out)))
+(rule (alias test) (action (diff equals-expected.exp equals-expected.out)))
 
 (rule (target error-reserved.out) (deps error-reserved.mly)
   (action
     (with-outputs-to error-reserved.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias error-reserved)
-  (action (diff error-reserved.exp error-reserved.out)))
+(rule (alias test) (action (diff error-reserved.exp error-reserved.out)))
 
 (rule (target expansion-capture.out) (deps expansion-capture.mly)
   (action
     (with-outputs-to expansion-capture.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias expansion-capture)
+(rule (alias test)
   (action (diff expansion-capture.exp expansion-capture.out)))
 
 (rule (target expansion_diverges.out) (deps expansion_diverges.mly)
@@ -318,7 +308,7 @@
     (with-outputs-to expansion_diverges.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias expansion_diverges)
+(rule (alias test)
   (action (diff expansion_diverges.exp expansion_diverges.out)))
 
 (rule (target expression.out) (deps expression.mly)
@@ -326,14 +316,14 @@
     (with-outputs-to expression.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias expression) (action (diff expression.exp expression.out)))
+(rule (alias test) (action (diff expression.exp expression.out)))
 
 (rule (target expression-expected.out) (deps expression-expected.mly)
   (action
     (with-outputs-to expression-expected.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias expression-expected)
+(rule (alias test)
   (action (diff expression-expected.exp expression-expected.out)))
 
 (rule (target expressions.out) (deps expressions.mly)
@@ -341,22 +331,21 @@
     (with-outputs-to expressions.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias expressions) (action (diff expressions.exp expressions.out)))
+(rule (alias test) (action (diff expressions.exp expressions.out)))
 
 (rule (target forbidden-dollar.out) (deps forbidden-dollar.mly)
   (action
     (with-outputs-to forbidden-dollar.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias forbidden-dollar)
-  (action (diff forbidden-dollar.exp forbidden-dollar.out)))
+(rule (alias test) (action (diff forbidden-dollar.exp forbidden-dollar.out)))
 
 (rule (target forbidden-dollar-bis.out) (deps forbidden-dollar-bis.mly)
   (action
     (with-outputs-to forbidden-dollar-bis.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias forbidden-dollar-bis)
+(rule (alias test)
   (action (diff forbidden-dollar-bis.exp forbidden-dollar-bis.out)))
 
 (rule (target forbidden-pos.out) (deps forbidden-pos.mly)
@@ -364,8 +353,7 @@
     (with-outputs-to forbidden-pos.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias forbidden-pos)
-  (action (diff forbidden-pos.exp forbidden-pos.out)))
+(rule (alias test) (action (diff forbidden-pos.exp forbidden-pos.out)))
 
 (rule (target hidden-left-recursion-one.out)
   (deps hidden-left-recursion-one.mly)
@@ -373,7 +361,7 @@
     (with-outputs-to hidden-left-recursion-one.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias hidden-left-recursion-one)
+(rule (alias test)
   (action (diff hidden-left-recursion-one.exp hidden-left-recursion-one.out)))
 
 (rule (target hidden-left-recursion-two.out)
@@ -382,7 +370,7 @@
     (with-outputs-to hidden-left-recursion-two.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias hidden-left-recursion-two)
+(rule (alias test)
   (action (diff hidden-left-recursion-two.exp hidden-left-recursion-two.out)))
 
 (rule (target ill-formed-attribute.out) (deps ill-formed-attribute.mly)
@@ -390,7 +378,7 @@
     (with-outputs-to ill-formed-attribute.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias ill-formed-attribute)
+(rule (alias test)
   (action (diff ill-formed-attribute.exp ill-formed-attribute.out)))
 
 (rule (target ill-formed-prec.out) (deps ill-formed-prec.mly)
@@ -398,15 +386,14 @@
     (with-outputs-to ill-formed-prec.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias ill-formed-prec)
-  (action (diff ill-formed-prec.exp ill-formed-prec.out)))
+(rule (alias test) (action (diff ill-formed-prec.exp ill-formed-prec.out)))
 
 (rule (target ill-sorted-attribute.out) (deps ill-sorted-attribute.mly)
   (action
     (with-outputs-to ill-sorted-attribute.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias ill-sorted-attribute)
+(rule (alias test)
   (action (diff ill-sorted-attribute.exp ill-sorted-attribute.out)))
 
 (rule (target inline-attribute-def.out) (deps inline-attribute-def.mly)
@@ -414,7 +401,7 @@
     (with-outputs-to inline-attribute-def.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias inline-attribute-def)
+(rule (alias test)
   (action (diff inline-attribute-def.exp inline-attribute-def.out)))
 
 (rule (target inline-attribute-use.out) (deps inline-attribute-use.mly)
@@ -422,7 +409,7 @@
     (with-outputs-to inline-attribute-use.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias inline-attribute-use)
+(rule (alias test)
   (action (diff inline-attribute-use.exp inline-attribute-use.out)))
 
 (rule (target inline-cycle.out) (deps inline-cycle.mly)
@@ -430,14 +417,14 @@
     (with-outputs-to inline-cycle.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias inline-cycle) (action (diff inline-cycle.exp inline-cycle.out)))
+(rule (alias test) (action (diff inline-cycle.exp inline-cycle.out)))
 
 (rule (target inline-cycle-complex.out) (deps inline-cycle-complex.mly)
   (action
     (with-outputs-to inline-cycle-complex.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias inline-cycle-complex)
+(rule (alias test)
   (action (diff inline-cycle-complex.exp inline-cycle-complex.out)))
 
 (rule (target inline-cycle-long.out) (deps inline-cycle-long.mly)
@@ -445,7 +432,7 @@
     (with-outputs-to inline-cycle-long.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias inline-cycle-long)
+(rule (alias test)
   (action (diff inline-cycle-long.exp inline-cycle-long.out)))
 
 (rule (target inline-minimal-cycle.out) (deps inline-minimal-cycle.mly)
@@ -453,7 +440,7 @@
     (with-outputs-to inline-minimal-cycle.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias inline-minimal-cycle)
+(rule (alias test)
   (action (diff inline-minimal-cycle.exp inline-minimal-cycle.out)))
 
 (rule (target int-of-string.out) (deps int-of-string.mly)
@@ -461,15 +448,14 @@
     (with-outputs-to int-of-string.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias int-of-string)
-  (action (diff int-of-string.exp int-of-string.out)))
+(rule (alias test) (action (diff int-of-string.exp int-of-string.out)))
 
 (rule (target invalid-declarations-a.out) (deps invalid-declarations-a.mly)
   (action
     (with-outputs-to invalid-declarations-a.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias invalid-declarations-a)
+(rule (alias test)
   (action (diff invalid-declarations-a.exp invalid-declarations-a.out)))
 
 (rule (target invalid-declarations-b.out) (deps invalid-declarations-b.mly)
@@ -477,7 +463,7 @@
     (with-outputs-to invalid-declarations-b.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias invalid-declarations-b)
+(rule (alias test)
   (action (diff invalid-declarations-b.exp invalid-declarations-b.out)))
 
 (rule (target invalid-declarations-c.out) (deps invalid-declarations-c.mly)
@@ -485,7 +471,7 @@
     (with-outputs-to invalid-declarations-c.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias invalid-declarations-c)
+(rule (alias test)
   (action (diff invalid-declarations-c.exp invalid-declarations-c.out)))
 
 (rule (target invalid-declarations-d.out) (deps invalid-declarations-d.mly)
@@ -493,7 +479,7 @@
     (with-outputs-to invalid-declarations-d.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias invalid-declarations-d)
+(rule (alias test)
   (action (diff invalid-declarations-d.exp invalid-declarations-d.out)))
 
 (rule (target invalid-declarations-e.out) (deps invalid-declarations-e.mly)
@@ -501,7 +487,7 @@
     (with-outputs-to invalid-declarations-e.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias invalid-declarations-e)
+(rule (alias test)
   (action (diff invalid-declarations-e.exp invalid-declarations-e.out)))
 
 (rule (target invalid-parameter-declaration.out)
@@ -510,7 +496,7 @@
     (with-outputs-to invalid-parameter-declaration.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias invalid-parameter-declaration)
+(rule (alias test)
   (action
     (diff invalid-parameter-declaration.exp
       invalid-parameter-declaration.out)))
@@ -521,7 +507,7 @@
     (with-outputs-to invalid-point-free-action.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias invalid-point-free-action)
+(rule (alias test)
   (action (diff invalid-point-free-action.exp invalid-point-free-action.out)))
 
 (rule (target invalid-token-in-prec.out) (deps invalid-token-in-prec.mly)
@@ -529,7 +515,7 @@
     (with-outputs-to invalid-token-in-prec.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias invalid-token-in-prec)
+(rule (alias test)
   (action (diff invalid-token-in-prec.exp invalid-token-in-prec.out)))
 
 (rule (target jh.out) (deps jh.mly)
@@ -537,21 +523,21 @@
     (with-outputs-to jh.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias jh) (action (diff jh.exp jh.out)))
+(rule (alias test) (action (diff jh.exp jh.out)))
 
 (rule (target jh-three.out) (deps jh-three.mly)
   (action
     (with-outputs-to jh-three.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias jh-three) (action (diff jh-three.exp jh-three.out)))
+(rule (alias test) (action (diff jh-three.exp jh-three.out)))
 
 (rule (target jh-two.out) (deps jh-two.mly)
   (action
     (with-outputs-to jh-two.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias jh-two) (action (diff jh-two.exp jh-two.out)))
+(rule (alias test) (action (diff jh-two.exp jh-two.out)))
 
 (rule (target join-param-1.out) (deps join-param-1.mly join-param-2.mly)
   (action
@@ -559,21 +545,21 @@
       (with-accepted-exit-codes (not 0)
         (run menhir --base join-param-1 %{deps})))))
 
-(rule (alias join-param-1) (action (diff join-param-1.exp join-param-1.out)))
+(rule (alias test) (action (diff join-param-1.exp join-param-1.out)))
 
 (rule (target keyword.out) (deps keyword.mly)
   (action
     (with-outputs-to keyword.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias keyword) (action (diff keyword.exp keyword.out)))
+(rule (alias test) (action (diff keyword.exp keyword.out)))
 
 (rule (target keyword-in-header.out) (deps keyword-in-header.mly)
   (action
     (with-outputs-to keyword-in-header.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias keyword-in-header)
+(rule (alias test)
   (action (diff keyword-in-header.exp keyword-in-header.out)))
 
 (rule (target let-comma.out) (deps let-comma.mly)
@@ -581,14 +567,14 @@
     (with-outputs-to let-comma.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias let-comma) (action (diff let-comma.exp let-comma.out)))
+(rule (alias test) (action (diff let-comma.exp let-comma.out)))
 
 (rule (target let-more.out) (deps let-more.mly)
   (action
     (with-outputs-to let-more.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias let-more) (action (diff let-more.exp let-more.out)))
+(rule (alias test) (action (diff let-more.exp let-more.out)))
 
 (rule (target list-of-productions-expected.out)
   (deps list-of-productions-expected.mly)
@@ -596,7 +582,7 @@
     (with-outputs-to list-of-productions-expected.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias list-of-productions-expected)
+(rule (alias test)
   (action
     (diff list-of-productions-expected.exp list-of-productions-expected.out)))
 
@@ -605,7 +591,7 @@
     (with-outputs-to location-keyword-errors.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias location-keyword-errors)
+(rule (alias test)
   (action (diff location-keyword-errors.exp location-keyword-errors.out)))
 
 (rule (target lots-of-errors-a.out) (deps lots-of-errors-a.mly)
@@ -613,39 +599,35 @@
     (with-outputs-to lots-of-errors-a.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias lots-of-errors-a)
-  (action (diff lots-of-errors-a.exp lots-of-errors-a.out)))
+(rule (alias test) (action (diff lots-of-errors-a.exp lots-of-errors-a.out)))
 
 (rule (target lots-of-errors-b.out) (deps lots-of-errors-b.mly)
   (action
     (with-outputs-to lots-of-errors-b.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias lots-of-errors-b)
-  (action (diff lots-of-errors-b.exp lots-of-errors-b.out)))
+(rule (alias test) (action (diff lots-of-errors-b.exp lots-of-errors-b.out)))
 
 (rule (target lots-of-errors-c.out) (deps lots-of-errors-c.mly)
   (action
     (with-outputs-to lots-of-errors-c.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias lots-of-errors-c)
-  (action (diff lots-of-errors-c.exp lots-of-errors-c.out)))
+(rule (alias test) (action (diff lots-of-errors-c.exp lots-of-errors-c.out)))
 
 (rule (target lowercase-token.out) (deps lowercase-token.mly)
   (action
     (with-outputs-to lowercase-token.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias lowercase-token)
-  (action (diff lowercase-token.exp lowercase-token.out)))
+(rule (alias test) (action (diff lowercase-token.exp lowercase-token.out)))
 
 (rule (target missing-percentpercent.out) (deps missing-percentpercent.mly)
   (action
     (with-outputs-to missing-percentpercent.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias missing-percentpercent)
+(rule (alias test)
   (action (diff missing-percentpercent.exp missing-percentpercent.out)))
 
 (rule (target missing_token_alias.out) (deps missing_token_alias.mly)
@@ -654,7 +636,7 @@
       (with-accepted-exit-codes (not 0)
         (run menhir %{read-lines:missing_token_alias.flags} %{deps})))))
 
-(rule (alias missing_token_alias)
+(rule (alias test)
   (action (diff missing_token_alias.exp missing_token_alias.out)))
 
 (rule (target mixed.out) (deps mixed.mly)
@@ -662,21 +644,21 @@
     (with-outputs-to mixed.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias mixed) (action (diff mixed.exp mixed.out)))
+(rule (alias test) (action (diff mixed.exp mixed.out)))
 
 (rule (target modifier.out) (deps modifier.mly)
   (action
     (with-outputs-to modifier.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias modifier) (action (diff modifier.exp modifier.out)))
+(rule (alias test) (action (diff modifier.exp modifier.out)))
 
 (rule (target multiple-precedence.out) (deps multiple-precedence.mly)
   (action
     (with-outputs-to multiple-precedence.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias multiple-precedence)
+(rule (alias test)
   (action (diff multiple-precedence.exp multiple-precedence.out)))
 
 (rule (target multiple-producers-with-same-name.out)
@@ -685,7 +667,7 @@
     (with-outputs-to multiple-producers-with-same-name.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias multiple-producers-with-same-name)
+(rule (alias test)
   (action
     (diff multiple-producers-with-same-name.exp
       multiple-producers-with-same-name.out)))
@@ -696,7 +678,7 @@
     (with-outputs-to multiple-symbol-definition.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias multiple-symbol-definition)
+(rule (alias test)
   (action
     (diff multiple-symbol-definition.exp multiple-symbol-definition.out)))
 
@@ -705,8 +687,7 @@
     (with-outputs-to multiple-token.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias multiple-token)
-  (action (diff multiple-token.exp multiple-token.out)))
+(rule (alias test) (action (diff multiple-token.exp multiple-token.out)))
 
 (rule (target multiple-type-definition.out)
   (deps multiple-type-definition.mly)
@@ -714,7 +695,7 @@
     (with-outputs-to multiple-type-definition.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias multiple-type-definition)
+(rule (alias test)
   (action (diff multiple-type-definition.exp multiple-type-definition.out)))
 
 (rule (target multiple-type-definition-modules-1.out)
@@ -725,7 +706,7 @@
       (with-accepted-exit-codes (not 0)
         (run menhir --base multiple-type-definition-modules-1 %{deps})))))
 
-(rule (alias multiple-type-definition-modules-1)
+(rule (alias test)
   (action
     (diff multiple-type-definition-modules-1.exp
       multiple-type-definition-modules-1.out)))
@@ -735,7 +716,7 @@
     (with-outputs-to new-syntax-parentheses.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias new-syntax-parentheses)
+(rule (alias test)
   (action (diff new-syntax-parentheses.exp new-syntax-parentheses.out)))
 
 (rule (target new-syntax-parentheses-bis.out)
@@ -744,7 +725,7 @@
     (with-outputs-to new-syntax-parentheses-bis.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias new-syntax-parentheses-bis)
+(rule (alias test)
   (action
     (diff new-syntax-parentheses-bis.exp new-syntax-parentheses-bis.out)))
 
@@ -753,7 +734,7 @@
     (with-outputs-to no-start-and-inline.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias no-start-and-inline)
+(rule (alias test)
   (action (diff no-start-and-inline.exp no-start-and-inline.out)))
 
 (rule (target no-start-symbol.out) (deps no-start-symbol.mly)
@@ -761,15 +742,14 @@
     (with-outputs-to no-start-symbol.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias no-start-symbol)
-  (action (diff no-start-symbol.exp no-start-symbol.out)))
+(rule (alias test) (action (diff no-start-symbol.exp no-start-symbol.out)))
 
 (rule (target no-tokens.out) (deps no-tokens.mly)
   (action
     (with-outputs-to no-tokens.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias no-tokens) (action (diff no-tokens.exp no-tokens.out)))
+(rule (alias test) (action (diff no-tokens.exp no-tokens.out)))
 
 (rule (target no_space_after_directive.out)
   (deps no_space_after_directive.mly)
@@ -777,7 +757,7 @@
     (with-outputs-to no_space_after_directive.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias no_space_after_directive)
+(rule (alias test)
   (action (diff no_space_after_directive.exp no_space_after_directive.out)))
 
 (rule (target non-terminal-is-expected.out)
@@ -786,7 +766,7 @@
     (with-outputs-to non-terminal-is-expected.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias non-terminal-is-expected)
+(rule (alias test)
   (action (diff non-terminal-is-expected.exp non-terminal-is-expected.out)))
 
 (rule (target non-terminal-multiple-branch-groups.out)
@@ -795,7 +775,7 @@
     (with-outputs-to non-terminal-multiple-branch-groups.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias non-terminal-multiple-branch-groups)
+(rule (alias test)
   (action
     (diff non-terminal-multiple-branch-groups.exp
       non-terminal-multiple-branch-groups.out)))
@@ -806,7 +786,7 @@
     (with-outputs-to non-terminal-multiple-definitions.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias non-terminal-multiple-definitions)
+(rule (alias test)
   (action
     (diff non-terminal-multiple-definitions.exp
       non-terminal-multiple-definitions.out)))
@@ -819,7 +799,7 @@
       (with-accepted-exit-codes (not 0)
         (run menhir --base non-terminals-tokens-overlap-1 %{deps})))))
 
-(rule (alias non-terminals-tokens-overlap-1)
+(rule (alias test)
   (action
     (diff non-terminals-tokens-overlap-1.exp
       non-terminals-tokens-overlap-1.out)))
@@ -832,7 +812,7 @@
       (with-accepted-exit-codes (not 0)
         (run menhir --base non-terminals-tokens-overlap-other-case-1 %{deps})))))
 
-(rule (alias non-terminals-tokens-overlap-other-case-1)
+(rule (alias test)
   (action
     (diff non-terminals-tokens-overlap-other-case-1.exp
       non-terminals-tokens-overlap-other-case-1.out)))
@@ -843,7 +823,7 @@
     (with-outputs-to non-terminals-tokens-overlap-simple.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias non-terminals-tokens-overlap-simple)
+(rule (alias test)
   (action
     (diff non-terminals-tokens-overlap-simple.exp
       non-terminals-tokens-overlap-simple.out)))
@@ -853,7 +833,7 @@
     (with-outputs-to nonlinear-pattern.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias nonlinear-pattern)
+(rule (alias test)
   (action (diff nonlinear-pattern.exp nonlinear-pattern.out)))
 
 (rule (target nonlinear-pattern-pun.out) (deps nonlinear-pattern-pun.mly)
@@ -861,7 +841,7 @@
     (with-outputs-to nonlinear-pattern-pun.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias nonlinear-pattern-pun)
+(rule (alias test)
   (action (diff nonlinear-pattern-pun.exp nonlinear-pattern-pun.out)))
 
 (rule (target nonlinear-pattern-tuple.out) (deps nonlinear-pattern-tuple.mly)
@@ -869,7 +849,7 @@
     (with-outputs-to nonlinear-pattern-tuple.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias nonlinear-pattern-tuple)
+(rule (alias test)
   (action (diff nonlinear-pattern-tuple.exp nonlinear-pattern-tuple.out)))
 
 (rule (target nonsense.out) (deps nonsense.mly)
@@ -877,14 +857,14 @@
     (with-outputs-to nonsense.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias nonsense) (action (diff nonsense.exp nonsense.out)))
+(rule (alias test) (action (diff nonsense.exp nonsense.out)))
 
 (rule (target not-well-founded-rec.out) (deps not-well-founded-rec.mly)
   (action
     (with-outputs-to not-well-founded-rec.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias not-well-founded-rec)
+(rule (alias test)
   (action (diff not-well-founded-rec.exp not-well-founded-rec.out)))
 
 (rule (target obscene-dollar.out) (deps obscene-dollar.mly)
@@ -892,23 +872,21 @@
     (with-outputs-to obscene-dollar.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias obscene-dollar)
-  (action (diff obscene-dollar.exp obscene-dollar.out)))
+(rule (alias test) (action (diff obscene-dollar.exp obscene-dollar.out)))
 
 (rule (target ocaml-keyword.out) (deps ocaml-keyword.mly)
   (action
     (with-outputs-to ocaml-keyword.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias ocaml-keyword)
-  (action (diff ocaml-keyword.exp ocaml-keyword.out)))
+(rule (alias test) (action (diff ocaml-keyword.exp ocaml-keyword.out)))
 
 (rule (target occurs-check.out) (deps occurs-check.mly)
   (action
     (with-outputs-to occurs-check.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias occurs-check) (action (diff occurs-check.exp occurs-check.out)))
+(rule (alias test) (action (diff occurs-check.exp occurs-check.out)))
 
 (rule (target on-error-reduce-ill-kinded.out)
   (deps on-error-reduce-ill-kinded.mly)
@@ -916,7 +894,7 @@
     (with-outputs-to on-error-reduce-ill-kinded.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias on-error-reduce-ill-kinded)
+(rule (alias test)
   (action
     (diff on-error-reduce-ill-kinded.exp on-error-reduce-ill-kinded.out)))
 
@@ -926,7 +904,7 @@
     (with-outputs-to on-error-reduce-nonexistent.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias on-error-reduce-nonexistent)
+(rule (alias test)
   (action
     (diff on-error-reduce-nonexistent.exp on-error-reduce-nonexistent.out)))
 
@@ -936,7 +914,7 @@
     (with-outputs-to on-error-reduce-nonexistent-argument.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias on-error-reduce-nonexistent-argument)
+(rule (alias test)
   (action
     (diff on-error-reduce-nonexistent-argument.exp
       on-error-reduce-nonexistent-argument.out)))
@@ -946,14 +924,14 @@
     (with-outputs-to option.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias option) (action (diff option.exp option.out)))
+(rule (alias test) (action (diff option.exp option.out)))
 
 (rule (target parameterized-start.out) (deps parameterized-start.mly)
   (action
     (with-outputs-to parameterized-start.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias parameterized-start)
+(rule (alias test)
   (action (diff parameterized-start.exp parameterized-start.out)))
 
 (rule (target parameterized-start-weird.out)
@@ -962,7 +940,7 @@
     (with-outputs-to parameterized-start-weird.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias parameterized-start-weird)
+(rule (alias test)
   (action (diff parameterized-start-weird.exp parameterized-start-weird.out)))
 
 (rule (target parentheses.out) (deps parentheses.mly)
@@ -970,14 +948,14 @@
     (with-outputs-to parentheses.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias parentheses) (action (diff parentheses.exp parentheses.out)))
+(rule (alias test) (action (diff parentheses.exp parentheses.out)))
 
 (rule (target pattern.out) (deps pattern.mly)
   (action
     (with-outputs-to pattern.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias pattern) (action (diff pattern.exp pattern.out)))
+(rule (alias test) (action (diff pattern.exp pattern.out)))
 
 (rule (target positional-identifier-clash.out)
   (deps positional-identifier-clash.mly)
@@ -985,7 +963,7 @@
     (with-outputs-to positional-identifier-clash.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias positional-identifier-clash)
+(rule (alias test)
   (action
     (diff positional-identifier-clash.exp positional-identifier-clash.out)))
 
@@ -994,7 +972,7 @@
     (with-outputs-to prec-inline-non-tail.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias prec-inline-non-tail)
+(rule (alias test)
   (action (diff prec-inline-non-tail.exp prec-inline-non-tail.out)))
 
 (rule (target prec-inline-prec.out) (deps prec-inline-prec.mly)
@@ -1002,8 +980,7 @@
     (with-outputs-to prec-inline-prec.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias prec-inline-prec)
-  (action (diff prec-inline-prec.exp prec-inline-prec.out)))
+(rule (alias test) (action (diff prec-inline-prec.exp prec-inline-prec.out)))
 
 (rule (target producer-with-a-positional-name.out)
   (deps producer-with-a-positional-name.mly)
@@ -1011,7 +988,7 @@
     (with-outputs-to producer-with-a-positional-name.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias producer-with-a-positional-name)
+(rule (alias test)
   (action
     (diff producer-with-a-positional-name.exp
       producer-with-a-positional-name.out)))
@@ -1021,7 +998,7 @@
     (with-outputs-to production-expected.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias production-expected)
+(rule (alias test)
   (action (diff production-expected.exp production-expected.out)))
 
 (rule (target production-group.out) (deps production-group.mly)
@@ -1029,15 +1006,14 @@
     (with-outputs-to production-group.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias production-group)
-  (action (diff production-group.exp production-group.out)))
+(rule (alias test) (action (diff production-group.exp production-group.out)))
 
 (rule (target recursive-recognize.out) (deps recursive-recognize.mly)
   (action
     (with-outputs-to recursive-recognize.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias recursive-recognize)
+(rule (alias test)
   (action (diff recursive-recognize.exp recursive-recognize.out)))
 
 (rule (target reference-to-pseudo-token.out)
@@ -1046,7 +1022,7 @@
     (with-outputs-to reference-to-pseudo-token.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias reference-to-pseudo-token)
+(rule (alias test)
   (action (diff reference-to-pseudo-token.exp reference-to-pseudo-token.out)))
 
 (rule (target resync-on-action-prec.out) (deps resync-on-action-prec.mly)
@@ -1054,7 +1030,7 @@
     (with-outputs-to resync-on-action-prec.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias resync-on-action-prec)
+(rule (alias test)
   (action (diff resync-on-action-prec.exp resync-on-action-prec.out)))
 
 (rule (target rule-error.out) (deps rule-error.mly)
@@ -1062,51 +1038,49 @@
     (with-outputs-to rule-error.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias rule-error) (action (diff rule-error.exp rule-error.out)))
+(rule (alias test) (action (diff rule-error.exp rule-error.out)))
 
 (rule (target semantic.out) (deps semantic.mly)
   (action
     (with-outputs-to semantic.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias semantic) (action (diff semantic.exp semantic.out)))
+(rule (alias test) (action (diff semantic.exp semantic.out)))
 
 (rule (target semibar.out) (deps semibar.mly)
   (action
     (with-outputs-to semibar.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias semibar) (action (diff semibar.exp semibar.out)))
+(rule (alias test) (action (diff semibar.exp semibar.out)))
 
 (rule (target semibarcomma.out) (deps semibarcomma.mly)
   (action
     (with-outputs-to semibarcomma.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias semibarcomma) (action (diff semibarcomma.exp semibarcomma.out)))
+(rule (alias test) (action (diff semibarcomma.exp semibarcomma.out)))
 
 (rule (target semicolon.out) (deps semicolon.mly)
   (action
     (with-outputs-to semicolon.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias semicolon) (action (diff semicolon.exp semicolon.out)))
+(rule (alias test) (action (diff semicolon.exp semicolon.out)))
 
 (rule (target sloc-with-param.out) (deps sloc-with-param.mly)
   (action
     (with-outputs-to sloc-with-param.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias sloc-with-param)
-  (action (diff sloc-with-param.exp sloc-with-param.out)))
+(rule (alias test) (action (diff sloc-with-param.exp sloc-with-param.out)))
 
 (rule (target symbol-expected.out) (deps symbol-expected.mly)
   (action
     (with-outputs-to symbol-expected.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias symbol-expected)
-  (action (diff symbol-expected.exp symbol-expected.out)))
+(rule (alias test) (action (diff symbol-expected.exp symbol-expected.out)))
 
 (rule (target symbolstartpos-with-param.out)
   (deps symbolstartpos-with-param.mly)
@@ -1114,7 +1088,7 @@
     (with-outputs-to symbolstartpos-with-param.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias symbolstartpos-with-param)
+(rule (alias test)
   (action (diff symbolstartpos-with-param.exp symbolstartpos-with-param.out)))
 
 (rule (target syntax-let.out) (deps syntax-let.mly)
@@ -1122,22 +1096,21 @@
     (with-outputs-to syntax-let.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias syntax-let) (action (diff syntax-let.exp syntax-let.out)))
+(rule (alias test) (action (diff syntax-let.exp syntax-let.out)))
 
 (rule (target syntax-let-foo.out) (deps syntax-let-foo.mly)
   (action
     (with-outputs-to syntax-let-foo.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias syntax-let-foo)
-  (action (diff syntax-let-foo.exp syntax-let-foo.out)))
+(rule (alias test) (action (diff syntax-let-foo.exp syntax-let-foo.out)))
 
 (rule (target syntax-public-let.out) (deps syntax-public-let.mly)
   (action
     (with-outputs-to syntax-public-let.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias syntax-public-let)
+(rule (alias test)
   (action (diff syntax-public-let.exp syntax-public-let.out)))
 
 (rule (target terminal-type.out) (deps terminal-type.mly)
@@ -1145,22 +1118,21 @@
     (with-outputs-to terminal-type.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias terminal-type)
-  (action (diff terminal-type.exp terminal-type.out)))
+(rule (alias test) (action (diff terminal-type.exp terminal-type.out)))
 
 (rule (target tired.out) (deps tired.mly)
   (action
     (with-outputs-to tired.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias tired) (action (diff tired.exp tired.out)))
+(rule (alias test) (action (diff tired.exp tired.out)))
 
 (rule (target token-alias-clash.out) (deps token-alias-clash.mly)
   (action
     (with-outputs-to token-alias-clash.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias token-alias-clash)
+(rule (alias test)
   (action (diff token-alias-clash.exp token-alias-clash.out)))
 
 (rule (target token-has-multiple-definition.out)
@@ -1169,7 +1141,7 @@
     (with-outputs-to token-has-multiple-definition.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias token-has-multiple-definition)
+(rule (alias test)
   (action
     (diff token-has-multiple-definition.exp
       token-has-multiple-definition.out)))
@@ -1182,7 +1154,7 @@
       (with-accepted-exit-codes (not 0)
         (run menhir --base token-has-multiple-definition-modules-1 %{deps})))))
 
-(rule (alias token-has-multiple-definition-modules-1)
+(rule (alias test)
   (action
     (diff token-has-multiple-definition-modules-1.exp
       token-has-multiple-definition-modules-1.out)))
@@ -1192,29 +1164,28 @@
     (with-outputs-to tricky.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias tricky) (action (diff tricky.exp tricky.out)))
+(rule (alias test) (action (diff tricky.exp tricky.out)))
 
 (rule (target tricky-deep.out) (deps tricky-deep.mly)
   (action
     (with-outputs-to tricky-deep.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias tricky-deep) (action (diff tricky-deep.exp tricky-deep.out)))
+(rule (alias test) (action (diff tricky-deep.exp tricky-deep.out)))
 
 (rule (target tuple-pattern.out) (deps tuple-pattern.mly)
   (action
     (with-outputs-to tuple-pattern.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias tuple-pattern)
-  (action (diff tuple-pattern.exp tuple-pattern.out)))
+(rule (alias test) (action (diff tuple-pattern.exp tuple-pattern.out)))
 
 (rule (target tuple-pattern-previous.out) (deps tuple-pattern-previous.mly)
   (action
     (with-outputs-to tuple-pattern-previous.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias tuple-pattern-previous)
+(rule (alias test)
   (action (diff tuple-pattern-previous.exp tuple-pattern-previous.out)))
 
 (rule (target two-prec.out) (deps two-prec.mly)
@@ -1222,15 +1193,14 @@
     (with-outputs-to two-prec.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias two-prec) (action (diff two-prec.exp two-prec.out)))
+(rule (alias test) (action (diff two-prec.exp two-prec.out)))
 
 (rule (target type-ill-kinded.out) (deps type-ill-kinded.mly)
   (action
     (with-outputs-to type-ill-kinded.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias type-ill-kinded)
-  (action (diff type-ill-kinded.exp type-ill-kinded.out)))
+(rule (alias test) (action (diff type-ill-kinded.exp type-ill-kinded.out)))
 
 (rule (target type-of-nonexistent-symbol.out)
   (deps type-of-nonexistent-symbol.mly)
@@ -1238,7 +1208,7 @@
     (with-outputs-to type-of-nonexistent-symbol.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias type-of-nonexistent-symbol)
+(rule (alias test)
   (action
     (diff type-of-nonexistent-symbol.exp type-of-nonexistent-symbol.out)))
 
@@ -1247,7 +1217,7 @@
     (with-outputs-to unclosed-attribute.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unclosed-attribute)
+(rule (alias test)
   (action (diff unclosed-attribute.exp unclosed-attribute.out)))
 
 (rule (target unclosed-attribute-variant.out)
@@ -1256,7 +1226,7 @@
     (with-outputs-to unclosed-attribute-variant.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unclosed-attribute-variant)
+(rule (alias test)
   (action
     (diff unclosed-attribute-variant.exp unclosed-attribute-variant.out)))
 
@@ -1265,15 +1235,14 @@
     (with-outputs-to unclosed-brace.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unclosed-brace)
-  (action (diff unclosed-brace.exp unclosed-brace.out)))
+(rule (alias test) (action (diff unclosed-brace.exp unclosed-brace.out)))
 
 (rule (target unclosed-brace-brace.out) (deps unclosed-brace-brace.mly)
   (action
     (with-outputs-to unclosed-brace-brace.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unclosed-brace-brace)
+(rule (alias test)
   (action (diff unclosed-brace-brace.exp unclosed-brace-brace.out)))
 
 (rule (target unclosed-brace-paren.out) (deps unclosed-brace-paren.mly)
@@ -1281,7 +1250,7 @@
     (with-outputs-to unclosed-brace-paren.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unclosed-brace-paren)
+(rule (alias test)
   (action (diff unclosed-brace-paren.exp unclosed-brace-paren.out)))
 
 (rule (target unclosed-prologue.out) (deps unclosed-prologue.mly)
@@ -1289,7 +1258,7 @@
     (with-outputs-to unclosed-prologue.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unclosed-prologue)
+(rule (alias test)
   (action (diff unclosed-prologue.exp unclosed-prologue.out)))
 
 (rule (target undeclared-token-alias.out) (deps undeclared-token-alias.mly)
@@ -1297,7 +1266,7 @@
     (with-outputs-to undeclared-token-alias.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias undeclared-token-alias)
+(rule (alias test)
   (action (diff undeclared-token-alias.exp undeclared-token-alias.out)))
 
 (rule (target undefined-non-terminal-reference.out)
@@ -1306,7 +1275,7 @@
     (with-outputs-to undefined-non-terminal-reference.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias undefined-non-terminal-reference)
+(rule (alias test)
   (action
     (diff undefined-non-terminal-reference.exp
       undefined-non-terminal-reference.out)))
@@ -1316,7 +1285,7 @@
     (with-outputs-to undefined-position.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias undefined-position)
+(rule (alias test)
   (action (diff undefined-position.exp undefined-position.out)))
 
 (rule (target undefined-producer.out) (deps undefined-producer.mly)
@@ -1324,7 +1293,7 @@
     (with-outputs-to undefined-producer.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias undefined-producer)
+(rule (alias test)
   (action (diff undefined-producer.exp undefined-producer.out)))
 
 (rule (target undefined-start.out) (deps undefined-start.mly)
@@ -1332,8 +1301,7 @@
     (with-outputs-to undefined-start.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias undefined-start)
-  (action (diff undefined-start.exp undefined-start.out)))
+(rule (alias test) (action (diff undefined-start.exp undefined-start.out)))
 
 (rule (target unification-error-at-toplevel.out)
   (deps unification-error-at-toplevel.mly)
@@ -1341,7 +1309,7 @@
     (with-outputs-to unification-error-at-toplevel.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unification-error-at-toplevel)
+(rule (alias test)
   (action
     (diff unification-error-at-toplevel.exp
       unification-error-at-toplevel.out)))
@@ -1352,7 +1320,7 @@
     (with-outputs-to unification-error-in-args.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unification-error-in-args)
+(rule (alias test)
   (action (diff unification-error-in-args.exp unification-error-in-args.out)))
 
 (rule (target unification-error-in-depth.out)
@@ -1361,7 +1329,7 @@
     (with-outputs-to unification-error-in-depth.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unification-error-in-depth)
+(rule (alias test)
   (action
     (diff unification-error-in-depth.exp unification-error-in-depth.out)))
 
@@ -1371,7 +1339,7 @@
     (with-outputs-to unification-error-not-at-toplevel.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unification-error-not-at-toplevel)
+(rule (alias test)
   (action
     (diff unification-error-not-at-toplevel.exp
       unification-error-not-at-toplevel.out)))
@@ -1382,7 +1350,7 @@
     (with-outputs-to unknown_symbol_in_attribute.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unknown_symbol_in_attribute)
+(rule (alias test)
   (action
     (diff unknown_symbol_in_attribute.exp unknown_symbol_in_attribute.out)))
 
@@ -1392,7 +1360,7 @@
     (with-outputs-to unknown_symbol_in_on_error_reduce.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unknown_symbol_in_on_error_reduce)
+(rule (alias test)
   (action
     (diff unknown_symbol_in_on_error_reduce.exp
       unknown_symbol_in_on_error_reduce.out)))
@@ -1402,7 +1370,7 @@
     (with-outputs-to unknown_symbol_in_type.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unknown_symbol_in_type)
+(rule (alias test)
   (action (diff unknown_symbol_in_type.exp unknown_symbol_in_type.out)))
 
 (rule (target unspecified-start.out) (deps unspecified-start.mly)
@@ -1410,7 +1378,7 @@
     (with-outputs-to unspecified-start.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unspecified-start)
+(rule (alias test)
   (action (diff unspecified-start.exp unspecified-start.out)))
 
 (rule (target unspecified-start-type.out) (deps unspecified-start-type.mly)
@@ -1418,7 +1386,7 @@
     (with-outputs-to unspecified-start-type.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias unspecified-start-type)
+(rule (alias test)
   (action (diff unspecified-start-type.exp unspecified-start-type.out)))
 
 (rule (target uppercase-start.out) (deps uppercase-start.mly)
@@ -1426,204 +1394,26 @@
     (with-outputs-to uppercase-start.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias uppercase-start)
-  (action (diff uppercase-start.exp uppercase-start.out)))
+(rule (alias test) (action (diff uppercase-start.exp uppercase-start.out)))
 
 (rule (target use-index-not-id.out) (deps use-index-not-id.mly)
   (action
     (with-outputs-to use-index-not-id.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias use-index-not-id)
-  (action (diff use-index-not-id.exp use-index-not-id.out)))
+(rule (alias test) (action (diff use-index-not-id.exp use-index-not-id.out)))
 
 (rule (target use_pseudo_token.out) (deps use_pseudo_token.mly)
   (action
     (with-outputs-to use_pseudo_token.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias use_pseudo_token)
-  (action (diff use_pseudo_token.exp use_pseudo_token.out)))
+(rule (alias test) (action (diff use_pseudo_token.exp use_pseudo_token.out)))
 
 (rule (target wktxt_parser.out) (deps wktxt_parser.mly)
   (action
     (with-outputs-to wktxt_parser.out
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
-(rule (alias wktxt_parser) (action (diff wktxt_parser.exp wktxt_parser.out)))
-
-(alias (name test)
-  (deps
-    (alias a-rule-is-expected)
-    (alias actuals)
-    (alias after-a-semicolon)
-    (alias another-rule-is-expected)
-    (alias arity-error)
-    (alias arity-self)
-    (alias arity-split)
-    (alias bad-arity)
-    (alias bad-dollar)
-    (alias bad_obc)
-    (alias bad_uppercase)
-    (alias calc-no-dollars)
-    (alias choice-expression)
-    (alias closing-paren-expected)
-    (alias colon)
-    (alias comma-delimited-list-expected)
-    (alias commabar)
-    (alias constant-arity-in-multiple-def-1)
-    (alias constant-inline-in-multiple-def-1)
-    (alias crazy_long_production)
-    (alias cycle-length-one)
-    (alias cycle-length-three)
-    (alias cycle-length-two)
-    (alias cyclic-parameterized-definition)
-    (alias declaration-error-a)
-    (alias declaration-error-b)
-    (alias disallow_Error)
-    (alias dont-use-private-symbol-1)
-    (alias double-equals)
-    (alias duplicate-formal)
-    (alias either-a-semantic-action)
-    (alias either-another-production)
-    (alias either-another-rule)
-    (alias either-public)
-    (alias equals-expected)
-    (alias error-reserved)
-    (alias expansion-capture)
-    (alias expansion_diverges)
-    (alias expression)
-    (alias expression-expected)
-    (alias expressions)
-    (alias forbidden-dollar)
-    (alias forbidden-dollar-bis)
-    (alias forbidden-pos)
-    (alias hidden-left-recursion-one)
-    (alias hidden-left-recursion-two)
-    (alias ill-formed-attribute)
-    (alias ill-formed-prec)
-    (alias ill-sorted-attribute)
-    (alias inline-attribute-def)
-    (alias inline-attribute-use)
-    (alias inline-cycle)
-    (alias inline-cycle-complex)
-    (alias inline-cycle-long)
-    (alias inline-minimal-cycle)
-    (alias int-of-string)
-    (alias invalid-declarations-a)
-    (alias invalid-declarations-b)
-    (alias invalid-declarations-c)
-    (alias invalid-declarations-d)
-    (alias invalid-declarations-e)
-    (alias invalid-parameter-declaration)
-    (alias invalid-point-free-action)
-    (alias invalid-token-in-prec)
-    (alias jh)
-    (alias jh-three)
-    (alias jh-two)
-    (alias join-param-1)
-    (alias keyword)
-    (alias keyword-in-header)
-    (alias let-comma)
-    (alias let-more)
-    (alias list-of-productions-expected)
-    (alias location-keyword-errors)
-    (alias lots-of-errors-a)
-    (alias lots-of-errors-b)
-    (alias lots-of-errors-c)
-    (alias lowercase-token)
-    (alias missing-percentpercent)
-    (alias missing_token_alias)
-    (alias mixed)
-    (alias modifier)
-    (alias multiple-precedence)
-    (alias multiple-producers-with-same-name)
-    (alias multiple-symbol-definition)
-    (alias multiple-token)
-    (alias multiple-type-definition)
-    (alias multiple-type-definition-modules-1)
-    (alias new-syntax-parentheses)
-    (alias new-syntax-parentheses-bis)
-    (alias no-start-and-inline)
-    (alias no-start-symbol)
-    (alias no-tokens)
-    (alias no_space_after_directive)
-    (alias non-terminal-is-expected)
-    (alias non-terminal-multiple-branch-groups)
-    (alias non-terminal-multiple-definitions)
-    (alias non-terminals-tokens-overlap-1)
-    (alias non-terminals-tokens-overlap-other-case-1)
-    (alias non-terminals-tokens-overlap-simple)
-    (alias nonlinear-pattern)
-    (alias nonlinear-pattern-pun)
-    (alias nonlinear-pattern-tuple)
-    (alias nonsense)
-    (alias not-well-founded-rec)
-    (alias obscene-dollar)
-    (alias ocaml-keyword)
-    (alias occurs-check)
-    (alias on-error-reduce-ill-kinded)
-    (alias on-error-reduce-nonexistent)
-    (alias on-error-reduce-nonexistent-argument)
-    (alias option)
-    (alias parameterized-start)
-    (alias parameterized-start-weird)
-    (alias parentheses)
-    (alias pattern)
-    (alias positional-identifier-clash)
-    (alias prec-inline-non-tail)
-    (alias prec-inline-prec)
-    (alias producer-with-a-positional-name)
-    (alias production-expected)
-    (alias production-group)
-    (alias recursive-recognize)
-    (alias reference-to-pseudo-token)
-    (alias resync-on-action-prec)
-    (alias rule-error)
-    (alias semantic)
-    (alias semibar)
-    (alias semibarcomma)
-    (alias semicolon)
-    (alias sloc-with-param)
-    (alias symbol-expected)
-    (alias symbolstartpos-with-param)
-    (alias syntax-let)
-    (alias syntax-let-foo)
-    (alias syntax-public-let)
-    (alias terminal-type)
-    (alias tired)
-    (alias token-alias-clash)
-    (alias token-has-multiple-definition)
-    (alias token-has-multiple-definition-modules-1)
-    (alias tricky)
-    (alias tricky-deep)
-    (alias tuple-pattern)
-    (alias tuple-pattern-previous)
-    (alias two-prec)
-    (alias type-ill-kinded)
-    (alias type-of-nonexistent-symbol)
-    (alias unclosed-attribute)
-    (alias unclosed-attribute-variant)
-    (alias unclosed-brace)
-    (alias unclosed-brace-brace)
-    (alias unclosed-brace-paren)
-    (alias unclosed-prologue)
-    (alias undeclared-token-alias)
-    (alias undefined-non-terminal-reference)
-    (alias undefined-position)
-    (alias undefined-producer)
-    (alias undefined-start)
-    (alias unification-error-at-toplevel)
-    (alias unification-error-in-args)
-    (alias unification-error-in-depth)
-    (alias unification-error-not-at-toplevel)
-    (alias unknown_symbol_in_attribute)
-    (alias unknown_symbol_in_on_error_reduce)
-    (alias unknown_symbol_in_type)
-    (alias unspecified-start)
-    (alias unspecified-start-type)
-    (alias uppercase-start)
-    (alias use-index-not-id)
-    (alias use_pseudo_token)
-    (alias wktxt_parser)))
+(rule (alias test) (action (diff wktxt_parser.exp wktxt_parser.out)))
 
