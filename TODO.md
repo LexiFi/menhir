@@ -69,6 +69,9 @@
 
 ## Minor suggestions for enhancements
 
+* `promote.sh` is currently broken; remove it? Check if Dune can create
+  missing files.
+
 * Let `--compare-errors` produce a list of error messages that is sorted
   by location.
 
