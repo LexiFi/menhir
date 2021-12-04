@@ -647,25 +647,6 @@ let errortypescheme s =
 let can_die =
   ref false
 
-(* A code pattern for an exception handling construct where both alternatives
-   are in tail position. Concrete syntax in OCaml 4.02 is [match e with x ->
-   e1 | exception Error -> e2]. Earlier versions of OCaml do not support this
-   construct. We continue to emulate it using a combination of [try/with],
-   [match/with], and an [option] value. It is used only in a very rare case
-   anyway. *)
-
-(* TEMPORARY either remove this or add support for [match with exception] *)
-
-let letunless e x e1 e2 =
-  EMatch (
-    ETry (
-      EData ("Some", [ e ]),
-      [ branch (PData (excdef.excname, [])) (EData ("None", [])) ]
-    ),
-    [ branch (PData ("Some", [ PVar x ])) e1 ;
-      branch (PData ("None", []))         e2 ]
-  )
-
 (* ------------------------------------------------------------------------ *)
 (* Calling conventions. *)
 
@@ -1261,13 +1242,7 @@ let reducebody prod =
         unitbindings @
         posbindings action,
 
-        (* If the semantic action is susceptible of raising [Error],
-           use a [let/unless] construct, otherwise use [let]. *)
-
-        if Action.has_syntaxerror action then
-          letunless act semv (call_goto nt) (errorbookkeeping call_errorcase)
-        else
-          blet ([ PVar semv, act ], call_goto nt)
+        blet ([ PVar semv, act ], call_goto nt)
       ))
 
 (* This is the definition of the [reduce] function associated with

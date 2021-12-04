@@ -1,5 +1,9 @@
 # Changes
 
+## 2021/12/XX
+
+* The `$syntaxerror` keyword is no longer supported.
+
 ## 2021/11/28
 
 * Revert a change in version 2021/11/25 regarding the printing of universally

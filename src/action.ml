@@ -134,17 +134,12 @@ let semvars action =
 let keywords action =
   action.keywords
 
-let has_syntaxerror action =
-  KeywordSet.mem SyntaxError action.keywords
-
 let has_beforeend action =
   KeywordSet.mem (Position (Before, WhereEnd, FlavorPosition)) action.keywords
 
 let posvars action =
   KeywordSet.fold (fun keyword accu ->
     match keyword with
-    | SyntaxError ->
-        accu
     | Position (s, w, f) ->
         let x = Keyword.posvar s w f in
         StringSet.add x accu
@@ -230,8 +225,6 @@ let restrict_semvar xs { semvar; posvar } =
 
 let rename_keyword f (phi : subst ref) keyword : keyword =
   match keyword with
-  | SyntaxError ->
-      SyntaxError
   | Position (subject, where, flavor) ->
       let subject', where' =
         match f (subject, where) with

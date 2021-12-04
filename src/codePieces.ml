@@ -189,11 +189,10 @@ let destructuretokendef name codomain bindsemv branch = {
 
 (* A global variable holds the exception [Error]. *)
 
-(* We preallocate the [Error] exception and store it into a global
-   variable. This allows saving code at the sites where the exception
-   is raised. Don't change the conventional name [_eRR], it is shared
-   with the lexer, which replaces occurrences of the [$syntaxerror]
-   keyword with [(raise _eRR)]. *)
+(* We preallocate the [Error] exception and store it into a global variable.
+   This was initially done in order to save code at the sites where the
+   exception is raised. In retrospect, it would have been preferable to
+   save code by defining an auxiliary function that raises [Error]. *)
 
 let parse_error =
   "_eRR"

@@ -3397,21 +3397,6 @@ an \error token was successfully shifted. In this mode, tokens are repeatedly
 taken off the input stream and discarded until an acceptable token is found.
 This feature is no longer offered by \menhir.
 
-\paragraph{Error-related keywords}
-
-Under the \legacy strategy, the \verb+$syntaxerror+ keyword
-is made available to semantic actions.
-%
-When this keyword is evaluated, the evaluation of the semantic action is
-aborted, so that the current reduction is abandoned; the current lookahead
-token is discarded and replaced with the \error token; and error handling mode
-is entered. There is no mechanism for inserting an \error token \emph{in front
-of} the current lookahead token, even though this might also be desirable.
-
-It is unclear whether this keyword is useful.
-It is not supported in the \simplified strategy,
-and it may be suppressed in the future.
-
 % ------------------------------------------------------------------------------
 
 \section{Error handling: the new way}
@@ -3466,8 +3451,7 @@ The impact of these alterations must be taken into account when writing
 diagnostic messages (\sref{sec:errors:diagnostics}).
 
 In this approach to error handling, the special \error token is not used. It
-should not appear in the grammar. Similarly, the \verb+$syntaxerror+ keyword
-should not be used.
+should not appear in the grammar.
 
 % ------------------------------------------------------------------------------
 
@@ -4061,7 +4045,7 @@ Several restrictions are imposed when \menhir is used in \ocoq mode:
 %
 \begin{itemize}
 \item The error handling mechanism (\sref{sec:errors}) is absent.
-      The \verb+$syntaxerror+ keyword and the \error token are not supported.
+      The \error token is not supported.
 \item Location information is not propagated. The \verb+$start*+ and \verb+$end*+
       keywords (\fref{fig:pos}) are not supported.
 \item \dparameter (\sref{sec:parameter}) is not supported.
@@ -4976,7 +4960,7 @@ Gabriel Scherer provided motivation for investigating Jeffery's technique.
 % LocalWords:  boption sep nonassociative multi basicshiftreduce lookahead decl
 % LocalWords:  UIDENT LIDENT decls tycon expr exprs basiceos basiceosdump lex
 % LocalWords:  curr Lexing lexbuf pos cnum startpos endpos startofs endofs LALR
-% LocalWords:  syntaxerror whitespace EOL cst API lexing MenhirInterpreter pc
+% LocalWords:  whitespace EOL cst API lexing MenhirInterpreter pc
 % LocalWords:  InputNeeded HandlingError env CompCert Aut se nat init cparser
 % LocalWords:  validator subdirectory EBNF reentrant eos typecheck menhir ulex
 % LocalWords:  DeRemer Pennello's Tarjan Yao Dencker Dürre Heuft Bau Raja LLC

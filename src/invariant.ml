@@ -118,13 +118,7 @@ let handlers states =
 
    (3) If a stack cell contains more than one state and if at least
    one of these states is able to handle the [error] token, then these
-   states are represented.
-
-   (4) If the semantic action associated with a production mentions
-   the [$syntaxerror] keyword, then the state that is being reduced to
-   (that is, the state that initiated the recognition of this
-   production) is represented. (Indeed, it will be passed as an
-   argument to [errorcase].) *)
+   states are represented. *)
 
 module RepresentedStates () : sig
   val represented : Lr1.node -> bool
@@ -204,20 +198,6 @@ let () =
       if Lr1.NodeSet.cardinal states >= 2 && handlers states then
         represents states
     ) v
-  )
-
-(* Enforce condition (4) above. *)
-
-let () =
-  Production.iterx (fun prod ->
-    if Action.has_syntaxerror (Production.action prod) then
-      let sites = Lr1.production_where prod in
-      let length = Production.length prod in
-      if length = 0 then
-        Lr1.NodeSet.iter represent sites
-      else
-        let states = (StackStatesShort.production_states prod).(0) in
-        represents states
   )
 
 (* Define an accessor. *)
@@ -428,9 +408,7 @@ let () =
 
     (* Examine the production's position keywords. *)
 
-    KeywordSet.iter (function
-      | SyntaxError ->
-          ()
+    Action.keywords action |> KeywordSet.iter begin function
       | Position (Before, _, _) ->
           (* Condition (2) in the long comment above (2015/11/11). This condition
              was incorrectly implemented until 2021/10/12, because of a confusion
@@ -461,7 +439,7 @@ let () =
             if id = id' then
               F.record_ConVar true (rhs.(i), where)
           ) ids
-    ) (Action.keywords action)
+    end (* end of loop on keywords *)
 
   end (* end of loop on productions *)
 

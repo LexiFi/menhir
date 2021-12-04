@@ -272,13 +272,6 @@
   by Andrej Bauer on 2016/01/21. Once this is issue is fixed, improve the test
   suite to verify that we never have unexplainable conflicts.
 
-* When we are in error-handling mode and we attempt to reduce (because the
-  current state can reduce), if the semantic action uses `$syntaxerror`, then
-  we loop (because we catch the exception and end up in error-handling mode
-  and in the same state). Bug reported by Gabriel Scherer about OCaml's
-  grammar, bug number 0007847. Could we detect this case and handle it
-  properly?
-
 * The function `rewind` contains an incorrect comment ("every stack
   description either is definite or contains at least one represented state").
   Find out why it is incorrect. Find out what the implications for `rewind`
