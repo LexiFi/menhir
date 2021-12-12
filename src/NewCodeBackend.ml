@@ -91,6 +91,14 @@ module Run () = struct
     else
       program
 
+  (* Simplify [ICaseToken] instructions where possible. This transformation
+     improves performance by eliminating some redundant [ICaseToken]
+     instructions. It also clarifies the code by allowing some instructions
+     and blocks to be recognized as dead. *)
+
+  let program =
+    StackLangTokenAnalysis.transform program
+
   (* Inline functions whose in-degree is 1, insofar as possible. *)
 
   let program =
