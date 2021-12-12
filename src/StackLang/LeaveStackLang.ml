@@ -1,3 +1,13 @@
+(******************************************************************************)
+(*                                                                            *)
+(*                                    Menhir                                  *)
+(*                                                                            *)
+(*   Copyright Inria. All rights reserved. This file is distributed under     *)
+(*   the terms of the GNU General Public License version 2, as described in   *)
+(*   the file LICENSE.                                                        *)
+(*                                                                            *)
+(******************************************************************************)
+
 open Printf
 let map, concat = List.(map, concat)
 let if1, ifn = MList.(if1, ifn)

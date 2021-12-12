@@ -1,3 +1,13 @@
+(******************************************************************************)
+(*                                                                            *)
+(*                                    Menhir                                  *)
+(*                                                                            *)
+(*   Copyright Inria. All rights reserved. This file is distributed under     *)
+(*   the terms of the GNU General Public License version 2, as described in   *)
+(*   the file LICENSE.                                                        *)
+(*                                                                            *)
+(******************************************************************************)
+
 open StackLangBasics
 
 (**A set of bindings is a finite map of registers to values. It can be thought
