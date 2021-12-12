@@ -417,3 +417,23 @@ let complete program (branches : tagbranch list) : tagbranch list =
 let trim branches =
   let keep (_, body) = match body with IDead `Dynamic -> false | _ -> true in
   List.filter keep branches
+
+(* -------------------------------------------------------------------------- *)
+
+(* Computing which branches cover which tokens in [ICaseToken] instructions.  *)
+
+open Grammar.TerminalSet
+
+let tokens tokpat : terminals =
+  match tokpat with
+  | TokSingle (tok, _) ->
+      singleton tok
+  | TokMultiple toks ->
+      toks
+
+let all_tokens (branches : tokbranch list) : terminals =
+  let (+) = union in
+  List.fold_left (fun accu (tokpat, _) -> accu + tokens tokpat) empty branches
+
+let exhaustive (branches : tokbranch list) : bool =
+  subset universe (all_tokens branches)

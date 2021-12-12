@@ -146,32 +146,6 @@ let close i =
 
 (* -------------------------------------------------------------------------- *)
 
-(* An exhaustiveness check for case analyses on a token. *)
-
-include struct
-
-  open Grammar.TerminalSet
-
-  let tokens tokpat =
-    match tokpat with
-    | TokSingle (tok, _) ->
-        singleton tok
-    | TokMultiple toks ->
-        toks
-
-  let tokens branches =
-    List.fold_left
-      (fun accu (tokpat, _) -> union accu (tokens tokpat))
-      empty
-      branches
-
-  let exhaustive branches =
-    subset universe (tokens branches)
-
-end
-
-(* -------------------------------------------------------------------------- *)
-
 (* Here come the public construction functions. *)
 
 let push vs cell =
