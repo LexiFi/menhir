@@ -500,7 +500,7 @@ type train =
 
 (* [pushes_vanish block] determines whether a PUSH instruction, in front
    of the block [block], can vanish. This is the case if [block] contains
-   a sequence of DEF, PUSH, TRACE instructions that ends with DEAD or DIE. *)
+   a sequence of DEF, PUSH, TRACE instructions that ends with DEAD or STOP. *)
 
 (* This information is exploited by [materialize], which itself is used in
    [pad_branch]. *)
@@ -656,9 +656,9 @@ let rec transform_block env block : int * int * block =
       (* As a special case, if the block that follows is so trivial that PUSH
          instructions in front of it vanish, then we are done. We drop the
          PUSH instructions (and transform the block, which should result in no
-         transformation). We include this special rule because DIE reports
+         transformation). We include this special rule because STOP reports
          that it does not want to absorb any PUSHes (see below). Thus, this
-         rule remains necessary in order to transform PUSH; DIE into DIE. *)
+         rule remains necessary in order to transform PUSH; STOP into STOP. *)
       kinfo "(optm) Some push instructions have vanished here"
       (do_not_transform_block env block)
 
@@ -741,15 +741,15 @@ let rec transform_block env block : int * int * block =
       0, 0, IDead phase
 
   | IStop s ->
-      (* [PUSH*; DEF; DIE] is equivalent to [DIE]. Thus, DIE is able to absorb
-         an arbitrary number of PUSH instructions. However, we do not wish to
-         return the integer [length pushes], because that would mean that we
-         *want* to absorb all of them, and when DIE appears in a branch of a
-         CASE construct, that would imply that all available PUSH instructions
-         *must* enter the CASE construct. In reality, DIE does not care how
-         many PUSHes enter the CASE construct; it will absorb all of them,
-         anyway. So, we artificially return 0, so as to not influence the
-         [max] computation that takes place at CASE constructs. *)
+      (* [PUSH*; DEF; STOP] is equivalent to [STOP]. Thus, STOP is able to
+         absorb an arbitrary number of PUSH instructions. However, we do not
+         wish to return the integer [length pushes], because that would mean
+         that we *want* to absorb all of them, and when STOP appears in a
+         branch of a CASE construct, that would imply that all available PUSH
+         instructions *must* enter the CASE construct. In reality, STOP does
+         not care how many PUSHes enter the CASE construct; it will absorb all
+         of them, anyway. So, we artificially return 0, so as to not influence
+         the [max] computation that takes place at CASE constructs. *)
       0, 0, IStop s
 
   | IReturn (nt, v) ->

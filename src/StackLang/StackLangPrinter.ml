@@ -196,7 +196,7 @@ and instruction b =
   | IDead `Dynamic ->
       string "DEAD (DYNAMIC)"
   | IStop s ->
-      string "DIE  " ^^ (OCaml.int s)
+      string "STOP " ^^ (OCaml.int s)
   | IReturn (nt, v) ->
       string "RET  " ^^ value v ^^ sharp ^^ space ^^ final (Some nt)
   | IJump l ->
