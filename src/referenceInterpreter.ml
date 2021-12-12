@@ -10,6 +10,7 @@
 
 open Grammar
 open Cst
+let dummy_pos = Lexing.dummy_pos
 
 (* ------------------------------------------------------------------------ *)
 
@@ -136,9 +137,9 @@ module T = struct
       let values : semantic_value array =
         Array.make n CstError (* dummy *)
       and startp =
-        ref Lexing.dummy_pos
+        ref dummy_pos
       and endp =
-        ref Lexing.dummy_pos
+        ref dummy_pos
       and current =
         ref env.current
       and stack =
@@ -326,14 +327,15 @@ let check_error_path log nt input =
   let rec loop (checkpoint : cst E.checkpoint) (spurious : spurious_reduction list) =
     match checkpoint with
     | E.InputNeeded _ ->
-      begin match next() with
-      | None ->
-        OInputReadPastEnd
-      | Some t ->
-        loop (E.offer checkpoint (t, Lexing.dummy_pos, Lexing.dummy_pos)) spurious
-      end
+        begin match next() with
+        | None ->
+            OInputReadPastEnd
+        | Some t ->
+            let checkpoint = E.offer checkpoint (t, dummy_pos, dummy_pos) in
+            loop checkpoint spurious
+        end
     | E.Shifting _ ->
-      loop (E.resume ~strategy checkpoint) spurious
+        loop (E.resume ~strategy checkpoint) spurious
     | E.AboutToReduce (env, prod) ->
         (* If we have requested the last input token and if this is not
            a default reduction, then this is a spurious reduction.
@@ -365,4 +367,4 @@ let check_error_path log nt input =
         assert false
   in
 
-  loop (E.start entry Lexing.dummy_pos) []
+  loop (E.start entry dummy_pos) []
