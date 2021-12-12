@@ -179,7 +179,7 @@ let rec wf_block env block =
   | IComment (_, block) ->
       wf_block env block
   | IDead _
-  | IStop ->
+  | IStop _ ->
       ()
   | IReturn (_nt, v) ->
       wf_value env v
@@ -631,7 +631,7 @@ let rec wt_block env block : block =
   | IDead `Dynamic
   | ITrace _
   | IComment _
-  | IStop
+  | IStop _
   | ICaseToken _
     -> Block.map (wt_block env) block
 

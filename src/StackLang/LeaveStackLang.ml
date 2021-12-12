@@ -617,7 +617,7 @@ let rec compile_block block =
   | IDead `Dynamic ->
       call_assertfalse
 
-  | IStop ->
+  | IStop _s ->
       ERaise errorval
 
   | IReturn (nt, v) ->

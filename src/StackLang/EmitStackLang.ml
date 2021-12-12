@@ -554,7 +554,7 @@ and run_error_dispatch s =
 
       (* This state is unable to handle errors. Stop. *)
 
-      stop()
+      stop (Lr1.number s)
 
 (* -------------------------------------------------------------------------- *)
 

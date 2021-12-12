@@ -393,7 +393,7 @@ let rec spec_block env block =
   | ITrace _
   | IComment _
   | IDead _
-  | IStop
+  | IStop _
   | IReturn _
   | ICaseToken _
     ->
@@ -508,7 +508,7 @@ type train =
 let rec pushes_vanish block =
   match block with
   | IDead _
-  | IStop ->
+  | IStop _ ->
       true
   | IComment (_, block)
   | IDef (_, block)
@@ -740,7 +740,7 @@ let rec transform_block env block : int * int * block =
   | IDead phase ->
       0, 0, IDead phase
 
-  | IStop ->
+  | IStop s ->
       (* [PUSH*; DEF; DIE] is equivalent to [DIE]. Thus, DIE is able to absorb
          an arbitrary number of PUSH instructions. However, we do not wish to
          return the integer [length pushes], because that would mean that we
@@ -750,7 +750,7 @@ let rec transform_block env block : int * int * block =
          many PUSHes enter the CASE construct; it will absorb all of them,
          anyway. So, we artificially return 0, so as to not influence the
          [max] computation that takes place at CASE constructs. *)
-      0, 0, IStop
+      0, 0, IStop s
 
   | IReturn (nt, v) ->
       (* We certainly have no PUSH instructions, because the parser accepts

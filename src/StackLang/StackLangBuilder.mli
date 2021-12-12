@@ -98,7 +98,7 @@ val move : register -> register -> unit
 
 (* Group 2: Instructions with zero successor. *)
 
-val stop : unit -> unit
+val stop : int -> unit
 
 val return : start_nonterminal -> value -> unit
 

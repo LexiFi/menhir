@@ -18,6 +18,11 @@ open Grammar
 open StackLang
 open StackLangMeasure
 
+type outcome =
+  | Accept
+  | Reject of int
+  | AbortBySemanticAction
+
 (* -------------------------------------------------------------------------- *)
 
 (* The registers and the stack contain ground values. A ground value can be a
@@ -254,7 +259,7 @@ let rec exec state block =
           m.prim <- m.prim + 1;
           exec state block
       | exception Abort ->
-          None (* reject *)
+          AbortBySemanticAction
       end
 
   | ITrace (trace, block) ->
@@ -269,15 +274,14 @@ let rec exec state block =
       (* This is problematic! This point in the code should not be reachable. *)
       assert false
 
-  | IStop ->
+  | IStop s ->
       m.stop <- m.stop + 1;
-      None (* reject *)
+      Reject s
 
   | IReturn (_, v) ->
       let (_gv : gvalue) = eval state v in
       m.return <- m.return + 1;
-      Some ()
-      (* accept *)
+      Accept
 
   | IJump label ->
       state.label <- label;

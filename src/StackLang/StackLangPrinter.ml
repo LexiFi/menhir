@@ -195,8 +195,8 @@ and instruction b =
       string "DEAD (STATIC)"
   | IDead `Dynamic ->
       string "DEAD (DYNAMIC)"
-  | IStop ->
-      string "DIE"
+  | IStop s ->
+      string "DIE  " ^^ (OCaml.int s)
   | IReturn (nt, v) ->
       string "RET  " ^^ value v ^^ sharp ^^ space ^^ final (Some nt)
   | IJump l ->
@@ -220,7 +220,7 @@ and block b =
   | ITrace (_, b)
   | IComment (_, b) ->
       block b
-  | IDead _ | IStop | IReturn _ | IJump _ ->
+  | IDead _ | IStop _ | IReturn _ | IJump _ ->
       empty
   | ICaseToken (_, branches, default) ->
       concat_map branch (

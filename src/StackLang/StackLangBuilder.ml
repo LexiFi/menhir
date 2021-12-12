@@ -201,8 +201,8 @@ let trace t =
 let comment s =
   extend (fun block -> IComment (s, block))
 
-let stop () =
-  close IStop
+let stop s =
+  close (IStop s)
 
 let return nt v =
   close (IReturn (nt, v))

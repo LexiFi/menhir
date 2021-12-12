@@ -56,15 +56,18 @@ let run_reference nt sentence : outcome * int =
     end)
   in
   let log = (module Log : Logging.LOG) in
-  match ReferenceInterpreter.interpret nt log lexer lexbuf with
-  | Some _cst ->
-      Accepted, !count
-  | None ->
-      Rejected, !count
-  | exception Interpret.EndOfStream ->
-      Overshoot, !count
-  | exception e ->
-      Crash e, !count
+  let outcome =
+    match ReferenceInterpreter.interpret nt log lexer lexbuf with
+    | Some _cst ->
+        Accepted
+    | None ->
+        Rejected
+    | exception Interpret.EndOfStream ->
+        Overshoot
+    | exception e ->
+        Crash e
+  in
+  outcome, !count
 
 (* [run_candidate candidate bound sentence] uses the interpreter [candidate]
    to parse the sentence [sentence]. The parameter [bound] bounds the number
@@ -81,17 +84,22 @@ let run_candidate candidate bound sentence : outcome * int =
     if bound < !count then
       raise BoundExceeded
   in
-  match candidate log lexer lexbuf with
-  | Some _cst ->
-      Accepted, !count
-  | None ->
-      Rejected, !count
-  | exception BoundExceeded ->
-      TraceTooLong bound, !count
-  | exception Interpret.EndOfStream ->
-      Overshoot, !count
-  | exception e ->
-      Crash e, !count
+  let outcome =
+    match candidate log lexer lexbuf with
+    | StackLangInterpreter.Accept ->
+        Accepted
+    | StackLangInterpreter.Reject _s ->
+        Rejected
+    | StackLangInterpreter.AbortBySemanticAction ->
+        Rejected
+    | exception BoundExceeded ->
+        TraceTooLong bound
+    | exception Interpret.EndOfStream ->
+        Overshoot
+    | exception e ->
+        Crash e
+  in
+  outcome, !count
 
 (* -------------------------------------------------------------------------- *)
 

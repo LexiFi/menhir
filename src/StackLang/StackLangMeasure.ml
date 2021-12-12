@@ -107,7 +107,7 @@ let rec measure_block m block =
       measure_block m block
   | IDead _ ->
       m.dead <- m.dead + 1
-  | IStop ->
+  | IStop _ ->
       m.stop <- m.stop + 1
   | IReturn _ ->
       m.return <- m.return + 1

@@ -188,9 +188,13 @@ type block =
       If [phase] is [`Dynamic], then this corresponds to a runtime failure
       in OCaml. *)
 
-  | IStop
-  (** [IStop] causes an abrupt termination of the program. It is translated
-      into OCaml by raising the exception [Error]. *)
+  | IStop of int
+  (** [IStop s] causes the parser to stop and reject the input. It is
+      translated into OCaml by raising the exception [Error]. The integer [s]
+      reflects the current state of the automaton, and can be exploited by
+      the user in order to display a suitable syntax error message. The
+      state [s] is not necessarily represented, which is why [s] cannot have
+      type [tag] and must have type [int]. *)
 
   | IReturn of start_nonterminal * value
   (** [IReturn (nt, v)] causes the normal termination of the parser.

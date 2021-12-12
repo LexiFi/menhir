@@ -51,7 +51,7 @@ let map f block =
   | IComment (content, block) ->
       IComment (content, f block)
   | IDead _
-  | IStop
+  | IStop _
   | IReturn _
   | IJump _ ->
       block
@@ -75,7 +75,7 @@ let iter f block =
   | IComment (_, block)
       -> f block
   | IDead _
-  | IStop
+  | IStop _
   | IReturn _
   | IJump _
       -> ()
@@ -96,7 +96,7 @@ let rec jumps yield block =
   | IComment (_, block) ->
       jumps yield block
   | IDead _
-  | IStop
+  | IStop _
   | IReturn _ ->
       ()
   | IJump label ->

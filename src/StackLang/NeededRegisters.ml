@@ -58,7 +58,7 @@ let needed block (query : label -> registers) : registers =
     | IComment (_, block) ->
         needed block
     | IDead _
-    | IStop ->
+    | IStop _ ->
         empty
     | IReturn (_, v) ->
         Value.registers [v]
@@ -141,9 +141,9 @@ let prune block (query : label -> registers) : registers * block =
     | IDead phase ->
         empty,
         IDead phase
-    | IStop ->
+    | IStop s ->
         empty,
-        IStop
+        IStop s
     | IReturn (nt, v) ->
         Value.registers [v],
         IReturn (nt, v)
