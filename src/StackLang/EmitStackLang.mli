@@ -29,10 +29,13 @@ end
 val state : register
 
 (**The register that holds the lexer. *)
-val lexer: register
+val lexer : register
 
 (**The register that holds the lexbuf. *)
 val lexbuf: register
+
+(**The register that holds the current token. *)
+val token : register
 
 (**The registers that must be defined (with dummy values) in the initial
    runtime environment in StackLangInterpreter. This is not very pretty, but
