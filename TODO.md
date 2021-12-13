@@ -1,5 +1,16 @@
 # TODO
 
+## New Code Back-End
+
+* Add support for the revised API, where the lexer produces a triple of a
+  token and two positions, and there is no `lexbuf`. (Command-line switch.)
+
+* Add support for the incremental API. (Command-line switch.)
+
+* Investigate adding support for the inspection API. This would likely require
+  disabling many optimizations: PUSH movement must be forbidden; all states,
+  positions, and semantic values must be represented, for simplicity.
+
 ## Automaton
 
 * When displaying the known suffix of the stack in a `.messages` file and/or
