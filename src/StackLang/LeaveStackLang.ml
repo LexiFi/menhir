@@ -422,15 +422,20 @@ let eactionparams action =
   let xs = actionparams action in
   match xs with [] -> [EUnit] | _ -> evars xs
 
+let actionbody prod =
+  let action = Production.action prod in
+  EComment (
+    Production.print prod,
+    Action.to_il_expr action
+  )
+
 let actiondef prod =
   let action = Production.action prod in
   def (actionname prod) (
     EFun (
       pactionparams action,
-      EComment (
-        Production.print prod,
-        Action.to_il_expr action
-  )))
+      actionbody prod
+  ))
 
 let call_action prod action =
   EApp (
