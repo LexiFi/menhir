@@ -176,9 +176,7 @@ val strict: bool
 
 (** This flag causes the exception [Error] to be declared equal to
    [Parsing.Parse_error]. This is useful when full compatibility with
-   ocamlyacc is desired. In particular, this is used when building
-   Menhir itself, since Menhir is compiled first using ocamlyacc, then
-   using Menhir. *)
+   ocamlyacc is desired. *)
 val fixedexc: bool
 
 (**This flag causes the exception [Error] to carry an integer state.
