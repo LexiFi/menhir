@@ -88,11 +88,9 @@ val destructuretokendef: string -> typ -> bool -> (Terminal.t -> expr) -> valdef
 
 (* ------------------------------------------------------------------------ *)
 
-(* A global variable holds the exception [Error]. *)
+(* A toplevel function [stop] raises the exception [Error]. *)
 
-(* A reference to this global variable. *)
-
-val errorval: expr
+val call_stop: expr
 
 (* ------------------------------------------------------------------------ *)
 

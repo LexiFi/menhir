@@ -19,8 +19,8 @@ let state = EmitStackLang.state
 (* Our target language: *)
 open IL
 open CodeBits
-let semvtype, errorval, tokpat, tokspat, tok_bind_unit, mbasics =
-  CodePieces.(semvtype, errorval, tokpat, tokspat, tok_bind_unit, mbasics)
+let semvtype, call_stop, tokpat, tokspat, tok_bind_unit, mbasics =
+  CodePieces.(semvtype, call_stop, tokpat, tokspat, tok_bind_unit, mbasics)
 let print_token, call_assertfalse, printtokendef, assertfalsedef =
   CodeBackend.(print_token, call_assertfalse, printtokendef, assertfalsedef)
 let exvar (r : register) = EVar (Reg.export r)
@@ -628,7 +628,7 @@ let rec compile_block block =
       call_assertfalse
 
   | IStop _s ->
-      ERaise errorval
+      call_stop
 
   | IReturn (nt, v) ->
       (* Box the return value in a data type. This is done for type-checking

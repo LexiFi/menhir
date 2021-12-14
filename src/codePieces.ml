@@ -187,33 +187,18 @@ let destructuretokendef name codomain bindsemv branch = {
 
 (* ------------------------------------------------------------------------ *)
 
-(* A global variable holds the exception [Error]. *)
+(* A toplevel function [stop] raises the exception [Error]. *)
 
-(* We preallocate the [Error] exception and store it into a global variable.
-   This was initially done in order to save code at the sites where the
-   exception is raised. In retrospect, it would have been preferable to
-   save code by defining an auxiliary function that raises [Error]. *)
-
-let parse_error =
+let stop =
   "_eRR"
 
-let errorval =
-  EVar parse_error
+let call_stop =
+  EApp (EVar stop, [EUnit])
 
-let basics =
-  "MenhirBasics"
-  (* 2017/01/20 The name [basics] must be an unlikely name, as it might
-     otherwise hide a user-defined module by the same name. *)
-
-(* The global definition [let _eRR : exn = Error] includes a type
-   annotation. This allows us to avoid warning 41, which warns
-   about the existence of a data constructor named [Error] in
-   the standard library. *)
-
-let excvaldef = {
+let stopdef = {
   valpublic = false;
-  valpat = PVar parse_error;
-  valval = EAnnot (EData (Interface.excname, []), type2scheme texn)
+  valpat = PVar stop;
+  valval = EFun ([PWildcard], ERaise (EData (Interface.excname, [])))
 }
 
 (* ------------------------------------------------------------------------ *)
@@ -221,6 +206,11 @@ let excvaldef = {
 (* Define the internal sub-module [Basics], which contains the definitions
    of the exception [Error] and of the type [token]. Then, include this
    sub-module. This is used both in the code and table back-ends. *)
+
+let basics =
+  "MenhirBasics"
+  (* 2017/01/20 This name must be an unlikely name, as it might
+     otherwise hide a user-defined module by the same name. *)
 
 let mbasics grammar = [
 
@@ -230,12 +220,9 @@ let mbasics grammar = [
     (* The exception [Error]. *)
     SIExcDefs [ Interface.excdef ] ::
 
-    (* 2021/09/27 We now place the definition [let _eRR = Error] at this
-       particular point so as to avoid the risk of a name collision. In
-       previous versions of Menhir, if a token was named [Error], then the
-       definition [let _eRR = Error] would not receive its intended meaning,
-       and the code produced by the code back-end would be ill-typed. *)
-    SIValDefs (false, [ excvaldef ]) ::
+    (* The definition of [stop] must be placed at this particular point
+       so as to avoid the risk of a name collision. *)
+    SIValDefs (false, [ stopdef ]) ::
 
     (* The type [token]. *)
     interface_to_structure (
