@@ -3,8 +3,9 @@ module MenhirBasics = struct
   
   exception Error
   
-  let _eRR : exn =
-    Error
+  let _eRR =
+    fun _s ->
+      raise Error
   
   type token = 
     | TIMES
@@ -15,7 +16,7 @@ module MenhirBasics = struct
     | INT of (
 # 1 "demos/calc-new-syntax/parser.mly"
        (int)
-# 19 "demos/calc-new-syntax/parser.ml"
+# 20 "demos/calc-new-syntax/parser.ml"
   )
     | EOL
     | DIV
@@ -86,7 +87,7 @@ let _menhir_action_02 =
     
 # 197 "<standard.mly>"
     ( x )
-# 90 "demos/calc-new-syntax/parser.ml"
+# 91 "demos/calc-new-syntax/parser.ml"
     
 
 let _menhir_action_03 =
@@ -94,12 +95,12 @@ let _menhir_action_03 =
     let f = 
 # 86 "demos/calc-new-syntax/parser.mly"
            ( (~- ) )
-# 98 "demos/calc-new-syntax/parser.ml"
+# 99 "demos/calc-new-syntax/parser.ml"
      in
     
 # 31 "demos/calc-new-syntax/parser.mly"
                 ( f x )
-# 103 "demos/calc-new-syntax/parser.ml"
+# 104 "demos/calc-new-syntax/parser.ml"
     
 
 let _menhir_action_04 =
@@ -112,12 +113,12 @@ let _menhir_action_05 =
     let op = 
 # 58 "demos/calc-new-syntax/parser.mly"
            ( ( + ) )
-# 116 "demos/calc-new-syntax/parser.ml"
+# 117 "demos/calc-new-syntax/parser.ml"
      in
     
 # 23 "demos/calc-new-syntax/parser.mly"
                                                  ( op sum elem )
-# 121 "demos/calc-new-syntax/parser.ml"
+# 122 "demos/calc-new-syntax/parser.ml"
     
 
 let _menhir_action_06 =
@@ -126,12 +127,12 @@ let _menhir_action_06 =
     let op = 
 # 59 "demos/calc-new-syntax/parser.mly"
            ( ( - ) )
-# 130 "demos/calc-new-syntax/parser.ml"
+# 131 "demos/calc-new-syntax/parser.ml"
      in
     
 # 23 "demos/calc-new-syntax/parser.mly"
                                                  ( op sum elem )
-# 135 "demos/calc-new-syntax/parser.ml"
+# 136 "demos/calc-new-syntax/parser.ml"
     
 
 let _menhir_action_07 =
@@ -143,12 +144,12 @@ let _menhir_action_08 =
     let op = 
 # 70 "demos/calc-new-syntax/parser.mly"
            ( ( * ) )
-# 147 "demos/calc-new-syntax/parser.ml"
+# 148 "demos/calc-new-syntax/parser.ml"
      in
     
 # 23 "demos/calc-new-syntax/parser.mly"
                                                  ( op sum elem )
-# 152 "demos/calc-new-syntax/parser.ml"
+# 153 "demos/calc-new-syntax/parser.ml"
     
 
 let _menhir_action_09 =
@@ -156,12 +157,12 @@ let _menhir_action_09 =
     let op = 
 # 71 "demos/calc-new-syntax/parser.mly"
            ( ( / ) )
-# 160 "demos/calc-new-syntax/parser.ml"
+# 161 "demos/calc-new-syntax/parser.ml"
      in
     
 # 23 "demos/calc-new-syntax/parser.mly"
                                                  ( op sum elem )
-# 165 "demos/calc-new-syntax/parser.ml"
+# 166 "demos/calc-new-syntax/parser.ml"
     
 
 let _menhir_action_10 =
@@ -212,7 +213,7 @@ include struct
           let _v = _menhir_action_01 _1 in
           _menhir_run_16 _menhir_stack _menhir_lexbuf _menhir_lexer _v _tok
       | _ ->
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_02 : type  ttv_stack. ttv_stack -> _ -> _ -> (ttv_stack, _menhir_box_main) _menhir_state -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer _menhir_s ->
@@ -229,7 +230,7 @@ include struct
           let _v = _menhir_action_01 _1 in
           _menhir_run_13_spec_02 _menhir_stack _menhir_lexbuf _menhir_lexer _v _tok
       | _ ->
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_13_spec_02 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_LPAREN -> _ -> _ -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer _v _tok ->
@@ -251,7 +252,7 @@ include struct
           let _v = _menhir_action_04 _1 in
           _menhir_goto_fold_left_additive_op_multiplicative_expr_ _menhir_stack _menhir_lexbuf _menhir_lexer _v _menhir_s _tok
       | _ ->
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_05 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_fold_left_multiplicative_op_atomic_expr_ -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer ->
@@ -267,7 +268,7 @@ include struct
           let _v = _menhir_action_01 _1 in
           _menhir_run_06 _menhir_stack _menhir_lexbuf _menhir_lexer _v _tok
       | _ ->
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_06 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_fold_left_multiplicative_op_atomic_expr_ -> _ -> _ -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer _v _tok ->
@@ -305,7 +306,7 @@ include struct
           let _v = _menhir_action_06 _1 _1_inlined1 sum in
           _menhir_goto_fold_left_additive_op_multiplicative_expr_ _menhir_stack _menhir_lexbuf _menhir_lexer _v _menhir_s _tok
       | _ ->
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_07 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_fold_left_multiplicative_op_atomic_expr_ -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer ->
@@ -321,7 +322,7 @@ include struct
           let _v = _menhir_action_01 _1 in
           _menhir_run_08 _menhir_stack _menhir_lexbuf _menhir_lexer _v _tok
       | _ ->
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_08 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_fold_left_multiplicative_op_atomic_expr_ -> _ -> _ -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer _v _tok ->
@@ -354,7 +355,7 @@ include struct
           let _v = _menhir_action_10 _1 _2 in
           MenhirBox_main _v
       | _ ->
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_11 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_fold_left_additive_op_multiplicative_expr_ -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer ->
@@ -370,7 +371,7 @@ include struct
           let _v = _menhir_action_01 _1 in
           _menhir_run_13_spec_11 _menhir_stack _menhir_lexbuf _menhir_lexer _v _tok
       | _ ->
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_13_spec_11 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_fold_left_additive_op_multiplicative_expr_ -> _ -> _ -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer _v _tok ->
@@ -393,7 +394,7 @@ include struct
           let _v = _menhir_action_05 _1 _1_inlined1 sum in
           _menhir_goto_fold_left_additive_op_multiplicative_expr_ _menhir_stack _menhir_lexbuf _menhir_lexer _v _menhir_s _tok
       | _ ->
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_14 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_fold_left_additive_op_multiplicative_expr_ -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer ->
@@ -409,7 +410,7 @@ include struct
           let _v = _menhir_action_01 _1 in
           _menhir_run_13_spec_14 _menhir_stack _menhir_lexbuf _menhir_lexer _v _tok
       | _ ->
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_13_spec_14 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_fold_left_additive_op_multiplicative_expr_ -> _ -> _ -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer _v _tok ->
@@ -433,7 +434,7 @@ include struct
           let _menhir_stack = MenhirCell1_fold_left_additive_op_multiplicative_expr_ (_menhir_stack, _menhir_s, _v) in
           _menhir_run_14 _menhir_stack _menhir_lexbuf _menhir_lexer
       | _ ->
-          raise _eRR
+          _eRR ()
   
   and _menhir_goto_atomic_expr : type  ttv_stack. ttv_stack -> _ -> _ -> _ -> (ttv_stack, _menhir_box_main) _menhir_state -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer _v _menhir_s _tok ->
@@ -480,7 +481,7 @@ include struct
           let _v = _menhir_action_01 _1 in
           _menhir_run_13_spec_00 _menhir_stack _menhir_lexbuf _menhir_lexer _v _tok
       | _ ->
-          raise _eRR
+          _eRR ()
   
 end
 

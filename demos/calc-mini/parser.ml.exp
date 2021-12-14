@@ -3,8 +3,9 @@ module MenhirBasics = struct
   
   exception Error
   
-  let _eRR : exn =
-    Error
+  let _eRR =
+    fun _s ->
+      raise Error
   
   type token = 
     | TIMES
@@ -14,7 +15,7 @@ module MenhirBasics = struct
     | INT of (
 # 1 "demos/calc-mini/parser.mly"
        (int)
-# 18 "demos/calc-mini/parser.ml"
+# 19 "demos/calc-mini/parser.ml"
   )
     | EOL
   
@@ -59,7 +60,7 @@ let _menhir_action_1 =
     
 # 19 "demos/calc-mini/parser.mly"
     ( i )
-# 63 "demos/calc-mini/parser.ml"
+# 64 "demos/calc-mini/parser.ml"
     
 
 let _menhir_action_2 =
@@ -68,7 +69,7 @@ let _menhir_action_2 =
     
 # 21 "demos/calc-mini/parser.mly"
     ( e )
-# 72 "demos/calc-mini/parser.ml"
+# 73 "demos/calc-mini/parser.ml"
     
 
 let _menhir_action_3 =
@@ -77,7 +78,7 @@ let _menhir_action_3 =
     
 # 23 "demos/calc-mini/parser.mly"
     ( e1 + e2 )
-# 81 "demos/calc-mini/parser.ml"
+# 82 "demos/calc-mini/parser.ml"
     
 
 let _menhir_action_4 =
@@ -86,7 +87,7 @@ let _menhir_action_4 =
     
 # 25 "demos/calc-mini/parser.mly"
     ( e1 * e2 )
-# 90 "demos/calc-mini/parser.ml"
+# 91 "demos/calc-mini/parser.ml"
     
 
 let _menhir_action_5 =
@@ -95,7 +96,7 @@ let _menhir_action_5 =
     
 # 15 "demos/calc-mini/parser.mly"
     ( e )
-# 99 "demos/calc-mini/parser.ml"
+# 100 "demos/calc-mini/parser.ml"
     
 
 let _menhir_print_token : token -> string =
@@ -159,7 +160,7 @@ include struct
           _menhir_run_02_spec_01 _menhir_stack _menhir_lexbuf _menhir_lexer _v
       | _ ->
           (* Initiating error handling *)
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_02_spec_01 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_LPAREN -> _ -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer _v ->
@@ -186,7 +187,7 @@ include struct
           _menhir_run_07 _menhir_stack _menhir_lexbuf _menhir_lexer
       | _ ->
           (* Initiating error handling *)
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_04 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_expr -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer ->
@@ -201,7 +202,7 @@ include struct
           _menhir_run_02_spec_04 _menhir_stack _menhir_lexbuf _menhir_lexer _v
       | _ ->
           (* Initiating error handling *)
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_02_spec_04 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_expr -> _ -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer _v ->
@@ -249,7 +250,7 @@ include struct
           _menhir_run_11 _menhir_stack
       | _ ->
           (* Initiating error handling *)
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_07 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_expr -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer ->
@@ -264,7 +265,7 @@ include struct
           _menhir_run_02_spec_07 _menhir_stack _menhir_lexbuf _menhir_lexer _v
       | _ ->
           (* Initiating error handling *)
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_02_spec_07 : type  ttv_stack. (ttv_stack, _menhir_box_main) _menhir_cell1_expr -> _ -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer _v ->
@@ -291,7 +292,7 @@ include struct
           _menhir_goto_expr _menhir_stack _menhir_lexbuf _menhir_lexer _v _menhir_s _tok
       | _ ->
           (* Initiating error handling *)
-          raise _eRR
+          _eRR ()
   
   and _menhir_run_06 : type  ttv_stack. ((ttv_stack, _menhir_box_main) _menhir_cell1_LPAREN, _menhir_box_main) _menhir_cell1_expr -> _ -> _ -> _menhir_box_main =
     fun _menhir_stack _menhir_lexbuf _menhir_lexer ->
@@ -329,7 +330,7 @@ include struct
           _menhir_run_02_spec_00 _menhir_stack _menhir_lexbuf _menhir_lexer _v
       | _ ->
           (* Initiating error handling *)
-          raise _eRR
+          _eRR ()
   
 end
 
