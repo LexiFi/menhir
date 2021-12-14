@@ -1429,7 +1429,7 @@ let errorbody s =
       match rewind s with
       | Die ->
           can_die := true;
-          call_stop
+          call_stop (Lr1.number s)
       | DownTo (w, st) ->
           let _, pat = fold_left errorcellparams (0, PVar stack) w in
           blet (

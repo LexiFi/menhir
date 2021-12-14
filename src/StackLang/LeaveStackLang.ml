@@ -627,8 +627,8 @@ let rec compile_block block =
   | IDead `Dynamic ->
       call_assertfalse
 
-  | IStop _s ->
-      call_stop
+  | IStop s ->
+      call_stop s
 
   | IReturn (nt, v) ->
       (* Box the return value in a data type. This is done for type-checking

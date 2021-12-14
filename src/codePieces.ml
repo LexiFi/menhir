@@ -189,17 +189,29 @@ let destructuretokendef name codomain bindsemv branch = {
 
 (* A toplevel function [stop] raises the exception [Error]. *)
 
+(* If --exn-carries-state is passed, the exception [Error] carries an integer
+   parameter, a state number. *)
+
 let stop =
   "_eRR"
 
-let call_stop =
-  EApp (EVar stop, [EUnit])
+let call_stop (s : int) =
+  if Settings.exn_carries_state then
+    EApp (EVar stop, [EIntConst s])
+  else
+    EApp (EVar stop, [EUnit])
 
-let stopdef = {
-  valpublic = false;
-  valpat = PVar stop;
-  valval = EFun ([PWildcard], ERaise (EData (Interface.excname, [])))
-}
+let stopdef =
+  let s = "_s" in
+  let args = if Settings.exn_carries_state then [ EVar s ] else [] in
+  {
+    valpublic = false;
+    valpat = PVar stop;
+    valval =
+      EFun ([PVar s],
+        ERaise (EData (Interface.excname, args))
+      )
+  }
 
 (* ------------------------------------------------------------------------ *)
 

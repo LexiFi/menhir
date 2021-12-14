@@ -19,10 +19,21 @@ open CodeBits
 let excname =
   "Error"
 
-let excdef = {
-  excname = excname;
-  exceq = (if Settings.fixedexc then Some "Parsing.Parse_error" else None);
-}
+(* If --fixed-exception is passed, then the exception [Error] is defined as
+   a synonym for [Parsing.Parse_error]. *)
+
+let exceq =
+  if Settings.fixedexc then Some "Parsing.Parse_error" else None
+
+(* If --exn-carries-state is passed, the exception [Error] carries an integer
+   parameter, a state number. This information can be exploited by the caller
+   to select a suitable syntax error message. *)
+
+let excparams =
+  if Settings.exn_carries_state then [ tint ] else []
+
+let excdef =
+  { excname; exceq; excparams }
 
 (* -------------------------------------------------------------------------- *)
 

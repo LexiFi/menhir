@@ -90,7 +90,12 @@ val destructuretokendef: string -> typ -> bool -> (Terminal.t -> expr) -> valdef
 
 (* A toplevel function [stop] raises the exception [Error]. *)
 
-val call_stop: expr
+(* If --exn-carries-state is passed, the exception [Error] carries an integer
+   parameter, a state number. This state number must be passed as an argument
+   to [call_stop]. In the absence of --exn-carries-state, [call_stop] ignores
+   its argument. *)
+
+val call_stop: int -> expr
 
 (* ------------------------------------------------------------------------ *)
 
