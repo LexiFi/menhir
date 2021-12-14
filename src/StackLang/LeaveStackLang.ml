@@ -322,7 +322,8 @@ let statetypedef =
 
   (* Construct the data constructors. *)
   let datadefs =
-    Tag.Map.fold (fun tag { stack; final } datadefs ->
+    Tag.Map.bindings program.states |>
+    List.map begin fun (tag, { stack; final }) ->
       let tfinal = compile_final (tvar tvfinal) final in
       {
         dataname =
@@ -344,8 +345,7 @@ let statetypedef =
         unboxed =
           false;
       }
-      :: datadefs
-    ) program.states []
+    end
   in
 
   (* Construct the type definition. *)
