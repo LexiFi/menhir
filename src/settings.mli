@@ -174,7 +174,7 @@ val coq_no_actions : bool
    productions that are never reduced, etc. should be treated as errors. *)
 val strict: bool
 
-(** This flag causes the exception [Error] should be declared equal to
+(** This flag causes the exception [Error] to be declared equal to
    [Parsing.Parse_error]. This is useful when full compatibility with
    ocamlyacc is desired. In particular, this is used when building
    Menhir itself, since Menhir is compiled first using ocamlyacc, then
