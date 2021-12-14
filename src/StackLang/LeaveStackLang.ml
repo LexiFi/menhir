@@ -429,12 +429,46 @@ let actionbody prod =
     Action.to_il_expr action
   )
 
+(* [must_not_return e msg] has the same semantics as [e] if [e] raises
+   an exception or aborts the program. If [e] returns a value, then
+   [must_not_return e msg] prints the message [msg] and causes a
+   dynamic assertion failure. *)
+
+let must_not_return e msg =
+  ELet (
+    [
+      PWildcard, e;
+      PUnit, EApp (EVar "prerr_string", [EStringConst msg]);
+    ],
+    eassert efalse
+  )
+
+(* In the simplified strategy, a production that contains the [error] token
+   is not allowed to terminate normally: it must abort the parser by raising
+   an exception. We check this at runtime, and if this check fails, we blame
+   the user. *)
+
+(* For the moment, this is done only here, in the new code back-end, but it
+   could in principle be done uniformly for every back-end. *)
+
+let blame prod =
+  sprintf
+    "Menhir: misuse: the semantic action associated with the production\n\
+     %s\n\
+     is expected to abort the parser, but does not do so.\n"
+    (Production.print prod)
+
 let actiondef prod =
   let action = Production.action prod in
   def (actionname prod) (
     EFun (
       pactionparams action,
-      actionbody prod
+      if Production.error_free prod then
+        (* The usual case. *)
+        actionbody prod
+      else
+        (* An error production is not allowed to terminate normally. *)
+        must_not_return (actionbody prod) (blame prod)
   ))
 
 let call_action prod action =
