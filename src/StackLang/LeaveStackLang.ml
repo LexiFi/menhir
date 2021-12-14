@@ -798,12 +798,16 @@ let celltypedefs =
 
 (* The main program. This is the complete generated parser. *)
 
-(* We disable the "fragile match warning" (4) and the "unused rec flag"
-   warning (39) in the heart of the parser, that is, in the [blocks] that
-   correspond to the StackLang program. This does not affect the OCaml code
-   fragments written by the user; the prelude, postlude, and semantic actions
-   lie outside of this area. We could disable other warnings as well if
-   desired. *)
+(* We disable the following OCaml warnings in the heart of the parser, that is,
+   in the [blocks] that correspond to the StackLang program:
+
+     "fragile match" (4)
+     "unused data constructor" (37)
+     "unused rec flag" (39)
+
+   This does not affect the OCaml code fragments written by the user;
+   the prelude, postlude, and semantic actions lie outside of this area.
+   We could disable other warnings as well if desired. *)
 
 open BasicSyntax
 
@@ -826,7 +830,7 @@ let program =
       if1 Settings.trace (valdef discarddef) @
 
       SIInclude (MStruct (
-        SIAttribute ("ocaml.warning", "-4-39") ::
+        SIAttribute ("ocaml.warning", "-4-37-39") ::
         blocks
       )) ::
 
