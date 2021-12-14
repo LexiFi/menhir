@@ -181,6 +181,11 @@ val strict: bool
    using Menhir. *)
 val fixedexc: bool
 
+(**This flag causes the exception [Error] to carry an integer state.
+   This is the state where a syntax error is detected.
+   This feature is supported only by the new code back-end. *)
+val exn_carries_state: bool
+
 (** This is a set of tokens which may be unused and about which we should not
    emit a warning. *)
 val ignored_unused_tokens: StringSet.t

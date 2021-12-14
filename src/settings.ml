@@ -244,6 +244,9 @@ let strict =
 let fixedexc =
   ref false
 
+let exn_carries_state =
+  ref false
+
 type suggestion =
   | SuggestNothing
   | SuggestCompFlags
@@ -407,6 +410,7 @@ let options = Arg.align [
   "--echo-errors", Arg.String set_echo_errors, "<filename> Echo the sentences in a .messages file";
   "--echo-errors-concrete", Arg.String set_echo_errors_concrete, "<filename> Echo the sentences in a .messages file";
   "--error-recovery", Arg.Set recovery, " (no longer supported)";
+  "--exn-carries-state", Arg.Set exn_carries_state, " Declares exception Error of int";
   "--explain", Arg.Set explain, " Explain conflicts in <basename>.conflicts";
   "--external-tokens", Arg.String codeonly, "<module> Import token type definition from <module>";
   "--fixed-exception", Arg.Set fixedexc, " Declares Error = Parsing.Parse_error";
@@ -576,6 +580,23 @@ let strategy =
 
 (* ------------------------------------------------------------------------- *)
 
+(* [--exn-carries-state] is supported only by the new code back-end,
+   and is incompatible with [--fixed-exception]. *)
+
+let () =
+  if !exn_carries_state
+  && backend <> `NewCodeBackend then
+    error
+      "Error: --exn-carries-state is supported only by the code back-end.\n"
+
+let () =
+  if !exn_carries_state
+  && !fixedexc then
+    error
+      "Error: --fixed-exception and --exn-carries-state are incompatible.\n"
+
+(* ------------------------------------------------------------------------- *)
+
 (* Menhir is able to suggest compile and link flags to be passed to the
    OCaml compilers. If required, do so and stop. *)
 
@@ -723,6 +744,9 @@ let strict =
 
 let fixedexc =
   !fixedexc
+
+let exn_carries_state =
+  !exn_carries_state
 
 let ignored_unused_tokens =
   !ignored_unused_tokens
