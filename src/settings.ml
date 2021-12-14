@@ -10,6 +10,9 @@
 
 open Printf
 
+let error format =
+  ksprintf (fun s -> prerr_string s; exit 1) format
+
 (* ------------------------------------------------------------------------- *)
 (* Prepare for parsing the command line. *)
 
@@ -281,9 +284,8 @@ let set_list_errors_algorithm (algorithm: string) : unit =
     | "classic"  -> `Classic
     | "validate" -> `Validate
     | algorithm ->
-      eprintf "Error: --list-errors-algorithm should be followed with \
-               fast | classic | validate (got %S).\n" algorithm;
-      exit 1
+        error "Error: --list-errors-algorithm should be followed with \
+               fast | classic | validate (got %S).\n" algorithm
   in
   list_errors_algorithm := algorithm
 
@@ -366,8 +368,7 @@ let set_strategy = function
   | "simplified" ->
       strategy := `Simplified
   | _ ->
-      eprintf "Error: --strategy should be followed with legacy | simplified.\n";
-      exit 1
+      error "Error: --strategy should be followed with legacy | simplified.\n"
 
 let stacklang_dump =
   ref false
@@ -569,10 +570,9 @@ let strategy =
       `Legacy
   | (`Legacy as strategy), `NewCodeBackend
   | (`Simplified as strategy), `OldCodeBackend ->
-      eprintf "Error: the %s does not allow --strategy %s.\n"
+      error "Error: the %s does not allow --strategy %s.\n"
         (print_backend backend)
-        (print_strategy strategy);
-      exit 1
+        (print_strategy strategy)
 
 (* ------------------------------------------------------------------------- *)
 
@@ -749,10 +749,9 @@ let compare_errors =
   | [ filename2; filename1 ] -> (* LIFO *)
       Some (filename1, filename2)
   | _ ->
-      eprintf
+      error
         "To compare two .messages files, please use:\n\
-         --compare-errors <filename1> --compare-errors <filename2>.\n";
-      exit 1
+         --compare-errors <filename1> --compare-errors <filename2>.\n"
 
 let merge_errors =
   match !merge_errors with
@@ -761,10 +760,9 @@ let merge_errors =
   | [ filename2; filename1 ] -> (* LIFO *)
       Some (filename1, filename2)
   | _ ->
-      eprintf
+      error
         "To merge two .messages files, please use:\n\
-         --merge-errors <filename1> --merge-errors <filename2>.\n";
-      exit 1
+         --merge-errors <filename1> --merge-errors <filename2>.\n"
 
 let update_errors =
   !update_errors
