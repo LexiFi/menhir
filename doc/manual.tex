@@ -53,13 +53,12 @@
 \section{Foreword}
 
 \menhir is a parser generator. It turns high-level grammar specifications,
-decorated with semantic actions expressed in the \ocaml programming
-language~\cite{ocaml}, into parsers, again expressed in \ocaml. It is
-based on Knuth's LR(1) parser construction technique~\cite{knuth-lr-65}. It is
-strongly inspired by its precursors: \yacc~\cite{johnson-yacc-79},
-\texttt{ML-Yacc}~\cite{tarditi-appel-00}, and \ocamlyacc~\cite{ocaml},
-but offers a large number of minor and major improvements that make it a more
-modern tool.
+decorated with ``semantic actions'' (fragments of executable code), into
+parsers. It is based on Knuth's LR(1) parser construction
+technique~\cite{knuth-lr-65}. It is strongly inspired by its precursors:
+\yacc~\cite{johnson-yacc-79}, \texttt{ML-Yacc}~\cite{tarditi-appel-00}, and
+\ocamlyacc~\cite{ocaml}, but offers a large number of minor and major
+improvements that make it a more modern tool.
 
 This brief reference manual explains how to use \menhir. It does not attempt to
 explain context-free grammars, parsing, or the LR technique. Readers who have
@@ -68,6 +67,38 @@ first~\cite{aho-86,appel-tiger-98,hopcroft-motwani-ullman-00}. They are also
 invited to have a look at the \distrib{demos} directory in \menhir's
 distribution.
 
+\paragraph*{Back-ends}
+Menhir currently offers a choice between several ``back-ends'':
+\begin{itemize}
+\item When the ``code'' back-end is used,
+      the semantic actions are fragments of OCaml code,
+      and the parser produced by \menhir is a stand-alone piece of OCaml code.
+      The grammar must be placed in a file whose name ends with \mly,
+      such as \texttt{parser.mly}, and \menhir produces
+      a parser whose implementation and interface are stored in the files
+      \texttt{parser.ml} and \texttt{parser.mli}.
+      The code back-end is the default back-end.
+\item When the ``table'' back-end is used,
+      the semantic actions are fragments of OCaml code,
+      and the parser produced by \menhir is a piece of OCaml code
+      that needs to be linked with the library \menhirlib.
+      The grammar must be placed in a file whose name ends with \mly,
+      such as \texttt{parser.mly}, and \menhir produces
+      a parser whose implementation and interface are stored in the files
+      \texttt{parser.ml} and \texttt{parser.mli}.
+      The table back-end is selected by passing \otable on the command line.
+\item When the ``Coq'' back-end is used,
+      the semantic actions are fragments of Coq code,
+      and the parser produced by \menhir is a piece of Coq code
+      that contains not only a parser,
+      but also a proof that this parser is correct and complete
+      with respect to the grammar.
+      The grammar must be placed in a file whose name ends with \vy,
+      such as \texttt{parser.vy}, and \menhir produces
+      \texttt{parser.v}.
+\end{itemize}
+
+\paragraph*{Caveat}
 Potential users of \menhir should be warned that \menhir's feature set is not
 completely stable. There is a tension between preserving a measure of
 compatibility with \ocamlyacc, on the one hand, and introducing new ideas, on
