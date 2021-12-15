@@ -35,6 +35,26 @@
     the `error` token**. Support for the `error` token may be removed
     entirely at some point in the future.
 
+  The original code back-end, which has been around since the early days of
+  Menhir (2005), temporarily remains available (using `--code-ancient`). It
+  will be removed at some point in the future.
+
+  The new code back-end offers several levels of optimization, which remain
+  undocumented and are subject to change in the future. At present, the main
+  levels are roughly as follows:
+
+  - `-O 0 --represent-everything` uses a uniform representation of the stack
+    and produces straightforward code.
+  - `-O 0` uses a non-uniform representation of the stack; some stack cells
+    have fewer fields; some stack cells disappear altogether.
+  - `-O 1` reduces memory traffic by moving `PUSH` operations so that they
+    meet `POP` operations and cancel out.
+  - `-O 2` optimizes the reduction of unit productions (that is, productions
+    whose right-hand side has length 1) by performing a limited amount of
+    code specialization.
+
+  The default level of optimization is the maximum level, `-O 2`.
+
 * The `$syntaxerror` keyword is no longer supported.
 
 ## 2021/11/28
