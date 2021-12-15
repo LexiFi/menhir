@@ -2,10 +2,38 @@
 
 ## 2021/12/YY
 
-* A new "code" back-end, which produces efficient and well-typed OCaml
-  code, has been introduced.
+* The code back-end has been rewritten from the ground up by Émile Trotignon
+  and François Pottier, and now produces efficient and **well-typed** OCaml
+  code. The infamous `Obj.magic` is not used any more.
 
-## 2021/12/XX
+  The table back-end and the Coq back-end are unaffected by this change.
+
+  The main side effects of this change are as follows:
+
+  - The code back-end now needs type information. This means that
+    *either* Menhir's type inference mechanism must be enabled
+             (the easiest way of enabling it is to let `dune` invoke Menhir)
+    *or* the type of every nonterminal symbol must be
+         explicitly given via a `%type` declaration.
+
+  - The code back-end now adheres to the *simplified* error-handling strategy,
+    as opposed to the *legacy* strategy.
+
+    For grammars that do *not* use the `error` token, this makes no difference.
+
+    For grammars that use the `error` token in the limited way permitted by
+    the simplified strategy, this makes no difference either. The simplified
+    strategy makes the following requirement: the `error` token should always
+    appear at the end of a production, whose semantic action should abort the
+    parser by raising an exception.
+
+    Grammars that make more complex use of the `error` token, and therefore
+    need the `legacy` strategy, cannot be compiled by the new code back-end.
+    As a workaround, it is possible to switch to the table back-end (using
+    `--table --strategy legacy`) or to the ancient code back-end (using
+    `--code-ancient`). **In the long run, we recommend abandoning the use of
+    the `error` token**. Support for the `error` token may be removed
+    entirely at some point in the future.
 
 * The `$syntaxerror` keyword is no longer supported.
 
