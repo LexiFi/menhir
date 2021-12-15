@@ -28,6 +28,8 @@ code).
 A second back-end (producing OCaml tables, and relying on the interpreter in
 the `menhirLib` library) was implemented in 2008. An initial implementation by
 Raja Boujbel and Guillaume Bau was completed and polished by François Pottier.
+This project was generously funded by Jane Street Capital, LLC through the
+``OCaml Summer Project'' initiative.
 
 A third back-end (producing Coq tables, and relying on a verified validator
 and a verified interpreter in the `coq-menhirlib` library) was implemented in
@@ -35,6 +37,9 @@ and a verified interpreter in the `coq-menhirlib` library) was implemented in
 
 The incremental API, the inspection API, the notion of *attribute*, and the
 library `MenhirSdk` were contributed between 2014 and 2017 by Frédéric Bour.
+\href{https://github.com/ocaml/merlin}{Merlin}, an emacs mode for \ocaml,
+contains an impressive incremental, syntax-error-tolerant \ocaml parser,
+which has been a driving force for \menhir's APIs.
 
 The switch to the `dune` build system was made in 2019 with the help of
 Nicolás Ojeda Bär.
