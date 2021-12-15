@@ -43,6 +43,10 @@ The reachability algorithm behind `menhir --list-errors` was implemented in
 2015 by François Pottier. A much faster algorithm was contributed in 2021 by
 Frédéric Bour.
 
+The new code back-end, which produces efficient and well-typed OCaml code, was
+implemented throughout the year 2021 by Émile Trotignon and François Pottier.
+It relies on a new intermediate language, StackLang.
+
 Today, the principal maintainer of Menhir is François Pottier.
 
 The intellectual property of Menhir (including the OCaml libraries `menhirLib`
