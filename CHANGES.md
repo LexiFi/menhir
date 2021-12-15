@@ -16,7 +16,7 @@
     *or* the type of every nonterminal symbol must be
          explicitly given via a `%type` declaration.
 
-  - The code back-end no longer allows the type of a start symbol to be an
+  - The code back-end no longer allows the type of any symbol to be an
     open polymorphic variant type, such as ```[> `A ]```. As a workaround,
     we suggest using a closed polymorphic variant instead.
 
