@@ -379,12 +379,12 @@ end-of-stream conflicts, and missing token aliases.
 
 \docswitch{\oo{suggest-*}} See \sref{sec:build}.
 
-\docswitch{\otable} This switch causes \menhir to use its table-based
-back-end, as opposed to its (default) code-based back-end. When \otable is
-used, \menhir produces significantly more compact and somewhat slower parsers.
-See \sref{sec:qa} for a speed comparison.
+\docswitch{\otable} This switch causes \menhir to use the table back-end, as
+opposed to the code back-end, which is the default. When \otable is used,
+\menhir produces significantly more compact and somewhat slower parsers. See
+\sref{sec:qa} for a speed comparison.
 
-The table-based back-end produces rather compact tables, which are analogous
+The table back-end produces rather compact tables, which are analogous
 to those produced by \yacc, \bison, or \ocamlyacc. These tables are not quite
 stand-alone: they are exploited by an interpreter, which is shipped as part of
 the support library \menhirlib. For this reason, when \otable is used,
@@ -392,11 +392,11 @@ the support library \menhirlib. For this reason, when \otable is used,
 into your executable program. The \texttt{--suggest-*} switches, described
 above, help do this.
 
-The code-based back-end compiles the LR automaton directly into a nest of
+The code back-end compiles the LR automaton directly into a nest of
 mutually recursive \ocaml functions. In that case, \menhirlib is not required.
 
 The incremental API (\sref{sec:incremental}) and the inspection API
-(\sref{sec:inspection}) are made available only by the table-based back-end.
+(\sref{sec:inspection}) are made available only by the table back-end.
 
 \docswitch{\otimings} This switch causes internal timing information to
 be sent to the standard error channel.
@@ -4420,7 +4420,8 @@ This material should be of interest only to authors of build systems
 who wish to build support for \menhir into their system.
 %
 Ordinary users should skip this section and use a build system that knows
-about \menhir, such as \hyperlink{dune}{\dune} (preferred) or \ocamlbuild.
+about \menhir, such as \hyperlink{dune}{\dune} (preferred; \sref{sec:dune})
+or \ocamlbuild.
 
 \subsection{\ocaml type inference and dependency analysis}
 \label{sec:build:infer}
@@ -4735,6 +4736,7 @@ The list is roughly sorted by decreasing order of importance.
 
 \section{Questions and Answers}
 \label{sec:qa}
+\label{sec:dune}
 
 $\mathstrut$ % Ensure correct indentation of the first question. Ugly.
 
@@ -4758,7 +4760,7 @@ or \ocamlbuild.
 Pass \verb+-use-menhir+ to \ocamlbuild.
 To pass options to \menhir,
 pass \verb+-menhir "menhir <options>"+ to \ocamlbuild.
-To use \menhir's table-based back-end,
+To use \menhir's table back-end,
 pass \verb+-menhir "menhir --table"+ to \ocamlbuild,
 and either
 pass \verb+-package menhirLib+ to \ocamlbuild
@@ -4902,17 +4904,19 @@ deep.
 % definition, and will end up unintentionally redefining the meaning of *.
 
 \question{Can I ship a generated parser while avoiding a dependency on \menhirlib?}
-Yes. One option is to use the code-based back-end (that is, to not
+Yes. One option is to use the code back-end (that is, to not
 use \otable). In this case, the generated parser is self-contained. Another
-option is to use the table-based back-end (that is, use \otable) and include a
+option is to use the table back-end (that is, use \otable) and include a
 copy of the files \verb+menhirLib.{ml,mli}+ together with the generated
 parser. The command \texttt{menhir \osuggestmenhirlib} will tell you where to
 find these source files.
 
-\question{Why is \texttt{\$startpos} off towards the left? It seems to include some leading whitespace.}
-Indeed, as of 2015/11/04, the computation of positions has changed so as to match \ocamlyacc's
-behavior. As a result, \texttt{\$startpos} can now appear to be too far off to the left. This is explained
-in \sref{sec:positions}. In short, the solution is to use \verb+$symbolstartpos+ instead.
+\question{Why is \texttt{\$startpos} off towards the left? It seems to include
+  some leading whitespace.} Indeed, as of 2015/11/04, the computation of
+positions has changed so as to match \ocamlyacc's behavior. As a result,
+\texttt{\$startpos} can now appear to be too far off to the left. This is
+explained in \sref{sec:positions}. A solution may be to use
+\verb+$symbolstartpos+ instead.
 
 \question{Can I pretty-print a grammar in ASCII, HTML, or \LaTeX{} format?}
 Yes. Have a look at \texttt{obelisk} \cite{obelisk}.
@@ -4948,10 +4952,12 @@ factoring out an error matrix, as suggested by Dencker, Dürre, and
 Heuft~\cite{dencker-84}.
 
 The type-theoretic tricks that triggered our interest in LR
-parsers~\cite{pottier-regis-gianas-typed-lr} are not implemented in \menhir.
-In the beginning, we did not implement them because the \ocaml compiler did
-not at the time offer generalized algebraic data types (GADTs). Today, \ocaml
-has GADTs, but, as the saying goes, ``if it ain't broken, don't fix it''.
+parsers~\cite{pottier-regis-gianas-typed-lr} are implemented
+in \menhir's code back-end. (It took 16 years, from the initial
+idea in 2005 to the re-implementation of the code back-end in 2021.)
+A generalized algebraic data type (GADT) is used to describe the
+shape of the stack and the relationship that exists between the
+shape of the stack and the current state of the automaton.
 
 The main ideas behind the Coq back-end are described in a paper by Jourdan,
 Pottier and Leroy~\cite{jourdan-leroy-pottier-12}. The C11 parser in the
@@ -4961,13 +4967,14 @@ Menhir is described by Jourdan and Pottier~\cite{jourdan-pottier-17}.
 
 The approach to error reports presented in \sref{sec:errors:new} was
 proposed by Jeffery~\cite{jeffery-03} and further explored by
-Pottier~\cite{pottier-reachability-cc-2016}.
+Pottier~\cite{pottier-reachability-cc-2016} and by
+Bour and Pottier~\cite{bour-pottier-21}.
 
 % ------------------------------------------------------------------------------
 
 \section{Acknowledgements}
 
-\menhir's interpreter (\ointerpret) and table-based back-end (\otable) were
+\menhir's interpreter (\ointerpret) and table back-end (\otable) were
 implemented by Guillaume Bau, Raja Boujbel, and François Pottier. The project
 was generously funded by Jane Street Capital, LLC through the ``OCaml Summer
 Project'' initiative.
