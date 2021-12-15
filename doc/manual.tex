@@ -3385,8 +3385,11 @@ In error handling mode, the parser behaves as follows:
   action takes place. Under the \legacy strategy, the parser then
   reads the next token and returns to normal mode. Under the
   simplified strategy, it does \emph{not} request the next token, so
-  the current token remains \error, and the parser remains in error handling
-  mode.
+  the current token remains \error, and the parser remains in error-handling
+  mode.%
+  \footnote{In the simplified strategy, once the parser enters error-handling
+  mode, it remains in error-handling mode forever. Thus, the input stream is
+  effectively discarded and replaced with an infinite stream of \error tokens.}
 \item If the current state has a reduce action on the \error token, then this
   action takes place. (This behavior differs from that of \yacc and
   \ocamlyacc, which do not reduce on \error. It is somewhat unclear why not.)
