@@ -430,12 +430,6 @@ export:
 # There are two opam packages: one for menhir (part of the OCaml opam
 # repository) and one for coq-menhirlib (part of the Coq opam repository).
 
-# You need a version of opam-publish that supports --packages-directory:
-#   git clone git@github.com:fpottier/opam-publish.git
-#   cd opam-publish
-#   git checkout 2.0
-#   opam pin add opam-publish.dev .
-
 # The following command should have been run once:
 #   opam publish repo add opam-coq-archive coq/opam-coq-archive
 
