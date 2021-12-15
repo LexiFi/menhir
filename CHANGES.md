@@ -1,6 +1,6 @@
 # Changes
 
-## 2021/12/YY
+## 2021/12/15
 
 * The code back-end has been rewritten from the ground up by Émile Trotignon
   and François Pottier, and now produces efficient and **well-typed** OCaml
@@ -15,6 +15,10 @@
              (the easiest way of enabling it is to let `dune` invoke Menhir)
     *or* the type of every nonterminal symbol must be
          explicitly given via a `%type` declaration.
+
+  - The code back-end no longer allows the type of a start symbol to be an
+    open polymorphic variant type, such as ```[> `A ]```. As a workaround,
+    we suggest using a closed polymorphic variant instead.
 
   - The code back-end now adheres to the *simplified* error-handling strategy,
     as opposed to the *legacy* strategy.
