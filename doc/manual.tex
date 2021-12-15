@@ -4431,7 +4431,7 @@ according to the \ocaml type discipline, and their types should be known to
 needs to know the \ocaml type of every nonterminal symbol.)
 %
 To address this problem, three approaches exist:
-\begin{itemize}
+\begin{enumerate}
 \item Ignore the problem and let \menhir run without \ocaml type information
       (\sref{sec:build:infer:none}).
 \item Let \menhir obtain \ocaml type information
@@ -4440,7 +4440,9 @@ To address this problem, three approaches exist:
 \item Let \menhir request and receive \ocaml type information
       without invoking the \ocaml compiler
       (\sref{sec:build:infer:indirect}).
-\end{itemize}
+\end{enumerate}
+%
+\dune follows the third approach behind the scenes.
 
 \subsubsection{Running without \ocaml type information}
 \label{sec:build:infer:none}
@@ -4466,9 +4468,14 @@ The drawbacks of this approach are as follows:
       % reported inside Menhir's standard library, whereas when --infer is
       % used, we place the standard library first, so as to ensure that no
       % type error is found inside it. (See [infer.ml].)
-\item Unless a \dtype declaration for every nonterminal symbol is
-      given, the inspection API cannot be generated, that is,
-      \oinspection must be turned off.
+\item Unless the type of every nonterminal symbol is given
+      (via a \dtype declaration),
+      some features of \menhir are disabled.
+      The main features that require type information are
+      the code back-end
+      % (the new one)
+      and
+      the inspection API.
 \end{itemize}
 
 \subsubsection{Obtaining \ocaml type information by calling the \ocaml compiler}
