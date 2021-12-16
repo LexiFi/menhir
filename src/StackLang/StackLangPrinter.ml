@@ -115,8 +115,10 @@ let patterns ps =
 
 let primitive prim =
   match prim with
-  | PrimLexerCall rs ->
-      string "<lexer call>" ^^ concat_map (fun r -> space ^^ value r) rs
+  | PrimLexerCall [ lexer; lexbuf ] ->
+      value lexer ^^ parens (value lexbuf)
+  | PrimLexerCall _ ->
+      assert false
   | PrimOCamlFieldAccess (v, f) ->
       value v ^^ dot ^^ string f
   | PrimOCamlAction (bs, _prod, _action) ->
