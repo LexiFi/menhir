@@ -19,15 +19,25 @@ module P = Dot.Print (struct
     sprintf "s%d" (Lr1.number node)
 
   let successors (f : ?style:Dot.style -> label:string -> vertex -> unit) source =
-    SymbolMap.iter (fun symbol target ->
-      let label = Symbol.print false symbol in
+    SymbolMap.iter (fun _symbol target ->
+      let label = "" in
       f ~label target
     ) (Lr1.transitions source)
 
   let iter (f : ?shape:Dot.shape -> ?style:Dot.style -> label:string -> vertex -> unit) =
     Lr1.iter (fun node ->
-      let label = sprintf "%d" (Lr1.number node) in
-      f ~label node
+      let label =
+        match Lr1.incoming_symbol node with
+        | None ->
+            sprintf "%d" (Lr1.number node)
+        | Some nt ->
+            (* The incoming symbol and the node number,
+               stacked vertically. *)
+            sprintf "{%s|%d}"
+              (Symbol.print false nt)
+              (Lr1.number node)
+      in
+      f ~shape:Dot.Record ~label node
     )
 
 end)
