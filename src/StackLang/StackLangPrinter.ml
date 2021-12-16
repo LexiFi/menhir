@@ -73,7 +73,7 @@ let cell cell =
   bit (holds_state cell)
 
 let sharpcell c =
-  space ^^ sharp ^^ space ^^ cell c
+  space ^^ at ^^ space ^^ cell c
 
 let final final =
   match final with
