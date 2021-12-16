@@ -19,9 +19,15 @@ module P = Dot.Print (struct
     sprintf "s%d" (Lr1.number node)
 
   let successors (f : ?style:Dot.style -> label:string -> vertex -> unit) source =
-    SymbolMap.iter (fun _symbol target ->
-      let label = "" in
-      f ~label target
+    SymbolMap.iter (fun symbol target ->
+      (* Shift transitions are solid; goto transitions are dashed. *)
+      let style = if Symbol.is_terminal symbol then Dot.Solid else Dot.Dashed in
+      (* Edges are unlabeled, because it is more economical to
+         place the edge label in the target node. Some whitespace
+         is artificially placed in the label to obtain better
+         placement of nodes and edges. *)
+      let label = "        " in
+      f ~style ~label target
     ) (Lr1.transitions source)
 
   let iter (f : ?shape:Dot.shape -> ?style:Dot.style -> label:string -> vertex -> unit) =
