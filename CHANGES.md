@@ -1,5 +1,13 @@
 # Changes
 
+## 2021/12/XX
+
+* Document the trick of wrapping module aliases in `open struct ... end`,
+  like this: `%{ open struct module alias M = MyLongModuleName end %}`.
+  This allows you to use the short name `M` in your grammar, but forces
+  OCaml to infer types that refer to the long name `MyLongModuleName`.
+  (Suggested by Frédéric Bour.)
+
 ## 2021/12/15
 
 * The code back-end has been rewritten from the ground up by Émile Trotignon
