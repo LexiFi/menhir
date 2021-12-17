@@ -624,17 +624,34 @@ file, \emph{not} to the \mli file. Therefore, it should not contain
 declarations that affect the meaning of the types that appear in the \mli
 file. Here are two problems that people commonly run into:
 \begin{itemize}
-\item Placing an \kw{open} directive that is required for a \dtype declaration
-  to make sense. For instance, writing \verb+open Foo+ in the header and
-  declaring \verb+%type<t> bar+, where the type \verb+t+ is defined in the
-  module \verb+Foo+, will not work. You must write \verb+%type<Foo.t> bar+.
-\item Declaring a module alias that affects a (declared or inferred) type. For
-  instance, writing \verb+module F = Foo+ in the header and declaring
-  \verb+%type<Foo.t> bar+ may not work (from
-  2020/05/25 on). The reason is, OCaml may infer that the symbol \verb+bar+ has
-  type \verb+F.t+, and Menhir will rely on this information without realizing
-  that \verb+F+ is a local name, so in the end, the \mli file contains a
-  reference to \verb+F.t+ that does not make sense.
+\item
+  \textbf{Problem:} Placing an \kw{open} directive that is required for a
+  \dtype declaration to make sense. For instance, writing \verb+open Foo+ in
+  the header and declaring \verb+%type<t> bar+, where the type \verb+t+ is
+  defined in the module \verb+Foo+, will not work.
+  \par\noindent\textbf{Solution:} Write \verb+%type<Foo.t> bar+.
+\item
+  \textbf{Problem:} Declaring a module alias that affects a (declared or
+  inferred) type. For instance, placing the definition \verb+module F = Foo+
+  in the header can create a problem,
+  % from 2020/05/25 on
+  because it allows OCaml to infer that the symbol \verb+bar+ has type
+  \verb+F.t+. Menhir relies on this information without realizing that
+  \verb+F+ is a local name, so in the end, the \mli file contains a reference
+  to \verb+F.t+ that does not make sense. The problem persists even if one
+  declares \verb+%type<Foo.t> bar+, because Menhir prefers the type inferred
+  by OCaml over the type declared by the user.
+  % because of the presence of implicit type variables in certain types,
+  % such as open polymorphic variants, it may be the case that these two
+  % types are *compatible* yet the inferred type is *more specific* (and
+  % only the inferred type is sound).
+  \par\noindent\textbf{Solution:}
+  Wrap the module alias in an anonymous structure, like so:
+  \verb+open struct module F = Foo end+.
+  (This requires OCaml 4.08 or newer.)
+  % Thanks to Frédéric Bour for suggesting this!
+  This makes the name \verb+F+ available in your code,
+  but forces OCaml to prefer the name \verb+Foo+ in the types that it infers.
 \end{itemize}
 
 \subsubsection{Parameters}
@@ -4865,15 +4882,11 @@ required for type soundness.)
 %
 In the presence of a~module alias declaration such as \texttt{module F =
   Foo}, OCaml can infer types that begin with \texttt{F.} instead of
-\texttt{Foo.}, and Menhir currently does not detect that \texttt{F} is a local
+\texttt{Foo.}, and Menhir does not detect that \texttt{F} is a local
 name.
 %
-The suggested fix is to avoid placing module alias declarations in \mly files.
-%
-% fp: If people insist on using module aliases, the simplest way of supporting
-%     them would be to generate a module alias definition both in the .ml file
-%     and in the .mli file. This could be done by adding a new %module_alias
-%     declaration to Menhir.
+The fix is to place the module alias declaration
+inside \verb+open struct ... end+ (\sref{sec:decls:headers}).
 
 \question{\menhir reports \emph{more} shift/reduce conflicts than
 \ocamlyacc! How come?} \ocamlyacc sometimes merges two states
