@@ -197,7 +197,7 @@ and instruction b =
   | IStop s ->
       string "STOP " ^^ (OCaml.int s)
   | IReturn (nt, v) ->
-      string "RET  " ^^ value v ^^ sharp ^^ space ^^ final (Some nt)
+      string "RET  " ^^ value v ^^ space ^^ at ^^ space ^^ final (Some nt)
   | IJump l ->
       string "JUMP " ^^ label l
   | ICaseToken (r, _, _) ->
