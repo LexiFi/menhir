@@ -37,23 +37,10 @@
   Where else can we print tokens in concrete syntax?
   In conflict explanations?
 
-* It could be interesting to offer a way of producing a set of sentences that
-  reach every state where a production that ends with `error` is reduced.
-  (Suggested by Gabriel Scherer.) More generally, given an arbitrary
-  production, it would be interesting to produce a set of sentences that reach
-  every state where this production is reduced.
+* Given an arbitrary production, it would be interesting to produce a set of
+  sentences that reach every state where this production is reduced.
 
 * Extensions to the incremental API:
-    * Propose a new parsing loop that implements one of several error
-      handling strategies:
-        * recognize the `error` token and treat it as it is treated today;
-        * recognize the `error` token and perform reductions on it,
-          but do not discard stack cells,
-          and after shifting on `error`, stop (without asking for the
-          next token);
-        * do not recognize the `error` token; perform as many reductions
-          as possible, then stop.
-        * do not recognize the `error` token; stop immediately.
     * Expose a function `lookahead` of type `'a env -> token option`.
     * Expose `print_checkpoint`.
     * Define a printer for stacks.
@@ -85,10 +72,6 @@
 
 * Let `--compare-errors` produce a list of error messages that is sorted
   by location.
-
-* Would it make sense to *not* report conflicts on the `error` token?
-  Or to report them but consider them acceptable even in `--strict` mode?
-  (I think so. Or maybe distinguish `--strict` and `--strict-except-on-error`.)
 
 * Add a new flag `--show-stdlib` to print `standard.mly`. (Suggested by
   Gabriel Scherer.)
@@ -159,7 +142,7 @@
 
 ## Tests
 
-* Add proper test cases for `--list-errors`.
+* Add more test cases for `--list-errors`.
 
 ## Major new features
 
