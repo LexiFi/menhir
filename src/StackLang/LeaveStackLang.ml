@@ -19,8 +19,9 @@ let state = EmitStackLang.state
 (* Our target language: *)
 open IL
 open CodeBits
-let semvtype, call_stop, tokpat, tokspat, tok_bind_unit, mbasics =
-  CodePieces.(semvtype, call_stop, tokpat, tokspat, tok_bind_unit, mbasics)
+let semvtype, call_stop, tokpat, tokspat, tok_bind_unit, basics, mbasics =
+  CodePieces.(semvtype, call_stop, tokpat, tokspat, tok_bind_unit,
+              basics, mbasics)
 let print_token, call_assertfalse, printtokendef, assertfalsedef =
   CodeBackend.(print_token, call_assertfalse, printtokendef, assertfalsedef)
 let exvar (r : register) = EVar (Reg.export r)
@@ -78,6 +79,13 @@ let tag_branch tag body =
 let actionname prod =
   let prod = Misc.padded_index Production.n (Production.p2i prod) in
   prefix (sprintf "action_%s" prod)
+
+(* A type scheme for the type [token], qualified with the module name
+   [MenhirBasics], so as to avoid the risk of a capture. *)
+
+let stoken =
+  let tctoken = sprintf "%s.%s" basics TokenType.tctoken in
+  type2scheme (IL.TypApp (tctoken, []))
 
 (* -------------------------------------------------------------------------- *)
 
@@ -694,9 +702,19 @@ and def_jump bs label =
   let needed = (lookup program label).needed in
   EApp (exlab label, exvar stack :: def_regs bs (elements needed))
 
+(* In a [match] construct on a token, we run a risk that the data constructors
+   of the type [token] be hidden by the user's prologue. (This has happened in
+   practice.) Indeed, the type [token] is defined before the prologue appears,
+   and I don't think we should change that. So, to work around this problem,
+   we have two solutions: either (1) qualify every data constructor with the
+   name [MenhirBasics]; or (2) annotate the scrutinee with its type, namely
+   [MenhirBasics.token]; this lets OCaml perform type-based disambiguation.
+   This feature has been present since OCaml 4.01, so we can rely on it. We
+   choose option (2) because it is less verbose. *)
+
 and compile_casetoken r branches odefault =
   EMatch (
-    exvar r,
+    EAnnot (exvar r, stoken),
     map compile_case_token_branch branches @
     compile_default_branch odefault
   )
