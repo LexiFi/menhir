@@ -27,6 +27,10 @@
 
 ## Enhancements
 
+* If the type of a symbol is underconstrained, then type inference produces
+  a type that contains a type variable, which causes problems. It would be
+  nice to detect and report this situation.
+
 * Add `--strategy none` to guarantee that the `error` token is not used.
 
 * Offer a way of producing a de-lexer (`print_token_concrete`).
