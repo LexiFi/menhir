@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 397 distinct tests.
+;; 398 distinct tests.
 
 (rule (target JSParse.opp.out) (deps JSParse.mly)
   (action
@@ -21838,6 +21838,72 @@
   (action
     (diff opam-doc_0_9_3-info_parser_stripped.ml.log.exp
       opam-doc_0_9_3-info_parser_stripped.ml.log)))
+
+(rule (target openqasm.opp.out) (deps openqasm.mly)
+  (action
+    (with-outputs-to openqasm.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias quick) (action (diff openqasm.opp.exp openqasm.opp.out)))
+
+(rule
+  (targets openqasm.out openqasm.automaton openqasm.automaton.resolved
+    openqasm.conflicts openqasm.timings)
+  (deps openqasm.mly)
+  (action
+    (with-outputs-to openqasm.out
+      (with-accepted-exit-codes 0
+        (run menhir --table --dump --dump-resolved --explain -lg 2 -la 2 -lc
+          2 --timings-to openqasm.timings %{deps})))))
+
+(rule (alias quick) (action (diff openqasm.exp openqasm.out)))
+
+(rule (alias quick)
+  (action (diff openqasm.automaton.exp openqasm.automaton)))
+
+(rule (alias quick)
+  (action (diff openqasm.automaton.resolved.exp openqasm.automaton.resolved)))
+
+(rule (alias quick)
+  (action (diff openqasm.conflicts.exp openqasm.conflicts)))
+
+(rule (target openqasm_stripped.mly) (deps openqasm.mly)
+  (action
+    (with-stderr-to openqasm_stripped.ignored
+      (with-stdout-to openqasm_stripped.mly
+        (with-accepted-exit-codes 0
+          (run menhir --only-preprocess-uu %{deps}))))))
+
+(rule
+  (targets openqasm_stripped.log openqasm_stripped.mli openqasm_stripped.ml
+    openqasm_stripped.stacklang openqasm_stripped.timings
+    openqasm_stripped.scount openqasm_stripped.dcount)
+  (deps openqasm_stripped.mly)
+  (action
+    (with-outputs-to openqasm_stripped.log
+      (with-accepted-exit-codes 0
+        (run menhir --infer --stacklang-test --stacklang-dump -lg 2 -la 2 -lc
+          2 --timings-to openqasm_stripped.timings %{deps})))))
+
+(alias (name quick) (deps
+                      openqasm_stripped.stacklang))
+
+(rule (targets openqasm_stripped.cmi openqasm_stripped.mli.log)
+  (deps openqasm_stripped.mli)
+  (action
+    (with-stdout-to openqasm_stripped.mli.dtimings
+      (with-stderr-to openqasm_stripped.mli.log
+        (run ocamlc -w A-24 -warn-error A -dtimings -c openqasm_stripped.mli)))))
+
+(rule (targets openqasm_stripped.cmo openqasm_stripped.ml.log)
+  (deps openqasm_stripped.ml openqasm_stripped.cmi)
+  (action
+    (with-stdout-to openqasm_stripped.ml.dtimings
+      (with-stderr-to openqasm_stripped.ml.log
+        (run ocamlc -w A-24 -warn-error A -dtimings -c openqasm_stripped.ml)))))
+
+(rule (alias test)
+  (action (diff openqasm_stripped.ml.log.exp openqasm_stripped.ml.log)))
 
 (rule (target option2.opp.out) (deps option2.mly)
   (action

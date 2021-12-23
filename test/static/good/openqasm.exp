@@ -1,0 +1,132 @@
+Grammar has 23 nonterminal symbols, among which 1 start symbols.
+Grammar has 39 terminal symbols.
+Grammar has 63 productions.
+nullable(uop_or_barrier) = false
+nullable(uop) = false
+nullable(unaryop) = false
+nullable(statement) = false
+nullable(separated_nonempty_list(COMMA,exp)) = false
+nullable(separated_nonempty_list(COMMA,argument)) = false
+nullable(separated_nonempty_list(COMMA,ID)) = false
+nullable(qop) = false
+nullable(program) = true
+nullable(mainprogram) = false
+nullable(loption(separated_nonempty_list(COMMA,exp))) = true
+nullable(loption(separated_nonempty_list(COMMA,argument))) = true
+nullable(loption(separated_nonempty_list(COMMA,ID))) = true
+nullable(list(uop_or_barrier)) = true
+nullable(list(statement)) = true
+nullable(idlist) = true
+nullable(goplist) = true
+nullable(gatedecl) = false
+nullable(explist) = true
+nullable(exp) = false
+nullable(decl) = false
+nullable(argument) = false
+nullable(anylist) = true
+first(uop_or_barrier) = U ID CX BARRIER
+first(uop) = U ID CX
+first(unaryop) = TAN SQRT SIN LN EXP COS
+first(statement) = U RESET QREG OPAQUE MEASURE INCLUDE IF ID GATE CX CREG BARRIER
+first(separated_nonempty_list(COMMA,exp)) = TAN SQRT SIN REAL PI NINT MINUS LPAREN LN ID EXP COS
+first(separated_nonempty_list(COMMA,argument)) = ID
+first(separated_nonempty_list(COMMA,ID)) = ID
+first(qop) = U RESET MEASURE ID CX
+first(program) = U RESET QREG OPAQUE MEASURE INCLUDE IF ID GATE CX CREG BARRIER
+first(mainprogram) = OPENQASM
+first(loption(separated_nonempty_list(COMMA,exp))) = TAN SQRT SIN REAL PI NINT MINUS LPAREN LN ID EXP COS
+first(loption(separated_nonempty_list(COMMA,argument))) = ID
+first(loption(separated_nonempty_list(COMMA,ID))) = ID
+first(list(uop_or_barrier)) = U ID CX BARRIER
+first(list(statement)) = U RESET QREG OPAQUE MEASURE INCLUDE IF ID GATE CX CREG BARRIER
+first(idlist) = ID
+first(goplist) = U ID CX BARRIER
+first(gatedecl) = GATE
+first(explist) = TAN SQRT SIN REAL PI NINT MINUS LPAREN LN ID EXP COS
+first(exp) = TAN SQRT SIN REAL PI NINT MINUS LPAREN LN ID EXP COS
+first(decl) = QREG CREG
+first(argument) = ID
+first(anylist) = ID
+minimal(uop_or_barrier) = (* 2 *) ID SEMICOLON
+minimal(uop) = (* 2 *) ID SEMICOLON
+minimal(unaryop) = (* 1 *) SIN
+minimal(statement) = (* 2 *) ID SEMICOLON
+minimal(separated_nonempty_list(COMMA,exp)) = (* 1 *) REAL
+minimal(separated_nonempty_list(COMMA,argument)) = (* 1 *) ID
+minimal(separated_nonempty_list(COMMA,ID)) = (* 1 *) ID
+minimal(qop) = (* 2 *) ID SEMICOLON
+minimal(program) = (* 0 *)
+minimal(mainprogram) = (* 4 *) OPENQASM REAL SEMICOLON EOF
+minimal(loption(separated_nonempty_list(COMMA,exp))) = (* 0 *)
+minimal(loption(separated_nonempty_list(COMMA,argument))) = (* 0 *)
+minimal(loption(separated_nonempty_list(COMMA,ID))) = (* 0 *)
+minimal(list(uop_or_barrier)) = (* 0 *)
+minimal(list(statement)) = (* 0 *)
+minimal(idlist) = (* 0 *)
+minimal(goplist) = (* 0 *)
+minimal(gatedecl) = (* 2 *) GATE ID
+minimal(explist) = (* 0 *)
+minimal(exp) = (* 1 *) REAL
+minimal(decl) = (* 6 *) QREG ID LBRACKET NINT RBRACKET SEMICOLON
+minimal(argument) = (* 1 *) ID
+minimal(anylist) = (* 0 *)
+maximal(uop_or_barrier) = infinity
+maximal(uop) = infinity
+maximal(unaryop) = 1
+maximal(statement) = infinity
+maximal(separated_nonempty_list(COMMA,exp)) = infinity
+maximal(separated_nonempty_list(COMMA,argument)) = infinity
+maximal(separated_nonempty_list(COMMA,ID)) = infinity
+maximal(qop) = infinity
+maximal(program) = infinity
+maximal(mainprogram) = infinity
+maximal(loption(separated_nonempty_list(COMMA,exp))) = infinity
+maximal(loption(separated_nonempty_list(COMMA,argument))) = infinity
+maximal(loption(separated_nonempty_list(COMMA,ID))) = infinity
+maximal(list(uop_or_barrier)) = infinity
+maximal(list(statement)) = infinity
+maximal(idlist) = infinity
+maximal(goplist) = infinity
+maximal(gatedecl) = infinity
+maximal(explist) = infinity
+maximal(exp) = infinity
+maximal(decl) = 6
+maximal(argument) = 4
+maximal(anylist) = infinity
+follow(uop_or_barrier) = U RBRACE ID CX BARRIER
+follow(uop) = U RESET RBRACE QREG OPAQUE MEASURE INCLUDE IF ID GATE EOF CX CREG BARRIER
+follow(unaryop) = LPAREN
+follow(statement) = U RESET QREG OPAQUE MEASURE INCLUDE IF ID GATE EOF CX CREG BARRIER
+follow(separated_nonempty_list(COMMA,exp)) = RPAREN
+follow(separated_nonempty_list(COMMA,argument)) = SEMICOLON
+follow(separated_nonempty_list(COMMA,ID)) = SEMICOLON RPAREN LBRACE
+follow(qop) = U RESET QREG OPAQUE MEASURE INCLUDE IF ID GATE EOF CX CREG BARRIER
+follow(program) = EOF
+follow(mainprogram) = #
+follow(loption(separated_nonempty_list(COMMA,exp))) = RPAREN
+follow(loption(separated_nonempty_list(COMMA,argument))) = SEMICOLON
+follow(loption(separated_nonempty_list(COMMA,ID))) = SEMICOLON RPAREN LBRACE
+follow(list(uop_or_barrier)) = RBRACE
+follow(list(statement)) = EOF
+follow(idlist) = SEMICOLON RPAREN LBRACE
+follow(goplist) = RBRACE
+follow(gatedecl) = LBRACE
+follow(explist) = RPAREN
+follow(exp) = TIMES RPAREN POW PLUS MINUS DIV COMMA
+follow(decl) = U RESET QREG OPAQUE MEASURE INCLUDE IF ID GATE EOF CX CREG BARRIER
+follow(argument) = SEMICOLON COMMA ARROW
+follow(anylist) = SEMICOLON
+Built an LR(0) automaton with 140 states.
+The grammar is not SLR(1) -- 6 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 140 states.
+30 shift/reduce conflicts were silently solved.
+49 out of 140 states have a default reduction.
+The action table is 5600 entries; 322 non-zero; 302 compressed.
+The action table occupies roughly 696 bytes.
+The goto table is 3360 entries; 94 non-zero; 243 compressed.
+The goto table occupies roughly 336 bytes.
+The error table occupies roughly 736 bytes.
+The default_reduction table occupies roughly 176 bytes.
+The lhs table occupies roughly 96 bytes.
+The trace table occupies roughly 8 bytes.

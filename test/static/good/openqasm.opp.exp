@@ -1,0 +1,226 @@
+%{
+  open AST
+%}
+%start mainprogram
+%token ARROW
+%token BARRIER
+%token COMMA
+%token COS
+%token CREG
+%token CX
+%token DIV
+%token EOF
+%token EQUALS
+%token EXP
+%token GATE
+%token <string> ID
+%token IF
+%token INCLUDE
+%token LBRACE
+%token LBRACKET
+%token LN
+%token LPAREN
+%token MEASURE
+%token MINUS
+%token <int> NINT
+%token OPAQUE
+%token OPENQASM
+%token PI
+%token PLUS
+%token POW
+%token QREG
+%token RBRACE
+%token RBRACKET
+%token <float> REAL
+%token RESET
+%token RPAREN
+%token SEMICOLON
+%token SIN
+%token SQRT
+%token <string> STRING
+%token TAN
+%token TIMES
+%token U
+%left MINUS PLUS
+%left DIV TIMES
+%left UMINUS
+%right POW
+%type <AST.program> mainprogram
+%%
+
+loption_separated_nonempty_list_COMMA_ID__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_ID_
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_argument__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_argument_
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_exp__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_exp_
+    {    ( x )}
+
+list_statement_:
+  
+    {    ( [] )}
+| x = statement xs = list_statement_
+    {    ( x :: xs )}
+
+list_uop_or_barrier_:
+  
+    {    ( [] )}
+| x = uop_or_barrier xs = list_uop_or_barrier_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_ID_:
+  x = ID
+    {    ( [ x ] )}
+| x = ID _2 = COMMA xs = separated_nonempty_list_COMMA_ID_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_argument_:
+  x = argument
+    {    ( [ x ] )}
+| x = argument _2 = COMMA xs = separated_nonempty_list_COMMA_argument_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_exp_:
+  x = exp
+    {    ( [ x ] )}
+| x = exp _2 = COMMA xs = separated_nonempty_list_COMMA_exp_
+    {    ( x :: xs )}
+
+mainprogram:
+  _1 = OPENQASM _2 = REAL _3 = SEMICOLON p = program _5 = EOF
+    {                                               ( p )}
+
+program:
+  sl = list_statement_
+    {                         ( sl )}
+
+statement:
+  _1 = INCLUDE inc = STRING _3 = SEMICOLON
+    {                                                                ( Include(inc) )}
+| d = decl
+    {                                                                ( Decl(d) )}
+| gd = gatedecl _2 = LBRACE gl = goplist _4 = RBRACE
+    {                                                                ( GateDecl(gd, gl) )}
+| _1 = OPAQUE name = ID qargs = idlist _4 = SEMICOLON
+    {                                                                ( OpaqueDecl(name, [], qargs) )}
+| _1 = OPAQUE name = ID _3 = LPAREN params = idlist _5 = RPAREN qargs = idlist _7 = SEMICOLON
+    {                                                                ( OpaqueDecl(name, params, qargs) )}
+| q = qop
+    {                                                                ( Qop(q) )}
+| _1 = IF _2 = LPAREN creg = ID _4 = EQUALS n = NINT _6 = RPAREN q = qop
+    {                                                                ( If(creg, n, q) )}
+| _1 = BARRIER qargs = anylist _3 = SEMICOLON
+    {                                                                ( Barrier(qargs) )}
+
+decl:
+  _1 = QREG name = ID _3 = LBRACKET size = NINT _5 = RBRACKET _6 = SEMICOLON
+    {                                           ( QReg(name, size) )}
+| _1 = CREG name = ID _3 = LBRACKET size = NINT _5 = RBRACKET _6 = SEMICOLON
+    {                                           ( CReg(name, size) )}
+
+gatedecl:
+  _1 = GATE name = ID qargs = idlist
+    {                                                          ( (name, [], qargs) )}
+| _1 = GATE name = ID _3 = LPAREN params = idlist _5 = RPAREN qargs = idlist
+    {                                                          ( (name, params, qargs) )}
+
+goplist:
+  body = list_uop_or_barrier_
+    {                                ( body )}
+
+uop_or_barrier:
+  u = uop
+    {                              ( GUop(u) )}
+| _1 = BARRIER qargs = idlist _3 = SEMICOLON
+    {                              ( GBarrier(qargs) )}
+
+qop:
+  u = uop
+    {                                                      ( Uop(u) )}
+| _1 = MEASURE qarg = argument _3 = ARROW carg = argument _5 = SEMICOLON
+    {                                                      ( Meas(qarg, carg) )}
+| _1 = RESET qarg = argument _3 = SEMICOLON
+    {                                                      ( Reset(qarg) )}
+
+uop:
+  _1 = CX q1 = argument _3 = COMMA q2 = argument _5 = SEMICOLON
+    {                                                            ( CX(q1, q2) )}
+| _1 = U _2 = LPAREN params = explist _4 = RPAREN q = argument _6 = SEMICOLON
+    {                                                            ( U(params, q) )}
+| gname = ID qargs = anylist _3 = SEMICOLON
+    {                                                            ( Gate(gname, [], qargs) )}
+| gname = ID _2 = LPAREN params = explist _4 = RPAREN qargs = anylist _6 = SEMICOLON
+    {                                                            ( Gate(gname, params, qargs) )}
+
+anylist:
+  xs = loption_separated_nonempty_list_COMMA_argument__
+    {let al =     ( xs ) in
+                                            ( al )}
+
+idlist:
+  xs = loption_separated_nonempty_list_COMMA_ID__
+    {let il =     ( xs ) in
+                                     ( il )}
+
+argument:
+  name = ID
+    {                                  ( (name, None) )}
+| name = ID _2 = LBRACKET idx = NINT _4 = RBRACKET
+    {                                  ( (name, Some idx) )}
+
+explist:
+  xs = loption_separated_nonempty_list_COMMA_exp__
+    {let el =     ( xs ) in
+                                       ( el )}
+
+exp:
+  r = REAL
+    {                                  ( Real(r) )}
+| n = NINT
+    {                                  ( Nninteger(n) )}
+| _1 = PI
+    {                                  ( Pi )}
+| id = ID
+    {                                  ( Id(id) )}
+| e1 = exp _2 = PLUS e2 = exp
+    {                                  ( BinaryOp(Plus, e1, e2) )}
+| e1 = exp _2 = MINUS e2 = exp
+    {                                  ( BinaryOp(Minus, e1, e2) )}
+| e1 = exp _2 = TIMES e2 = exp
+    {                                  ( BinaryOp(Times, e1, e2) )}
+| e1 = exp _2 = DIV e2 = exp
+    {                                  ( BinaryOp(Div, e1, e2) )}
+| _1 = MINUS e = exp %prec UMINUS
+    {                                  ( UnaryOp(UMinus, e) )}
+| e1 = exp _2 = POW e2 = exp
+    {                                  ( BinaryOp(Pow, e1, e2) )}
+| _1 = LPAREN e = exp _3 = RPAREN
+    {                                  ( e )}
+| uo = unaryop _2 = LPAREN e = exp _4 = RPAREN
+    {                                  ( UnaryOp(uo, e) )}
+
+unaryop:
+  _1 = SIN
+    {          ( Sin )}
+| _1 = COS
+    {          ( Cos )}
+| _1 = TAN
+    {          ( Tan )}
+| _1 = EXP
+    {          ( Exp )}
+| _1 = LN
+    {          ( Ln )}
+| _1 = SQRT
+    {          ( Sqrt )}
+
+%%
