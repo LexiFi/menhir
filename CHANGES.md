@@ -12,7 +12,9 @@
 
   - The code back-end now needs type information. This means that
     *either* Menhir's type inference mechanism must be enabled
-             (the easiest way of enabling it is to let `dune` invoke Menhir)
+             (the easiest way of enabling it is to use Menhir via `dune`
+              and to check that the `dune-project` file says
+              `(using menhir 2.0)` or later)
     *or* the type of every nonterminal symbol must be
          explicitly given via a `%type` declaration.
 
