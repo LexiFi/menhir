@@ -29,7 +29,7 @@ A second back-end (producing OCaml tables, and relying on the interpreter in
 the `menhirLib` library) was implemented in 2008. An initial implementation by
 Raja Boujbel and Guillaume Bau was completed and polished by François Pottier.
 This project was generously funded by Jane Street Capital, LLC through the
-"OCaml Summer Project"" initiative.
+"OCaml Summer Project" initiative.
 
 A third back-end (producing Coq tables, and relying on a verified validator
 and a verified interpreter in the `coq-menhirlib` library) was implemented in
