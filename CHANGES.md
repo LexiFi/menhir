@@ -1,5 +1,14 @@
 # Changes
 
+## 2022/01/XX
+
+* In the new code back-end, every semantic action in the generated code is now
+  annotated with its result type. This should allow type-directed
+  disambiguation to work (in most cases) inside the semantic actions.
+  (Type-directed disambiguation works in the ancient code back-end and in the
+  table back-end, but is broken in the new code back-end in version
+  2021/12/30.)
+
 ## 2021/12/30
 
 * The code back-end has been rewritten from the ground up by Émile Trotignon
