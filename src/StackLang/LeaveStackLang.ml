@@ -410,7 +410,14 @@ let entrydef (nt : string) label defs =
    duplicating semantic actions. The OCaml compiler is free to inline these
    functions if it so desires. *)
 
-(* We do not declare the type of the semantic action; OCaml can infer it. *)
+(* It is preferable to declare the type of the semantic action (even though
+   one might think that OCaml can infer it) because this allows type-directed
+   disambiguation to take place. In 20211230, no type annotation was produced.
+   As of 20220103, we annotate just the body of the semantic action with its
+   result type. In principle, we could also annotate the parameters with their
+   type, but that would be somewhat messy (see the function [actiondef] in the
+   module Infer) and my gut feeling is that most of the time, this should not
+   be necessary. *)
 
 (* The list of all productions cannot be easily extracted from the StackLang
    program, so we obtain it by calling [Production.mapx] directly. This could
@@ -431,12 +438,22 @@ let eactionparams action =
   let xs = actionparams action in
   match xs with [] -> [EUnit] | _ -> evars xs
 
+let annotate e nt =
+  match Nonterminal.ocamltype nt with
+  | Some ty ->
+      CodeBits.annotate e (TypTextual ty)
+  | None ->
+      e
+      (* In principle, this won't happen. We check at the beginning of [Run]
+         that every nonterminal symbol has a known OCaml type. *)
+
 let actionbody prod =
-  let action = Production.action prod in
-  EComment (
+  let action = Production.action prod
+  and nt = Production.nt prod in
+  annotate (EComment (
     Production.print prod,
     Action.to_il_expr action
-  )
+  )) nt
 
 (* [must_not_return e msg] has the same semantics as [e] if [e] raises
    an exception or aborts the program. If [e] returns a value, then
