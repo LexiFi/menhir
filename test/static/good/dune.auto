@@ -1469,6 +1469,76 @@
     (diff apron_20160125-apron_parser_stripped.ml.log.exp
       apron_20160125-apron_parser_stripped.ml.log)))
 
+(rule (target asl_parser.opp.out) (deps asl_parser.mly)
+  (action
+    (with-outputs-to asl_parser.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias quick) (action (diff asl_parser.opp.exp asl_parser.opp.out)))
+
+(rule
+  (targets asl_parser.out asl_parser.automaton asl_parser.automaton.resolved
+    asl_parser.conflicts asl_parser.timings)
+  (deps asl_parser.mly)
+  (action
+    (with-outputs-to asl_parser.out
+      (with-accepted-exit-codes 0
+        (run menhir --table --dump --dump-resolved --explain -lg 2 -la 2 -lc
+          2 --timings-to asl_parser.timings %{deps})))))
+
+(rule (alias quick) (action (diff asl_parser.exp asl_parser.out)))
+
+(rule (alias quick)
+  (action (diff asl_parser.automaton.exp asl_parser.automaton)))
+
+(rule (alias quick)
+  (action
+    (diff asl_parser.automaton.resolved.exp asl_parser.automaton.resolved)))
+
+(rule (alias quick)
+  (action (diff asl_parser.conflicts.exp asl_parser.conflicts)))
+
+(rule (target asl_parser_stripped.mly) (deps asl_parser.mly)
+  (action
+    (with-stderr-to asl_parser_stripped.ignored
+      (with-stdout-to asl_parser_stripped.mly
+        (with-accepted-exit-codes 0
+          (run menhir --only-preprocess-uu %{deps}))))))
+
+(rule
+  (targets asl_parser_stripped.log asl_parser_stripped.mli
+    asl_parser_stripped.ml asl_parser_stripped.stacklang
+    asl_parser_stripped.timings asl_parser_stripped.scount
+    asl_parser_stripped.dcount)
+  (deps asl_parser_stripped.mly)
+  (action
+    (with-outputs-to asl_parser_stripped.log
+      (with-accepted-exit-codes 0
+        (run menhir --infer --stacklang-test --stacklang-dump -lg 2 -la 2 -lc
+          2 --timings-to asl_parser_stripped.timings %{deps})))))
+
+(alias (name quick) (deps
+                      asl_parser_stripped.stacklang))
+
+(rule (targets asl_parser_stripped.cmi asl_parser_stripped.mli.log)
+  (deps asl_parser_stripped.mli)
+  (action
+    (with-stdout-to asl_parser_stripped.mli.dtimings
+      (with-stderr-to asl_parser_stripped.mli.log
+        (run ocamlc -w A-24 -warn-error A -dtimings -c
+          asl_parser_stripped.mli)))))
+
+(rule (targets asl_parser_stripped.cmo asl_parser_stripped.ml.log)
+  (deps asl_parser_stripped.ml asl_parser_stripped.cmi)
+  (action
+    (with-stdout-to asl_parser_stripped.ml.dtimings
+      (with-stderr-to asl_parser_stripped.ml.log
+        (run ocamlc -w A-24 -warn-error A -dtimings -c
+          asl_parser_stripped.ml)))))
+
+(rule (alias test)
+  (action (diff asl_parser_stripped.ml.log.exp asl_parser_stripped.ml.log)))
+
 (rule (target astrada_css.opp.out) (deps astrada_css.mly)
   (action
     (with-outputs-to astrada_css.opp.out

@@ -1,0 +1,1237 @@
+File "asl_parser.mly", line 748, characters 0-11:
+Warning: symbol dummy_binop is unreachable from any of the start symbol(s).
+File "asl_parser.mly", line 786, characters 0-10:
+Warning: symbol expr_spice is unreachable from any of the start symbol(s).
+File "asl_parser.mly", line 152, characters 0-1:
+Warning: symbol l is unreachable from any of the start symbol(s).
+File "asl_parser.mly", line 522, characters 0-11:
+Warning: symbol lexpr_spice is unreachable from any of the start symbol(s).
+File "asl_parser.mly", line 488, characters 0-14:
+Warning: symbol nonempty_block is unreachable from any of the start symbol(s).
+File "asl_parser.mly", line 366, characters 0-8:
+Warning: symbol operator is unreachable from any of the start symbol(s).
+File "asl_parser.mly", line 570, characters 0-10:
+Warning: symbol stmt_spice is unreachable from any of the start symbol(s).
+File "asl_parser.mly", line 682, characters 0-5:
+Warning: symbol zexpr is unreachable from any of the start symbol(s).
+%{
+open Asl_ast
+%}
+%start declarations_start
+%start expr_command_start
+%start impdef_command_start
+%start stmt_command_start
+%token AMPERSAND
+%token AMPERSAND_AMPERSAND
+%token AND
+%token ARRAY
+%token ASSERT
+%token BANG
+%token BANG_EQ
+%token BAR_BAR
+%token BITS
+%token <string> BITSLIT
+%token CARET
+%token CASE
+%token CATCH
+%token COLON
+%token COMMA
+%token CONSTANT
+%token CONSTRAINED_UNDERSCORE_UNPREDICTABLE
+%token DEDENT
+%token DIV
+%token DO
+%token DOT
+%token DOT_DOT
+%token DOWNTO
+%token ELSE
+%token ELSIF
+%token ENUMERATION
+%token EOF
+%token EOL
+%token EOR
+%token EQ
+%token EQ_EQ
+%token EQ_GT
+%token FOR
+%token GT
+%token GT_EQ
+%token GT_GT
+%token <string> HEXLIT
+%token <string> ID
+%token IF
+%token IFF
+%token IMPLEMENTATION_UNDERSCORE_DEFINED
+%token IMPLIES
+%token IN
+%token INDENT
+%token <string> INTLIT
+%token IS
+%token LBRACE
+%token LBRACE_LBRACE
+%token LBRACK
+%token LPAREN
+%token LT
+%token LT_EQ
+%token LT_LT
+%token <string> MASKLIT
+%token MINUS
+%token MOD
+%token NOT
+%token OF
+%token OR
+%token OTHERWISE
+%token PLUS
+%token PLUS_COLON
+%token PLUS_PLUS
+%token <string> QUALIFIER
+%token QUOT
+%token RBRACE
+%token RBRACE_RBRACE
+%token RBRACK
+%token <string> REALLIT
+%token RECORD
+%token REM
+%token REPEAT
+%token RETURN
+%token RPAREN
+%token SEE
+%token SEMICOLON
+%token SLASH
+%token STAR
+%token <string> STRINGLIT
+%token THEN
+%token THROW
+%token TO
+%token TRY
+%token TYPE
+%token <string> TYPEID
+%token TYPEOF
+%token UNDEFINED
+%token UNDERSCORE_UNDERSCORE_ARRAY
+%token UNDERSCORE_UNDERSCORE_BUILTIN
+%token UNDERSCORE_UNDERSCORE_CONDITIONAL
+%token UNDERSCORE_UNDERSCORE_CONFIG
+%token UNDERSCORE_UNDERSCORE_DECODE
+%token UNDERSCORE_UNDERSCORE_ENCODING
+%token UNDERSCORE_UNDERSCORE_EVENT
+%token UNDERSCORE_UNDERSCORE_EXCEPTIONTAKEN
+%token UNDERSCORE_UNDERSCORE_EXECUTE
+%token UNDERSCORE_UNDERSCORE_FIELD
+%token UNDERSCORE_UNDERSCORE_FUNCTION
+%token UNDERSCORE_UNDERSCORE_GUARD
+%token UNDERSCORE_UNDERSCORE_INSTRUCTION
+%token UNDERSCORE_UNDERSCORE_INSTRUCTION_UNDERSCORE_SET
+%token UNDERSCORE_UNDERSCORE_MAP
+%token UNDERSCORE_UNDERSCORE_NEWEVENT
+%token UNDERSCORE_UNDERSCORE_NEWMAP
+%token UNDERSCORE_UNDERSCORE_NOP
+%token UNDERSCORE_UNDERSCORE_OPCODE
+%token UNDERSCORE_UNDERSCORE_OPERATOR_ONE
+%token UNDERSCORE_UNDERSCORE_OPERATOR_TWO
+%token UNDERSCORE_UNDERSCORE_POSTDECODE
+%token UNDERSCORE_UNDERSCORE_READWRITE
+%token UNDERSCORE_UNDERSCORE_REGISTER
+%token UNDERSCORE_UNDERSCORE_UNALLOCATED
+%token UNDERSCORE_UNDERSCORE_UNPREDICTABLE
+%token UNDERSCORE_UNDERSCORE_UNPREDICTABLE_UNDERSCORE_UNLESS
+%token UNDERSCORE_UNDERSCORE_WRITE
+%token UNKNOWN
+%token UNPREDICTABLE
+%token UNTIL
+%token WHEN
+%token WHILE
+%type <Asl_ast.declaration list> declarations_start
+%type <Asl_ast.expr> expr_command_start
+%type <Asl_ast.impdef_command> impdef_command_start
+%type <Asl_ast.stmt> stmt_command_start
+%%
+
+loption_separated_nonempty_list_COMMA_apattern__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_apattern_
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_decode_pattern__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_decode_pattern_
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_decode_slice__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_decode_slice_
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_expr__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_expr_
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_formal__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_formal_
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_ident__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_ident_
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_mapfield__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_mapfield_
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_sformal__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_sformal_
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_slice__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_slice_
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_ty__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_ty_
+    {    ( x )}
+
+list_catcher_:
+  
+    {    ( [] )}
+| x = catcher xs = list_catcher_
+    {    ( x :: xs )}
+
+list_declaration_:
+  
+    {    ( [] )}
+| x = declaration xs = list_declaration_
+    {    ( x :: xs )}
+
+list_e_elsif_:
+  
+    {    ( [] )}
+| x = e_elsif xs = list_e_elsif_
+    {    ( x :: xs )}
+
+list_factor_:
+  
+    {    ( [] )}
+| x = factor xs = list_factor_
+    {    ( x :: xs )}
+
+list_instr_field_:
+  
+    {    ( [] )}
+| x = instr_field xs = list_instr_field_
+    {    ( x :: xs )}
+
+list_instr_unpred_:
+  
+    {    ( [] )}
+| x = instr_unpred xs = list_instr_unpred_
+    {    ( x :: xs )}
+
+list_regfield_:
+  
+    {    ( [] )}
+| x = regfield xs = list_regfield_
+    {    ( x :: xs )}
+
+list_s_elsif_:
+  
+    {    ( [] )}
+| x = s_elsif xs = list_s_elsif_
+    {    ( x :: xs )}
+
+list_sfactor_:
+  
+    {    ( [] )}
+| x = sfactor xs = list_sfactor_
+    {    ( x :: xs )}
+
+list_simple_elsif_:
+  
+    {    ( [] )}
+| x = simple_elsif xs = list_simple_elsif_
+    {    ( x :: xs )}
+
+nonempty_list_alt_:
+  x = alt
+    {    ( [ x ] )}
+| x = alt xs = nonempty_list_alt_
+    {    ( x :: xs )}
+
+nonempty_list_decode_alt_:
+  x = decode_alt
+    {    ( [ x ] )}
+| x = decode_alt xs = nonempty_list_decode_alt_
+    {    ( x :: xs )}
+
+nonempty_list_encoding_:
+  x = encoding
+    {    ( [ x ] )}
+| x = encoding xs = nonempty_list_encoding_
+    {    ( x :: xs )}
+
+nonempty_list_field_:
+  x = field
+    {    ( [ x ] )}
+| x = field xs = nonempty_list_field_
+    {    ( x :: xs )}
+
+nonempty_list_simple_stmt_:
+  x = simple_stmt
+    {    ( [ x ] )}
+| x = simple_stmt xs = nonempty_list_simple_stmt_
+    {    ( x :: xs )}
+
+nonempty_list_stmts_:
+  x = stmts
+    {    ( [ x ] )}
+| x = stmts xs = nonempty_list_stmts_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_apattern_:
+  x = apattern
+    {    ( [ x ] )}
+| x = apattern _2 = COMMA xs = separated_nonempty_list_COMMA_apattern_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_decode_pattern_:
+  x = decode_pattern
+    {    ( [ x ] )}
+| x = decode_pattern _2 = COMMA xs = separated_nonempty_list_COMMA_decode_pattern_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_decode_slice_:
+  x = decode_slice
+    {    ( [ x ] )}
+| x = decode_slice _2 = COMMA xs = separated_nonempty_list_COMMA_decode_slice_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_expr_:
+  x = expr
+    {    ( [ x ] )}
+| x = expr _2 = COMMA xs = separated_nonempty_list_COMMA_expr_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_field_ns_:
+  x = field_ns
+    {    ( [ x ] )}
+| x = field_ns _2 = COMMA xs = separated_nonempty_list_COMMA_field_ns_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_formal_:
+  x = formal
+    {    ( [ x ] )}
+| x = formal _2 = COMMA xs = separated_nonempty_list_COMMA_formal_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_ident_:
+  x = ident
+    {    ( [ x ] )}
+| x = ident _2 = COMMA xs = separated_nonempty_list_COMMA_ident_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_mapfield_:
+  x = mapfield
+    {    ( [ x ] )}
+| x = mapfield _2 = COMMA xs = separated_nonempty_list_COMMA_mapfield_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_pattern_:
+  x = pattern
+    {    ( [ x ] )}
+| x = pattern _2 = COMMA xs = separated_nonempty_list_COMMA_pattern_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_sformal_:
+  x = sformal
+    {    ( [ x ] )}
+| x = sformal _2 = COMMA xs = separated_nonempty_list_COMMA_sformal_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_slice_:
+  x = slice
+    {    ( [ x ] )}
+| x = slice _2 = COMMA xs = separated_nonempty_list_COMMA_slice_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_ty_:
+  x = ty
+    {    ( [ x ] )}
+| x = ty _2 = COMMA xs = separated_nonempty_list_COMMA_ty_
+    {    ( x :: xs )}
+
+declarations_start:
+  declarations = declarations _2 = EOF
+    {    ( declarations )}
+
+expr_command_start:
+  expr_command = expr_command _2 = EOF
+    {    ( expr_command )}
+
+stmt_command_start:
+  stmt_command = stmt_command _2 = EOF
+    {    ( stmt_command )}
+
+impdef_command_start:
+  impdef_command = impdef_command _2 = EOF
+    {    ( impdef_command )}
+
+ident:
+  id = ID
+    {    ( (*Case 1*) Ident id )}
+
+typeident:
+  typeid = TYPEID
+    {    ( (*Case 1*) Ident typeid )}
+
+leadingblank:
+  _1 = EOL
+    {    ( (*Case 2*) LeadingBlank )}
+| 
+    {    ( (*Case 2*) LeadingNothing )}
+
+declarations:
+  leadingblank = leadingblank declaration0 = list_declaration_
+    {    ( (*Case 1*) declaration0 )}
+
+declaration:
+  type_declaration = type_declaration
+    {    ( (*Case 1*) type_declaration )}
+| variable_declaration = variable_declaration
+    {    ( (*Case 1*) variable_declaration )}
+| function_declaration = function_declaration
+    {    ( (*Case 1*) function_declaration )}
+| procedure_declaration = procedure_declaration
+    {    ( (*Case 1*) procedure_declaration )}
+| getter_declaration = getter_declaration
+    {    ( (*Case 1*) getter_declaration )}
+| setter_declaration = setter_declaration
+    {    ( (*Case 1*) setter_declaration )}
+| instruction_definition = instruction_definition
+    {    ( (*Case 1*) instruction_definition )}
+| internal_definition = internal_definition
+    {    ( (*Case 1*) internal_definition )}
+
+type_declaration:
+  _1 = UNDERSCORE_UNDERSCORE_BUILTIN _2 = TYPE tidentdecl = tidentdecl _4 = SEMICOLON _5 = EOL
+    {let _endpos = _endpos__5_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_BuiltinType(tidentdecl,Range(_symbolstartpos,_endpos)) )}
+| _1 = TYPE tidentdecl = tidentdecl _3 = SEMICOLON _4 = EOL
+    {let _endpos = _endpos__4_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_Forward(tidentdecl,Range(_symbolstartpos,_endpos)) )}
+| _1 = RECORD tidentdecl = tidentdecl _3 = LBRACE field0 = nonempty_list_field_ _5 = RBRACE _6 = SEMICOLON _7 = EOL
+    {let _endpos = _endpos__7_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_Record(tidentdecl,field0,Range(_symbolstartpos,_endpos)) )}
+| _1 = TYPE tidentdecl = tidentdecl _3 = IS _4 = LPAREN field_ns0 = separated_nonempty_list_COMMA_field_ns_ _6 = RPAREN _7 = EOL
+    {let _endpos = _endpos__7_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 1*) Decl_Record(tidentdecl, field_ns0, Range(_symbolstartpos,_endpos)) )}
+| _1 = TYPE tidentdecl = tidentdecl _3 = EQ ty = ty _5 = SEMICOLON _6 = EOL
+    {let _endpos = _endpos__6_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_Typedef(tidentdecl,ty,Range(_symbolstartpos,_endpos)) )}
+| _1 = ENUMERATION tidentdecl = tidentdecl _3 = LBRACE xs = loption_separated_nonempty_list_COMMA_ident__ _5 = RBRACE _6 = SEMICOLON _7 = EOL
+    {let ident0 =     ( xs ) in
+let _endpos = _endpos__7_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_Enum(tidentdecl,ident0,Range(_symbolstartpos,_endpos)) )}
+
+field_ns:
+  ty = ty ident = ident
+    {    ( (*Case 1*) (ty, ident) )}
+
+field:
+  ty = ty ident = ident _3 = SEMICOLON
+    {    ( (*Case 1*) (ty, ident) )}
+
+variable_declaration:
+  ty = ty qualident = qualident _3 = SEMICOLON _4 = EOL
+    {let _endpos = _endpos__4_ in
+let _symbolstartpos = _startpos_ty_ in
+    ( (*Case 2*) Decl_Var(ty,qualident,Range(_symbolstartpos,_endpos)) )}
+| _1 = CONSTANT ty = ty qualident = qualident _4 = EQ expr = expr _6 = SEMICOLON _7 = EOL
+    {let _endpos = _endpos__7_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_Const(ty,qualident,expr,Range(_symbolstartpos,_endpos)) )}
+| _1 = ARRAY ty = ty qualident = qualident _4 = LBRACK ixtype = ixtype _6 = RBRACK _7 = SEMICOLON _8 = EOL
+    {let _endpos = _endpos__8_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 1*) Decl_Var(Type_Array(ixtype,ty), qualident, Range(_symbolstartpos,_endpos)) )}
+
+ixtype:
+  tident = tident
+    {    ( (*Case 2*) Index_Enum(tident) )}
+| expr1 = expr _2 = DOT_DOT expr2 = expr
+    {    ( (*Case 2*) Index_Range(expr1,expr2) )}
+
+function_declaration:
+  _1 = UNDERSCORE_UNDERSCORE_BUILTIN ty = ty qualident = qualident _4 = LPAREN xs = loption_separated_nonempty_list_COMMA_formal__ _6 = RPAREN _7 = SEMICOLON _8 = EOL
+    {let formal0 =     ( xs ) in
+let _endpos = _endpos__8_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_BuiltinFunction(ty,qualident,formal0,Range(_symbolstartpos,_endpos)) )}
+| ty = ty qualident = qualident _3 = LPAREN xs = loption_separated_nonempty_list_COMMA_formal__ _5 = RPAREN _6 = SEMICOLON _7 = EOL
+    {let formal0 =     ( xs ) in
+let _endpos = _endpos__7_ in
+let _symbolstartpos = _startpos_ty_ in
+    ( (*Case 2*) Decl_FunType(ty,qualident,formal0,Range(_symbolstartpos,_endpos)) )}
+| ty = ty qualident = qualident _3 = LPAREN xs = loption_separated_nonempty_list_COMMA_formal__ _5 = RPAREN opt_indented_block = opt_indented_block
+    {let formal0 =     ( xs ) in
+let _endpos = _endpos_opt_indented_block_ in
+let _symbolstartpos = _startpos_ty_ in
+    ( (*Case 2*) Decl_FunDefn(ty,qualident,formal0,opt_indented_block,Range(_symbolstartpos,_endpos)) )}
+
+procedure_declaration:
+  qualident = qualident _2 = LPAREN xs = loption_separated_nonempty_list_COMMA_formal__ _4 = RPAREN _5 = SEMICOLON _6 = EOL
+    {let formal0 =     ( xs ) in
+let _endpos = _endpos__6_ in
+let _symbolstartpos = _startpos_qualident_ in
+    ( (*Case 2*) Decl_ProcType(qualident,formal0,Range(_symbolstartpos,_endpos)) )}
+| qualident = qualident _2 = LPAREN xs = loption_separated_nonempty_list_COMMA_formal__ _4 = RPAREN opt_indented_block = opt_indented_block
+    {let formal0 =     ( xs ) in
+let _endpos = _endpos_opt_indented_block_ in
+let _symbolstartpos = _startpos_qualident_ in
+    ( (*Case 2*) Decl_ProcDefn(qualident,formal0,opt_indented_block,Range(_symbolstartpos,_endpos)) )}
+
+formal:
+  ty = ty ident = ident
+    {    ( (*Case 1*) (ty, ident) )}
+
+getter_declaration:
+  _1 = UNDERSCORE_UNDERSCORE_FUNCTION ty = ty qualident = qualident _4 = SEMICOLON _5 = EOL
+    {let _endpos = _endpos__5_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_VarGetterType(ty,qualident,Range(_symbolstartpos,_endpos)) )}
+| ty = ty qualident = qualident opt_indented_block = opt_indented_block
+    {let _endpos = _endpos_opt_indented_block_ in
+let _symbolstartpos = _startpos_ty_ in
+    ( (*Case 2*) Decl_VarGetterDefn(ty,qualident,opt_indented_block,Range(_symbolstartpos,_endpos)) )}
+| ty = ty qualident = qualident _3 = LBRACK xs = loption_separated_nonempty_list_COMMA_formal__ _5 = RBRACK _6 = SEMICOLON _7 = EOL
+    {let formal0 =     ( xs ) in
+let _endpos = _endpos__7_ in
+let _symbolstartpos = _startpos_ty_ in
+    ( (*Case 2*) Decl_ArrayGetterType(ty,qualident,formal0,Range(_symbolstartpos,_endpos)) )}
+| ty = ty qualident = qualident _3 = LBRACK xs = loption_separated_nonempty_list_COMMA_formal__ _5 = RBRACK opt_indented_block = opt_indented_block
+    {let formal0 =     ( xs ) in
+let _endpos = _endpos_opt_indented_block_ in
+let _symbolstartpos = _startpos_ty_ in
+    ( (*Case 2*) Decl_ArrayGetterDefn(ty,qualident,formal0,opt_indented_block,Range(_symbolstartpos,_endpos)) )}
+
+setter_declaration:
+  qualident = qualident _2 = EQ ty = ty ident = ident _5 = SEMICOLON _6 = EOL
+    {let _endpos = _endpos__6_ in
+let _symbolstartpos = _startpos_qualident_ in
+    ( (*Case 2*) Decl_VarSetterType(qualident,ty,ident,Range(_symbolstartpos,_endpos)) )}
+| qualident = qualident _2 = EQ ty = ty ident = ident opt_indented_block = opt_indented_block
+    {let _endpos = _endpos_opt_indented_block_ in
+let _symbolstartpos = _startpos_qualident_ in
+    ( (*Case 2*) Decl_VarSetterDefn(qualident,ty,ident,opt_indented_block,Range(_symbolstartpos,_endpos)) )}
+| qualident = qualident _2 = LBRACK xs = loption_separated_nonempty_list_COMMA_sformal__ _4 = RBRACK _5 = EQ ty = ty ident = ident _8 = SEMICOLON _9 = EOL
+    {let sformal0 =     ( xs ) in
+let _endpos = _endpos__9_ in
+let _symbolstartpos = _startpos_qualident_ in
+    ( (*Case 2*) Decl_ArraySetterType(qualident,sformal0,ty,ident,Range(_symbolstartpos,_endpos)) )}
+| qualident = qualident _2 = LBRACK xs = loption_separated_nonempty_list_COMMA_sformal__ _4 = RBRACK _5 = EQ ty = ty ident = ident opt_indented_block = opt_indented_block
+    {let sformal0 =     ( xs ) in
+let _endpos = _endpos_opt_indented_block_ in
+let _symbolstartpos = _startpos_qualident_ in
+    ( (*Case 2*) Decl_ArraySetterDefn(qualident,sformal0,ty,ident,opt_indented_block,Range(_symbolstartpos,_endpos)) )}
+
+sformal:
+  ty = ty ident = ident
+    {    ( (*Case 2*) Formal_In(ty,ident) )}
+| ty = ty _2 = AMPERSAND ident = ident
+    {    ( (*Case 2*) Formal_InOut(ty,ident) )}
+
+instruction_definition:
+  _1 = UNDERSCORE_UNDERSCORE_INSTRUCTION ident = ident _3 = EOL _4 = INDENT encoding0 = nonempty_list_encoding_ opt_postdecode = opt_postdecode _7 = UNDERSCORE_UNDERSCORE_EXECUTE opt_conditional = opt_conditional opt_indented_block = opt_indented_block _10 = DEDENT
+    {let _endpos = _endpos__10_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_InstructionDefn(ident,encoding0,opt_postdecode,opt_conditional,opt_indented_block,Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDERSCORE_UNDERSCORE_DECODE ident = ident _3 = EOL _4 = INDENT decode_case = decode_case _6 = DEDENT
+    {let _endpos = _endpos__6_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_DecoderDefn(ident,decode_case,Range(_symbolstartpos,_endpos)) )}
+
+encoding:
+  _1 = UNDERSCORE_UNDERSCORE_ENCODING ident1 = ident _3 = EOL _4 = INDENT _5 = UNDERSCORE_UNDERSCORE_INSTRUCTION_UNDERSCORE_SET ident2 = ident _7 = EOL instr_field0 = list_instr_field_ _9 = UNDERSCORE_UNDERSCORE_OPCODE opcode_value = opcode_value _11 = EOL _12 = UNDERSCORE_UNDERSCORE_GUARD expr = expr _14 = EOL instr_unpred0 = list_instr_unpred_ _16 = UNDERSCORE_UNDERSCORE_DECODE opt_indented_block = opt_indented_block _18 = DEDENT
+    {let _endpos = _endpos__18_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Encoding_Block(ident1,ident2,instr_field0,opcode_value,expr,instr_unpred0,opt_indented_block,Range(_symbolstartpos,_endpos)) )}
+
+opt_conditional:
+  _1 = UNDERSCORE_UNDERSCORE_CONDITIONAL
+    {    ( (*Case 1*) true )}
+| 
+    {    ( (*Case 1*) false )}
+
+opt_postdecode:
+  _1 = UNDERSCORE_UNDERSCORE_POSTDECODE indented_block = indented_block
+    {    ( (*Case 1*) Some(indented_block) )}
+| 
+    {    ( (*Case 1*) None )}
+
+instr_field:
+  _1 = UNDERSCORE_UNDERSCORE_FIELD ident = ident offset1 = offset _4 = PLUS_COLON offset2 = offset _6 = EOL
+    {    ( (*Case 2*) IField_Field(ident,offset1,offset2) )}
+
+offset:
+  intLit = INTLIT
+    {    ( (*Case 1*) int_of_string intLit )}
+
+opcode_value:
+  bitsLit = BITSLIT
+    {    ( (*Case 2*) Opcode_Bits(bitsLit) )}
+| maskLit = MASKLIT
+    {    ( (*Case 2*) Opcode_Mask(maskLit) )}
+
+instr_unpred:
+  _1 = UNDERSCORE_UNDERSCORE_UNPREDICTABLE_UNDERSCORE_UNLESS intLit = INTLIT _3 = EQ_EQ bitsLit = BITSLIT _5 = EOL
+    {    ( (*Case 1*) (int_of_string intLit, bitsLit) )}
+
+decode_case:
+  _1 = CASE _2 = LPAREN xs = loption_separated_nonempty_list_COMMA_decode_slice__ _4 = RPAREN _5 = OF _6 = EOL _7 = INDENT decode_alt0 = nonempty_list_decode_alt_ _9 = DEDENT
+    {let decode_slice0 =     ( xs ) in
+let _endpos = _endpos__9_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) DecoderCase_Case(decode_slice0,decode_alt0,Range(_symbolstartpos,_endpos)) )}
+
+decode_slice:
+  offset1 = offset _2 = PLUS_COLON offset2 = offset
+    {    ( (*Case 2*) DecoderSlice_Slice(offset1,offset2) )}
+| ident = ident
+    {    ( (*Case 2*) DecoderSlice_FieldName(ident) )}
+| ident0 = separated_nonempty2_list_COLON_ident_
+    {    ( (*Case 2*) DecoderSlice_Concat(ident0) )}
+
+decode_alt:
+  _1 = WHEN _2 = LPAREN xs = loption_separated_nonempty_list_COMMA_decode_pattern__ _4 = RPAREN _5 = EQ_GT decode_body = decode_body
+    {let decode_pattern0 =     ( xs ) in
+    ( (*Case 2*) DecoderAlt_Alt(decode_pattern0,decode_body) )}
+
+decode_pattern:
+  bitsLit = BITSLIT
+    {    ( (*Case 2*) DecoderPattern_Bits(bitsLit) )}
+| maskLit = MASKLIT
+    {    ( (*Case 2*) DecoderPattern_Mask(maskLit) )}
+| ident = ident
+    {    ( (*Case 2*) DecoderPattern_Wildcard(ident) )}
+| _1 = BANG decode_pattern = decode_pattern
+    {    ( (*Case 2*) DecoderPattern_Not(decode_pattern) )}
+
+decode_body:
+  _1 = UNDERSCORE_UNDERSCORE_UNPREDICTABLE _2 = EOL
+    {let _endpos = _endpos__2_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) DecoderBody_UNPRED(Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDERSCORE_UNDERSCORE_UNALLOCATED _2 = EOL
+    {let _endpos = _endpos__2_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) DecoderBody_UNALLOC(Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDERSCORE_UNDERSCORE_NOP _2 = EOL
+    {let _endpos = _endpos__2_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) DecoderBody_NOP(Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDERSCORE_UNDERSCORE_ENCODING ident = ident _3 = EOL
+    {let _endpos = _endpos__3_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) DecoderBody_Encoding(ident,Range(_symbolstartpos,_endpos)) )}
+| _1 = EOL _2 = INDENT instr_field0 = list_instr_field_ decode_case = decode_case _5 = DEDENT
+    {let _endpos = _endpos__5_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) DecoderBody_Decoder(instr_field0,decode_case,Range(_symbolstartpos,_endpos)) )}
+
+internal_definition:
+  _1 = UNDERSCORE_UNDERSCORE_OPERATOR_ONE unop = unop _3 = EQ ident0 = separated_nonempty_list_COMMA_ident_ _5 = SEMICOLON _6 = EOL
+    {let _endpos = _endpos__6_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_Operator1(unop,ident0,Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDERSCORE_UNDERSCORE_OPERATOR_TWO binop_or_concat = binop_or_concat _3 = EQ ident0 = separated_nonempty_list_COMMA_ident_ _5 = SEMICOLON _6 = EOL
+    {let _endpos = _endpos__6_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_Operator2(binop_or_concat,ident0,Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDERSCORE_UNDERSCORE_NEWEVENT qualident = qualident _3 = LPAREN xs = loption_separated_nonempty_list_COMMA_formal__ _5 = RPAREN _6 = SEMICOLON _7 = EOL
+    {let formal0 =     ( xs ) in
+let _endpos = _endpos__7_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_NewEventDefn(qualident,formal0,Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDERSCORE_UNDERSCORE_EVENT qualident = qualident possibly_empty_block = possibly_empty_block
+    {let _endpos = _endpos_possibly_empty_block_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_EventClause(qualident,possibly_empty_block,Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDERSCORE_UNDERSCORE_NEWMAP ty = ty qualident = qualident _4 = LPAREN xs = loption_separated_nonempty_list_COMMA_formal__ _6 = RPAREN opt_indented_block = opt_indented_block
+    {let formal0 =     ( xs ) in
+let _endpos = _endpos_opt_indented_block_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_NewMapDefn(ty,qualident,formal0,opt_indented_block,Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDERSCORE_UNDERSCORE_MAP qualident = qualident xs = loption_separated_nonempty_list_COMMA_mapfield__ optmapcond = optmapcond _5 = THEN possibly_empty_block = possibly_empty_block
+    {let mapfield0 =     ( xs ) in
+let _endpos = _endpos_possibly_empty_block_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_MapClause(qualident,mapfield0,optmapcond,possibly_empty_block,Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDERSCORE_UNDERSCORE_CONFIG ty = ty qualident = qualident _4 = EQ expr = expr _6 = SEMICOLON _7 = EOL
+    {let _endpos = _endpos__7_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Decl_Config(ty,qualident,expr,Range(_symbolstartpos,_endpos)) )}
+
+optmapcond:
+  _1 = WHEN expr = expr
+    {    ( (*Case 1*) Some(expr) )}
+| 
+    {    ( (*Case 1*) None )}
+
+mapfield:
+  ident = ident _2 = EQ pattern = pattern
+    {    ( (*Case 2*) MapField_Field(ident,pattern) )}
+
+qualident:
+  ident = ident
+    {    ( (*Case 1*) ident )}
+| qualifier = QUALIFIER _2 = DOT ident = ident
+    {    ( (*Case 1*) addQualifier qualifier ident )}
+
+tidentdecl:
+  typeident = typeident
+    {    ( (*Case 1*) typeident )}
+| ident = ident
+    {    ( (*Case 1*) addTypeIdent(ident); ident )}
+| qualifier = QUALIFIER _2 = DOT ident = ident
+    {    ( (*Case 1*) addTypeIdent(ident); addQualifier qualifier ident )}
+
+tident:
+  typeident = typeident
+    {    ( (*Case 1*) typeident )}
+| qualifier = QUALIFIER _2 = DOT typeident = typeident
+    {    ( (*Case 1*) addQualifier qualifier typeident )}
+
+ty:
+  tident = tident
+    {    ( (*Case 2*) Type_Constructor(tident) )}
+| _1 = BITS _2 = LPAREN expr = expr _4 = RPAREN
+    {    ( (*Case 2*) Type_Bits(expr) )}
+| tident = tident _2 = LPAREN expr0 = separated_nonempty_list_COMMA_expr_ _4 = RPAREN
+    {    ( (*Case 2*) Type_App(tident,expr0) )}
+| _1 = TYPEOF _2 = LPAREN expr = expr _4 = RPAREN
+    {    ( (*Case 2*) Type_OfExpr(expr) )}
+| _1 = UNDERSCORE_UNDERSCORE_REGISTER intLit = INTLIT _3 = LBRACE regfields = regfields _5 = RBRACE
+    {    ( (*Case 2*) Type_Register(intLit,regfields) )}
+| _1 = ARRAY _2 = LBRACK ixtype = ixtype _4 = RBRACK _5 = OF ty = ty
+    {    ( (*Case 2*) Type_Array(ixtype,ty) )}
+| _1 = LPAREN xs = loption_separated_nonempty_list_COMMA_ty__ _3 = RPAREN
+    {let ty0 =     ( xs ) in
+    ( (*Case 2*) Type_Tuple(ty0) )}
+
+regfields:
+  regfield0 = list_regfield_
+    {    ( (*Case 1*) regfield0 )}
+| regfield = regfield _2 = COMMA regfields = regfields
+    {    ( (*Case 1*) regfield :: regfields )}
+
+regfield:
+  slice0 = separated_nonempty_list_COMMA_slice_ ident = ident
+    {    ( (*Case 1*) (slice0, ident) )}
+
+stmt:
+  simple_stmt = simple_stmt
+    {    ( (*Case 1*) simple_stmt )}
+| compound_stmt = compound_stmt
+    {    ( (*Case 1*) compound_stmt )}
+
+compound_stmt:
+  conditional_stmt = conditional_stmt
+    {    ( (*Case 1*) conditional_stmt )}
+| repetitive_stmt = repetitive_stmt
+    {    ( (*Case 1*) repetitive_stmt )}
+| catch_stmt = catch_stmt
+    {    ( (*Case 1*) catch_stmt )}
+
+simple_stmt_list:
+  simple_stmt0 = nonempty_list_simple_stmt_
+    {    ( (*Case 1*) simple_stmt0 )}
+
+simple_if_stmt:
+  _1 = IF expr = expr _3 = THEN simple_stmt_list1 = simple_stmt_list simple_elsif0 = list_simple_elsif_ _6 = ELSE simple_stmt_list2 = simple_stmt_list _8 = EOL
+    {let _endpos = _endpos__8_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 1*) Stmt_If(expr, simple_stmt_list1, simple_elsif0, simple_stmt_list2, Range(_symbolstartpos, _endpos)) )}
+| _1 = IF expr = expr _3 = THEN simple_stmt_list1 = simple_stmt_list simple_elsif0 = list_simple_elsif_ _6 = EOL
+    {let _endpos = _endpos__6_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 1*) Stmt_If(expr, simple_stmt_list1, simple_elsif0, [], Range(_symbolstartpos, _endpos)) )}
+
+simple_elsif:
+  _1 = ELSIF expr = expr _3 = THEN simple_stmt_list = simple_stmt_list
+    {    ( (*Case 1*) S_Elsif_Cond(expr, simple_stmt_list) )}
+
+simple_stmts:
+  simple_stmt_list = simple_stmt_list simple_if_stmt = simple_if_stmt
+    {    ( (*Case 1*) simple_stmt_list @ [ simple_if_stmt ] )}
+| simple_stmt_list = simple_stmt_list _2 = EOL
+    {    ( (*Case 1*) simple_stmt_list )}
+
+stmts:
+  simple_stmts = simple_stmts
+    {    ( (*Case 1*) simple_stmts )}
+| compound_stmt = compound_stmt
+    {    ( (*Case 1*) [ compound_stmt ] )}
+
+indented_block:
+  _1 = EOL _2 = INDENT stmts0 = nonempty_list_stmts_ _4 = DEDENT
+    {    ( (*Case 1*) List.concat stmts0 )}
+
+possibly_empty_block:
+  indented_block = indented_block
+    {    ( (*Case 1*) indented_block )}
+| simple_stmts = simple_stmts
+    {    ( (*Case 1*) simple_stmts )}
+| _1 = EOL
+    {    ( (*Case 1*) [] )}
+
+opt_indented_block:
+  indented_block = indented_block
+    {    ( (*Case 1*) indented_block )}
+| _1 = EOL
+    {    ( (*Case 1*) [] )}
+
+assignment_stmt:
+  ty = ty ident0 = separated_nonempty_list_COMMA_ident_ _3 = SEMICOLON
+    {let _endpos = _endpos__3_ in
+let _symbolstartpos = _startpos_ty_ in
+    ( (*Case 2*) Stmt_VarDeclsNoInit(ty,ident0,Range(_symbolstartpos,_endpos)) )}
+| ty = ty ident = ident _3 = EQ expr = expr _5 = SEMICOLON
+    {let _endpos = _endpos__5_ in
+let _symbolstartpos = _startpos_ty_ in
+    ( (*Case 2*) Stmt_VarDecl(ty,ident,expr,Range(_symbolstartpos,_endpos)) )}
+| _1 = CONSTANT ty = ty ident = ident _4 = EQ expr = expr _6 = SEMICOLON
+    {let _endpos = _endpos__6_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_ConstDecl(ty,ident,expr,Range(_symbolstartpos,_endpos)) )}
+| lexpr = lexpr _2 = EQ expr = expr _4 = SEMICOLON
+    {let _endpos = _endpos__4_ in
+let _symbolstartpos = _startpos_lexpr_ in
+    ( (*Case 2*) Stmt_Assign(lexpr,expr,Range(_symbolstartpos,_endpos)) )}
+
+lexpr:
+  _1 = MINUS
+    {    ( (*Case 2*) LExpr_Wildcard )}
+| qualident = qualident
+    {    ( (*Case 2*) LExpr_Var(qualident) )}
+| lexpr = lexpr _2 = DOT ident = ident
+    {    ( (*Case 2*) LExpr_Field(lexpr,ident) )}
+| lexpr = lexpr _2 = DOT _3 = LBRACK ident0 = separated_nonempty_list_COMMA_ident_ _5 = RBRACK
+    {    ( (*Case 2*) LExpr_Fields(lexpr,ident0) )}
+| lexpr = lexpr _2 = LBRACK xs = loption_separated_nonempty_list_COMMA_slice__ _4 = RBRACK
+    {let slice0 =     ( xs ) in
+    ( (*Case 2*) LExpr_Slices(lexpr,slice0) )}
+| _1 = LBRACK lexpr0 = separated_nonempty2_list_COMMA_lexpr_ _3 = RBRACK
+    {    ( (*Case 2*) LExpr_BitTuple(lexpr0) )}
+| _1 = LPAREN lexpr0 = separated_nonempty2_list_COMMA_lexpr_ _3 = RPAREN
+    {    ( (*Case 2*) LExpr_Tuple(lexpr0) )}
+| _1 = LPAREN lexpr = lexpr _3 = RPAREN
+    {    ( (*Case 1*) lexpr )}
+
+simple_stmt:
+  assignment_stmt = assignment_stmt
+    {    ( (*Case 1*) assignment_stmt )}
+| qualident = qualident _2 = LPAREN xs = loption_separated_nonempty_list_COMMA_expr__ _4 = RPAREN _5 = SEMICOLON
+    {let expr0 =     ( xs ) in
+let _endpos = _endpos__5_ in
+let _symbolstartpos = _startpos_qualident_ in
+    ( (*Case 1*) Stmt_TCall(qualident, [], expr0, Range(_symbolstartpos,_endpos)) )}
+| _1 = RETURN expr = expr _3 = SEMICOLON
+    {let _endpos = _endpos__3_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_FunReturn(expr,Range(_symbolstartpos,_endpos)) )}
+| _1 = RETURN _2 = SEMICOLON
+    {let _endpos = _endpos__2_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_ProcReturn(Range(_symbolstartpos,_endpos)) )}
+| _1 = ASSERT expr = expr _3 = SEMICOLON
+    {let _endpos = _endpos__3_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_Assert(expr,Range(_symbolstartpos,_endpos)) )}
+| _1 = UNPREDICTABLE _2 = LPAREN _3 = RPAREN _4 = SEMICOLON
+    {let _endpos = _endpos__4_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_Unpred(Range(_symbolstartpos,_endpos)) )}
+| _1 = CONSTRAINED_UNDERSCORE_UNPREDICTABLE _2 = SEMICOLON
+    {let _endpos = _endpos__2_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_ConstrainedUnpred(Range(_symbolstartpos,_endpos)) )}
+| _1 = IMPLEMENTATION_UNDERSCORE_DEFINED _2 = LPAREN ident = ident _4 = RPAREN _5 = SEMICOLON
+    {let _endpos = _endpos__5_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_ImpDef(ident,Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDEFINED _2 = LPAREN _3 = RPAREN _4 = SEMICOLON
+    {let _endpos = _endpos__4_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_Undefined(Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDERSCORE_UNDERSCORE_EXCEPTIONTAKEN _2 = LPAREN _3 = RPAREN _4 = SEMICOLON
+    {let _endpos = _endpos__4_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_ExceptionTaken(Range(_symbolstartpos,_endpos)) )}
+| _1 = UNPREDICTABLE _2 = SEMICOLON
+    {let _endpos = _endpos__2_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_Dep_Unpred(Range(_symbolstartpos,_endpos)) )}
+| _1 = IMPLEMENTATION_UNDERSCORE_DEFINED stringLit = STRINGLIT _3 = SEMICOLON
+    {let _endpos = _endpos__3_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_Dep_ImpDef(stringLit,Range(_symbolstartpos,_endpos)) )}
+| _1 = IMPLEMENTATION_UNDERSCORE_DEFINED _2 = SEMICOLON
+    {let _endpos = _endpos__2_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 1*) Stmt_Dep_ImpDef("", Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDEFINED _2 = SEMICOLON
+    {let _endpos = _endpos__2_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_Dep_Undefined(Range(_symbolstartpos,_endpos)) )}
+| _1 = SEE _2 = LPAREN expr = expr _4 = RPAREN _5 = SEMICOLON
+    {let _endpos = _endpos__5_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_See(expr,Range(_symbolstartpos,_endpos)) )}
+| _1 = SEE stringLit = STRINGLIT _3 = SEMICOLON
+    {let _endpos = _endpos__3_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 1*) Stmt_See(Expr_LitString(stringLit), Range(_symbolstartpos, _endpos)) )}
+| _1 = SEE ident = ident _3 = SEMICOLON
+    {let _endpos = _endpos__3_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 1*) Stmt_See(Expr_LitString(pprint_ident ident), Range(_symbolstartpos, _endpos)) )}
+| _1 = THROW ident = ident _3 = SEMICOLON
+    {let _endpos = _endpos__3_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_Throw(ident,Range(_symbolstartpos,_endpos)) )}
+| _1 = UNDERSCORE_UNDERSCORE_DECODE ident = ident expr = expr _4 = SEMICOLON
+    {let _endpos = _endpos__4_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_DecodeExecute(ident,expr,Range(_symbolstartpos,_endpos)) )}
+
+conditional_stmt:
+  _1 = IF expr = expr _3 = THEN opt_indented_block = opt_indented_block s_elsif0 = list_s_elsif_ optional_else = optional_else
+    {let _endpos = _endpos_optional_else_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_If(expr,opt_indented_block,s_elsif0,optional_else,Range(_symbolstartpos,_endpos)) )}
+| _1 = IF expr = expr _3 = THEN simple_stmts = simple_stmts s_elsif0 = list_s_elsif_ optional_else = optional_else
+    {let _endpos = _endpos_optional_else_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 1*) Stmt_If(expr,simple_stmts,s_elsif0,optional_else, Range(_symbolstartpos, _endpos)) )}
+| _1 = IF expr = expr _3 = THEN simple_stmt_list1 = simple_stmt_list simple_elsif0 = list_simple_elsif_ _6 = ELSE simple_stmt_list2 = simple_stmt_list _8 = EOL
+    {let _endpos = _endpos__8_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 1*) Stmt_If(expr, simple_stmt_list1, simple_elsif0, simple_stmt_list2, Range(_symbolstartpos, _endpos)) )}
+| _1 = CASE expr = expr _3 = OF _4 = EOL _5 = INDENT alt0 = nonempty_list_alt_ opt_otherwise = opt_otherwise _8 = DEDENT
+    {let _endpos = _endpos__8_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_Case(expr,alt0,opt_otherwise,Range(_symbolstartpos,_endpos)) )}
+
+s_elsif:
+  _1 = ELSIF expr = expr _3 = THEN opt_indented_block = opt_indented_block
+    {    ( (*Case 2*) S_Elsif_Cond(expr,opt_indented_block) )}
+| _1 = ELSIF expr = expr _3 = THEN simple_stmts = simple_stmts
+    {    ( (*Case 1*) S_Elsif_Cond(expr, simple_stmts) )}
+
+optional_else:
+  _1 = ELSE opt_indented_block = opt_indented_block
+    {    ( (*Case 1*) opt_indented_block )}
+| _1 = ELSE simple_stmts = simple_stmts
+    {    ( (*Case 1*) simple_stmts )}
+| 
+    {    ( (*Case 1*) [] )}
+
+alt:
+  _1 = WHEN pattern0 = separated_nonempty_list_COMMA_pattern_ opt_altcond = opt_altcond possibly_empty_block = possibly_empty_block
+    {    ( (*Case 2*) Alt_Alt(pattern0,opt_altcond,possibly_empty_block) )}
+| _1 = WHEN pattern0 = separated_nonempty_list_COMMA_pattern_ opt_altcond = opt_altcond simple_if_stmt = simple_if_stmt
+    {    ( (*Case 1*) Alt_Alt(pattern0, opt_altcond, [ simple_if_stmt ]) )}
+
+opt_otherwise:
+  _1 = OTHERWISE possibly_empty_block = possibly_empty_block
+    {    ( (*Case 1*) Some(possibly_empty_block) )}
+| 
+    {    ( (*Case 1*) None )}
+
+opt_altcond:
+  _1 = AMPERSAND_AMPERSAND expr = expr _3 = EQ_GT
+    {    ( (*Case 1*) Some(expr) )}
+| _1 = EQ_GT
+    {    ( (*Case 1*) None )}
+| 
+    {    ( (*Case 1*) None )}
+
+pattern:
+  intLit = INTLIT
+    {    ( (*Case 2*) Pat_LitInt(intLit) )}
+| hexLit = HEXLIT
+    {    ( (*Case 2*) Pat_LitHex(hexLit) )}
+| bitsLit = BITSLIT
+    {    ( (*Case 2*) Pat_LitBits(bitsLit) )}
+| maskLit = MASKLIT
+    {    ( (*Case 2*) Pat_LitMask(maskLit) )}
+| qualident = qualident
+    {    ( (*Case 2*) Pat_Const(qualident) )}
+| _1 = MINUS
+    {    ( (*Case 2*) Pat_Wildcard )}
+| _1 = LPAREN pattern0 = separated_nonempty2_list_COMMA_pattern_ _3 = RPAREN
+    {    ( (*Case 2*) Pat_Tuple(pattern0) )}
+| _1 = LBRACE xs = loption_separated_nonempty_list_COMMA_apattern__ _3 = RBRACE
+    {let apattern0 =     ( xs ) in
+    ( (*Case 2*) Pat_Set(apattern0) )}
+
+apattern:
+  expr1 = expr _2 = DOT_DOT expr2 = expr
+    {    ( (*Case 2*) Pat_Range(expr1,expr2) )}
+| expr = expr
+    {    ( (*Case 2*) Pat_Single(expr) )}
+
+repetitive_stmt:
+  _1 = FOR ident = ident _3 = EQ expr1 = expr direction = direction expr2 = expr indented_block = indented_block
+    {let _endpos = _endpos_indented_block_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_For(ident,expr1,direction,expr2,indented_block,Range(_symbolstartpos,_endpos)) )}
+| _1 = WHILE expr = expr _3 = DO indented_block = indented_block
+    {let _endpos = _endpos_indented_block_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_While(expr,indented_block,Range(_symbolstartpos,_endpos)) )}
+| _1 = REPEAT indented_block = indented_block _3 = UNTIL expr = expr _5 = SEMICOLON _6 = EOL
+    {let _endpos = _endpos__6_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_Repeat(indented_block,expr,Range(_symbolstartpos,_endpos)) )}
+
+direction:
+  _1 = TO
+    {    ( (*Case 2*) Direction_Up )}
+| _1 = DOWNTO
+    {    ( (*Case 2*) Direction_Down )}
+
+catch_stmt:
+  _1 = TRY indented_block = indented_block _3 = CATCH ident = ident _5 = EOL _6 = INDENT catcher0 = list_catcher_ opt_otherwise = opt_otherwise _9 = DEDENT
+    {let _endpos = _endpos__9_ in
+let _symbolstartpos = _startpos__1_ in
+    ( (*Case 2*) Stmt_Try(indented_block,ident,catcher0,opt_otherwise,Range(_symbolstartpos,_endpos)) )}
+
+catcher:
+  _1 = WHEN expr = expr opt_indented_block = opt_indented_block
+    {    ( (*Case 2*) Catcher_Guarded(expr,opt_indented_block) )}
+
+expr:
+  conditional_expression = conditional_expression
+    {    ( (*Case 1*) conditional_expression )}
+
+conditional_expression:
+  _1 = IF cexpr1 = cexpr _3 = THEN expr1 = expr e_elsif0 = list_e_elsif_ _6 = ELSE expr2 = expr
+    {    ( (*Case 2*) Expr_If(cexpr1,expr1,e_elsif0,expr2) )}
+| cexpr = cexpr
+    {    ( (*Case 1*) cexpr )}
+
+e_elsif:
+  _1 = ELSIF expr1 = expr _3 = THEN expr2 = expr
+    {    ( (*Case 2*) E_Elsif_Cond(expr1,expr2) )}
+
+cexpr:
+  bexpr = bexpr factor0 = list_factor_
+    {    ( (*Case 1*) buildExpression bexpr factor0 (Range(_startpos_bexpr_,_endpos_factor0_)) )}
+
+factor:
+  binop_or_concat = binop_or_concat bexpr = bexpr
+    {    ( (*Case 2*) Factor_BinOp(binop_or_concat,bexpr) )}
+
+binop_or_concat:
+  binop = binop
+    {    ( (*Case 1*) binop )}
+| _1 = COLON
+    {    ( (*Case 2*) Binop_Concat )}
+
+binop:
+  _1 = EQ_EQ
+    {    ( (*Case 2*) Binop_Eq )}
+| _1 = BANG_EQ
+    {    ( (*Case 2*) Binop_NtEq )}
+| _1 = GT
+    {    ( (*Case 2*) Binop_Gt )}
+| _1 = GT_EQ
+    {    ( (*Case 2*) Binop_GtEq )}
+| _1 = LT
+    {    ( (*Case 2*) Binop_Lt )}
+| _1 = LT_EQ
+    {    ( (*Case 2*) Binop_LtEq )}
+| _1 = PLUS
+    {    ( (*Case 2*) Binop_Plus )}
+| _1 = MINUS
+    {    ( (*Case 2*) Binop_Minus )}
+| _1 = STAR
+    {    ( (*Case 2*) Binop_Multiply )}
+| _1 = SLASH
+    {    ( (*Case 2*) Binop_Divide )}
+| _1 = CARET
+    {    ( (*Case 2*) Binop_Power )}
+| _1 = QUOT
+    {    ( (*Case 2*) Binop_Quot )}
+| _1 = REM
+    {    ( (*Case 2*) Binop_Rem )}
+| _1 = DIV
+    {    ( (*Case 2*) Binop_Div )}
+| _1 = MOD
+    {    ( (*Case 2*) Binop_Mod )}
+| _1 = LT_LT
+    {    ( (*Case 2*) Binop_ShiftL )}
+| _1 = GT_GT
+    {    ( (*Case 2*) Binop_ShiftR )}
+| _1 = AMPERSAND_AMPERSAND
+    {    ( (*Case 2*) Binop_BoolAnd )}
+| _1 = BAR_BAR
+    {    ( (*Case 2*) Binop_BoolOr )}
+| _1 = IFF
+    {    ( (*Case 2*) Binop_BoolIff )}
+| _1 = IMPLIES
+    {    ( (*Case 2*) Binop_BoolImplies )}
+| _1 = OR
+    {    ( (*Case 2*) Binop_BitOr )}
+| _1 = EOR
+    {    ( (*Case 2*) Binop_BitEor )}
+| _1 = AND
+    {    ( (*Case 2*) Binop_BitAnd )}
+| _1 = PLUS_PLUS
+    {    ( (*Case 2*) Binop_Append )}
+
+bexpr:
+  unop = unop fexpr = fexpr
+    {    ( (*Case 2*) Expr_Unop(unop,fexpr) )}
+| fexpr = fexpr
+    {    ( (*Case 1*) fexpr )}
+
+fexpr:
+  fexpr = fexpr _2 = DOT ident = ident
+    {    ( (*Case 2*) Expr_Field(fexpr,ident) )}
+| fexpr = fexpr _2 = DOT _3 = LBRACK ident0 = separated_nonempty_list_COMMA_ident_ _5 = RBRACK
+    {    ( (*Case 2*) Expr_Fields(fexpr,ident0) )}
+| fexpr = fexpr _2 = LBRACK xs = loption_separated_nonempty_list_COMMA_slice__ _4 = RBRACK
+    {let slice0 =     ( xs ) in
+    ( (*Case 2*) Expr_Slices(fexpr,slice0) )}
+| fexpr = fexpr _2 = IN pattern = pattern
+    {    ( (*Case 2*) Expr_In(fexpr,pattern) )}
+| aexpr = aexpr
+    {    ( (*Case 1*) aexpr )}
+
+aexpr:
+  literal_expression = literal_expression
+    {    ( (*Case 1*) literal_expression )}
+| qualident = qualident
+    {    ( (*Case 2*) Expr_Var(qualident) )}
+| qualident = qualident _2 = LPAREN xs = loption_separated_nonempty_list_COMMA_expr__ _4 = RPAREN
+    {let expr0 =     ( xs ) in
+    ( (*Case 1*) Expr_TApply(qualident, [], expr0) )}
+| _1 = LPAREN expr = expr _3 = RPAREN
+    {    ( (*Case 2*) Expr_Parens(expr) )}
+| _1 = LPAREN expr0 = separated_nonempty2_list_COMMA_expr_ _3 = RPAREN
+    {    ( (*Case 2*) Expr_Tuple(expr0) )}
+| ty = ty _2 = UNKNOWN
+    {    ( (*Case 2*) Expr_Unknown(ty) )}
+| ty = ty _2 = IMPLEMENTATION_UNDERSCORE_DEFINED opt_stringLit = opt_stringLit
+    {    ( (*Case 2*) Expr_ImpDef(ty,opt_stringLit) )}
+
+opt_stringLit:
+  stringLit = STRINGLIT
+    {    ( (*Case 1*) Some(stringLit) )}
+| 
+    {    ( (*Case 1*) None )}
+
+unop:
+  _1 = MINUS
+    {    ( (*Case 2*) Unop_Negate )}
+| _1 = BANG
+    {    ( (*Case 2*) Unop_BoolNot )}
+| _1 = NOT
+    {    ( (*Case 2*) Unop_BitsNot )}
+
+slice:
+  sexpr = sexpr
+    {    ( (*Case 2*) Slice_Single(sexpr) )}
+| sexpr1 = sexpr _2 = COLON sexpr2 = sexpr
+    {    ( (*Case 2*) Slice_HiLo(sexpr1,sexpr2) )}
+| sexpr1 = sexpr _2 = PLUS_COLON sexpr2 = sexpr
+    {    ( (*Case 2*) Slice_LoWd(sexpr1,sexpr2) )}
+
+sexpr:
+  scexpr = scexpr
+    {    ( (*Case 1*) scexpr )}
+| _1 = IF cexpr1 = cexpr _3 = THEN expr1 = expr e_elsif0 = list_e_elsif_ _6 = ELSE scexpr2 = scexpr
+    {    ( (*Case 1*) Expr_If(cexpr1, expr1, e_elsif0, scexpr2) )}
+
+scexpr:
+  bexpr = bexpr sfactor0 = list_sfactor_
+    {    ( (*Case 1*) buildExpression bexpr sfactor0 (Range(_startpos_bexpr_,_endpos_sfactor0_)) )}
+
+sfactor:
+  binop = binop bexpr = bexpr
+    {    ( (*Case 1*) Factor_BinOp(binop, bexpr) )}
+
+literal_expression:
+  intLit = INTLIT
+    {    ( (*Case 2*) Expr_LitInt(intLit) )}
+| hexLit = HEXLIT
+    {    ( (*Case 2*) Expr_LitHex(hexLit) )}
+| realLit = REALLIT
+    {    ( (*Case 2*) Expr_LitReal(realLit) )}
+| bitsLit = BITSLIT
+    {    ( (*Case 2*) Expr_LitBits(bitsLit) )}
+| maskLit = MASKLIT
+    {    ( (*Case 2*) Expr_LitMask(maskLit) )}
+| stringLit = STRINGLIT
+    {    ( (*Case 2*) Expr_LitString(stringLit) )}
+
+expr_command:
+  _1 = EOL expr = expr
+    {    ( (*Case 1*) expr )}
+
+stmt_command:
+  _1 = EOL stmt = stmt
+    {    ( (*Case 1*) stmt )}
+
+impdef_command:
+  _1 = EOL stringLit = STRINGLIT _3 = EQ expr = expr
+    {    ( (*Case 2*) CLI_Impdef(stringLit,expr) )}
+
+separated_nonempty2_list_COLON_ident_:
+  x1 = ident _2 = COLON x2 = ident
+    {    ( [ x1; x2 ] )}
+| x = ident _2 = COLON xs = separated_nonempty2_list_COLON_ident_
+    {    ( x :: xs )}
+
+separated_nonempty2_list_COMMA_expr_:
+  x1 = expr _2 = COMMA x2 = expr
+    {    ( [ x1; x2 ] )}
+| x = expr _2 = COMMA xs = separated_nonempty2_list_COMMA_expr_
+    {    ( x :: xs )}
+
+separated_nonempty2_list_COMMA_lexpr_:
+  x1 = lexpr _2 = COMMA x2 = lexpr
+    {    ( [ x1; x2 ] )}
+| x = lexpr _2 = COMMA xs = separated_nonempty2_list_COMMA_lexpr_
+    {    ( x :: xs )}
+
+separated_nonempty2_list_COMMA_pattern_:
+  x1 = pattern _2 = COMMA x2 = pattern
+    {    ( [ x1; x2 ] )}
+| x = pattern _2 = COMMA xs = separated_nonempty2_list_COMMA_pattern_
+    {    ( x :: xs )}
+
+%%
