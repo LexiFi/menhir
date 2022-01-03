@@ -145,10 +145,10 @@ let actiondef grammar symbol branch =
       in
       let pid =
         (* We use [PVarLocated] in preference to [PVar] so that this binding
-           can be accurately in the source file (not in the generated file)
-           by the OCaml compiler. This is important when a variable declared
-           by the user turns out to be unused in a semantic action. We want
-           the unused-variable warning (or error) to be correctly located. *)
+           can be located in the source file (not in the generated file) by
+           the OCaml compiler. This is important when a variable declared by
+           the user turns out to be unused in a semantic action. We want the
+           unused-variable warning (or error) to be correctly located. *)
         pvarlocated lid
       in
       let pid =
