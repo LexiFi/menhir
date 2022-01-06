@@ -71,6 +71,8 @@ and fv_aux accu e =
       List.fold_left fv_aux accu es
   | EApp (e, es) ->
       List.fold_left fv_aux accu (e :: es)
+  | EUnit ->
+      accu
   | _ ->
       assert false (* unsupported *))
 
