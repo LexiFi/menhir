@@ -9,6 +9,10 @@
   table back-end, but is broken in the new code back-end in version
   2021/12/30.)
 
+* Fix an assertion failure that would occur when a point-free semantic action
+  `<A>` was used in a production that binds zero identifiers. (Reported by
+  Romain Calascibetta, fixed by Frédéric Bour.)
+
 ## 2021/12/30
 
 * The code back-end has been rewritten from the ground up by Émile Trotignon
