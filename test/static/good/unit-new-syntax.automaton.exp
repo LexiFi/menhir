@@ -2,49 +2,49 @@ State 0:
 ## Known stack suffix:
 ##
 ## LR(1) items:
-main' -> . main [ # ]
+bar' -> . bar [ # ]
 ## Transitions:
 -- On A shift to state 1
--- On main shift to state 2
--- On a shift to state 3
+-- On foo shift to state 2
+-- On bar shift to state 4
 ## Reductions:
 
 State 1:
 ## Known stack suffix:
 ## A
 ## LR(1) items:
-a -> A . [ EOF ]
+foo -> A . [ EOF ]
 ## Transitions:
 ## Reductions:
 -- On EOF
---   reduce production a -> A
+--   reduce production foo -> A
 
 State 2:
 ## Known stack suffix:
-## main
+## foo
 ## LR(1) items:
-main' -> main . [ # ]
+bar -> foo . EOF [ # ]
 ## Transitions:
+-- On EOF shift to state 3
 ## Reductions:
--- On #
---   accept main
 
 State 3:
 ## Known stack suffix:
-## a
+## foo EOF
 ## LR(1) items:
-main -> a . EOF [ # ]
-## Transitions:
--- On EOF shift to state 4
-## Reductions:
-
-State 4:
-## Known stack suffix:
-## a EOF
-## LR(1) items:
-main -> a EOF . [ # ]
+bar -> foo EOF . [ # ]
 ## Transitions:
 ## Reductions:
 -- On #
---   reduce production main -> a EOF
+--   reduce production bar -> foo EOF
+
+State 4:
+## Known stack suffix:
+## bar
+## LR(1) items:
+bar' -> bar . [ # ]
+## Transitions:
+## Reductions:
+-- On #
+--   accept bar
 
