@@ -37,7 +37,7 @@ end) = struct
   (* [emit] does nothing if [show] is false. *)
 
   let emit format =
-    kprintf (fun s -> if show then eprintf "%s%!" s) format
+    ksprintf (fun s -> if show then eprintf "%s%!" s) format
 
   (* [newline] increments [count], and performs the bounds check,
       even if [show] is false. *)
