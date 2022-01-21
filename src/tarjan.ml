@@ -231,7 +231,9 @@ end) = struct
     Array.iter (yield action) representatives
 
   let rev_topological_iter action =
-    MArray.iter_rev (yield action) representatives
+    for i = Array.length representatives - 1 downto 0 do
+      yield action representatives.(i)
+    done
 
   let map action =
     Array.map (yield action) representatives |> Array.to_list
