@@ -52,3 +52,29 @@
     (:result compcert_pre_parser.err))
   (action (diff %{expected} %{result}))
 )
+
+(rule
+  (targets unreachable_transition.out unreachable_transition.err)
+  (deps unreachable_transition.mly)
+  (action
+    (with-stdout-to unreachable_transition.out
+    (with-stderr-to unreachable_transition.err
+    (with-accepted-exit-codes 0
+    (run menhir %{read-lines:unreachable_transition.flags} --list-errors %{deps})
+)))))
+
+(rule
+  (alias test)
+  (deps
+    (:expected unreachable_transition.out.exp)
+    (:result unreachable_transition.out))
+  (action (diff %{expected} %{result}))
+)
+
+(rule
+  (alias test)
+  (deps
+    (:expected unreachable_transition.err.exp)
+    (:result unreachable_transition.err))
+  (action (diff %{expected} %{result}))
+)
