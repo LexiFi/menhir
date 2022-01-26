@@ -13,6 +13,10 @@
   `<A>` was used in a production that binds zero identifiers. (Reported by
   Romain Calascibetta, fixed by Frédéric Bour.)
 
+* Fix an assertion failure in `menhir --list-errors` that would occur when a
+  state was unreachable due to conflict resolution. (Reported by Enrico Tassi,
+  fixed by Frédéric Bour.)
+
 ## 2021/12/30
 
 * The code back-end has been rewritten from the ground up by Émile Trotignon
