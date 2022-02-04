@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 400 distinct tests.
+;; 401 distinct tests.
 
 (rule (target JSParse.opp.out) (deps JSParse.mly)
   (action
@@ -26750,6 +26750,72 @@
   (action
     (diff sqlgg_0_4_5-sql_parser_stripped.ml.log.exp
       sqlgg_0_4_5-sql_parser_stripped.ml.log)))
+
+(rule (target squirrel.opp.out) (deps squirrel.mly)
+  (action
+    (with-outputs-to squirrel.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias quick) (action (diff squirrel.opp.exp squirrel.opp.out)))
+
+(rule
+  (targets squirrel.out squirrel.automaton squirrel.automaton.resolved
+    squirrel.conflicts squirrel.timings)
+  (deps squirrel.mly)
+  (action
+    (with-outputs-to squirrel.out
+      (with-accepted-exit-codes 0
+        (run menhir --table --dump --dump-resolved --explain -lg 2 -la 2 -lc
+          2 --timings-to squirrel.timings %{deps})))))
+
+(rule (alias quick) (action (diff squirrel.exp squirrel.out)))
+
+(rule (alias quick)
+  (action (diff squirrel.automaton.exp squirrel.automaton)))
+
+(rule (alias quick)
+  (action (diff squirrel.automaton.resolved.exp squirrel.automaton.resolved)))
+
+(rule (alias quick)
+  (action (diff squirrel.conflicts.exp squirrel.conflicts)))
+
+(rule (target squirrel_stripped.mly) (deps squirrel.mly)
+  (action
+    (with-stderr-to squirrel_stripped.ignored
+      (with-stdout-to squirrel_stripped.mly
+        (with-accepted-exit-codes 0
+          (run menhir --only-preprocess-uu %{deps}))))))
+
+(rule
+  (targets squirrel_stripped.log squirrel_stripped.mli squirrel_stripped.ml
+    squirrel_stripped.stacklang squirrel_stripped.timings
+    squirrel_stripped.scount squirrel_stripped.dcount)
+  (deps squirrel_stripped.mly)
+  (action
+    (with-outputs-to squirrel_stripped.log
+      (with-accepted-exit-codes 0
+        (run menhir --infer --stacklang-test --stacklang-dump -lg 2 -la 2 -lc
+          2 --timings-to squirrel_stripped.timings %{deps})))))
+
+(alias (name quick) (deps
+                      squirrel_stripped.stacklang))
+
+(rule (targets squirrel_stripped.cmi squirrel_stripped.mli.log)
+  (deps squirrel_stripped.mli)
+  (action
+    (with-stdout-to squirrel_stripped.mli.dtimings
+      (with-stderr-to squirrel_stripped.mli.log
+        (run ocamlc -w A-24 -warn-error A -dtimings -c squirrel_stripped.mli)))))
+
+(rule (targets squirrel_stripped.cmo squirrel_stripped.ml.log)
+  (deps squirrel_stripped.ml squirrel_stripped.cmi)
+  (action
+    (with-stdout-to squirrel_stripped.ml.dtimings
+      (with-stderr-to squirrel_stripped.ml.log
+        (run ocamlc -w A-24 -warn-error A -dtimings -c squirrel_stripped.ml)))))
+
+(rule (alias test)
+  (action (diff squirrel_stripped.ml.log.exp squirrel_stripped.ml.log)))
 
 (rule (target stanc3.opp.out) (deps stanc3.mly)
   (action

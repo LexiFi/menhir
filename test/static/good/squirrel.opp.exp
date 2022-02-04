@@ -1,0 +1,1105 @@
+%{
+  module L  = Location
+  module T  = Tactics
+%}
+%start declarations
+%start interactive
+%start top_formula
+%start top_process
+%token ABORT
+%token ABSTRACT
+%token AENC
+%token AND
+%token ARROW
+%token AS
+%token ASSERT
+%token ASSIGN
+%token AT
+%token AXIOM
+%token <string> BANG
+%token BANGU
+%token BOOLEAN
+%token BY
+%token CHANNEL
+%token CHECKFAIL
+%token CLEAR
+%token COLON
+%token COMMA
+%token CYCLE
+%token DARROW
+%token DDH
+%token DEPENDS
+%token DEQUIVARROW
+%token DESTRUCT
+%token DIFF
+%token DOT
+%token ELSE
+%token EOF
+%token EQ
+%token EQUIV
+%token EXISTS
+%token EXN
+%token EXP
+%token FALSE
+%token FIND
+%token FORALL
+%token GENERALIZE
+%token GEQ
+%token GOAL
+%token HAPPENS
+%token HASH
+%token HELP
+%token <string> ID
+%token IF
+%token IN
+%token INDEX
+%token INIT
+%token <int> INT
+%token INTRO
+%token LANGLE
+%token LBRACKET
+%token LEFT
+%token LEQ
+%token LET
+%token LPAREN
+%token MESSAGE
+%token MINUS
+%token MUTABLE
+%token NAME
+%token NEQ
+%token NEW
+%token NONE
+%token NOSIMPL
+%token NOT
+%token NULL
+%token OR
+%token ORACLE
+%token OUT
+%token PARALLEL
+%token PLUS
+%token PRED
+%token PROCESS
+%token PROOF
+%token QED
+%token QMARK
+%token QUANTIF
+%token RANGLE
+%token RBRACKET
+%token REPEAT
+%token REVERT
+%token REWRITE
+%token RIGHT
+%token RPAREN
+%token SEMICOLON
+%token SENC
+%token SEQ
+%token SET
+%token SIGNATURE
+%token SLASH
+%token SLASHEQUAL
+%token SLASHSLASH
+%token STAR
+%token SUCHTHAT
+%token SYSTEM
+%token TERM
+%token THEN
+%token TIMESTAMP
+%token TRUE
+%token TRY
+%token UNDERSCORE
+%token UNDO
+%token USE
+%token WITH
+%token XOR
+%nonassoc QUANTIF
+%right ARROW
+%right DARROW
+%right DEQUIVARROW
+%left OR
+%left AND
+%nonassoc DIFF FALSE HAPPENS ID INIT LPAREN NOT PRED SEQ TRUE
+%nonassoc EQ GEQ LANGLE LEQ NEQ RANGLE
+%nonassoc empty_else
+%nonassoc ELSE
+%left XOR
+%left EXP
+%nonassoc AT
+%nonassoc tac_prec
+%left PLUS
+%right SEMICOLON
+%nonassoc BY
+%nonassoc REPEAT
+%nonassoc TRY
+%nonassoc NOSIMPL
+%type <Decl.declarations> declarations
+%type <Prover.parsed_input> interactive
+%type <Theory.formula> top_formula
+%type <Process.process> top_process
+%%
+
+option_as_ip_:
+  
+    {    ( None )}
+| x = as_ip
+    {    ( Some x )}
+
+loption_separated_nonempty_list_PARALLEL_simpl_pat__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_PARALLEL_simpl_pat_
+    {    ( x )}
+
+loption_separated_nonempty_list_empty_simpl_pat__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_empty_simpl_pat_
+    {    ( x )}
+
+separated_nonempty_list_COMMA_int_:
+  x = int
+    {    ( [ x ] )}
+| x = int _2 = COMMA xs = separated_nonempty_list_COMMA_int_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_lsymb_:
+  x = lsymb
+    {    ( [ x ] )}
+| x = lsymb _2 = COMMA xs = separated_nonempty_list_COMMA_lsymb_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_term_:
+  x = term
+    {    ( [ x ] )}
+| x = term _2 = COMMA xs = separated_nonempty_list_COMMA_term_
+    {    ( x :: xs )}
+
+separated_nonempty_list_PARALLEL_sel_tac_:
+  s = selector _2 = COLON r = tac
+    {let x =                          ( (s,r) ) in
+    ( [ x ] )}
+| s = selector _2_inlined1 = COLON r = tac _2 = PARALLEL xs = separated_nonempty_list_PARALLEL_sel_tac_
+    {let x =                          ( (s,r) ) in
+    ( x :: xs )}
+
+separated_nonempty_list_PARALLEL_simpl_pat_:
+  x = simpl_pat
+    {    ( [ x ] )}
+| x = simpl_pat _2 = PARALLEL xs = separated_nonempty_list_PARALLEL_simpl_pat_
+    {    ( x :: xs )}
+
+separated_nonempty_list_empty_intro_pat_:
+  x = intro_pat
+    {    ( [ x ] )}
+| x = intro_pat xs = separated_nonempty_list_empty_intro_pat_
+    {let _2 =   ( () ) in
+    ( x :: xs )}
+
+separated_nonempty_list_empty_lsymb_:
+  x = lsymb
+    {    ( [ x ] )}
+| x = lsymb xs = separated_nonempty_list_empty_lsymb_
+    {let _2 =   ( () ) in
+    ( x :: xs )}
+
+separated_nonempty_list_empty_rw_arg_:
+  x = rw_arg
+    {    ( [ x ] )}
+| x = rw_arg xs = separated_nonempty_list_empty_rw_arg_
+    {let _2 =   ( () ) in
+    ( x :: xs )}
+
+separated_nonempty_list_empty_simpl_pat_:
+  x = simpl_pat
+    {    ( [ x ] )}
+| x = simpl_pat xs = separated_nonempty_list_empty_simpl_pat_
+    {let _2 =   ( () ) in
+    ( x :: xs )}
+
+separated_nonempty_list_empty_sterm_:
+  x = sterm
+    {    ( [ x ] )}
+| x = sterm xs = separated_nonempty_list_empty_sterm_
+    {let _2 =   ( () ) in
+    ( x :: xs )}
+
+lsymb:
+  x = ID
+    {let id =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+             ( id )}
+
+sterm_i:
+  _1 = LPAREN t = term_i _3 = RPAREN
+    {                                  ( t )}
+| id = lsymb
+    {                                  ( Theory.App (id, []) )}
+| _1 = LANGLE t = term _3 = COMMA t0 = term _5 = RANGLE
+    {let _endpos = _endpos__5_ in
+let _startpos = _startpos__1_ in
+    ( let loc = L.make _startpos _endpos in
+      let fsymb = L.mk_loc loc "pair" in
+      Theory.App (fsymb, [t;t0]) )}
+| _1 = DIFF _2 = LPAREN t = term _4 = COMMA t0 = term _6 = RPAREN
+    {                                          ( Theory.Diff (t,t0) )}
+| _1 = SEQ _2 = LPAREN i = ids _4 = ARROW t = term _6 = RPAREN
+    {                                          ( Theory.Seq (i,t) )}
+| _1 = NOT f = sterm
+    {                                          ( Theory.Not (f) )}
+| _1 = FALSE
+    {                                          ( Theory.False )}
+| _1 = TRUE
+    {                                          ( Theory.True )}
+| _1 = HAPPENS _2 = LPAREN l = separated_nonempty_list_COMMA_term_ _4 = RPAREN
+    {let ts =                                   ( l ) in
+                                          ( Theory.Happens ts )}
+| _1 = PRED _2 = LPAREN ts = term _4 = RPAREN
+    {                                         ( Theory.Tpred ts )}
+| _1 = INIT
+    {                                         ( Theory.Tinit )}
+
+term_i:
+  f = sterm_i
+    {                                             ( f )}
+| id = lsymb terms = term_list1
+    {                                             ( Theory.App (id, terms) )}
+| id = lsymb _2 = AT ts = term
+    {                                             ( Theory.AppAt (id,[],ts) )}
+| id = lsymb terms = term_list1 _3 = AT ts = term
+    {                                             ( Theory.AppAt (id,terms,ts) )}
+| t = term _2 = XOR t0 = term
+    {let _endpos = _endpos_t0_ in
+let _startpos = _startpos_t_ in
+    ( let loc = L.make _startpos _endpos in
+      let fsymb = L.mk_loc loc "xor" in
+      Theory.App (fsymb,  [t;t0]) )}
+| t = term _2 = EXP t0 = term
+    {let _endpos = _endpos_t0_ in
+let _startpos = _startpos_t_ in
+    ( let loc = L.make _startpos _endpos in
+      let fsymb = L.mk_loc loc "exp" in
+      Theory.App (fsymb,  [t;t0]))}
+| _1 = IF b = term _3 = THEN t = term %prec empty_else
+    {let t0 =
+  let _endpos__0_ = _endpos_t_ in
+  let _endpos = _endpos__0_ in
+  let _startpos = _endpos__0_ in
+                       ( let loc = L.make _startpos _endpos in
+                       let fsymb = L.mk_loc loc "zero" in
+                       L.mk_loc loc (Theory.App (fsymb, [])) )
+in
+                                          ( Theory.ITE (b,t,t0) )}
+| _1 = IF b = term _3 = THEN t = term _1_inlined1 = ELSE t_inlined1 = term
+    {let t0 =
+  let t = t_inlined1 in
+                      ( t )
+in
+                                          ( Theory.ITE (b,t,t0) )}
+| _1 = FIND is = indices _3 = SUCHTHAT b = term _5 = IN t = term %prec empty_else
+    {let t0 =
+  let _endpos__0_ = _endpos_t_ in
+  let _endpos = _endpos__0_ in
+  let _startpos = _endpos__0_ in
+                       ( let loc = L.make _startpos _endpos in
+                       let fsymb = L.mk_loc loc "zero" in
+                       L.mk_loc loc (Theory.App (fsymb, [])) )
+in
+                                          ( Theory.Find (is,b,t,t0) )}
+| _1 = FIND is = indices _3 = SUCHTHAT b = term _5 = IN t = term _1_inlined1 = ELSE t_inlined1 = term
+    {let t0 =
+  let t = t_inlined1 in
+                      ( t )
+in
+                                          ( Theory.Find (is,b,t,t0) )}
+| f = term _2 = AND f0 = term
+    {                                    ( Theory.And (f,f0) )}
+| f = term _2 = OR f0 = term
+    {                                    ( Theory.Or (f,f0) )}
+| f = term _2 = DARROW f0 = term
+    {                                    ( Theory.Impl (f,f0) )}
+| f = term _1 = EQ f0 = term
+    {let o =                                  ( `Eq ) in
+                                          ( Theory.Compare (o,f,f0) )}
+| f = term _1 = NEQ f0 = term
+    {let o =                                  ( `Neq ) in
+                                          ( Theory.Compare (o,f,f0) )}
+| f = term _1 = LEQ f0 = term
+    {let o =                                  ( `Leq ) in
+                                          ( Theory.Compare (o,f,f0) )}
+| f = term _1 = LANGLE f0 = term
+    {let o =                                  ( `Lt ) in
+                                          ( Theory.Compare (o,f,f0) )}
+| f = term _1 = GEQ f0 = term
+    {let o =                                  ( `Geq ) in
+                                          ( Theory.Compare (o,f,f0) )}
+| f = term _1 = RANGLE f0 = term
+    {let o =                                  ( `Gt ) in
+                                          ( Theory.Compare (o,f,f0) )}
+| _1 = EXISTS _2 = LPAREN vs = arg_list _4 = RPAREN _5 = sep f = term %prec QUANTIF
+    {                                 ( Theory.Exists (vs,f)  )}
+| _1 = FORALL _2 = LPAREN vs = arg_list _4 = RPAREN _5 = sep f = term %prec QUANTIF
+    {                                 ( Theory.ForAll (vs,f)  )}
+| _1 = EXISTS id = lsymb _3 = COLON k = kind _5 = sep f = term %prec QUANTIF
+    {                                 ( Theory.Exists ([id,k],f)  )}
+| _1 = FORALL id = lsymb _3 = COLON k = kind _5 = sep f = term %prec QUANTIF
+    {                                 ( Theory.ForAll ([id,k],f)  )}
+| f = term _2 = DEQUIVARROW f0 = term
+    {let _endpos = _endpos_f0_ in
+let _startpos = _startpos_f_ in
+    ( let loc = L.make _startpos _endpos in
+      Theory.And (L.mk_loc loc (Theory.Impl (f,f0)),
+                  L.mk_loc loc (Theory.Impl (f0,f))) )}
+
+sterm:
+  x = sterm_i
+    {let t =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+                 ( t )}
+
+term:
+  x = term_i
+    {let t =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+                ( t )}
+
+term_list:
+  
+    {                                     ( [] )}
+| _1 = LPAREN _2 = RPAREN
+    {                                     ( [] )}
+| _1 = LPAREN t = term terms = tm_list _4 = RPAREN
+    {                                     ( t::terms )}
+
+term_list1:
+  _1 = LPAREN t = term terms = tm_list _4 = RPAREN
+    {                                     ( t::terms )}
+
+tm_list:
+  
+    {                            ( [] )}
+| _1 = COMMA tm = term tms = tm_list
+    {                            ( tm::tms )}
+
+kind:
+  _1 = INDEX
+    {                                 ( Sorts.eindex )}
+| _1 = MESSAGE
+    {                                 ( Sorts.emessage )}
+| _1 = BOOLEAN
+    {                                 ( Sorts.eboolean )}
+| _1 = TIMESTAMP
+    {                                 ( Sorts.etimestamp )}
+
+arg_list:
+  
+    {                                          ( [] )}
+| is = ids _2 = COLON k = kind
+    {                                          ( List.map (fun x -> x,k) is )}
+| is = ids _2 = COLON k = kind _4 = COMMA args = arg_list
+    {                                          ( List.map (fun x -> x,k) is @ args )}
+
+ids:
+  id = lsymb
+    {                                       ( [id] )}
+| id = lsymb _2 = COMMA ids = ids
+    {                                       ( id::ids )}
+
+top_formula:
+  f = term _2 = EOF
+    {                                ( f )}
+
+sep:
+  
+    {        (())}
+| _1 = COMMA
+    {        (())}
+
+top_process:
+  p = process _2 = EOF
+    {                                   ( p )}
+
+process_i:
+  _1 = NULL
+    {                                   ( Process.Null )}
+| _1 = LPAREN ps = processes_i _3 = RPAREN
+    {                                   ( ps )}
+| id = lsymb terms = term_list
+    {                                   ( Process.Apply (id,terms) )}
+| id = lsymb _2 = COLON p = process
+    {                                   ( Process.Alias (p,id) )}
+| _1 = NEW id = lsymb _3 = SEMICOLON p = process
+    {                                   ( Process.New (id,p) )}
+| _1 = IN _2 = LPAREN c = lsymb _4 = COMMA id = lsymb _6 = RPAREN p = process_cont
+    {    ( Process.In (c,id,p) )}
+| _1 = OUT _2 = LPAREN c = lsymb _4 = COMMA t = term _6 = RPAREN p = process_cont
+    {    ( Process.Out (c,t,p) )}
+| _1 = IF f = term _3 = THEN p = process p0 = else_process
+    {    ( Process.Exists ([],f,p,p0) )}
+| _1 = FIND is = indices _3 = SUCHTHAT f = term _5 = IN p = process p0 = else_process
+    {    ( Process.Exists (is,f,p,p0) )}
+| _1 = LET id = lsymb _3 = EQ t = term _5 = IN p = process
+    {    ( Process.Let (id,t,p) )}
+| id = lsymb terms = term_list _3 = ASSIGN t = term p = process_cont
+    {    ( let to_idx t = match L.unloc t with
+        | Theory.App(x,[]) -> x
+        | ti -> raise @@ Theory.Conv (L.loc t, Theory.Index_not_var ti)
+      in
+      let l = List.map to_idx terms in
+      Process.Set (id,l,t,p) )}
+| x = BANG p = process
+    {let s =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+                        ( Process.Repl (s,p) )}
+
+process:
+  x = process_i
+    {let p =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+                   ( p )}
+
+processes_i:
+  p = process_i
+    {                                          ( p )}
+| p = process _2 = PARALLEL x = processes_i
+    {let ps =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+                                          ( Process.Parallel (p,ps) )}
+
+process_cont:
+  
+    {let _endpos = _endpos__0_ in
+let _startpos = _endpos__0_ in
+                                 ( let loc = L.make _startpos _endpos in
+                                   L.mk_loc loc Process.Null )}
+| _1 = SEMICOLON p = process
+    {                                 ( p )}
+
+else_process:
+   %prec empty_else
+    {let _endpos = _endpos__0_ in
+let _startpos = _endpos__0_ in
+                                 ( let loc = L.make _startpos _endpos in
+                                   L.mk_loc loc Process.Null )}
+| _1 = ELSE p = process
+    {                                 ( p )}
+
+indices:
+  id = lsymb
+    {                                    ( [id] )}
+| id = lsymb _2 = COMMA ids = indices
+    {                                    ( id::ids )}
+
+opt_arg_list:
+  _1 = LPAREN args = arg_list _3 = RPAREN
+    {                                 ( args )}
+| 
+    {                                 ( [] )}
+
+name_type:
+  _1 = MESSAGE
+    {                                 ( 0 )}
+| _1 = INDEX _2 = ARROW t = name_type
+    {                                 ( 1 + t )}
+
+msg_or_bool:
+  _1 = MESSAGE
+    {                                 ( Sorts.emessage )}
+| _1 = BOOLEAN
+    {                                 ( Sorts.eboolean )}
+
+msg_type:
+  _1 = MESSAGE
+    {                                 ( 0 )}
+| _1 = MESSAGE _2 = ARROW t = msg_type
+    {                                 ( 1 + t )}
+
+abs_type:
+  t = msg_type
+    {                                 ( 0,t )}
+| _1 = INDEX _2 = ARROW t = abs_type
+    {                                 ( let i,m = t in i+1,m )}
+
+index_arity:
+  
+    {                                 ( 0 )}
+| _1 = LPAREN i = INT _3 = RPAREN
+    {                                 ( i )}
+
+declaration_i:
+  _1 = HASH e = lsymb a = index_arity
+    {                          ( Decl.Decl_hash (Some a, e, None) )}
+| _1 = HASH e = lsymb _3 = WITH _4 = ORACLE f = term
+    {                          ( Decl.Decl_hash (None, e, Some f) )}
+| _1 = AENC e = lsymb _3 = COMMA d = lsymb _5 = COMMA p = lsymb
+    {                          ( Decl.Decl_aenc (e, d, p) )}
+| _1 = SENC e = lsymb _3 = COMMA d = lsymb
+    {                          ( Decl.Decl_senc (e, d) )}
+| _1 = SENC e = lsymb _3 = COMMA d = lsymb _5 = WITH h = lsymb
+    {                          ( Decl.Decl_senc_w_join_hash (e, d, h) )}
+| _1 = SIGNATURE s = lsymb _3 = COMMA c = lsymb _5 = COMMA p = lsymb
+    {                          ( Decl.Decl_sign (s, c, p, None) )}
+| _1 = SIGNATURE s = lsymb _3 = COMMA c = lsymb _5 = COMMA p = lsymb _7 = WITH _8 = ORACLE f = term
+    {                       ( Decl.Decl_sign (s, c, p, Some f) )}
+| _1 = NAME e = lsymb _3 = COLON t = name_type
+    {                          ( Decl.Decl_name (e, t) )}
+| _1 = ABSTRACT e = lsymb _3 = COLON t = abs_type
+    {                          ( let index_arity,message_arity = t in
+                            Decl.(Decl_abstract
+                                    { name = e;
+                                      index_arity=index_arity;
+                                      message_arity=message_arity;}) )}
+| _1 = MUTABLE e = lsymb args = opt_arg_list _4 = COLON typ = msg_or_bool _6 = EQ t = term
+    {                          ( Decl.Decl_state (e, args, typ, t) )}
+| _1 = CHANNEL e = lsymb
+    {                          ( Decl.Decl_channel e )}
+| _1 = TERM e = lsymb args = opt_arg_list _4 = COLON typ = msg_or_bool _6 = EQ t = term
+    {                          ( Decl.Decl_macro (e, args, typ, t) )}
+| _1 = PROCESS e = lsymb args = opt_arg_list _4 = EQ p = process
+    {                          ( Decl.Decl_process (e, args, p) )}
+| _1 = AXIOM s = bsystem f = term
+    {                          ( Decl.(Decl_axiom { gname = None;
+                                               gsystem = s;
+                                               gform = f; }) )}
+| _1 = AXIOM s = bsystem i = lsymb _4 = COLON f = term
+    {                          ( Decl.(Decl_axiom { gname = Some i;
+                                               gsystem = s;
+                                               gform = f; }) )}
+| _1 = SYSTEM p = process
+    {                          ( Decl.(Decl_system { sname = None;
+                                                sprocess = p}) )}
+| _1 = SYSTEM _2 = LBRACKET id = lsymb _4 = RBRACKET p = process
+    {                          ( Decl.(Decl_system { sname = Some id;
+                                                sprocess = p}) )}
+
+declaration:
+  x = declaration_i
+    {let ldecl =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+                                            ( ldecl )}
+
+declaration_list:
+  decl = declaration
+    {                                          ( [decl] )}
+| decl = declaration decls = declaration_list
+    {                                          ( decl :: decls )}
+
+declarations:
+  decls = declaration_list _2 = DOT
+    {                             ( decls )}
+
+tactic_param:
+  f = term %prec tac_prec
+    {                         ( TacticsArgs.Theory f )}
+| i = INT
+    {                         ( TacticsArgs.Int_parsed i )}
+
+tactic_params:
+  
+    {                                        ( [] )}
+| t = tactic_param
+    {                                        ( [t] )}
+| t = tactic_param _2 = COMMA ts = tactic_params
+    {                                        ( t::ts )}
+
+rw_mult:
+  _1 = BANGU
+    {         ( `Many )}
+| _1 = QMARK
+    {         ( `Any )}
+| 
+    {         ( `Once )}
+
+rw_dir:
+  
+    {        ( `LeftToRight )}
+| _1 = MINUS
+    {        ( `RightToLeft )}
+
+rw_type:
+  f = sterm
+    {                 ( `Form f )}
+| _1 = SLASH t = sterm
+    {                 ( `Expand t )}
+
+rw_item:
+  m = rw_mult x = rw_dir t = rw_type
+    {let d =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+                                     ( TacticsArgs.{ rw_mult = m;
+                                                     rw_dir = d;
+                                                     rw_type = t; } )}
+
+rw_arg:
+  r = rw_item
+    {            ( TacticsArgs.R_item r )}
+| s = s_item
+    {            ( TacticsArgs.R_s_item s )}
+
+rw_args:
+  l = separated_nonempty_list_empty_rw_arg_
+    {let l =                                   ( l ) in
+                          ( l )}
+
+rw_in:
+  
+    {                           ( None )}
+| _1 = IN l = separated_nonempty_list_COMMA_lsymb_
+    {let l =                                   ( l ) in
+                           ( Some (`Hyps l) )}
+| _1 = IN _2 = STAR
+    {                           ( Some `All )}
+
+tac_errors:
+  
+    {                          ( [] )}
+| i = ID
+    {                          ( [i] )}
+| i = ID _2 = COMMA t = tac_errors
+    {                          ( i::t )}
+
+naming_pat:
+  _1 = UNDERSCORE
+    {              ( TacticsArgs.Unnamed )}
+| _1 = QMARK
+    {              ( TacticsArgs.AnyName )}
+| id = ID
+    {              ( TacticsArgs.Named id )}
+
+and_or_pat:
+  _1 = LBRACKET s = simpl_pat xs = loption_separated_nonempty_list_empty_simpl_pat__ _4 = RBRACKET
+    {let ips =
+  let l =     ( xs ) in
+                           ( l )
+in
+                    ( TacticsArgs.And (s :: ips) )}
+| _1 = LBRACKET s = simpl_pat _3 = PARALLEL xs = loption_separated_nonempty_list_PARALLEL_simpl_pat__ _5 = RBRACKET
+    {let ips =
+  let l =     ( xs ) in
+                           ( l )
+in
+                    ( TacticsArgs.Or  (s :: ips) )}
+| _1 = LBRACKET _2 = RBRACKET
+    {                    ( TacticsArgs.Split )}
+
+simpl_pat:
+  n_ip = naming_pat
+    {                   ( TacticsArgs.SNamed n_ip )}
+| ao_ip = and_or_pat
+    {                   ( TacticsArgs.SAndOr ao_ip )}
+
+s_item:
+  x = SLASHSLASH
+    {let l =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+                    ( TacticsArgs.Tryauto  (L.loc l))}
+| x = SLASHEQUAL
+    {let l =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+                    ( TacticsArgs.Simplify (L.loc l))}
+
+intro_pat:
+  s = s_item
+    {                ( TacticsArgs.SItem (s) )}
+| x = STAR
+    {let l =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+                ( TacticsArgs.Star  (L.loc l))}
+| pat = simpl_pat
+    {                ( TacticsArgs.Simpl pat )}
+
+intro_pat_list:
+  l = separated_nonempty_list_empty_intro_pat_
+    {let l =                                   ( l ) in
+                            ( l )}
+
+int:
+  i = INT
+    {       ( i )}
+
+selector:
+  l = separated_nonempty_list_COMMA_int_
+    {let l =                                   ( l ) in
+                      ( l )}
+
+tac_formula:
+  f = term %prec tac_prec
+    {                         ( f )}
+
+as_ip:
+  _1 = AS ip = simpl_pat
+    {                  ( ip )}
+
+sel_tacs:
+  l = separated_nonempty_list_PARALLEL_sel_tac_
+    {let l =                                   ( l ) in
+                             ( l )}
+
+tac:
+  _1 = LPAREN t = tac _3 = RPAREN
+    {                                       ( t )}
+| l = tac _2 = SEMICOLON r = tac
+    {                                       ( T.AndThen [l;r] )}
+| l = tac _2 = SEMICOLON _3 = LBRACKET sls = sel_tacs _5 = RBRACKET
+    {                                       ( T.AndThenSel (l,sls) )}
+| l = tac _2 = SEMICOLON s = selector _2_inlined1 = COLON r = tac %prec tac_prec
+    {let sl =                          ( (s,r) ) in
+                                       ( T.AndThenSel (l,[sl]) )}
+| _1 = BY t = tac %prec tac_prec
+    {                                       ( T.By t )}
+| l = tac _2 = PLUS r = tac
+    {                                       ( T.OrElse [l;r] )}
+| _1 = TRY l = tac
+    {                                       ( T.Try l )}
+| _1 = REPEAT t = tac
+    {                                       ( T.Repeat t )}
+| id = ID t = tactic_params
+    {                                       ( T.Abstract (id,t) )}
+| _1 = LEFT
+    {                                       ( T.Abstract ("left",[]) )}
+| _1 = RIGHT
+    {                                       ( T.Abstract ("right",[]) )}
+| _1 = INTRO p = intro_pat_list
+    {                                       ( T.Abstract
+                                           ("intro",[TacticsArgs.IntroPat p]) )}
+| t = tac _2 = DARROW p = intro_pat_list
+    {                                       ( T.AndThen
+                                           [t;T.Abstract
+                                                ("intro",[TacticsArgs.IntroPat p])] )}
+| _1 = DESTRUCT i = lsymb
+    {                                       ( T.Abstract
+                                           ("destruct",[TacticsArgs.String_name i]) )}
+| _1 = DESTRUCT i = lsymb _3 = AS p = and_or_pat
+    {                                       ( T.Abstract
+                                           ("destruct",[TacticsArgs.String_name i;
+                                                        TacticsArgs.AndOrPat p]) )}
+| _1 = DEPENDS args = tactic_params
+    {                                       ( T.Abstract ("depends",args) )}
+| _1 = DEPENDS args = tactic_params _3 = BY t = tac
+    {                                       ( T.AndThenSel
+                                           (T.Abstract ("depends",args),
+                                            [[1], t]) )}
+| _1 = EXISTS t = tactic_params
+    {                                       ( T.Abstract
+                                          ("exists",t) )}
+| _1 = NOSIMPL t = tac
+    {                                       ( T.Modifier
+                                          ("nosimpl", t) )}
+| _1 = CYCLE i = INT
+    {                                       ( T.Abstract
+                                         ("cycle",[TacticsArgs.Int_parsed i]) )}
+| _1 = CYCLE _2 = MINUS i = INT
+    {                                       ( T.Abstract
+                                         ("cycle",[TacticsArgs.Int_parsed (-i)]) )}
+| _1 = CHECKFAIL t = tac _3 = EXN ts = tac_errors
+    {                                       ( T.CheckFail
+                                         (T.tac_error_of_strings  ts,t) )}
+| _1 = REVERT l = separated_nonempty_list_empty_lsymb_
+    {let ids =                                   ( l ) in
+    ( let ids = List.map (fun id -> TacticsArgs.String_name id) ids in
+      T.Abstract ("revert", ids) )}
+| _1 = GENERALIZE l = separated_nonempty_list_empty_sterm_
+    {let ids =                                   ( l ) in
+    ( let ids = List.map (fun id -> TacticsArgs.Theory id) ids in
+      T.Abstract ("generalize", ids) )}
+| _1 = CLEAR l = separated_nonempty_list_empty_lsymb_
+    {let ids =                                   ( l ) in
+    ( let ids = List.map (fun id -> TacticsArgs.String_name id) ids in
+      T.Abstract ("clear", ids) )}
+| _1 = ASSERT p = tac_formula ip = option_as_ip_
+    {    ( let ip = match ip with
+        | None -> []
+        | Some ip -> [TacticsArgs.SimplPat ip] in
+      T.Abstract ("assert", TacticsArgs.Theory p::ip) )}
+| _1 = USE i = lsymb ip = option_as_ip_
+    {    ( let ip = match ip with
+        | None -> []
+        | Some ip -> [TacticsArgs.SimplPat ip] in
+      T.Abstract ("use", ip @ [TacticsArgs.String_name i]) )}
+| _1 = USE i = lsymb _3 = WITH t = tactic_params ip = option_as_ip_
+    {    ( let ip : TacticsArgs.parser_arg list = match ip with
+        | None -> []
+        | Some ip -> [TacticsArgs.SimplPat ip] in
+      T.Abstract ("use", ip @ [TacticsArgs.String_name i] @ t) )}
+| _1 = REWRITE p = rw_args w = rw_in
+    {    ( T.Abstract ("rewrite", [TacticsArgs.RewriteIn (p, w)]) )}
+| _1 = DDH i1 = lsymb _3 = COMMA i2 = lsymb _5 = COMMA i3 = lsymb
+    {                                                ( T.Abstract
+                                          ("ddh",
+                                           [TacticsArgs.String_name i1;
+					                                  TacticsArgs.String_name i2;
+					                                  TacticsArgs.String_name i3;
+				                                   ]) )}
+| _1 = HELP
+    {                                       ( T.Abstract
+                                          ("help",
+                                           []) )}
+| _1 = HELP i = lsymb
+    {                                          ( T.Abstract
+                                          ("help",
+                                           [TacticsArgs.String_name i]) )}
+| _1 = HELP h = help_tac
+    {   ( T.Abstract ("help",[TacticsArgs.String_name h]) )}
+
+help_tac_i:
+  _1 = LEFT
+    {             ( "left")}
+| _1 = RIGHT
+    {             ( "right")}
+| _1 = EXISTS
+    {             ( "exists")}
+| _1 = USE
+    {             ( "use")}
+| _1 = REWRITE
+    {             ( "rewrite")}
+| _1 = REVERT
+    {             ( "revert")}
+| _1 = GENERALIZE
+    {             ( "generalize")}
+| _1 = DEPENDS
+    {             ( "depends")}
+| _1 = DDH
+    {             ( "ddh")}
+| _1 = ASSERT
+    {             ( "assert")}
+| _1 = DESTRUCT
+    {             ( "destruct")}
+| _1 = INTRO
+    {             ( "intro")}
+
+help_tac:
+  x = help_tac_i
+    {let l =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+                    ( l )}
+
+qed:
+  _1 = QED
+    {                                      ( () )}
+
+abort:
+  _1 = ABORT
+    {                                      ( () )}
+
+undo:
+  _1 = UNDO i = INT _3 = DOT
+    {                                      ( i )}
+
+tactic:
+  t = tac _2 = DOT
+    {                                      ( t )}
+
+equiv:
+  ei = term
+    {                          ( [ei] )}
+| ei = term _2 = COMMA eis = equiv
+    {                          ( ei::eis )}
+
+equiv_form:
+  _1 = LBRACKET f = term _3 = RBRACKET
+    {                                ( Prover.PReach f )}
+| e = equiv
+    {                     ( Prover.PEquiv e )}
+| f = equiv_form _2 = ARROW f0 = equiv_form
+    {                                   ( Prover.PImpl (f,f0) )}
+
+args:
+  
+    {                                          ( [] )}
+| _1 = LPAREN vs0 = arg_list _3 = RPAREN vs = args
+    {                                     ( vs0 @ vs )}
+
+system:
+  
+    {                          ( SystemExpr.(P_SimplePair default_system_name) )}
+| _1 = LBRACKET _2 = LEFT _3 = RBRACKET
+    {                          ( SystemExpr.(P_Single (P_Left default_system_name)) )}
+| _1 = LBRACKET _2 = RIGHT _3 = RBRACKET
+    {                          ( SystemExpr.(P_Single (P_Right default_system_name)) )}
+| _1 = LBRACKET _2 = NONE _3 = COMMA i = lsymb _5 = RBRACKET
+    {                                        ( SystemExpr.(P_SimplePair i) )}
+| _1 = LBRACKET _2 = LEFT _3 = COMMA i = lsymb _5 = RBRACKET
+    {                                        ( SystemExpr.(P_Single (P_Left i)) )}
+| _1 = LBRACKET _2 = RIGHT _3 = COMMA i = lsymb _5 = RBRACKET
+    {                                        ( SystemExpr.(P_Single (P_Right i)) )}
+
+bsystem:
+  
+    {                             ( SystemExpr.(P_SimplePair default_system_name) )}
+| _1 = LBRACKET i = lsymb _3 = RBRACKET
+    {                             ( SystemExpr.(P_SimplePair i) )}
+
+single_system:
+  _1 = LBRACKET _2 = LEFT _3 = RBRACKET
+    {                          ( SystemExpr.(P_Left default_system_name))}
+| _1 = LBRACKET _2 = RIGHT _3 = RBRACKET
+    {                          ( SystemExpr.(P_Right default_system_name))}
+| _1 = LBRACKET _2 = LEFT _3 = COMMA i = lsymb _5 = RBRACKET
+    {                                        ( SystemExpr.(P_Left i) )}
+| _1 = LBRACKET _2 = RIGHT _3 = COMMA i = lsymb _5 = RBRACKET
+    {                                        ( SystemExpr.(P_Right i))}
+
+gname:
+  i = lsymb
+    {             ( P_named i )}
+| _1 = UNDERSCORE
+    {             ( P_unknown )}
+
+goal_i:
+  _1 = GOAL s = system n = gname args = args _5 = COLON f = term _7 = DOT
+    {    ( let f_i = Theory.ForAll (args, f) in
+      let fa = L.mk_loc (L.loc f) f_i in
+      Prover.Gm_goal (n, P_trace_goal (s, fa)) )}
+| _1 = EQUIV n = gname env = args _4 = COLON x = equiv_form _6 = DOT
+    {let f =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+                 ( Prover.Gm_goal (n, P_equiv_goal (env, f)) )}
+| _1 = EQUIV n = gname _3 = DOT
+    {                 ( Prover.Gm_goal
+                     (n, P_equiv_goal_process
+                                   (SystemExpr.(P_Left  default_system_name),
+			                              SystemExpr.(P_Right default_system_name))) )}
+| _1 = EQUIV b1 = single_system b2 = single_system n = gname _5 = DOT
+    {                 ( Prover.Gm_goal
+                     (n, Prover.P_equiv_goal_process (b1, b2)))}
+| _1 = PROOF
+    {                 ( Prover.Gm_proof )}
+
+goal:
+  x = goal_i
+    {let goal =
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+        (
+    { L.pl_desc = x;
+      L.pl_loc  = L.make _startpos _endpos;
+    }
+  )
+in
+                   ( goal )}
+
+option_param:
+  _1 = TRUE
+    {        ( Config.Param_bool true  )}
+| _1 = FALSE
+    {        ( Config.Param_bool false )}
+| n = ID
+    {        (
+        if n = "true" then (Config.Param_bool true)
+        else if n = "false" then (Config.Param_bool false)
+        else Config.Param_string n   )}
+| i = INT
+    {        ( Config.Param_int i      )}
+
+set_option:
+  _1 = SET n = ID _3 = EQ param = option_param _5 = DOT
+    {                                     ( (n, param) )}
+
+interactive:
+  set = set_option
+    {                     ( Prover.ParsedSetOption set )}
+| decls = declarations
+    {                     ( Prover.ParsedInputDescr decls )}
+| u = undo
+    {                     ( Prover.ParsedUndo u )}
+| tac = tactic
+    {                     ( Prover.ParsedTactic tac )}
+| _1 = qed
+    {                     ( Prover.ParsedQed )}
+| _1 = abort
+    {                     ( Prover.ParsedAbort )}
+| g = goal
+    {                     ( Prover.ParsedGoal g )}
+| _1 = EOF
+    {                     ( Prover.EOF )}
+
+%%
