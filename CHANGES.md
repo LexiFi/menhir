@@ -17,6 +17,12 @@
   state was unreachable due to conflict resolution. (Reported by Enrico Tassi,
   fixed by Frédéric Bour.)
 
+* Fix the description of the differences between the *legacy* error-handling
+  strategy and the *simplified* strategy in the change log (below). The
+  previous description incorrectly claimed that there is no difference between
+  these strategies when the grammar obeys the restrictions imposed by the
+  simplified strategy. This is not true. (Reported by Andreas Abel.)
+
 ## 2021/12/30
 
 * The code back-end has been rewritten from the ground up by Émile Trotignon
@@ -44,19 +50,29 @@
 
     For grammars that do *not* use the `error` token, this makes no difference.
 
-    For grammars that use the `error` token in the limited way permitted by
-    the simplified strategy, this makes no difference either. The simplified
-    strategy makes the following requirement: the `error` token should always
-    appear at the end of a production, whose semantic action should abort the
-    parser by raising an exception.
+    The simplified strategy makes the following requirement: the `error` token
+    should always appear at the end of a production, whose semantic action
+    should abort the parser by raising an exception. So, under the simplified
+    strategy, not all grammars are accepted. Furthermore, even a grammar that
+    obeys this requirement can behave differently under the legacy strategy
+    and under the simplified strategy. Under the legacy strategy, the parser
+    can discard items off the parser's stack before shifting the `error`
+    token; under the simplified strategy, it cannot. To give an example,
+    assume the grammar contains the definition `foo: A B | error`, and assume
+    that the input is `A C`. An error is detected after `A` has been shifted.
+    The next token in the input stream, which is `C`, is conceptually replaced
+    with an `error` token. In the legacy strategy, `A` is discarded from the
+    parser's stack and the production `foo: error` can then be reduced. In the
+    simplified strategy, `A` is not discarded, and the parser aborts by
+    raising an exception. Changing the grammar to `foo: A B | A error | error`
+    should allow it to work in the same way under both strategies.
 
-    Grammars that make more complex use of the `error` token, and therefore
-    need the `legacy` strategy, cannot be compiled by the new code back-end.
-    As a workaround, it is possible to switch to the table back-end (using
-    `--table --strategy legacy`) or to the ancient code back-end (using
-    `--code-ancient`). **In the long run, we recommend abandoning the use of
-    the `error` token**. Support for the `error` token may be removed
-    entirely at some point in the future.
+    A grammar that needs the `legacy` strategy cannot be compiled by the new
+    code back-end. As a workaround, it is possible to switch to the table
+    back-end (using `--table --strategy legacy`) or to the ancient code
+    back-end (using `--code-ancient`). **In the long run, we recommend
+    abandoning the use of the `error` token**. Support for the `error` token
+    may be removed entirely at some point in the future.
 
   The original code back-end, which has been around since the early days of
   Menhir (2005), temporarily remains available (using `--code-ancient`). It
