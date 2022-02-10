@@ -23,6 +23,10 @@
   these strategies when the grammar obeys the restrictions imposed by the
   simplified strategy. This is not true. (Reported by Andreas Abel.)
 
+* Fix `menhir --interpret` so as to allow either `--strategy legacy` or
+  `--strategy simplified`, as desired by the user. This possibility had
+  been inadvertently removed in 20211230.
+
 ## 2021/12/30
 
 * The code back-end has been rewritten from the ground up by Émile Trotignon
