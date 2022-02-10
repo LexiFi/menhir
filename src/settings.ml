@@ -515,21 +515,28 @@ let () =
 (* Decide which back-end is used. *)
 
 let backend =
-  match !backend with
-  | `Unspecified ->
-      (* The new code back-end is the default. *)
-      `NewCodeBackend
-  | `CoqBackend
-  | `NewCodeBackend
-  | `OldCodeBackend
-  | `TableBackend
-    as backend ->
-      backend
+  (* If any of the [--interpret] flags is used, then we consider that
+     the back-end is [`ReferenceInterpreter]. Indeed, in that case,
+     we are not using any of the other back-ends. *)
+  if !interpret || !interpret_error || !interpret_show_cst then
+    `ReferenceInterpreter
+  else
+    match !backend with
+    | `Unspecified ->
+        (* The new code back-end is the default. *)
+        `NewCodeBackend
+    | `CoqBackend
+    | `NewCodeBackend
+    | `OldCodeBackend
+    | `TableBackend
+      as backend ->
+        backend
 
 let extension =
   match backend with
   | `CoqBackend ->
       ".vy"
+  | `ReferenceInterpreter
   | `NewCodeBackend
   | `OldCodeBackend
   | `TableBackend ->
@@ -537,6 +544,8 @@ let extension =
 
 let print_backend backend =
   match backend with
+  | `ReferenceInterpreter ->
+      "reference interpreter"
   | `OldCodeBackend ->
       "ancient code back-end"
   | `NewCodeBackend ->
@@ -562,12 +571,14 @@ let strategy =
   | (`Unspecified | `Legacy), `OldCodeBackend ->
       (* The old code back-end supports only the legacy strategy. *)
       `Legacy
-  | `Simplified, `TableBackend ->
-      (* The table back-end supports both strategies. *)
+  | `Simplified, (`ReferenceInterpreter | `TableBackend) ->
+      (* The reference interpreter and the table back-end support both
+         strategies. *)
       `Simplified
-  | (`Unspecified | `Legacy), `TableBackend ->
-      (* The table back-end supports both strategies; legacy is the default,
-         for backward compatibility. *)
+  | (`Unspecified | `Legacy), (`ReferenceInterpreter | `TableBackend) ->
+      (* The reference interpreter and the table back-end support both
+         strategies; legacy is the default, for backward
+         compatibility. *)
       `Legacy
   | _, `CoqBackend ->
       (* The Coq back-end does not care. *)
@@ -826,9 +837,9 @@ let infer =
    and dependency nightmares. *)
 
 let skipping_parser_generation =
+  backend = `ReferenceInterpreter ||
   backend = `CoqBackend ||
   compile_errors <> None ||
-  interpret_error ||
   list_errors ||
   compare_errors <> None ||
   merge_errors <> None ||
@@ -850,6 +861,7 @@ let infer =
 
 let () =
   match backend with
+  | `ReferenceInterpreter
   | `TableBackend
   | `CoqBackend ->
       represent_everything()

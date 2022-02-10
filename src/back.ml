@@ -34,6 +34,9 @@ let write program =
 
 let () =
   match Settings.backend with
+  | `ReferenceInterpreter ->
+      (* This case is handled in Interpret. *)
+      assert false
   | `TableBackend ->
       let module B = TableBackend.Run (struct end) in
       write B.program;

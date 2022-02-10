@@ -12,6 +12,7 @@
 
 (** The back-end that must be used. *)
 val backend: [
+  | `ReferenceInterpreter
   | `CoqBackend
   | `NewCodeBackend
   | `OldCodeBackend
