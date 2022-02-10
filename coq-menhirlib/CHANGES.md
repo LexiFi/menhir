@@ -1,6 +1,6 @@
 # Changes
 
-## 2022/01/XX
+## 2022/02/10
 
 * Remove `Makefile.coq` and use `coq_makefile` instead. The `.coq-native`
   directories, which were not installed in previous releases, should now
