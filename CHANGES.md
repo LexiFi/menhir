@@ -25,7 +25,7 @@
 
 * Fix `menhir --interpret` so as to allow either `--strategy legacy` or
   `--strategy simplified`, as desired by the user. This possibility had
-  been inadvertently removed in 20211230.
+  been inadvertently removed in 2021/12/30.
 
 ## 2021/12/30
 
