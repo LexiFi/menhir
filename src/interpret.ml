@@ -133,7 +133,7 @@ let start poss ((nto, _) : sentence) : Nonterminal.t =
 
 (* [interpret] interprets a sentence. *)
 
-let interpret ((_, toks) as sentence) : unit =
+let interpret show_cst ((_, toks) as sentence) : unit =
 
   let nt = start [] sentence in
 
@@ -154,9 +154,12 @@ let interpret ((_, toks) as sentence) : unit =
   | Some cst ->
       (* Success. *)
       printf "ACCEPT";
-      if Settings.interpret_show_cst then begin
-        print_newline();
-        Cst.show stdout cst
+      begin match show_cst with
+      | `ShowCST ->
+          print_newline();
+          Cst.show stdout cst
+      | `DoNotShowCST ->
+          ()
       end
 
   | None ->
@@ -621,40 +624,43 @@ module Run (X : sig end) = struct
 
 (* --------------------------------------------------------------------------- *)
 
-(* If [--interpret] is set, interpret the sentences found on the standard
-   input channel, then stop, without generating a parser. *)
-
-(* We read a series of sentences from the standard input channel. To allow
-   interactive use, we interpret each sentence as soon as it is read. *)
+(* Honor [Settings.interpret]. *)
 
 let () =
-  if Settings.interpret then
-    let read = setup() in
-    printf "Ready!\n%!";
-    while true do
+  match Settings.interpret with
+  | `No ->
+      ()
+
+  (* If [--interpret] is set, interpret the sentences found on the standard
+     input channel, then stop, without generating a parser. *)
+
+  (* We read a series of sentences from the standard input channel. To allow
+     interactive use, we interpret each sentence as soon as it is read. *)
+
+  | `Normal show_cst ->
+      let read = setup() in
+      printf "Ready!\n%!";
+      while true do
+        match read() with
+        | None ->
+            exit 0
+        | Some sentence ->
+            interpret show_cst sentence
+      done
+
+  (* If [--interpret-error] is set, interpret one sentence found on the
+     standard input channel, then stop, without generating a parser. *)
+
+  (* We read just one sentence, confirm that this sentence ends in an error,
+     and display the number of the state that is reached. *)
+
+  | `Error ->
+      let read = setup() in
       match read() with
       | None ->
-          exit 0
+        exit 1 (* abnormal: no input *)
       | Some sentence ->
-          interpret sentence
-    done
-
-(* --------------------------------------------------------------------------- *)
-
-(* If [--interpret-error] is set, interpret one sentence found on the standard
-   input channel, then stop, without generating a parser. *)
-
-(* We read just one sentence, confirm that this sentence ends in an error, and
-   (if that is the case) display the number of the state that is reached. *)
-
-let () =
-  if Settings.interpret_error then
-    let read = setup() in
-    match read() with
-    | None ->
-      exit 1 (* abnormal: no input *)
-    | Some sentence ->
-        interpret_error sentence (* never returns *)
+          interpret_error sentence (* never returns *)
 
 (* --------------------------------------------------------------------------- *)
 

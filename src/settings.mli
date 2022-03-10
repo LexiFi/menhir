@@ -144,16 +144,19 @@ val base: string
 (** The filename of the standard library. *)
 val stdlib_filename : string
 
-(** Whether Menhir should behave as an interpreter. *)
-val interpret : bool
-
-(** Whether the interpreter should build and display concrete syntax trees. *)
-val interpret_show_cst : bool
-
-(** Whether Menhir should behave as an interpreter, in a special mode where
-   it checks one input sentence, expecting it to trigger an error at the
-   last token, and displays which state was reached. *)
-val interpret_error : bool
+(**This setting determines Menhir should behave as an interpreter of sentences
+   provided by the user on the standard input channel. Two interpretation
+   modes exist. In the mode [`Normal], Menhir interprets the sentence and
+   indicates whether it is rejected or accepted. (The flag --trace is taken
+   into account, so trace messages can be emitted if desired by the user.) In
+   this mode, an additional flag indicates whether a concrete syntax tree
+   should be displayed after an input is accepted. In the mode [`Error],
+   Menhir expects just one input sentence, expects it to trigger an error at
+   the very last token, and displays which state was reached. *)
+val interpret :
+  [ `No
+  | `Normal of [`ShowCST | `DoNotShowCST]
+  | `Error ]
 
 (** Whether to generate the inspection API (which requires GADTs, and
    requires producing more tables). *)

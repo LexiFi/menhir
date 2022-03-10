@@ -215,13 +215,7 @@ let insert name =
   filenames := StringSet.add name !filenames
 
 let interpret =
-  ref false
-
-let interpret_show_cst =
-  ref false
-
-let interpret_error =
-  ref false
+  ref `No
 
 let optimization_level =
   ref 2
@@ -419,9 +413,9 @@ let options = Arg.align [
   "--infer-write-query", Arg.String enable_write_query, "<filename> Write mock .ml file";
   "--infer-read-reply", Arg.String enable_read_reply, "<filename> Read inferred .mli file";
   "--inspection", Arg.Set inspection, " Generate the inspection API";
-  "--interpret", Arg.Set interpret, " Interpret the sentences provided on stdin";
-  "--interpret-show-cst", Arg.Set interpret_show_cst, " Show a concrete syntax tree upon acceptance";
-  "--interpret-error", Arg.Set interpret_error, " Interpret an error sentence";
+  "--interpret", Arg.Unit (fun () -> interpret := `Normal `DoNotShowCST), " Interpret the sentences provided on stdin";
+  "--interpret-show-cst", Arg.Unit (fun () -> interpret := `Normal `ShowCST), " Show a concrete syntax tree upon acceptance";
+  "--interpret-error", Arg.Unit (fun () -> interpret := `Error), " Interpret an error sentence";
   "--lalr", Arg.Unit (fun () -> construction_mode := ModeLALR), " Construct an LALR(1) automaton";
   "--list-errors", Arg.Set list_errors, " Produce a list of erroneous inputs";
   "--list-errors-algorithm", Arg.String set_list_errors_algorithm, " (undocumented)";
@@ -518,19 +512,20 @@ let backend =
   (* If any of the [--interpret] flags is used, then we consider that
      the back-end is [`ReferenceInterpreter]. Indeed, in that case,
      we are not using any of the other back-ends. *)
-  if !interpret || !interpret_error || !interpret_show_cst then
-    `ReferenceInterpreter
-  else
-    match !backend with
-    | `Unspecified ->
-        (* The new code back-end is the default. *)
-        `NewCodeBackend
-    | `CoqBackend
-    | `NewCodeBackend
-    | `OldCodeBackend
-    | `TableBackend
-      as backend ->
-        backend
+  match !interpret with
+  | `Normal _ | `Error ->
+      `ReferenceInterpreter
+  | `No ->
+      match !backend with
+      | `Unspecified ->
+          (* The new code back-end is the default. *)
+          `NewCodeBackend
+      | `CoqBackend
+      | `NewCodeBackend
+      | `OldCodeBackend
+      | `TableBackend
+        as backend ->
+          backend
 
 let extension =
   match backend with
@@ -719,12 +714,6 @@ let timings =
 
 let interpret =
   !interpret
-
-let interpret_show_cst =
-  !interpret_show_cst
-
-let interpret_error =
-  !interpret_error
 
 let optimization_level =
   !optimization_level
