@@ -1,5 +1,14 @@
 # Changes
 
+## 2022/XX/XX
+
+* To use the interpreter and print a concrete syntax tree, it used to be
+  necessary to pass both `--interpret` and `--interpret-show-cst`. It is
+  now sufficient to pass just `--interpret-show-cst`. (If both are passed,
+  then only the last one is obeyed.) This fixes the assertion failure that
+  would be observed when `--interpret-show-cst` alone was used.
+  (Reported by Reed Mullanix.)
+
 ## 2022/02/10
 
 * In the new code back-end, every semantic action in the generated code is now
