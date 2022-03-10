@@ -4,6 +4,11 @@ Menhir is an LR(1) parser generator for OCaml.
 
 Menhir has a [home page](http://cambium.inria.fr/~fpottier/menhir/).
 
+There is a
+[mailing list](https://sympa.inria.fr/sympa/info/menhir)
+for announcements of new releases and for discussion of problems,
+bugs, feature requests, and so on. Only subscribers can post.
+
 ## Installation
 
 The latest released version of Menhir can be easily installed via
