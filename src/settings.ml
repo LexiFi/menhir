@@ -446,7 +446,7 @@ let options = Arg.align [
   "--random-sentence", Arg.String random_sentence_abstract, "<sym> Generate a random valid sentence";
   "--random-sentence-concrete", Arg.String random_sentence_concrete, "<sym> Generate a random valid sentence";
   "--raw-depend", Arg.Unit enable_raw_depend, " Invoke ocamldep and echo its raw output";
-  "--reference-graph", Arg.Set reference_graph, " (undocumented)";
+  "--reference-graph", Arg.Set reference_graph, " Write a dependency graph to a .dot file";
   "--represent-states", Arg.Set represent_states, " (undocumented)";
   "--represent-positions", Arg.Set represent_positions, " (undocumented)";
   "--represent-values", Arg.Set represent_values, " (undocumented)";
