@@ -1,4 +1,4 @@
-.PHONY: all loop clean check
+.PHONY: all view loop clean check
 
 export TEXINPUTS=.:
 
@@ -25,6 +25,9 @@ manual.html: manual.tex $(DEPS) $(wildcard *.hva)
 #
 # Note: hevea generates images manual00{1,2,3}.png for the tikz pictures
 # present in the manual.
+
+view:
+	latexmk -pdf -pv manual
 
 loop:
 	latexmk -pdf -pvc manual
