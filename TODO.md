@@ -103,6 +103,10 @@
   Translate them to calls to the `Parsing` module.
   Document this command.
 
+* Add an option to export the grammar to a standard BNF or EBNF format.
+  To get EBNF, we would have to recognize `*`, `+` and `?` and treat them
+  in a special way (forbidding their expansion).
+
 * The documentation says not to use `_i`,
   but `--only-preprocess` produces it.
   Should we avoid producing it?
