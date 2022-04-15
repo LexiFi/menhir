@@ -2,6 +2,10 @@
 
 ## 2022/XX/XX
 
+* The new function `MenhirLib.LexerUtil.tabulate` makes it easy to run
+  the lexer and parser in two separate phases. This can be useful when
+  one wishes to benchmark them separately.
+
 * To use the interpreter and print a concrete syntax tree, it used to be
   necessary to pass both `--interpret` and `--interpret-show-cst`. It is
   now sufficient to pass just `--interpret-show-cst`. (If both are passed,
