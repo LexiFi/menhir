@@ -71,6 +71,9 @@
 
 ## Minor suggestions for enhancements
 
+* Add a new command line switch `--no-code-generation`, instructing Menhir to
+  generate no code at all. Only Menhir's front-end would run; no back-end.
+
 * `promote.sh` is currently broken; remove it? Check if Dune can create
   missing files.
 
