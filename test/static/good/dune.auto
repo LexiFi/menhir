@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 401 distinct tests.
+;; 402 distinct tests.
 
 (rule (target JSParse.opp.out) (deps JSParse.mly)
   (action
@@ -13630,6 +13630,70 @@
 
 (rule (alias test)
   (action (diff jasmc_stripped.ml.log.exp jasmc_stripped.ml.log)))
+
+(rule (target jasmin.opp.out) (deps jasmin.mly)
+  (action
+    (with-outputs-to jasmin.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias quick) (action (diff jasmin.opp.exp jasmin.opp.out)))
+
+(rule
+  (targets jasmin.out jasmin.automaton jasmin.automaton.resolved
+    jasmin.conflicts jasmin.timings)
+  (deps jasmin.mly)
+  (action
+    (with-outputs-to jasmin.out
+      (with-accepted-exit-codes 0
+        (run menhir --table --dump --dump-resolved --explain -lg 2 -la 2 -lc
+          2 --timings-to jasmin.timings %{deps})))))
+
+(rule (alias quick) (action (diff jasmin.exp jasmin.out)))
+
+(rule (alias quick) (action (diff jasmin.automaton.exp jasmin.automaton)))
+
+(rule (alias quick)
+  (action (diff jasmin.automaton.resolved.exp jasmin.automaton.resolved)))
+
+(rule (alias quick) (action (diff jasmin.conflicts.exp jasmin.conflicts)))
+
+(rule (target jasmin_stripped.mly) (deps jasmin.mly)
+  (action
+    (with-stderr-to jasmin_stripped.ignored
+      (with-stdout-to jasmin_stripped.mly
+        (with-accepted-exit-codes 0
+          (run menhir --only-preprocess-uu %{deps}))))))
+
+(rule
+  (targets jasmin_stripped.log jasmin_stripped.mli jasmin_stripped.ml
+    jasmin_stripped.stacklang jasmin_stripped.timings jasmin_stripped.scount
+    jasmin_stripped.dcount)
+  (deps jasmin_stripped.mly)
+  (action
+    (with-outputs-to jasmin_stripped.log
+      (with-accepted-exit-codes 0
+        (run menhir --infer --stacklang-test --stacklang-dump -lg 2 -la 2 -lc
+          2 --timings-to jasmin_stripped.timings %{deps})))))
+
+(alias (name quick) (deps
+                      jasmin_stripped.stacklang))
+
+(rule (targets jasmin_stripped.cmi jasmin_stripped.mli.log)
+  (deps jasmin_stripped.mli)
+  (action
+    (with-stdout-to jasmin_stripped.mli.dtimings
+      (with-stderr-to jasmin_stripped.mli.log
+        (run ocamlc -w A-24 -warn-error A -dtimings -c jasmin_stripped.mli)))))
+
+(rule (targets jasmin_stripped.cmo jasmin_stripped.ml.log)
+  (deps jasmin_stripped.ml jasmin_stripped.cmi)
+  (action
+    (with-stdout-to jasmin_stripped.ml.dtimings
+      (with-stderr-to jasmin_stripped.ml.log
+        (run ocamlc -w A-24 -warn-error A -dtimings -c jasmin_stripped.ml)))))
+
+(rule (alias test)
+  (action (diff jasmin_stripped.ml.log.exp jasmin_stripped.ml.log)))
 
 (rule (target java.opp.out) (deps java.mly)
   (action
