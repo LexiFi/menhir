@@ -74,6 +74,10 @@
 * Add a new command line switch `--no-code-generation`, instructing Menhir to
   generate no code at all. Only Menhir's front-end would run; no back-end.
 
+* Place a comment at the beginning of the generated code, indicating by which
+  version of Menhir it was introduced, and with which command line. (All
+  back-ends must do so. Arrange to share the code that does this.)
+
 * `promote.sh` is currently broken; remove it? Check if Dune can create
   missing files.
 
