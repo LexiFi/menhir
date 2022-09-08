@@ -84,6 +84,10 @@
 * Let `--compare-errors` produce a list of error messages that is sorted
   by location.
 
+* Add a way (a command line option?) for the code produced by `--compile-errors`
+  to produce format strings as opposed to ordinary strings. Each string in the
+  generated code would then have to be prefixed with `Stdlib.format_of_string`.
+
 * Add a new flag `--show-stdlib` to print `standard.mly`. (Suggested by
   Gabriel Scherer.)
 
