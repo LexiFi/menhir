@@ -71,6 +71,10 @@
 
 ## Minor suggestions for enhancements
 
+* Add a new command line switch asking Menhir to print the source code of
+  MenhirLib. This would remove the need to determine whether MenhirLib has
+  been installed (`--suggest-menhirlib`). (Suggestion by Nicolas Ojeda Bar.)
+
 * Add a new command line switch `--no-code-generation`, instructing Menhir to
   generate no code at all. Only Menhir's front-end would run; no back-end.
 
