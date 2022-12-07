@@ -257,7 +257,7 @@ let compile ocamlbase =
       (ocamlc source)))
   );
   (* Compare the log file with an expected result. *)
-  (* If the file [expected] does not exist, then Dune apparently behaves as if
+  (* If the file [expected] does not exist, then Dune >= 2.8.0 behaves as if
      this file exists and is empty, which is fine; we expect the compiler log
      to be empty. *)
   let expected = log ^ ".exp" in
