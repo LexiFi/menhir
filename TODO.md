@@ -165,8 +165,6 @@
 
 ## Tests
 
-* `make test` fails -- something to do with `_stripped.ml.log.exp` files.
-
 * Add more test cases for `--list-errors`.
 
 ## Major new features
