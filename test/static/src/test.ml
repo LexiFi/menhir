@@ -227,7 +227,6 @@ let ocamlc source =
     "run"; "ocamlc";
     "-w"; "A-24";
     "-warn-error"; "A";
-    "-dtimings";
     "-c"; source;
   ])
 
