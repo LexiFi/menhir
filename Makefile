@@ -154,6 +154,7 @@ VERSIONS := \
   4.12.0 \
   4.13.1 \
   4.14.0 \
+  5.0.0 \
 
 .PHONY: versions
 versions:
