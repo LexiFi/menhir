@@ -74,6 +74,9 @@ let base =
 let dump =
   ref false
 
+let dump_menhirLib =
+  ref None
+
 let dump_resolved =
   ref false
 
@@ -406,6 +409,7 @@ let options = Arg.align [
   "--coq-no-complete", Arg.Set coq_no_complete, " Do not generate a proof of completeness";
   "--depend", Arg.Unit enable_depend, " Invoke ocamldep and display dependencies";
   "--dump", Arg.Set dump, " Write an .automaton file";
+  "--dump-menhirLib", Arg.String (fun path -> dump_menhirLib := Some path), "<path> Dump menhirLib.{ml,mli} at <path>";
   "--dump-resolved", Arg.Set dump_resolved, " Write an .automaton.resolved file";
   "--echo-errors", Arg.String set_echo_errors, "<filename> Echo the sentences in a .messages file";
   "--echo-errors-concrete", Arg.String set_echo_errors_concrete, "<filename> Echo the sentences in a .messages file";
@@ -638,6 +642,17 @@ let () =
   | SuggestUseOcamlfind ->
       printf "false\n";
       exit 0
+
+let write_file filename contents =
+  let oc = open_out_bin filename in
+  output_string oc contents;
+  close_out oc
+
+let () =
+  !dump_menhirLib |> Option.iter @@ fun path ->
+    write_file (Filename.concat path "menhirLib.ml") MenhirLibSource.impl;
+    write_file (Filename.concat path "menhirLib.mli") MenhirLibSource.intf;
+    exit 0
 
 (* ------------------------------------------------------------------------- *)
 (* Export the settings. *)
