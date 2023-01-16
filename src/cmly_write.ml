@@ -139,8 +139,10 @@ let lr1_state (node : Lr1.node) : lr1_state_def =
       let add t ps rs = (Terminal.t2i t, Production.p2i (List.hd ps)) :: rs in
       TerminalMap.fold_rev add (Lr1.reductions node) []
     );
-    lr1_forbid_default_reduction =
-      Lr1.forbid_default_reduction node;
+    lr1_default_reduction =
+      Option.map
+        (fun (p, _ts) -> Production.p2i p)
+        (Default.has_default_reduction node);
   }
 
 let entry_point prod node nt _typ accu : (nonterminal * production * lr1) list =
