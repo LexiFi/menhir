@@ -135,9 +135,10 @@ let lr1_state (node : Lr1.node) : lr1_state_def =
     lr1_lr0 = Lr0.core (Lr1.state node);
     lr1_transitions =
       List.map transition (SymbolMap.bindings (Lr1.transitions node));
-    lr1_reductions =
-      let add t ps rs = (Terminal.t2i t, List.map Production.p2i ps) :: rs in
+    lr1_reductions = (
+      let add t ps rs = (Terminal.t2i t, Production.p2i (List.hd ps)) :: rs in
       TerminalMap.fold_rev add (Lr1.reductions node) []
+    );
   }
 
 let entry_point prod node nt _typ accu : (nonterminal * production * lr1) list =

@@ -119,7 +119,7 @@ module type GRAMMAR = sig
     include INDEXED with type t = lr1
     val lr0          : t -> lr0
     val transitions  : t -> (symbol * t) list
-    val reductions   : t -> (terminal * production list) list
+    val reductions   : t -> (terminal * production) list
   end
 
   module Print : sig
