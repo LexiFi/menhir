@@ -15,4 +15,8 @@
 
 exception Error of string
 
+val read_channel : in_channel -> Cmly_format.grammar
+
+module Lift (X : sig val grammar : Cmly_format.grammar end) : Cmly_api.GRAMMAR
+
 module Read (X : sig val filename : string end) : Cmly_api.GRAMMAR
