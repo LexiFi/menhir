@@ -120,6 +120,7 @@ module type GRAMMAR = sig
     val lr0          : t -> lr0
     val transitions  : t -> (symbol * t) list
     val reductions   : t -> (terminal * production) list
+    val forbid_default_reduction : t -> bool
   end
 
   module Print : sig

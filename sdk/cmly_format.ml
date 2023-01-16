@@ -92,6 +92,7 @@ type lr1_state_def = {
   lr1_lr0: lr0;
   lr1_transitions: (symbol * lr1) list;
   lr1_reductions: (terminal * production) list;
+  lr1_forbid_default_reduction: bool;
 }
 
 type grammar = {
