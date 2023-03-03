@@ -620,7 +620,7 @@ let compile_runs filename (runs : run or_comment list) : unit =
 (* The rest of this file is the function [run], internally written as a functor
    [Run] for syntactic convenience. *)
 
-module Run (X : sig end) = struct
+module Run () = struct
 
 (* --------------------------------------------------------------------------- *)
 
@@ -1209,5 +1209,5 @@ let () =
 end
 
 let run () =
-  let module R = Run(struct end) in
+  let module R = Run() in
   ()

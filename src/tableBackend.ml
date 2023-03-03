@@ -17,7 +17,7 @@ open TokenType
 open NonterminalType
 open CodePieces
 
-module Run (T : sig end) = struct
+module Run () = struct
 
 (* ------------------------------------------------------------------------ *)
 

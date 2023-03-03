@@ -42,7 +42,7 @@ let fn_branches accu branches =
 (* This functor makes it easy to share mutable internal state between
    the functions that follow. *)
 
-module Run (X : sig end) = struct
+module Run () = struct
 
 (* ------------------------------------------------------------------------ *)
 
@@ -141,7 +141,7 @@ end
 (* The main entry point invokes the functor and reads its result. *)
 
 let transform_partial_grammar g =
-  let module R = Run(struct end) in
+  let module R = Run() in
   let pg_rules = List.map R.transform_parameterized_rule g.pg_rules in
   let pg_rules = !R.rules @ pg_rules in
   { g with pg_rules }

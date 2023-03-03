@@ -10,7 +10,7 @@
 
 (* The (table-based) code generator. *)
 
-module Run (T : sig end) : sig
+module Run () : sig
 
   val program: IL.program
 
