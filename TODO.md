@@ -158,6 +158,10 @@
   identifier to the tuple is ill-typed, then we get a type error in the mock
   file. Can this be fixed? Generate `#` directives around the application node.
 
+* The generated code can trigger an unused-variable warning
+  (`unused variable foo`) if the user uses `$loc(foo)` but
+  not `foo` itself.
+
 ## Demos
 
 * Clean up the `calc-inspection` demo, which uses an undocumented/unfinished
