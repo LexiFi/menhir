@@ -27,7 +27,7 @@
    StackLang code is not necessarily isomorphic to the LR automaton, because
    of the optimizations (specialization, etc.) that are performed in
    StackLang. Exploiting the static analysis in LRijkstra* would probably
-   requiring embedding the analysis data (as [assume] instructions) in the
+   require embedding the analysis data (as [assume] instructions) in the
    StackLang code when it is first produced, so as to allow this information
    to be preserved when the code is transformed. Perhaps this could be done in
    the future. *)
