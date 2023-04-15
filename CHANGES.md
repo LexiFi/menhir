@@ -1,6 +1,10 @@
 # Changes
 
-## 2022/XX/XX
+## 2023/04/15
+
+* When using the code back-end, the default optimization level is now `-O 1`
+  instead of `-O 2`. Some users reported that `-O 2` is too aggressive and
+  can cause a blow-up in the size of the code.
 
 * Tweak the code for compatibility with OCaml 5.1. (Contributed by
   Florian Angeletti.)
