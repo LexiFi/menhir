@@ -2,6 +2,9 @@
 
 ## 2022/XX/XX
 
+* Tweak the code for compatibility with OCaml 5.1. (Contributed by
+  Florian Angeletti.)
+
 * The new function `MenhirLib.LexerUtil.tabulate` makes it easy to run
   the lexer and parser in two separate phases. This can be useful when
   one wishes to benchmark them separately.
