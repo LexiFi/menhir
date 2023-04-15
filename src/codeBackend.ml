@@ -339,7 +339,7 @@ let printtokendef =
    strategy. It does not (yet?) support the simplified strategy. Let the
    user know about this. *)
 
-module Run (T : sig end) = struct
+module Run () = struct
 
 let () =
   match Settings.strategy with

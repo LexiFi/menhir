@@ -11,7 +11,7 @@
 open Printf
 open Grammar
 
-module Run (T: sig end) = struct
+module Run () = struct
   let from_menhirlib f =
     match Settings.coq_lib_path with
     | None ->

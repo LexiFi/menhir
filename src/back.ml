@@ -38,11 +38,11 @@ let () =
       (* This case is handled in Interpret. *)
       assert false
   | `TableBackend ->
-      let module B = TableBackend.Run (struct end) in
+      let module B = TableBackend.Run () in
       write B.program;
       Interface.write Front.grammar ()
   | `CoqBackend ->
-      let module B = CoqBackend.Run (struct end) in
+      let module B = CoqBackend.Run () in
       let filename = Settings.base ^ ".v" in
       let f = open_out filename in
       B.write_all f
