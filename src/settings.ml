@@ -218,7 +218,10 @@ let interpret =
   ref `No
 
 let optimization_level =
-  ref 2
+  ref 1
+    (* -O2 was the default since the new code back-end appeared, but
+        was perhaps a little too aggressive. From 2023/04/15 on,
+        -O1 is the default. *)
 
 let inspection =
   ref false
