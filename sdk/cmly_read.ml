@@ -17,7 +17,7 @@ open Cmly_api
 
 exception Error of string
 
-let read (ic : in_channel) : grammar =
+let read_channel (ic : in_channel) : grammar =
   (* .cmly file format: CMLY ++ version string ++ grammar *)
   let magic = "CMLY" ^ Version.version in
   try
@@ -34,7 +34,7 @@ let read (ic : in_channel) : grammar =
 
 let read (filename : string) : grammar =
   let ic = open_in_bin filename in
-  match read ic with
+  match read_channel ic with
   | x ->
       close_in_noerr ic;
       x
@@ -86,7 +86,7 @@ end
 (* Packaging a data structure of type [Cmly_format.grammar] as a module
    of type [Cmly_api.GRAMMAR]. *)
 
-module Make (G : sig val grammar : grammar end) : GRAMMAR = struct
+module Lift (G : sig val grammar : grammar end) : GRAMMAR = struct
   open G
 
   type terminal    = int
@@ -215,6 +215,7 @@ module Make (G : sig val grammar : grammar end) : GRAMMAR = struct
     let lr0         i = table.(i).lr1_lr0
     let transitions i = table.(i).lr1_transitions
     let reductions  i = table.(i).lr1_reductions
+    let default_reduction i = table.(i).lr1_default_reduction
     include Index(struct
       let name = "Lr1"
       let count = Array.length table
@@ -334,4 +335,4 @@ module Make (G : sig val grammar : grammar end) : GRAMMAR = struct
 end
 
 module Read (X : sig val filename : string end) =
-  Make (struct let grammar = read X.filename end)
+  Lift (struct let grammar = read X.filename end)
