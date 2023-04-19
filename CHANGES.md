@@ -1,5 +1,23 @@
 # Changes
 
+## 2023/04/XX
+
+* Changes in the public API of the library `MenhirSdk`.
+  (Contributed by Frédéric Bour.)
+
+  + The type of the function `Lr1.reductions` changes
+    from `t -> (terminal * production list) list`
+    to   `t -> (terminal * production) list`.
+    This is a view of the automaton after conflict resolution,
+    so, for each token, at most one production can be reduced.
+
+  + The function `Lr1.default_reduction : Lr1.t -> production option`
+    appears. This function indicates which states have a default reduction.
+
+  + The function `Cmly_read.read_channel` appears.
+
+  + The module `Cmly_read.Lift` appears.
+
 ## 2023/04/15
 
 * When using the code back-end, the default optimization level is now `-O 1`
