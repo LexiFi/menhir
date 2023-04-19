@@ -21,7 +21,7 @@ val empty : t
 (**[empty] is an empty set of bindings. *)
 
 val assign : patterns -> values -> t
-(**[assign_many ps vs] represents the assignment [ps := vs].
+(**[assign ps vs] represents the assignment [ps := vs].
    The lists [ps] and [vs] must have the same length.
    No register must appear twice in the patterns [ps]. *)
 
