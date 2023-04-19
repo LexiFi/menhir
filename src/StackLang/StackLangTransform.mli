@@ -30,9 +30,9 @@ val remove_unreachable_blocks : program -> program
 (**[inline cautious program] transforms the program [program] by removing
    every unreachable block and by inlining away every label whose in-degree
    is 1, provided inlining is permitted. The rules that restrict inlining
-   are roughly as follows: *)
+   are roughly as follows:
 
-(**- Inlining a routine inside a [casetag] instruction is not permitted.
+   - Inlining a routine inside a [casetag] instruction is not permitted.
 
    - In normal mode (that is, when [cautious] is false), a routine that
      carries the hint [OnlyIfKnownState] cannot be inlined.
@@ -40,5 +40,4 @@ val remove_unreachable_blocks : program -> program
    - In cautious mode, a routine can be inlined only if both the source
      and destination blocks carry the hint [NoHint]. In short, this allows
      inlining a [run] routine into a [run] routine, and nothing else. *)
-
 val inline : (* cautious: *) bool -> program -> program
