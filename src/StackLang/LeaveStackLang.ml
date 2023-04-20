@@ -847,10 +847,31 @@ module S =
 let () =
   Time.tick "StackLang: computing the mutually recursive groups"
 
+(* [recursive labels] determines whether the strongly connected component
+   [labels] needs a [rec] flag. *)
+
+let recursive labels =
+  match labels with
+  | [] ->
+      assert false
+  | _ :: _ :: _ ->
+      (* There are at least two functions in this component, so a [rec]
+         flag is required. *)
+      true
+  | [label] ->
+      (* There is one only one function in this component. A [rec] flag
+         is required if and only if this function is recursive. *)
+      let recursive = ref false in
+      let yield label' = if Label.equal label label' then recursive := true in
+      G.successors yield label;
+      !recursive
+
+(* Build the toplevel definitions. *)
+
 let blocks : structure_item list =
   List.rev (S.map (fun _representative labels ->
     let valdefs = List.map def_block labels in
-    SIValDefs (true, valdefs)
+    SIValDefs (recursive labels, valdefs)
   ))
 
 let () =
@@ -878,7 +899,6 @@ let celltypedefs =
 
      "fragile match" (4)
      "unused data constructor" (37)
-     "unused rec flag" (39)
 
    This does not affect the OCaml code fragments written by the user;
    the prelude, postlude, and semantic actions lie outside of this area.
@@ -905,7 +925,7 @@ let program =
       if1 Settings.trace (valdef discarddef) @
 
       SIInclude (MStruct (
-        SIAttribute ("ocaml.warning", "-4-37-39") ::
+        SIAttribute ("ocaml.warning", "-4-37") ::
         blocks
       )) ::
 
