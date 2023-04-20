@@ -2,8 +2,6 @@
 
 ## New Code Back-End
 
-* Avoid generating `let rec` when the function is not recursive.
-
 * Add support for the revised API, where the lexer produces a triple of a
   token and two positions, and there is no `lexbuf`. (Command-line switch.)
 
