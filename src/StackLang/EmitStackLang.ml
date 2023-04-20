@@ -624,7 +624,6 @@ let reduce mode prod =
   let is_epsilon = (n = 0) in
   let id i = Reg.import ids.(i) in
 
-
   (* Pop [n] stack cells and store their content in suitable registers.
      The state stored in the bottom cell (the one that is popped last)
      is stored in the register [state] and thus becomes the new current
