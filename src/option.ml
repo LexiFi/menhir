@@ -57,6 +57,17 @@ let equal equal o1 o2 =
   | Some _, None ->
       false
 
+let compare cmp o1 o2 =
+  match o1, o2 with
+  | None, None ->
+      0
+  | Some x1, Some x2 ->
+      cmp x1 x2
+  | None, Some _ ->
+      -1
+  | Some _, None ->
+      +1
+
 let sub sub o1 o2 =
   match o1, o2 with
   | None, _ ->
