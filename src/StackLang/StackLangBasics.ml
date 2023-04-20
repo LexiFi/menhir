@@ -33,6 +33,7 @@ type label = Label.t
 module Tag : sig
 
   type tag
+  type t = tag
 
   (**[make] converts an LR(1) state to a tag. *)
   val make : Lr1.node -> tag
@@ -53,6 +54,7 @@ module Tag : sig
 end = struct
 
   type tag = int
+  type t = tag
 
   let make s =
     let tag = Lr1.number s in
