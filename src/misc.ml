@@ -130,21 +130,14 @@ let mapi n f =
 
 (* [qfold f accu q] repeatedly takes an element [x] off the queue [q]
    and applies [f] to the accumulator and to [x], until [q] becomes
-   empty. Of course, [f] can add elements to [q] as a side-effect.
-
-   We allocate an option to ensure that [qfold] is tail-recursive. *)
+   empty. Of course, [f] can add elements to [q] as a side-effect. *)
 
 let rec qfold f accu q =
-  match
-    try
-      Some (Queue.take q)
-    with Queue.Empty ->
-      None
-  with
-  | Some x ->
-      qfold f (f accu x) q
-  | None ->
+  match Queue.take q with
+  | exception Queue.Empty ->
       accu
+  | x ->
+      qfold f (f accu x) q
 
 (* [qiter f q] repeatedly takes an element [x] off the queue [q] and
    applies [f] to [x], until [q] becomes empty. Of course, [f] can add

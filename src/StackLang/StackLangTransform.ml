@@ -164,12 +164,7 @@ let queue : (label * tag) Queue.t =
    be entered again into the queue). *)
 
 module LTSet =
-  Set.Make (struct
-    type t = label * tag
-    let compare (label1, tag1) (label2, tag2) =
-      let c = Label.compare label1 label2 in
-      if c <> 0 then c else Tag.compare tag1 tag2
-  end)
+  Set.Make (Order.Pair(Label)(Tag))
 
 let inserted =
   ref LTSet.empty
