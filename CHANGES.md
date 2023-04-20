@@ -18,6 +18,10 @@
 
   + The module `Cmly_read.Lift` appears.
 
+* Enable OCaml warning 39 (unused rec flag) in the OCaml code produced
+  by Menhir's code back-end. Menhir now carefully emits `let` instead
+  of `let rec` when a function is not recursive.
+
 ## 2023/04/15
 
 * When using the code back-end, the default optimization level is now `-O 1`
