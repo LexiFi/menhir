@@ -227,9 +227,10 @@ module Terminal : sig
   val foldx: (t -> 'a -> 'a) -> 'a -> 'a
   val mapx: (t -> 'a) -> 'a list
 
-  (* [iter_real] offers iteration over all real terminals. *)
+  (* [iter_real] and [fold_real] offer iteration over all real terminals. *)
 
   val iter_real: (t -> unit) -> unit
+  val fold_real: (t -> 'a -> 'a) -> 'a -> 'a
 
   (* [attributes t] is the list of attributes attached with the terminal
      symbol [t]. *)

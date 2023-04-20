@@ -347,6 +347,12 @@ module Terminal = struct
     for i = 1 to n-2 do
       f i
     done
+  let fold_real f accu =
+    let accu = ref accu in
+    for i = 1 to n-2 do
+      accu := f i !accu
+    done;
+    !accu
 
   let tokens_without_an_alias =
     let accu = ref [] in
