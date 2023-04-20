@@ -5,10 +5,7 @@ open Position
 
 
 (** A program is a list of definitions. *)
-type program = definition located list
-[@@deriving sexp]
-
-and definition =
+type definition =
   (** A type definition. *)
   | DefineType of
       type_constructor located * type_variable located list * type_definition
@@ -87,7 +84,7 @@ and type_arguments =
 
 and pattern =
   (** A pattern which is simply an identifier. *)
-  | PVariable of identifier located 
+  | PVariable of identifier located
   (** A wildcard pattern [_]. *)
   | PWildcard
   (** A pattern with a type annotation of type form [p : ty] *)
@@ -141,9 +138,13 @@ and type_variable =
 
 and label =
   | LId of string
+[@@deriving sexp]
 
-and t = program
+type program = definition located list
+[@@deriving sexp]
+
+type t = program
+[@@deriving sexp]
 
 type elt = definition located
-
 [@@deriving sexp]
