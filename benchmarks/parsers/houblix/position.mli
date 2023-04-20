@@ -7,7 +7,7 @@ type t
 
 type position = t
 
-type 'a located = { value : 'a; position : t } [@@deriving sexp]
+type 'a located = { value : 'a; position : t }
 (** Decoration of a value with a position. *)
 
 val value : 'a located -> 'a

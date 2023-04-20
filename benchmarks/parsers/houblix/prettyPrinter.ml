@@ -4,7 +4,7 @@ open ExtPPrint
 open AST
 open Position
 
-let int i = string (Mint.to_string i)
+let int i = string (Int64.to_string i)
 
 let colon = string ","
 

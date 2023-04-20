@@ -1,23 +1,12 @@
-open Sexplib.Std
 open Lexing
 
 type lexing_position = Lexing.position
 
-let lexing_position_of_sexp p =
-  [%of_sexp: string * int * int * int] p
-  |> fun (pos_fname, pos_lnum, pos_bol, pos_cnum) ->
-  { pos_fname; pos_lnum; pos_bol; pos_cnum }
-
-let sexp_of_lexing_position p =
-  [%sexp_of: string * int * int * int]
-    (p.pos_fname, p.pos_lnum, p.pos_bol, p.pos_cnum)
-
 type t = { start_p : lexing_position; end_p : lexing_position }
-[@@deriving sexp]
 
 type position = t
 
-type 'a located = { value : 'a; position : t } [@@deriving sexp]
+type 'a located = { value : 'a; position : t }
 
 let value { value = v; position = _ } = v
 
