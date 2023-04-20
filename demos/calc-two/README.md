@@ -9,3 +9,5 @@ at runtime via a command line switch.
 
 This demo illustrates how to build two parsers that share a single set of
 tokens (see `tokens.mly`) and that share some productions (see `common.mly`).
+
+The compilation process is described in the `dune` file.
