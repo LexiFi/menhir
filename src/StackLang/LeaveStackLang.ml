@@ -847,11 +847,11 @@ module S =
 let () =
   Time.tick "StackLang: computing the mutually recursive groups"
 
-let blocks : valdef list list =
-  S.map (fun _representative labels -> List.map def_block labels)
-
 let blocks : structure_item list =
-  List.rev_map (fun valdefs -> SIValDefs (true, valdefs)) blocks
+  List.rev (S.map (fun _representative labels ->
+    let valdefs = List.map def_block labels in
+    SIValDefs (true, valdefs)
+  ))
 
 let () =
   Error.logC 1 (fun f ->
