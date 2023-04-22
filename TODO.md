@@ -2,6 +2,8 @@
 
 ## New Code Back-End
 
+* Document the various optimisation levels.
+
 * Add support for the revised API, where the lexer produces a triple of a
   token and two positions, and there is no `lexbuf`. (Command-line switch.)
 
