@@ -54,7 +54,8 @@ module Run () = struct
     if Settings.optimization_level >= 2 then
       program
       |> StackLangTransform.specialize
-      |> StackLangTransform.remove_unreachable_blocks
+      |> StackLangTransform.remove_unreachable_blocks (* TODO unnecessary? *)
+      |> NeededRegisters.update
       |> check
     else
       program
