@@ -48,7 +48,7 @@ module Run () = struct
   let program =
     program |> check
 
-  (* At -O 2, perform specialization. *)
+  (* At -O 2, perform limited specialization for the [state] register. *)
 
   let program =
     if Settings.optimization_level >= 2 then
