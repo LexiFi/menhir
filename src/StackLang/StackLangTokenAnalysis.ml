@@ -164,7 +164,7 @@ let make_exhaustive branches odefault =
          default branch, and the [case] construct remains exhaustive. *)
       odefault
   | None ->
-      (* This [case] construct has no default branch, because it is used to
+      (* This [case] construct has no default branch, because it used to
          be exhaustive, but is no longer exhaustive now that some dead
          branches have been removed. Introduce a default branch. *)
       Some (IDead `Dynamic)
