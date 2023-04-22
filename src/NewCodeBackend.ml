@@ -113,7 +113,7 @@ module Run () = struct
      [state] register. *)
 
   let program =
-    NeededRegisters.update program
+    NeededRegisters.update program (* TODO unnecessary? *)
 
   (* If requested, dump the StackLang program to %.stacklang
      and a static instruction count to %.scount. *)
