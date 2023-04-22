@@ -422,7 +422,7 @@ let spec_tblock tag tblock =
      should be dead anyway. *)
   let block = IDef (Bindings.assign [PReg state] [VTag tag], block) in
   (* Remove [state] from the set of needed registers. Better do it
-     explicitly, if we later decide to recompute the needed registers
+     explicitly, even though we later recompute the needed registers
      by calling [NeededRegisters.update]. *)
   let needed = Reg.Set.remove state tblock.needed in
   (* Specialize the type of this block. *)
