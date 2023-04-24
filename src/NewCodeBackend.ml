@@ -92,7 +92,10 @@ module Run () = struct
   (* Simplify [ICaseToken] instructions where possible. This transformation
      improves performance by eliminating some redundant [ICaseToken]
      instructions. It also clarifies the code by allowing some instructions
-     and blocks to be recognized as dead. *)
+     and blocks to be recognized as dead. It is likely to have an effect only
+     at level -O 2 and below; indeed, at level -O 3, each token is inspected
+     at most once, so every [ICaseToken] instruction examines a token about
+     which nothing is known, so nothing can be simplified. *)
 
   let program =
     StackLangTokenAnalysis.transform program
