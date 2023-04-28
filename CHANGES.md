@@ -1,6 +1,10 @@
 # Changes
 
-## 2023/04/XX
+## 2023/04/28
+
+* Malformed code and type definitions used to be produced when both
+  `--external-tokens` and `--inspection` were passed on the command line.
+  Fixed. (Reported by Maxime Dénès.)
 
 * Changes in the public API of the library `MenhirSdk`.
   (Contributed by Frédéric Bour.)
