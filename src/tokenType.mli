@@ -60,3 +60,8 @@ val tokengadtdef: BasicSyntax.grammar -> IL.interface
    it does nothing. *)
 
 val produce_tokentypes: BasicSyntax.grammar -> unit
+
+(* The name of the interpreter sub-module, when the table back-end
+   is used. *)
+
+val interpreter: string

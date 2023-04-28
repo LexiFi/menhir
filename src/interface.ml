@@ -50,7 +50,7 @@ let entrytypescheme grammar symbol =
    is named as follows. *)
 
 let interpreter =
-  "MenhirInterpreter"
+  TokenType.interpreter
 
 let checkpoint t =
   TypApp (interpreter ^ ".checkpoint", [ t ])
