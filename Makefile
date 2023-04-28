@@ -309,6 +309,12 @@ WWW     := www
 
 .PHONY: release
 release:
+# Check that we have hevea.
+	@ if ! which hevea ; then \
+	    echo "hevea is missing. The current opam switch is:" ; \
+	    opam switch show ; \
+	    exit 1; \
+          fi
 # Check if this is the master branch.
 	@ if [ "$$(git symbolic-ref --short HEAD)" != "master" ] ; then \
 	  echo "Error: this is not the master branch." ; \
