@@ -201,9 +201,9 @@ let produce_tokentypes grammar =
 
       let i =
         tokentypedef grammar @
-        MList.ifnlazy Settings.inspection (fun () ->
-          tokengadtdef grammar
-        )
+        MList.ifnlazy Settings.inspection (fun () -> [
+              IIModule ("MenhirInterpreter", MTSigEnd (tokengadtdef grammar))
+            ])
       in
 
       let module P =
