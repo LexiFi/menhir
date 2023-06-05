@@ -17,6 +17,25 @@ open StackLang
    every block is reachable. *)
 val specialize_state : program -> program
 
+(**[specialize_token] specializes the code with respect to the current
+   token. In the transformed program, every invocation of the lexer is
+   immediately followed with a case analysis that examines the new token,
+   and this token is never examined again. (In other words, every [CASEtok]
+   instruction immediately follows a call to the lexer.) This transformation
+   can blow up the size of the code, so it should be used with caution.
+
+   The sets of needed registers must be accurate when [specialize_token] is
+   invoked. They are not updated, so [NeededRegisters.update] must be
+   invoked after this transformation has been performed.
+
+   [specialize_token] assumes that no block contains both a lexer call and a
+   [CASEtag] instruction. It also assumes that [DEAD], [STOP] and [RET]
+   instructions cannot appear in the same block as a lexer call or inside a
+   [CASEtag] instruction. These restrictions are satisfied by EmitStackLang
+   but are not necessarily obeyed by other transformations (such as inlining),
+   so [specialize_token] should be applied first. *)
+val specialize_token : program -> program
+
 (**[commute_pushes] moves PUSH instructions forward in the code, in the
    hope that they meet POP instructions and cancel out. It also performs
    a certain amount of inlining, insofar as it has a beneficial effect

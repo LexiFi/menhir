@@ -1210,3 +1210,798 @@ let inline cautious program =
     let program = program
   end) in
   I.program
+
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+
+(* Specialization with respect to the current token. *)
+
+(* The purpose of this program transformation is to ensure that each token
+   is examined at most once. That is, we wish to ensure that no path in the
+   code goes through two [CASEtok] instructions on the same token.
+
+   To achieve this, immediately after a new token is read from the lexer, we
+   insert a [CASEtok] instruction with suitable branches. Then, within each
+   branch, we specialize the code under the knowledge of the current token,
+   so that all [CASEtok] instructions vanish.
+
+   Of course, in the [CASEtok] instructions that we insert, determining
+   which distinctions are needed requires an analysis. Creating one branch
+   per terminal symbol would be too naive: many branches would be identical
+   and the code size would explode. We must distinguish two terminal symbols
+   only if they are treated differently at some point in the program. The
+   required analysis can be formulated as a partition refinement problem. *)
+
+module SpecializeToken (X : sig val program : program end) = struct open X
+
+(* This flag controls internal debugging output. *)
+
+let debug =
+  false
+
+(* We use the partition refinement algorithm offered by Fix. *)
+
+open Fix (* Numbering, NUMBERING, Indexing, Minimize *)
+type 'a enum = 'a Enum.enum
+let (enum, foreach, singleton, map) = Enum.(enum, foreach, singleton, map)
+
+(* Let us write [T] as a short-hand for [Grammar.Terminal]
+   and [TSet] as a short-hand for [Grammar.TerminalSet]. *)
+
+module T    = Grammar.Terminal
+module TSet = Grammar.TerminalSet
+
+(* -------------------------------------------------------------------------- *)
+
+(* We assume that the [token] register is used by the StackLang program
+   to hold the lookahead token. Thus, it appears in [LexerCall] and
+   [CASEtok] instructions. This assumption is not essential, but
+   simplifies things a little. *)
+
+let token =
+  EmitStackLang.token
+
+(* We use the register [tokv] to temporarily hold the semantic value
+   carried by a token when we analyze this token. A fresh name is
+   used here. We should also be able to re-use the register [semv]
+   but that would require a little more thought. *)
+
+let tokv : register =
+  Reg.import "_tokv"
+
+(* This set of two registers is used some assertions. *)
+
+let sensitive =
+  Reg.Set.of_list [ token; tokv ]
+
+(* The pattern [tokpat toks] matches the set of tokens [toks]. If this set
+   is a singleton set, then this pattern also causes the token's semantic
+   value to be written to the register [tokv]. *)
+
+let tokpat toks =
+  if TSet.cardinal toks = 1 then
+    TokSingle (TSet.choose toks, tokv)
+  else
+    TokMultiple toks
+
+(* -------------------------------------------------------------------------- *)
+
+(* A block can be (and is) specialized if and only if the [token] register
+   appears among its needed registers. *)
+
+let can_specialize_tblock tblock =
+  Reg.Set.mem token tblock.needed
+
+let can_specialize label =
+  let tblock = lookup program label in
+  can_specialize_tblock tblock
+
+(* -------------------------------------------------------------------------- *)
+
+(* The partition refinement problem that we must solve is equivalent to
+   minimizing a deterministic finite-state automaton (DFA), which can be
+   described as follows.
+
+   A state of the automaton is either
+   - a pair [(label, None)],
+     where [can_specialize label] is false; or
+   - a pair [(label, Some t)],
+     where [can_specialize label] is true
+     and [t] is a terminal symbol.
+
+   We make the simplifying assumption that *in the transformed code* there is
+   at most one [CASE] instruction per block, which can be either a [CASEtag]
+   instruction or a [CASEtok] instruction. This allows us to give a simple
+   definition of the type [condition], involving zero or one jumps, never more
+   than one. Because a lexer call in the source code gives rise to a [CASEtok]
+   instruction in the transformed code, and because a [CASEtok] instruction in
+   the source code disappears, this amounts to assuming that *in the original
+   code* a block never contains both a lexer call and a [CASEtag] instruction.
+   (I think.) The code produced by EmitStackLang respect this restriction.
+   Inlining could violate it.
+
+   Thanks to this restriction, a jump from one block to another block
+   is either unconditional (i.e., not inside a [CASE] instruction) or
+   conditional (i.e., inside a [CASEtag] or [CASEtok] instruction).
+   The type [condition], defined below, encodes this information.
+
+   Furthermore, we assume that *in the transformed code* [DEAD], [STOP], and
+   [RET] instructions cannot be used inside a [CASEtok] instruction. This
+   amounts to assuming that *in the original code* [DEAD], [STOP] and [RET]
+   instructions cannot appear in the same block as a lexer call. (I think.)
+   Thanks to this restriction, we do not need to impose constraints on
+   equivalence classes due to the presence of [DEAD], [STOP] or [RET]
+   instructions. The information contained in block labels and in jumps from
+   block to block is sufficient to prevent confusing a situation that leads
+   to [STOP] and a situation that leads to [RET].
+
+   A transition of the automaton has
+   - a source state,
+   - a target state,
+   - and is labeled with a condition,
+     which indicates under what circumstances this transition is taken.
+
+   The problem is then to decide which states in this automaton can be
+   considered equivalent, under the following constraints:
+
+   C1- if two states [(label1, ot1)] and [(label2, ot2)] are equivalent
+       then [label1 = label2]
+       and either [ot1 = ot2 = None]
+               or [ot1 = Some _] and [ot2 = Some _];
+
+   C2- if two states [(label, Some t1)] and [(label, Some t2)] are equivalent
+       and if the block [label] contains a [CASEtok] instruction then this
+       instruction does not distinguish the terminal symbols [t1] and [t2];
+
+   C3- equivalence must be compatible with the transitions of the automaton;
+       that is, if two states [s1] and [s2] are equivalent and if [s1] has an
+       outgoing transition labeled [condition] towards [s'1] then [s2] has an
+       outgoing transition labeled [condition] towards some state [s'2] such
+       that [s'1] and [s'2] are equivalent.
+
+   Constraint C1 implies that two specialized blocks can be considered
+   equivalent (and fused) only if they are specialized copies of the same
+   source block. *)
+
+(* In the type definitions that follow, we use the names [vertex] for states
+   and [edge] for transitions. The names [state] and [transition] are later
+   used for integer indices that denote states and transitions. *)
+
+type vertex =
+  label * terminal option
+      (* option is [None] iff [can_specialize label] is [false] *)
+
+type condition =
+  | CondNone
+  | CondTag of tag
+  | CondTok of terminal
+
+type edge =
+  vertex * condition * vertex
+
+(* The types [label], [terminal], and [tag] can be hashed (they are just
+   integers), so the types [vertex], [condition] and [edge] can be hashed,
+   too. It is brittle but convenient to rely on this property. We exploit
+   this property when we use [Numbering.ForType] below. *)
+
+(* Debugging printers. *)
+
+let print_condition condition =
+  match condition with
+  | CondNone ->
+      sprintf "CondNone"
+  | CondTag tag ->
+      sprintf "CondTag %s" (Tag.print tag)
+  | CondTok t ->
+      sprintf "CondTok %s" (T.print t)
+
+let () =
+  ignore print_condition
+
+(* -------------------------------------------------------------------------- *)
+
+(* The minimization algorithm requires a total order on conditions
+   and a printer for conditions (for debugging purposes only). *)
+
+module Condition = struct
+  type t = condition
+  let compare = Generic.compare (* again brittle but convenient *)
+  let print condition =
+    match condition with
+    | CondNone ->
+        "CondNone"
+    | CondTag tag ->
+        sprintf "CondTag %s" (Tag.print tag)
+    | CondTok t ->
+        sprintf "CondTok %s" (T.print t)
+end
+
+(* -------------------------------------------------------------------------- *)
+
+(* An enumeration of all vertices. *)
+
+let vertex : vertex enum =
+  enum @@ fun yield ->
+    program.cfg |> Label.Map.iter @@ fun label _tblock ->
+      if can_specialize label then
+        T.iter_real @@ fun t -> yield (label, Some t)
+      else
+        yield (label, None)
+
+(* An enumeration of all initial vertices, that is, of all vertices that
+   represent entry points. The minimization algorithm throws away all
+   unreachable vertices, so it is important to provide this information. *)
+
+let initial_vertex : vertex enum =
+  enum @@ fun yield ->
+    program.entry |> StringMap.iter @@ fun _ label ->
+      assert (not (can_specialize label));
+      yield (label, None)
+
+(* [multi label toks] is an enumeration of all vertices [(label, Some t)]
+   where [t] ranges over the set [toks]. *)
+
+let multi label toks : vertex enum =
+  enum @@ fun yield ->
+    toks |> TSet.iter @@ fun t ->
+      yield (label, Some t)
+
+(* An enumeration of the equivalence classes that exist before the partition
+   refinement algorithm runs. The distinctions that we impose at this stage
+   encode constraints C1- and C2- in our specification of what vertices may
+   be considered equivalent. *)
+
+let groups : vertex enum enum =
+  enum @@ fun yield ->
+    program.cfg |> Label.Map.iter @@ fun label tblock ->
+      if not (can_specialize label) then
+        (* This block cannot be specialized. *)
+        (* This equivalence class is a singleton. *)
+        yield (singleton (label, None))
+      else
+        (* This block can be specialized. *)
+        match has_case_token tblock.block with
+        | None ->
+            (* This block does not contain a [CASEtok] instruction. *)
+            (* Thus, it imposes no distinction among the terminal symbols. *)
+            yield (multi label TSet.universe)
+        | Some (branches, odefault) ->
+            (* This block contains a [CASEtok] instruction. *)
+            (* Thus, it distinguishes certain classes of terminal symbols:
+               one class per branch, including the default branch, if there
+               is one. *)
+            List.iter (fun (tokpat, _) ->
+              yield (multi label (tokens tokpat))
+            ) branches;
+            if odefault <> None then
+              yield (multi label (default_tokens branches))
+
+let () =
+  if debug then
+    eprintf "DEBUG: %d equivalence classes before partition refinement\n%!"
+      (Enum.length groups)
+
+(* -------------------------------------------------------------------------- *)
+
+(* Number the vertices. *)
+
+module Vertex : NUMBERING with type t = vertex = struct
+  include Numbering.ForType(struct type t = vertex end)
+  let () = foreach vertex (fun v -> ignore (encode v))
+  include Done()
+    (* This defines [n], [encode], [decode]. *)
+end
+
+let () =
+  if debug then
+    eprintf "DEBUG: %d vertices\n%!" Vertex.n
+
+(* -------------------------------------------------------------------------- *)
+
+(* [walk jump env condition block] walks the block [block], anticipating on
+   the manner in which this block will be transformed, and enumerates the
+   outgoing edges of the transformed block.
+
+   The function [jump] is used to signal the presence of each outgoing edge.
+   The environment [env] indicates whether (in the transformed block) the
+   current token is currently known. The parameter [condition] keeps track
+   of the branches that have been taken since the transformed block was
+   entered. When an edge is found, this condition serves as the label of
+   this edge. *)
+
+let rec walk
+  (jump : condition -> vertex -> unit)
+  (env : terminal option)
+  (condition : condition)
+  (block : block)
+=
+  match block with
+
+  | IJump label ->
+      (* If we have knowledge of the current token, and if the target block
+         can be specialized with respect to the current token, then we wish
+         to preserve our knowledge and jump to a specialized version of the
+         target block. *)
+      (* In fact, if the target block can be specialized then it must be the
+         case that we already have knowledge of the current token. Indeed,
+         as soon we get a new token from the lexer, we inspect it; there is
+         never a jump after a lexer call and before the token is inspected. *)
+      let target : vertex =
+        if can_specialize label then begin
+          assert (env <> None);
+          (label, env)
+        end
+        else
+          (label, None)
+      in
+      jump condition target
+
+  | IPrim (p, PrimLexerCall _, block) ->
+      (* A lexer call overwrites the [token] register. *)
+      assert (p = PReg token);
+      (* It must be the case that the current token is not known and that we
+         have not already taken a branch. *)
+      assert (env = None);
+      assert (condition = CondNone);
+      (* The lexer call will be preserved by the program transformation.
+         Immediately after this call, a [CASEtok] instruction will be
+         inserted so as to analyze the new token, and within each branch, a
+         copy of the remainder of the current block will be placed.
+         Anticipating on this transformation, we analyze the remainder of
+         the block once for each terminal symbol [t]. *)
+      T.iter_real @@ fun t ->
+        let env = Some t in
+        let condition = CondTok t in
+        walk jump env condition block
+
+  | ICaseToken (r, branches, odefault) ->
+      (* [r] must be the [token] register. *)
+      assert (r = token);
+      (* The current token must be known, because the transformation inserts
+         a [CASEtok] instruction immediately after every lexer call. *)
+      let t = Option.force env in
+      (* Thus, this [CASEtok] instruction can be simplified. Only one branch
+         can be taken, and we can statically tell which branch that is. *)
+      begin match find_tokbranch branches (TSet.singleton t), odefault with
+      | Some (TokSingle _, block), _
+      | Some (TokMultiple _, block), _
+      | None, Some block ->
+          walk jump env condition block
+      | None, None ->
+          (* No branch is taken, and there is no default branch.
+             This cannot happen. *)
+          assert false
+      end
+
+  | ICaseTag (_, branches) ->
+      (* In each branch, we must update [condition]. *)
+      assert (condition = CondNone);
+      List.iter (fun (TagSingle t, block) ->
+        let condition = CondTag t in
+        walk jump env condition block
+      ) branches
+
+  (* The instructions that remain do not write the registers of interest.
+     They are not transformed. *)
+  | IPush _
+  | IPop _
+  | IPeek _
+  | IDef _
+  | IPrim _
+  | ITrace _
+  | IComment _
+    ->
+      assert (Reg.Set.disjoint sensitive (written block));
+      Block.iter (walk jump env condition) block
+
+  (* Check that terminator instructions are never used inside [CASEtok].
+     Without this property, we might inadvertently attempt to fuse a branch
+     that contains a [STOP] instruction and a branch that contains a [RET]
+     instruction, or two branches that contain [STOP] instructions with
+     different state numbers. Technically, I think that this would cause
+     [find_tokbranch] to fail because it cannot decide which branch is
+     definitely taken. *)
+  | IDead _
+  | IStop _
+  | IReturn _
+    ->
+      assert (match condition with CondTok _ -> false | _ -> true)
+
+(* -------------------------------------------------------------------------- *)
+
+(* An enumeration of all edges. *)
+
+let edge : edge enum =
+  enum @@ fun yield ->
+    (* Iterate over all blocks. *)
+    program.cfg |> Label.Map.iter @@ fun label tblock ->
+      (* If this block can be specialized, then analyze it once for every
+         terminal symbol [t]. Otherwise, analyze it just once. *)
+      let go env =
+        let source = (label, env) in
+        let jump condition target = yield (source, condition, target) in
+        let condition = CondNone in
+        let block = tblock.block in
+        walk jump env condition block
+      in
+      if can_specialize_tblock tblock then
+        T.iter_real @@ fun t -> go (Some t)
+      else
+        go None
+
+(* -------------------------------------------------------------------------- *)
+
+(* Number the edges. *)
+
+module Edge : NUMBERING with type t = edge = struct
+  include Numbering.ForType(struct type t = edge end)
+  let () = foreach edge (fun e -> ignore (encode e))
+  include Done()
+    (* This defines [n], [encode], [decode]. *)
+end
+
+let () =
+  if debug then
+    eprintf "DEBUG: %d edges\n%!" Edge.n
+
+(* -------------------------------------------------------------------------- *)
+
+(* Invoke the partition refinement algorithm. *)
+
+(* The use of strongly-typed integer indices in the algorithm's API
+   makes this invocation somewhat verbose. *)
+
+module DFA = struct
+  open Indexing
+  (* States. *)
+  module States = Const(struct let cardinal = Vertex.n end)
+  type states = States.n
+  let states = States.n
+  type state = states index
+  let encode_vertex (s : vertex) : state =
+    Index.of_int States.n (Vertex.encode s)
+  let decode_vertex (i : state) : vertex =
+    Vertex.decode (i :> int)
+  (* Transitions. *)
+  module Transitions = Const(struct let cardinal = Edge.n end)
+  type transitions = Transitions.n
+  let transitions = Transitions.n
+  type transition = transitions index
+  let decode_transition (i : transition) : edge =
+    Edge.decode (i :> int)
+  (* Descriptions of the transitions. *)
+  let label (i : transition) : condition =
+    let _source, condition, _target = decode_transition i in
+    condition
+  let source (i : transition) : state =
+    let source, _condition, _target = decode_transition i in
+    encode_vertex source
+  let target (i : transition) : state =
+    let _source, _condition, target = decode_transition i in
+    encode_vertex target
+  (* The initial states. *)
+  let initials : state enum =
+    map encode_vertex initial_vertex
+  (* The final states. (Every state is final.) *)
+  let finals : state enum =
+    map encode_vertex vertex
+  (* The initial partition. *)
+  let groups : state enum enum =
+    map (map encode_vertex) groups
+  (* Transmit the [debug] flag. *)
+  let debug = debug
+end
+
+let () =
+  if debug then
+    eprintf "DEBUG: now performing partition refinement...\n%!"
+
+module M =
+  Minimize.Minimize(Condition)(DFA)
+
+let () =
+  if debug then begin
+    eprintf "DEBUG: after partition refinement, %d vertices\n%!"
+      (Indexing.cardinal M.states);
+    eprintf "DEBUG: after partition refinement, %d edges\n%!"
+      (Indexing.cardinal M.transitions)
+  end
+
+(* -------------------------------------------------------------------------- *)
+
+(* A new vertex (that is, a vertex in the minimized automaton) is either
+   - a pair [(label, None)],
+     where [can_specialize label] is false; or
+   - a pair [(label, Some toks)],
+     where [can_specialize label] is true
+     and [toks] is a set of terminal symbols. *)
+
+type env =
+  TSet.t option
+
+type vertex' =
+  label * env
+
+(* Debug printers. *)
+
+let print_env env =
+  match env with
+  | None ->
+      "!"
+  | Some toks ->
+      sprintf "[%s]" (TSet.print toks)
+
+let print_vertex' (label, env) =
+  sprintf "%s%s" (Label.export label) (print_env env)
+
+(* -------------------------------------------------------------------------- *)
+
+(* A state number in the minimized automaton can be mapped to a new vertex. *)
+
+let decode_vertex' (s : M.state) : vertex' =
+  (* First, map [s] back to a (nonempty) list of source vertices,
+     all of which must have the same label. *)
+  let ss : vertex list =
+    s
+    |> M.backport_state_all
+    |> Enum.map DFA.decode_vertex
+    |> Enum.enum_to_list
+  in
+  assert (ss <> []);
+  (* Find out about this label. *)
+  let label, _ = List.hd ss in
+  if can_specialize label then
+    (* Find all vertices in the list, each of which must be of the form
+       [(label, Some t)] for some terminal symbol [t], and construct a
+       single vertex' [(label, Some toks)] where the set [toks ]gathers
+       all of these terminal symbols. *)
+    let extract (label', t) = assert (label = label'); Option.force t in
+    let toks = List.map extract ss in
+    let toks = TSet.of_list toks in
+    (label, Some toks)
+  else begin
+    (* The list must be a singleton list. *)
+    assert (ss = [(label, None)]);
+    (label, None)
+  end
+
+(* An enumeration of all new vertices. *)
+
+let vertex' : vertex' enum =
+  map decode_vertex' (enum (Indexing.Index.iter M.states))
+
+(* Debugging output. *)
+
+let () =
+  if debug then
+    foreach vertex' @@ fun (label, env) ->
+      env |> Option.iter @@ fun toks ->
+        eprintf "DEBUG: equivalence class (size %d): %s (%s)\n"
+          (TSet.cardinal toks) (Label.export label) (TSet.print toks)
+
+(* -------------------------------------------------------------------------- *)
+
+(* [transport] maps a (reachable) vertex to the corresponding new vertex. *)
+
+let transport (v : vertex) : vertex' =
+  v
+  |> DFA.encode_vertex
+  |> M.transport_state |> Option.force
+  |> decode_vertex'
+
+(* [enlarge] maps a candidate new vertex [v'] to a valid new vertex.
+
+   If [v'] is of the form [(label, None)] then the result is [v'].
+
+   If [v'] is of the form [(label, Some toks)]
+   where [toks] is a (possibly strict) subset of an equivalence class
+   [toks'] of tokens that are treated in the same manner at [label]
+   then the result is [(label, Some toks')]. *)
+
+let enlarge (v' : vertex') : vertex' =
+  if debug then eprintf "DEBUG: enlarging %s\n%!" (print_vertex' v');
+  match v' with
+  | (label, None) ->
+      assert (not (can_specialize label));
+      v'
+  | (label, Some toks) ->
+      assert (can_specialize label);
+      (* Choose an arbitrary terminal symbol [t] in [toks]. The choice
+         of [t] does not matter; all choices lead to the same result. *)
+      let t = try TSet.choose toks with Not_found -> assert false in
+      (* Transporting the vertex [(label, Some t)] yields the desired
+         new vertex. *)
+      let v' = transport (label, Some t) in
+      assert (
+        let label', otoks' = v' in
+        let toks' = Option.force otoks' in
+        Label.equal label label' &&
+        TSet.subset toks toks'
+      );
+      v'
+
+(* -------------------------------------------------------------------------- *)
+
+(* Determining which groups of tokens must be distinguished at a lexer call.  *)
+
+(* [groups block] expects a block [block] that contains a lexer call and
+   returns a partition of the set [universe], that is, a list of nonempty,
+   pairwise disjoint sets of tokens whose union is the universe.  *)
+
+(* By definition of [walk], because this block contains a lexer call, it
+   must contain a jump labeled [CondTok t] for every terminal symbol [t].
+   So, the union of the sets that we obtain must be the universe. *)
+
+(* This code works as follows. First, using [walk], we enumerate the outgoing
+   edges of the block [block]. We construct their target vertex in the original
+   DFA, then transport it to a vertex in the minimized DFA. We sort these edges
+   by target state, collecting the edge labels (which are terminal symbols)
+   into sets. This tells us what sets of tokens must be distinguished. *)
+
+let groups block : TSet.t list =
+  (* Allocate a vector, indexed by the states of the minimized automaton,
+     containing sets of terminal symbols. *)
+  let edges = Indexing.Vector.make M.states TSet.empty in
+  (* Populate this vector by examining the jumps out of [block]. *)
+  (* For each jump toward a target vertex [vertex], *)
+  let jump condition (target : vertex) =
+    (* Extract a terminal symbol [t] out of the edge label, *)
+    let t = match condition with CondTok t -> t | _ -> assert false in
+    (* Map this vertex to a state of the minimized automaton. *)
+    let target' : M.state =
+      target
+      |> DFA.encode_vertex
+      |> M.transport_state |> Option.force
+    in
+    (* Add [t] to the set stored at index [target'] in the vector. *)
+    let toks = Indexing.Vector.get edges target' in
+    let toks = TSet.add t toks in
+    Indexing.Vector.set edges target' toks
+  in
+  walk jump None CondNone block;
+  (* Gather the nonempty sets from the vector. *)
+  let groups =
+    Indexing.Vector.fold_left (fun accu toks ->
+      if TSet.is_empty toks then accu else toks :: accu
+    ) [] edges
+  in
+  (* A sanity check. *)
+  assert TSet.(is_universe (big_union groups));
+  groups
+
+(* -------------------------------------------------------------------------- *)
+
+(* [name_vertex' v'] returns a conventional name for the transformed block that
+   corresponds to the new vertex [v']. Naturally, two distinct new vertices
+   must be mapped to two distinct names. *)
+
+let name_vertex' (v' : vertex') : label =
+  let (label, env) = v' in
+  match env with
+  | None ->
+      label
+  | Some toks ->
+      if TSet.cardinal toks > TSet.cardinal_universe / 2 then
+        (* If [toks] involves more than half of all tokens then we do not
+           need to include a list of all of its members in the name. *)
+        sprintf "%s_majority" (Label.export label)
+        |> Label.import
+      else
+        (* The identifier returned by [TSet.identify] begins with 'c' so
+           cannot be confused with a "majority" label. *)
+        sprintf "%s_%s" (Label.export label) (TSet.identify toks)
+        |> Label.import
+
+(* -------------------------------------------------------------------------- *)
+
+(* [spec_block env block] transforms the block [block]. *)
+
+(* The environment [env] keeps track of whether (in the transformed block)
+   the current token is currently known or unknown. It should be the case
+   that [env] is [Some _] if and only the current block can be specialized,
+   that is, if and only if its label satisfies [can_specialize label]. *)
+
+let rec spec_block (env : env) block =
+  match block with
+
+  | IJump target ->
+      (* Compute which new vertex is the target of the jump. *)
+      let target : vertex' =
+        if can_specialize target then begin
+          assert (env <> None);
+          enlarge (target, env)
+        end
+        else
+          (* It may be the case here that we are forgetting information
+             by moving from [env = Some _] to [env = None]. (I think.) *)
+          (target, None)
+      in
+      IJump (name_vertex' target)
+
+  | IPrim (p, PrimLexerCall vs, block') ->
+      (* A lexer call overwrites the [token] register. *)
+      assert (p = PReg token);
+      (* It must be the case that the current token is not known. *)
+      assert (env = None);
+      (* The lexer call is preserved by the program transformation.
+         Immediately after this call, we choose to eagerly analyze
+         the new token using a [CASEtok] instruction and to specialize
+         the code that follows. *)
+      (* The branches are computed as follows. Because [groups block] is a
+         partition of the set [universe], no default branch is needed. *)
+      let branches : tokbranch list =
+        groups block |> List.map @@ fun toks ->
+          (* Changing [env] from [None] to [Some _] causes the code in
+             each branch to be specialized. *)
+          let env = Some toks in
+          tokpat toks, spec_block env block'
+      in
+      IPrim (p, PrimLexerCall vs,
+      ICaseToken (token, branches, None))
+
+  | ICaseToken (r, branches, odefault) ->
+      (* [r] must be the [token] register. *)
+      assert (r = token);
+      (* because we insert a [CASEtok] instruction immediately after every
+         lexer call, the current token must be known. *)
+      let toks = Option.force env in
+      assert (not (TSet.is_empty toks));
+      (* Thus, this CASEtok instruction can be simplified. *)
+      begin match find_tokbranch branches toks, odefault with
+      | Some (TokSingle (_, r), block), _ ->
+          (* Emit a [DEF] instruction to copy the semantic value of the token
+             from the register [tokv] to the register [r], where this branch
+             expects to find it. *)
+          let bs = Bindings.assign [PReg r] [VReg tokv] in
+          IDef (bs, spec_block env block)
+      | Some (TokMultiple _, block), _
+      | None, Some block ->
+          spec_block env block
+      | None, None ->
+          assert false (* no branch taken; no default branch present *)
+      end
+
+  (* The remaining instructions do not write the registers of interest,
+     so the environment need not be updated. These instructions are not
+     transformed. *)
+  | IPush _
+  | IPop _
+  | IPeek _
+  | IDef _
+  | IPrim _
+  | ITrace _
+  | IComment _
+  | IDead _
+  | IStop _
+  | IReturn _
+  | ICaseTag _
+    ->
+      assert (Reg.Set.disjoint sensitive (written block));
+      Block.map (spec_block env) block
+
+(* -------------------------------------------------------------------------- *)
+
+(* Construct the complete transformed program. *)
+
+let program =
+  let cfg = ref Label.Map.empty in
+  foreach vertex' begin fun v' ->
+    let (label, env) = v' in
+    let tblock = lookup program label in
+    let block = spec_block env tblock.block in
+    let tblock = { tblock with block } in
+    cfg := Label.Map.add (name_vertex' v') tblock !cfg
+  end;
+  let cfg = !cfg in
+  { program with cfg }
+
+end (* SpecializeToken *)
+
+(* Make this program transformation accessible to the outside as a function.  *)
+
+let specialize_token program =
+  let module S = SpecializeToken(struct let program = program end) in
+  Time.tick "StackLang: specialization with respect to the token";
+  S.program
+
+(* -------------------------------------------------------------------------- *)
