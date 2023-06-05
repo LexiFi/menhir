@@ -435,6 +435,8 @@ let all_tokens (branches : tokbranch list) : terminals =
 let exhaustive (branches : tokbranch list) : bool =
   subset universe (all_tokens branches)
 
+(* -------------------------------------------------------------------------- *)
+
 (* [written i] is the set of registers written by the instruction [i]
    alone (disregarding the instructions that follow [i] in the block). *)
 
@@ -457,3 +459,36 @@ let written (i : block) : registers =
   | ICaseToken _
   | ICaseTag _
       -> Reg.Set.empty
+
+(* -------------------------------------------------------------------------- *)
+
+(* [has_case_token block] determines whether the block [block] contains at
+   least one instruction of the form [ICaseToken (_, branches, odefault)].
+   If so, it returns [Some (branches, odefault)]. Otherwise, it returns
+   [None]. *)
+
+(* We assume that the block [block] contains at most [CASE] instruction,
+   that is, either one [CASEtok] instruction or one [CASEtag] instruction
+   or neither of them.  *)
+
+let rec has_case_token block =
+  match block with
+  | ICaseToken (_, branches, odefault) ->
+      (* We have a [CASEtok] instruction. *)
+      Some (branches, odefault)
+  | IPush (_, _, block)
+  | IPop (_, _, block)
+  | IPeek (_, _, block)
+  | IDef (_, block)
+  | IPrim (_, _, block)
+  | ITrace (_, block)
+  | IComment (_, block)
+      (* Look further. *)
+      -> has_case_token block
+  | ICaseTag _
+  | IDead _
+  | IStop _
+  | IReturn _
+  | IJump _
+      (* We do not have a [CASEtok] instructions. *)
+      -> None
