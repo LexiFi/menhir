@@ -316,6 +316,11 @@ module TerminalSet : sig
 
   val universe: t
 
+  (* [is_universe toks] determines whether the set [toks], which must
+     be a subset of [universe], is in fact equal to the set [universe]. *)
+
+  val is_universe: t -> bool
+
 end
 
 (* All of the operations documented in [GMap] are available. *)

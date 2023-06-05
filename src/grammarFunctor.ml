@@ -520,6 +520,12 @@ module TerminalSet = struct
       )
     )
 
+  let () =
+    assert (cardinal universe = Terminal.n - 2)
+
+  let is_universe s =
+    cardinal s = Terminal.n - 2
+
   (* The following definitions are used in the computation of FIRST sets
      below. They are not exported outside of this file. *)
 
