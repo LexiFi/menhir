@@ -435,6 +435,9 @@ let all_tokens (branches : tokbranch list) : terminals =
 let exhaustive (branches : tokbranch list) : bool =
   subset universe (all_tokens branches)
 
+let default_tokens (branches : tokbranch list) : terminals =
+  diff universe (all_tokens branches)
+
 (* -------------------------------------------------------------------------- *)
 
 (* [written i] is the set of registers written by the instruction [i]
