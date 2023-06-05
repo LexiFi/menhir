@@ -1,5 +1,51 @@
 # CHANGES
 
+## 2023/05/05
+
+* New modules `Fix.Partition` and `Fix.Minimize`.
+  (Contributed by Frédéric Bour; reviewed by François Pottier.)
+
+* New module `Fix.Enum`. The API of this module is not stable yet and is
+  likely to change in the future. This could have indirect impact on
+  users of `Fix.Minimize`, whose API involves the type `enum`.
+
+* New functionality and minor changes in `Fix.Indexing`.
+  (Contributed by Frédéric Bour; reviewed by François Pottier.)
+
+  + New functions `is_fixed`, `equal`, `assert_equal`.
+
+  + New function `rev_iter`.
+
+  + When faced with an invalid argument, `of_int` now raises
+    `Invalid_argument` instead of `Assert_failure`.
+
+* New functionality and minor changes in `Fix.Indexing.Vector`.
+  (Contributed by Frédéric Bour; reviewed by François Pottier.)
+
+  + The type `('n, 'a) vector` is no longer a private type: it is now an
+    abstract type. Thus, it can no longer be coerced to `'a array`. Instead,
+    the new function `as_array` is provided for this purpose.
+
+  + In the reverse direction, the new function `of_array` converts an array to
+    a vector, with a dynamic check, while the new functor `Of_array` also
+    converts an array to a vector, without a dynamic check. `of_array` is used
+    when the length of the array already has received a type-level name, while
+    `Of_array` is used when one wishes to create a fresh type-level name to
+    stand for this length.
+
+  + New functions `mapi`, `copy`, `iter`, `iteri`, `iter2`,
+    `fold_left`, `fold_right`, `to_list`, `sort`.
+    These functions are aliases for the functions by the same names
+    in the module `Array`.
+
+  + New functions `fold_left2` and `fold_right2`.
+
+  + New function `invert`.
+
+* Restrict the type of `Fix.Indexing.Vector.empty`, which was too general
+  and would allow out-of-bounds accesses into an empty vector.
+  (Contributed by Frédéric Bour.)
+
 ## 2022/01/21
 
 * The functor `Memoize.Make` now requires just `MINIMAL_IMPERATIVE_MAPS`

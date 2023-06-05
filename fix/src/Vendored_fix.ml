@@ -33,6 +33,9 @@ module Gensym         = Gensym
 module HashCons       = HashCons
 module DataFlow       = DataFlow
 module CompactQueue   = CompactQueue
+module Enum           = Enum
+module Partition      = Partition
+module Minimize       = Minimize
 
 (**This module defines {b a few common partial orders}, each of which
    satisfies the signature [PROPERTY]. These include Booleans,
