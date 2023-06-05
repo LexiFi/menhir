@@ -294,7 +294,16 @@ module TerminalSet : sig
   (* [diff xs ys] returns the set [xs], deprived of all elements that are
      members of the set [ys]. *)
 
-  val diff : t -> t -> t
+  val diff: t -> t -> t
+
+  (* [of_list] converts a list of terminal symbols into a set of terminal
+     symbols. *)
+
+  val of_list: Terminal.t list -> t
+
+  (* [big_union xss] returns the union of the sets in the list [xss]. *)
+
+  val big_union: t list -> t
 
   (* This offers a string representation of a set of terminals. The
      symbols are simply listed one after the other and separated with
