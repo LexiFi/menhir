@@ -305,16 +305,20 @@ module TerminalSet : sig
 
   val big_union: t list -> t
 
-  (* This offers a string representation of a set of terminals. The
+  (* [print] offers a string representation of a set of terminals. The
      symbols are simply listed one after the other and separated with
      spaces. *)
 
   val print: t -> string
 
-  (* This is the set of all terminal symbols except the pseudo-tokens
+  (* [universe] is the set of all terminal symbols except the pseudo-tokens
      [#] and [error]. *)
 
   val universe: t
+
+  (* [cardinal_universe] is the cardinal of the set [universe]. *)
+
+  val cardinal_universe: int
 
   (* [is_universe toks] determines whether the set [toks], which must
      be a subset of [universe], is in fact equal to the set [universe]. *)
