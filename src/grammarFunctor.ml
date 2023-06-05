@@ -514,11 +514,7 @@ module TerminalSet = struct
     Misc.separated_iter_to_string Terminal.print " " (fun f -> iter f toks)
 
   let universe =
-    remove Terminal.sharp (
-      remove Terminal.error (
-        Terminal.fold add empty
-      )
-    )
+    Terminal.fold_real add empty
 
   let () =
     assert (cardinal universe = Terminal.n - 2)
