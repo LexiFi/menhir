@@ -440,6 +440,39 @@ let default_tokens (branches : tokbranch list) : terminals =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Computing which branch is taken in an [ICaseToken] instruction. *)
+
+(* [match_tokpat toks tokpat] determines whether a token in the set [toks]
+   is definitely matched or definitely not matched by the pattern [tokpat].
+   The situation where the outcome is not definitely known is forbidden; a
+   runtime assertion detects it. *)
+
+let match_tokpat toks tokpat : bool =
+  let expected = tokens tokpat in
+  let is_subset = subset toks expected in
+  assert (is_subset || disjoint toks expected);
+  is_subset
+
+(* [match_tokbranch toks branch] determines whether a token in the set
+   [toks] is definitely matched or definitely not matched by the branch
+   [branch]. *)
+
+let match_tokbranch toks (tokpat, _) : bool =
+  match_tokpat toks tokpat
+
+(* [find_tokbranch branches toks] returns [Some branch] if the branch is
+   definitely taken when matching a token in the set [toks]. It returns
+   [None] if the default branch is definitely taken. The situation where the
+   outcome is not definitely known is forbidden. *)
+
+let find_tokbranch branches toks : tokbranch option =
+  match List.find (match_tokbranch toks) branches with
+  | branch -> Some branch
+  | exception Not_found -> None
+  (* [List.find_opt] requires OCaml 4.05, so cannot be used *)
+
+(* -------------------------------------------------------------------------- *)
+
 (* [written i] is the set of registers written by the instruction [i]
    alone (disregarding the instructions that follow [i] in the block). *)
 
