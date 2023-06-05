@@ -498,6 +498,12 @@ module TerminalSet = struct
 
   include BoundedBitSet.Make(Terminal)()
 
+  (* The signature [GSet.S] does not offer [diff], so we implement it here
+     in a naive way. *)
+
+  let diff xs ys =
+    fold remove ys xs
+
   let print toks =
     Misc.separated_iter_to_string Terminal.print " " (fun f -> iter f toks)
 

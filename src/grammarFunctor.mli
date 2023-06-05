@@ -291,6 +291,11 @@ module TerminalSet : sig
 
   include GSet.S with type element = Terminal.t
 
+  (* [diff xs ys] returns the set [xs], deprived of all elements that are
+     members of the set [ys]. *)
+
+  val diff : t -> t -> t
+
   (* This offers a string representation of a set of terminals. The
      symbols are simply listed one after the other and separated with
      spaces. *)

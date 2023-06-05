@@ -46,7 +46,6 @@ let token =
 
 module P = struct
   include Grammar.TerminalSet
-  let diff xs ys = fold remove ys xs
   type property = t
   let leq_join = union
 end
