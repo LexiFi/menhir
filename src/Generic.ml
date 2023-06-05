@@ -13,5 +13,7 @@
    refer to it under either name. The following definition allows us to refer
    to it under the name [Generic.compare]. *)
 
+(* The module [Stdlib] appeared in OCaml 4.07. *)
+
 let compare =
   compare
