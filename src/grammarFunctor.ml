@@ -516,11 +516,14 @@ module TerminalSet = struct
   let universe =
     Terminal.fold_real add empty
 
+  let cardinal_universe =
+    Terminal.n - 2
+
   let () =
-    assert (cardinal universe = Terminal.n - 2)
+    assert (cardinal universe = cardinal_universe)
 
   let is_universe s =
-    cardinal s = Terminal.n - 2
+    cardinal s = cardinal_universe
 
   (* The following definitions are used in the computation of FIRST sets
      below. They are not exported outside of this file. *)
