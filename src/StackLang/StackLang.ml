@@ -434,3 +434,26 @@ let all_tokens (branches : tokbranch list) : terminals =
 
 let exhaustive (branches : tokbranch list) : bool =
   subset universe (all_tokens branches)
+
+(* [written i] is the set of registers written by the instruction [i]
+   alone (disregarding the instructions that follow [i] in the block). *)
+
+let written (i : block) : registers =
+  match i with
+  | IPop (ps, _, _)
+  | IPeek (ps, _, _) ->
+      Pattern.registers ps
+  | IDef (bs, _) ->
+      Bindings.domain bs
+  | IPrim (p, _, _) ->
+      Pattern.registers [p]
+  | IPush _
+  | ITrace _
+  | IComment _
+  | IDead _
+  | IStop _
+  | IReturn _
+  | IJump _
+  | ICaseToken _
+  | ICaseTag _
+      -> Reg.Set.empty
