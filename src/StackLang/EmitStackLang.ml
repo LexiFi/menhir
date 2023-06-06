@@ -264,11 +264,18 @@ let initp =
 
 (* A code label is potentially the target of [jump] instructions. *)
 
-(* We need four kinds of code labels. The most common three are [run] (one
-   such label per state), [reduce] (one per production), and [goto] (one per
-   nonterminal symbol). On rare occasions, we also need [act_goto]: there is
-   one such label per production, but this applies only to non-start
-   non-epsilon productions that use [$endpos($0)]. *)
+(* We need five kinds of code labels.
+
+   The most common three are [run] (one such label per state), [reduce] (one
+   per production), and [goto] (one per nonterminal symbol).
+
+   On rare occasions, we also need [act_goto]: there is one such label per
+   production, but this applies only to non-start non-epsilon productions that
+   use [$endpos($0)].
+
+   Finally, we isolate each [STOP] instruction in a block of its own (one per
+   state), because this is required by [StackLangTransform.specialize_token].
+   This block can later be inlined away, so there is no cost. *)
 
 (* Making [A] a functor allows computing the long invariant only if needed. *)
 
@@ -279,6 +286,7 @@ type address =
   | Reduce of mode * Production.index
   | Goto of mode * Nonterminal.t
   | ActGoto of mode * Production.index
+  | Stop of Lr1.node
 
 let mode_prefix mode name =
   match mode with
@@ -306,6 +314,9 @@ let print addr =
         let prod = Misc.padded_index Production.n (Production.p2i prod) in
         sprintf "act_goto_%s" prod
         |> mode_prefix mode
+    | Stop s ->
+        let s = Misc.padded_index Lr1.n (Lr1.number s) in
+        sprintf "stop_%s" s
   ))
 
 let jump addr =
@@ -315,7 +326,8 @@ let iter mode yield =
   Lr1.iter (fun s -> yield (Run (mode, s)));
   Production.iter (fun prod -> yield (Reduce (mode, prod)));
   Nonterminal.iterx (fun nt -> yield (Goto (mode, nt)));
-  Production.iterx (fun prod -> yield (ActGoto (mode, prod)))
+  Production.iterx (fun prod -> yield (ActGoto (mode, prod)));
+  Lr1.iter (fun s -> yield (Stop s))
 
 let iter yield =
   iter NormalMode yield;
@@ -551,7 +563,12 @@ and run_error_dispatch s =
 
       (* This state is unable to handle errors. Stop. *)
 
-      stop (Lr1.number s)
+      (* Instead of emitting a [STOP] instruction inline, we emit a jump to
+         a [stop] routine. This is done in order to satisfy the requirement
+         of [StackLangTransform.specialize_token], which does not allow a
+         [STOP] instruction to appear inside a [CASE] instruction. *)
+
+      jump (Stop s)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -866,6 +883,15 @@ let code label =
       let stack = pop (Long.gotostack nt) in
       set_block_type stack (Origin.goto nt);
       act_goto mode prod
+
+  | Stop s ->
+      (* This block does not care what is on the stack. *)
+      let stack = empty in
+      (* Its return type is really bottom, but we use a return type
+         that is consistent with the [run] function for state [s]. *)
+      set_block_type stack (Origin.run s);
+      (* The code for this block consists of just a [STOP] instruction. *)
+      stop (Lr1.number s)
 
 (* -------------------------------------------------------------------------- *)
 
