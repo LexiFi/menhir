@@ -81,6 +81,9 @@ val similar: cell -> cell -> bool
    functions by the same names in the modules Array or MArray. *)
 type word
 
+(**[empty] is the empty word. *)
+val empty: word
+
 (**[get w i] is the [i]-th cell in the word [w]. *)
 val get: word -> int -> cell
 

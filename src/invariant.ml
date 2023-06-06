@@ -516,6 +516,9 @@ type word =
 
 (* Constructors. *)
 
+let empty : word =
+  [||]
+
 (* If [--represent-values] is passed on the command line, then every semantic
    value is stored. *)
 
