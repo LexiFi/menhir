@@ -100,6 +100,12 @@ module Run () = struct
   let program =
     StackLangTokenAnalysis.transform program
 
+  (* Propagate [STOP] instructions backward where possible. *)
+
+  let program =
+    program
+    |> StackLangTransform.stop_earlier
+
   (* Inline functions whose in-degree is 1, insofar as possible. *)
 
   let program =
