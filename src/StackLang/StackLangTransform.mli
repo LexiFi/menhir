@@ -10,12 +10,12 @@
 
 open StackLang
 
-(**[specialize] specializes certain routines for the situation where the
-   [state] register contains a statically known tag. It also performs a
+(**[specialize_state] specializes certain routines for the situation where
+   the [state] register contains a statically known tag. It also performs a
    certain amount of inlining, insofar as it has a beneficial effect on
-   specialization itself. [specialize] should be applied to a program
-   where very block is reachable. *)
-val specialize : program -> program
+   specialization itself. [specialize] should be applied to a program where
+   very block is reachable. *)
+val specialize_state : program -> program
 
 (**[commute_pushes] moves PUSH instructions forward in the code, in the
    hope that they meet POP instructions and cancel out. It also performs

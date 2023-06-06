@@ -53,7 +53,7 @@ module Run () = struct
   let program =
     if Settings.optimization_level >= 2 then
       program
-      |> StackLangTransform.specialize
+      |> StackLangTransform.specialize_state
       |> StackLangTransform.remove_unreachable_blocks (* TODO unnecessary? *)
       |> NeededRegisters.update
       |> check

@@ -65,7 +65,7 @@ let cells i =
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
 
-(* Specialization. *)
+(* Specialization with respect to the state. *)
 
 (* The purpose of this program transformation is to specialize certain
    routines for the situation where the [state] register contains a
@@ -81,7 +81,7 @@ let cells i =
    recognizing these routines and inlining them instead, with the same
    end result. *)
 
-module Specialize (X : sig val program : program end) = struct open X
+module SpecializeState (X : sig val program : program end) = struct open X
 
 (* [can_specialize label] determines whether it is desirable to create a
    specialized version of the routine labeled [label] for the situation
@@ -458,11 +458,11 @@ let () =
       (Label.Set.cardinal !labels)
   )
 
-end (* Specialize *)
+end (* SpecializeState *)
 
-let specialize program =
-  let module S = Specialize(struct let program = program end) in
-  Time.tick "StackLang: specialization";
+let specialize_state program =
+  let module S = SpecializeState(struct let program = program end) in
+  Time.tick "StackLang: specialization with respect to the state";
   S.program
 
 (* -------------------------------------------------------------------------- *)
