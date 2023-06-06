@@ -2005,3 +2005,82 @@ let specialize_token program =
   S.program
 
 (* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+
+(* This transformation allows a [STOP] instruction to swallow some of the
+   instructions that precede it. *)
+
+(* A stop block is a sequence of straight-line code, including [PUSH], [POP],
+   [PEEK], [DEF], [TRACE], and [JUMP] instructions, including comments, and
+   ending with a [STOP] instruction. *)
+
+(* Inside a stop block, we remove all pure instructions, namely [PUSH], [POP],
+   [PEEK], [DEF]. We also remove [JUMP] instructions; that is, we effectively
+   inline stop blocks at their starting point. We keep [TRACE] instructions
+   (which do not depend on the stack or on the registers) and comments. *)
+
+module StopEarlier (X : sig val program : program end) = struct open X
+
+(* [is_stop_block] recognizes a stop block. It may be applied to a block
+   before or after this block has been transformed. *)
+
+let rec is_stop_block block =
+  match block with
+  | IStop _ ->
+      true
+  | IPush (_, _, block)
+  | IPop (_, _, block)
+  | IPeek (_, _, block)
+  | IDef (_, block)
+  | IComment (_, block)
+  | ITrace (_, block) ->
+      is_stop_block block
+  | IJump target ->
+      let target_block = (lookup program target).block in
+      is_stop_block target_block
+  | _ ->
+      false
+
+(* The transformation recognizes stop blocks and inlines them at their
+   starting point. It is implemented as a bottom-up rewriting pass. *)
+
+let rec transform_block block =
+  (* First, transform every child. *)
+  let block = Block.map transform_block block in
+  (* Then, look at the current instruction. *)
+  match block with
+  | IPush (_, _, block)
+  | IPop (_, _, block)
+  | IPeek (_, _, block)
+  | IDef (_, block)
+    when is_stop_block block ->
+      (* A pure instruction in front of a stop block is dropped. *)
+      block
+  | IJump target ->
+      (* A [JUMP] instruction in front of a stop block is dropped.
+         The block is inlined. *)
+      (* [is_stop_block] is applied to an untransformed block. This
+         is a consequence of the fact that we do not control in what
+         order blocks are processed. *)
+      let target_block = (lookup program target).block in
+      if is_stop_block target_block then
+        transform_block target_block
+      else
+        block
+  | _ ->
+      block
+
+let transform_tblock tblock =
+  { tblock with block = transform_block tblock.block }
+
+let program =
+  { program with cfg = Label.Map.map transform_tblock program.cfg }
+
+end (* StopEarlier *)
+
+(* Make this program transformation accessible to the outside as a function.  *)
+
+let stop_earlier program =
+  let module S = StopEarlier(struct let program = program end) in
+  Time.tick "StackLang: propagating STOP instructions";
+  S.program

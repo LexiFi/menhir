@@ -60,3 +60,16 @@ val remove_unreachable_blocks : program -> program
      and destination blocks carry the hint [NoHint]. In short, this allows
      inlining a [run] routine into a [run] routine, and nothing else. *)
 val inline : (* cautious: *) bool -> program -> program
+
+(**[stop_earlier program] transforms the program [program] by letting a [STOP]
+   instructions swallow its predecessors, as long as they are pure
+   instructions. For instance, the sequence [PUSH; STOP] is replaced with just
+   [STOP].
+
+   This transformation can create opportunities for inlining. Conversely,
+   inlining can create new opportunities for [STOP] instructions to swallow
+   their predecessors.
+
+   The sets of needed registers are not updated, so [NeededRegisters.update]
+   must be invoked after this transformation has been performed. *)
+val stop_earlier: program -> program
