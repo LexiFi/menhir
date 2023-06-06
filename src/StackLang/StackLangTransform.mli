@@ -14,7 +14,7 @@ open StackLang
    the [state] register contains a statically known tag. It also performs a
    certain amount of inlining, insofar as it has a beneficial effect on
    specialization itself. [specialize] should be applied to a program where
-   very block is reachable. *)
+   every block is reachable. *)
 val specialize_state : program -> program
 
 (**[commute_pushes] moves PUSH instructions forward in the code, in the
