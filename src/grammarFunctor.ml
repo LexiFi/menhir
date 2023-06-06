@@ -525,6 +525,38 @@ module TerminalSet = struct
   let is_universe s =
     cardinal s = cardinal_universe
 
+  (* The following definitions aim to define [identify]. *)
+
+  (* [big_max f toks] computes the maximum of the function [f] over the
+     set of terminal symbols [toks]. *)
+
+  let big_max (f : element -> int) (toks : t) : int =
+    fold (fun t accu -> max (f t) accu) toks 0
+
+  (* [separator] is a run of underscore characters '_' that is long
+     enough so as to guarantee that no terminal symbol contains such
+     a run in its name. *)
+
+  let separator : string Lazy.t =
+    lazy begin
+      let longest_run t = Misc.longest_run '_' (Terminal.print t) in
+      let k = big_max longest_run universe in
+      String.make (k+1) '_'
+    end
+
+  (* [identify toks] converts the set of terminal symbols [toks] into
+     a valid OCaml identifier. The cardinal of the set is mentioned
+     (for informative purposes; it is not required for disambiguation)
+     and the symbols are separated using [separator]. *)
+
+  let identify toks =
+    String.concat (Lazy.force separator) (
+      (* The cardinal: *)
+      Printf.sprintf "c%d" (cardinal toks) ::
+      (* The symbols: *)
+      List.map Terminal.print (elements toks)
+    )
+
   (* The following definitions are used in the computation of FIRST sets
      below. They are not exported outside of this file. *)
 

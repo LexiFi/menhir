@@ -311,6 +311,13 @@ module TerminalSet : sig
 
   val print: t -> string
 
+  (* [identify] offers a string representation of a set of terminals. This
+     string is guaranteed to be a valid OCaml identifier. Furthermore, this
+     representation is unambiguous: two distinct sets are mapped to two
+     distinct identifiers. *)
+
+  val identify: t -> string
+
   (* [universe] is the set of all terminal symbols except the pseudo-tokens
      [#] and [error]. *)
 
