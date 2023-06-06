@@ -188,3 +188,7 @@ val nth: int -> string
    that alphabetical ordering coincides with numeric ordering. *)
 
 val padded_index: int -> int -> string
+
+(**[longest_run c s] computes the length of the longest run of consecutive
+   characters equal to [c] in the string [s]. *)
+val longest_run: char -> string -> int

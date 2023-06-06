@@ -390,3 +390,20 @@ let pad n s =
 
 let padded_index n i =
   pad (digits n) (Printf.sprintf "%d" i)
+
+(* [longest_run c s] computes the length of the longest run of consecutive
+   characters equal to [c] in the string [s]. *)
+
+(* In the auxiliary function, [i] is the index of the next character that
+   must be read, [m] is a max-accumulator, and [k] is a sum-accumulator. *)
+
+let rec longest_run c s n i m k =
+  if i = n then
+    max m k
+  else if s.[i] = c then
+    longest_run c s n (i+1) m (k+1)
+  else
+    longest_run c s n (i+1) (max m k) 0
+
+let longest_run c s =
+  longest_run c s (String.length s) 0 0 0
