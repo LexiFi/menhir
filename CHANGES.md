@@ -9,17 +9,25 @@
   increase. This feature is independent of the choice between `-O 0`,
   `-O 1` and `-O 2`. It may disappear in the future.
 
-* Malformed code and type definitions used to be produced when both
+* Inconsistent type definitions used to be produced when `--only-tokens` and
+  `--inspection` were passed on the command line. The type `terminal` was
+  defined at the toplevel, whereas it should always be defined inside the
+  submodule `MenhirInterpreter`. (Reported and fixed by Frédéric Bour.)
+
+* Malformed code and type definitions used to be produced when
   `--external-tokens` and `--inspection` were passed on the command line.
   Fixed. (Reported by Maxime Dénès.)
 
 * Changes in the public API of the library `MenhirSdk`.
   (Contributed by Frédéric Bour.)
 
-  + The type of the function `Lr1.reductions` changes
-    from `t -> (terminal * production list) list`
-    to   `t -> (terminal * production) list`.
-    This is a view of the automaton after conflict resolution,
+  + The function `Lr1.reductions`,
+    whose type is `t -> (terminal * production list) list`,
+    is still present but is now deprecated.
+    The function `Lr1.get_reductions`,
+    whose type is `t -> (terminal * production) list`,
+    should be used instead.
+    The library offers a view of the automaton after conflict resolution,
     so, for each token, at most one production can be reduced.
 
   + The function `Lr1.default_reduction : Lr1.t -> production option`
