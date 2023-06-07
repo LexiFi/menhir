@@ -1486,9 +1486,9 @@ let () =
 (* Number the vertices. *)
 
 module Vertex : NUMBERING with type t = vertex = struct
-  include Numbering.ForType(struct type t = vertex end)
-  let () = foreach vertex (fun v -> ignore (encode v))
-  include Done()
+  module N = Numbering.ForType(struct type t = vertex end)
+  let () = foreach vertex (fun v -> ignore (N.encode v))
+  include N.Done()
     (* This defines [n], [encode], [decode]. *)
 end
 
@@ -1634,9 +1634,9 @@ let edge : edge enum =
 (* Number the edges. *)
 
 module Edge : NUMBERING with type t = edge = struct
-  include Numbering.ForType(struct type t = edge end)
-  let () = foreach edge (fun e -> ignore (encode e))
-  include Done()
+  module N = Numbering.ForType(struct type t = edge end)
+  let () = foreach edge (fun e -> ignore (N.encode e))
+  include N.Done()
     (* This defines [n], [encode], [decode]. *)
 end
 
