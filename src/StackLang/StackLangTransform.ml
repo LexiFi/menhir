@@ -1395,8 +1395,8 @@ let print_condition condition =
   | CondTok t ->
       sprintf "CondTok %s" (T.print t)
 
-let () =
-  ignore print_condition
+let _ =
+  print_condition
 
 (* -------------------------------------------------------------------------- *)
 
