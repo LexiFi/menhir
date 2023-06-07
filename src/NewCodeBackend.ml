@@ -48,6 +48,22 @@ module Run () = struct
   let program =
     program |> check
 
+  (* If [--specialize-token] is set, perform aggressive specialization for
+     the [token] register. This transformation makes strong assumptions
+     about the code, so it must be applied first. Inlining, for instance,
+     can break these assumptions. This transformation causes a significant
+     increase in the code size and seems to also cause a small performance
+     loss, so it is currently experimental. *)
+
+  let program =
+    if Settings.specialize_token then
+      program
+      |> StackLangTransform.specialize_token
+      |> NeededRegisters.update
+      |> check
+    else
+      program
+
   (* At -O 2, perform limited specialization for the [state] register. *)
 
   let program =

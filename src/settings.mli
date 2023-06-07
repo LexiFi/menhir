@@ -294,3 +294,9 @@ val stacklang_graph: bool
 (**The undocumented flag [--stacklang-test] causes the StackLang program to be
    tested (by comparison with the reference interpreter). *)
 val stacklang_test: bool
+
+(**The undocumented flag [--specialize-token] causes the StackLang program to
+   be specialized with respect to the current token. This guarantees that
+   every token is case-analyzed exactly once, immediately after it has been
+   read from the lexer. *)
+val specialize_token: bool

@@ -379,6 +379,9 @@ let stacklang_graph =
 let stacklang_test =
   ref false
 
+let specialize_token =
+  ref false
+
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
@@ -455,6 +458,7 @@ let options = Arg.align [
   "--represent-values", Arg.Set represent_values, " (undocumented)";
   "--represent-everything", Arg.Unit represent_everything, " (undocumented)";
   "--require-aliases", Arg.Set require_aliases, " Check that every token has a token alias";
+  "--specialize-token", Arg.Set specialize_token, " (undocumented)";
   "--stacklang-dump", Arg.Set stacklang_dump, " (undocumented)";
   "--stacklang-graph", Arg.Set stacklang_graph, " (undocumented)";
   "--stacklang-test", Arg.Set stacklang_test, " (undocumented)";
@@ -878,3 +882,6 @@ let stacklang_graph =
 
 let stacklang_test =
   !stacklang_test
+
+let specialize_token =
+  !specialize_token
