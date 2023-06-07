@@ -1269,10 +1269,11 @@ let token =
 let tokv : register =
   Reg.import "_tokv"
 
-(* This set of two registers is used some assertions. *)
+(* This auxiliary function expresses an assertion. *)
 
-let sensitive =
-  Reg.Set.of_list [ token; tokv ]
+let assert_not_sensitive regs =
+  assert (not (Reg.Set.mem token regs));
+  assert (not (Reg.Set.mem tokv  regs))
 
 (* The pattern [tokpat toks] matches the set of tokens [toks]. If this set
    is a singleton set, then this pattern also causes the token's semantic
@@ -1591,7 +1592,7 @@ let rec walk
   | ITrace _
   | IComment _
     ->
-      assert (Reg.Set.disjoint sensitive (written block));
+      assert_not_sensitive (written block);
       Block.iter (walk jump env condition) block
 
   (* Check that terminator instructions are never used inside [CASEtok].
@@ -1976,7 +1977,7 @@ let rec spec_block (env : env) block =
   | IReturn _
   | ICaseTag _
     ->
-      assert (Reg.Set.disjoint sensitive (written block));
+      assert_not_sensitive (written block);
       Block.map (spec_block env) block
 
 (* -------------------------------------------------------------------------- *)
