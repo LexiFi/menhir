@@ -214,12 +214,15 @@ module Lift (G : sig val grammar : grammar end) : GRAMMAR = struct
     let table = grammar.g_lr1_states
     let lr0         i = table.(i).lr1_lr0
     let transitions i = table.(i).lr1_transitions
-    let reductions  i = table.(i).lr1_reductions
+    let get_reductions i = table.(i).lr1_reductions
     let default_reduction i = table.(i).lr1_default_reduction
     include Index(struct
       let name = "Lr1"
       let count = Array.length table
     end)
+    let reductions i =
+      List.map (fun (s, p) -> (s, [p]))
+	table.(i).lr1_reductions
   end
 
   module Print = struct
