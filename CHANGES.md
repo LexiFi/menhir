@@ -1,6 +1,13 @@
 # Changes
 
-## 2023/04/28
+## 2023/06/XX
+
+* The new experimental flag `--specialize-token` causes the code back-end
+  to perform code specialization so as to guarantee that each token is
+  examined exactly once (thus never more than once) by the parser. This
+  causes an increase in code size and does not (yet) allow a performance
+  increase. This feature is independent of the choice between `-O 0`,
+  `-O 1` and `-O 2`. It may disappear in the future.
 
 * Malformed code and type definitions used to be produced when both
   `--external-tokens` and `--inspection` were passed on the command line.
