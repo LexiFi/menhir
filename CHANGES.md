@@ -1,22 +1,12 @@
 # Changes
 
-## 2023/06/XX
+## 2023/06/08
 
-* The new experimental flag `--specialize-token` causes the code back-end
-  to perform code specialization so as to guarantee that each token is
-  examined exactly once (thus never more than once) by the parser. This
-  causes an increase in code size and does not (yet) allow a performance
-  increase. This feature is independent of the choice between `-O 0`,
-  `-O 1` and `-O 2`. It may disappear in the future.
-
-* Inconsistent type definitions used to be produced when `--only-tokens` and
-  `--inspection` were passed on the command line. The type `terminal` was
-  defined at the toplevel, whereas it should always be defined inside the
-  submodule `MenhirInterpreter`. (Reported and fixed by Frédéric Bour.)
-
-* Malformed code and type definitions used to be produced when
-  `--external-tokens` and `--inspection` were passed on the command line.
-  Fixed. (Reported by Maxime Dénès.)
+* The new command line switch `--dump-menhirLib <directory>` causes the source
+  files `menhirLib.ml` and `menhirLib.mli` to be created in the designated
+  directory. This command can be useful to users with special needs who wish
+  to use `menhirLib` but do not want to rely on it being installed somewhere
+  in the file system. (Contributed by Nicolás Ojeda Bär.)
 
 * Changes in the public API of the library `MenhirSdk`.
   (Contributed by Frédéric Bour.)
@@ -36,6 +26,22 @@
   + The function `Cmly_read.read_channel` appears.
 
   + The module `Cmly_read.Lift` appears.
+
+* The new experimental flag `--specialize-token` causes the code back-end
+  to perform code specialization so as to guarantee that each token is
+  examined exactly once (thus never more than once) by the parser. This
+  causes an increase in code size and does not (yet) allow a performance
+  increase. This feature is independent of the choice between `-O 0`,
+  `-O 1` and `-O 2`. It may disappear in the future.
+
+* Inconsistent type definitions used to be produced when `--only-tokens` and
+  `--inspection` were passed on the command line. The type `terminal` was
+  defined at the toplevel, whereas it should always be defined inside the
+  submodule `MenhirInterpreter`. (Reported and fixed by Frédéric Bour.)
+
+* Malformed code and type definitions used to be produced when
+  `--external-tokens` and `--inspection` were passed on the command line.
+  Fixed. (Reported by Maxime Dénès.)
 
 * Enable OCaml warning 39 (unused rec flag) in the OCaml code produced
   by Menhir's code back-end. Menhir now carefully emits `let` instead
