@@ -73,10 +73,6 @@
 
 ## Minor suggestions for enhancements
 
-* Add a new command line switch asking Menhir to print the source code of
-  MenhirLib. This would remove the need to determine whether MenhirLib has
-  been installed (`--suggest-menhirlib`). (Suggestion by Nicolas Ojeda Bar.)
-
 * Add a new command line switch `--no-code-generation`, instructing Menhir to
   generate no code at all. Only Menhir's front-end would run; no back-end.
 
@@ -94,8 +90,8 @@
   to produce format strings as opposed to ordinary strings. Each string in the
   generated code would then have to be prefixed with `Stdlib.format_of_string`.
 
-* Add a new flag `--show-stdlib` to print `standard.mly`. (Suggested by
-  Gabriel Scherer.)
+* Add a new flag `--dump-standard` to print or write `standard.mly`.
+  (Suggested by Gabriel Scherer.)
 
 * Allow `%type` declarations to appear in the rule section.
 
