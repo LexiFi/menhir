@@ -1,5 +1,9 @@
 # TODO
 
+## Licensing
+
+* Put the demos under an MIT license.
+
 ## New Code Back-End
 
 * Document the various optimisation levels.
@@ -12,6 +16,9 @@
 * Investigate adding support for the inspection API. This would likely require
   disabling many optimizations: PUSH movement must be forbidden; all states,
   positions, and semantic values must be represented, for simplicity.
+
+* When `--specialize-token` is enabled, arrange for the block that follows
+  each lexer call to be named. This should make lexer/parser fusion easier.
 
 ## Automaton
 
