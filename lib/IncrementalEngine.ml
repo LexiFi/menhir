@@ -90,7 +90,7 @@ module type INCREMENTAL_ENGINE = sig
      new checkpoint. It does not raise any exception. *)
 
   (* The optional argument [strategy] influences the manner in which [resume]
-     deals with checkpoints of the form [ErrorHandling _]. Its default value
+     deals with checkpoints of the form [HandlingError _]. Its default value
      is [`Legacy]. It can be briefly described as follows:
 
      - If the [error] token is used only to report errors (that is, if the
