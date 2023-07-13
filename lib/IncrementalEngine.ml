@@ -85,8 +85,8 @@ module type INCREMENTAL_ENGINE = sig
     'a checkpoint
 
   (* [resume] allows the user to resume the parser after it has suspended
-     itself with a checkpoint of the form [AboutToReduce (env, prod)] or
-     [HandlingError env]. [resume] expects the old checkpoint and produces a
+     itself with a checkpoint of the form [Shifting _], [AboutToReduce _], or
+     [HandlingError _]. [resume] expects the old checkpoint and produces a
      new checkpoint. It does not raise any exception. *)
 
   (* The optional argument [strategy] influences the manner in which [resume]
