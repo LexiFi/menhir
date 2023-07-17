@@ -105,17 +105,6 @@ let count p a =
   done;
   !c
 
-(* To keep compatibility with OCaml 4.02, we copy [Array.for_all],
-   which appeared in 4.03. *)
-
-let for_all p a =
-  let n = length a in
-  let rec loop i =
-    if i = n then true
-    else if p (unsafe_get a i) then loop (succ i)
-    else false in
-  loop 0
-
 (* To keep compatibility with OCaml 4.03, we copy [Array.for_all2],
    which appeared in 4.11. *)
 
