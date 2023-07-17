@@ -116,7 +116,8 @@ let for_all p a =
     else false in
   loop 0
 
-(* Similarly, we copy [Array.for_all2], which appeared in 4.11. *)
+(* To keep compatibility with OCaml 4.03, we copy [Array.for_all2],
+   which appeared in 4.11. *)
 
 let for_all2 p l1 l2 =
   let n1 = length l1
