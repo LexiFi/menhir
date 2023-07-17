@@ -3,58 +3,6 @@ open MenhirSdk
 
 (* ------------------------------------------------------------------------ *)
 
-(* This compatibility layer compensates for the absence of some [String] in
-   OCaml 4.02.3. *)
-
-module Compatibility = struct
-
-  module Char = struct
-
-    let lowercase_ascii c =
-      if (c >= 'A' && c <= 'Z')
-      then Char.chr (Char.code c + 32)
-      else c
-
-    let uppercase_ascii c =
-      if (c >= 'a' && c <= 'z')
-      then Char.chr (Char.code c - 32)
-      else c
-
-  end
-
-  module Bytes = struct
-
-    include Bytes
-
-    let apply1 f s =
-      if Bytes.length s = 0 then s else begin
-        let r = Bytes.copy s in
-        Bytes.unsafe_set r 0 (f (Bytes.unsafe_get s 0));
-        r
-      end
-
-    let capitalize_ascii s =
-      apply1 Char.uppercase_ascii s
-
-    let uncapitalize_ascii s =
-      apply1 Char.lowercase_ascii s
-
-  end
-
-  module String = struct
-
-    let capitalize_ascii s =
-      Bytes.unsafe_to_string (Bytes.capitalize_ascii (Bytes.unsafe_of_string s))
-
-    let uncapitalize_ascii s =
-      Bytes.unsafe_to_string (Bytes.uncapitalize_ascii (Bytes.unsafe_of_string s))
-
-  end
-
-end
-
-(* ------------------------------------------------------------------------ *)
-
 (* We expect one command line argument: the name of a .cmly file. *)
 
 let filename =
@@ -94,7 +42,7 @@ let module_name =
   filename
     |> Filename.basename
     |> Filename.chop_extension
-    |> Compatibility.String.capitalize_ascii
+    |> String.capitalize_ascii
 
 let header () =
   printf "open %s\n\n" module_name;
