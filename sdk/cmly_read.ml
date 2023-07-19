@@ -190,6 +190,10 @@ module Lift (G : sig val grammar : grammar end) : GRAMMAR = struct
       | T of terminal
       | N of nonterminal
 
+    let hash = function T t -> t | N nt -> nt (* [t] and [nt] are integers *)
+    let equal = (=) (* OK to use polymorphic equality *)
+    let compare = compare (* OK to use polymorphic comparison *)
+
     let name = symbol_name
 
   end

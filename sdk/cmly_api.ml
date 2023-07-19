@@ -96,6 +96,11 @@ module type GRAMMAR = sig
 
     val name : ?mangled:bool -> t -> string
 
+    (* Hashing, equality and ordering. *)
+    val hash : t -> int
+    val equal : t -> t -> bool
+    val compare : t -> t -> int
+
   end
 
   (**The type [symbol] is a synonym for [Symbol.t]. *)
