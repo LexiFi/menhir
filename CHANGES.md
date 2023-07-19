@@ -1,5 +1,13 @@
 # Changes
 
+## 2023/XX/XX
+
+* Minor additions in `MenhirSdk`:
+
+  + The functions `hash`, `equal`, and `compare` appear in the signature
+    `INDEXED`, so this signature now conforms with the standard signatures
+    `HashedType` and `OrderedType`.
+
 ## 2023/06/08
 
 * The new command line switch `--dump-menhirLib <directory>` causes the source
