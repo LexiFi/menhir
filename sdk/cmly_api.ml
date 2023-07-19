@@ -88,10 +88,22 @@ module type GRAMMAR = sig
     val attributes   : t -> Attribute.t list
   end
 
-  type symbol =
+  module Symbol : sig
+
+    type t =
+      | T of terminal
+      | N of nonterminal
+
+    val name : ?mangled:bool -> t -> string
+
+  end
+
+  (**The type [symbol] is a synonym for [Symbol.t]. *)
+  type symbol = Symbol.t =
     | T of terminal
     | N of nonterminal
 
+  (**[symbol_name] is a synonym for [Symbol.name]. *)
   val symbol_name : ?mangled:bool -> symbol -> string
 
   type identifier = string

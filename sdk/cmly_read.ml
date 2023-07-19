@@ -184,6 +184,16 @@ module Lift (G : sig val grammar : grammar end) : GRAMMAR = struct
         if mangled then Nonterminal.mangled_name n
         else Nonterminal.name n
 
+  module Symbol = struct
+
+    type t = symbol =
+      | T of terminal
+      | N of nonterminal
+
+    let name = symbol_name
+
+  end
+
   type identifier = string
 
   module Action = struct
