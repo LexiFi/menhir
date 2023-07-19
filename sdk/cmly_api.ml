@@ -16,9 +16,8 @@
 (* This API is currently entirely self-contained, except for a reference
    to the module [Keyword], which is also part of [MenhirSdk]. *)
 
-(* The module type [INDEXED] describes a type [t] whose elements are
-   in a bijection with an integer interval of the form [0..count). *)
-
+(**The module type [INDEXED] describes a type [t] whose elements are
+   in a bijection with an integer interval of the form [\[0..count)]. *)
 module type INDEXED = sig
   type t
   val count : int
@@ -29,8 +28,7 @@ module type INDEXED = sig
   val tabulate : (t -> 'a) -> t -> 'a
 end
 
-(* The module type [GRAMMAR] describes the grammar and automaton. *)
-
+(**The module type [GRAMMAR] describes the grammar and automaton. *)
 module type GRAMMAR = sig
 
   type terminal    = private int
