@@ -8,6 +8,12 @@
     `INDEXED`, so this signature now conforms with the standard signatures
     `HashedType` and `OrderedType`.
 
+  + The submodule `Symbol` appears in the signature `GRAMMAR`.
+    Thus, the type `Symbol.t` is now synonymous with `symbol`,
+    and the function `Symbol.name` is now synonymous with `symbol_name`.
+    The submodule `Symbol` contains the new functions `hash`, `equal`,
+    and `compare`.
+
 ## 2023/06/08
 
 * The new command line switch `--dump-menhirLib <directory>` causes the source
