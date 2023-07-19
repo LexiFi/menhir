@@ -23,6 +23,11 @@ module type INDEXED = sig
   val count : int
   val of_int : int -> t
   val to_int : t -> int
+  (* Hashing, equality and ordering. *)
+  val hash : t -> int
+  val equal : t -> t -> bool
+  val compare : t -> t -> int
+  (* Iteration and tabulation. *)
   val iter : (t -> unit) -> unit
   val fold : (t -> 'a -> 'a) -> 'a -> 'a
   val tabulate : (t -> 'a) -> t -> 'a

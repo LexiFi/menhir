@@ -63,6 +63,12 @@ end)
 
   let to_int n = n
 
+  let hash n = n
+
+  let equal (i : int) (j : int) = i = j
+
+  let compare (i : int) (j : int) = i - j (* OK for integers of small magnitude *)
+
   let iter f =
     for i = 0 to count - 1 do
       f i
