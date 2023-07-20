@@ -11,11 +11,11 @@
 open Cmly_format
 open Cmly_api
 
+exception Error of string
+
 (* ------------------------------------------------------------------------ *)
 
-(* Reading a .cmly file. *)
-
-exception Error of string
+(* Reading a .cmly file from a channel. *)
 
 let read_channel (ic : in_channel) : grammar =
   (* .cmly file format: CMLY ++ version string ++ grammar *)
@@ -32,6 +32,8 @@ let read_channel (ic : in_channel) : grammar =
   | Failure _ -> (* [input_value] *)
       raise (Error (Printf.sprintf "Invalid or damaged .cmly file."))
 
+(* Reading a .cmly file based on its filename. *)
+
 let read (filename : string) : grammar =
   let ic = open_in_bin filename in
   match read_channel ic with
@@ -41,6 +43,26 @@ let read (filename : string) : grammar =
   | exception exn ->
       close_in_noerr ic;
       raise exn
+
+(* ------------------------------------------------------------------------ *)
+
+(* Reading a .cmly file whose content is stored in a string. *)
+
+let starts_with prefix s =
+  String.(length prefix <= length s && prefix = sub s 0 (length prefix))
+
+let from_string (content : string) : grammar =
+  (* .cmly file format: CMLY ++ version string ++ grammar *)
+  let magic = "CMLY" ^ Version.version in
+  if starts_with magic content then
+    try
+      Marshal.from_string content (String.length magic)
+    with Failure _ ->
+      raise (Error (Printf.sprintf "Invalid or damaged .cmly file."))
+  else
+    let m = String.(sub content 0 (min (length magic) (length content))) in
+    raise (Error (Printf.sprintf "Invalid magic string in .cmly file.\n\
+               Expecting %S, but got %S." magic m))
 
 (* ------------------------------------------------------------------------ *)
 
@@ -357,5 +379,12 @@ module Lift (G : sig val grammar : grammar end) : GRAMMAR = struct
 
 end
 
+(* ------------------------------------------------------------------------ *)
+
+(* High-level views of the low-level functions [read] and [from_string]. *)
+
 module Read (X : sig val filename : string end) =
   Lift (struct let grammar = read X.filename end)
+
+module FromString (X : sig val content : string end) =
+  Lift (struct let grammar = from_string X.content end)
