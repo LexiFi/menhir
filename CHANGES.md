@@ -14,6 +14,9 @@
     The submodule `Symbol` contains the new functions `hash`, `equal`,
     and `compare`.
 
+  + The functor `Cmly_read.FromString` appears. This functor allows decoding
+    a `.cmly` file whose content is stored in a string.
+
 ## 2023/06/08
 
 * The new command line switch `--dump-menhirLib <directory>` causes the source
