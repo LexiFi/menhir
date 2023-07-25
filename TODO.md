@@ -4,6 +4,13 @@
 
 * Put the demos under an MIT license.
 
+## Build System
+
+* Some flags (`--explain`, `--dump`, `--dump-resolved`, etc.) cause Menhir
+  to produce extra files, but it is not clear whether `dune` is aware of
+  this. In my experience, these extra files cannot (or not reliably?)
+  be found in `_build`.
+
 ## New Code Back-End
 
 * Document the various optimisation levels.
