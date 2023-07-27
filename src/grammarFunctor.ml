@@ -168,6 +168,9 @@ module Nonterminal = struct
   let foldx f accu =
     Misc.foldij start n f accu
 
+  let mapx f =
+    Misc.mapij start n f
+
   let ocamltype nt =
     assert (not (is_internal_start nt));
     try

@@ -105,6 +105,7 @@ module Nonterminal : sig
 
   val iterx: (t -> unit) -> unit
   val foldx: (t -> 'a -> 'a) -> 'a -> 'a
+  val mapx: (t -> 'a) -> 'a list
 
   (* Tabulation of a function over nonterminals. *)
 
