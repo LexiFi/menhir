@@ -136,10 +136,18 @@ let typed_tokens grammar =
   ) grammar.tokens []
 
 (* [nonterminals grammar] is a list of all nonterminal symbols in the
-   grammar [grammar]. *)
+   grammar [grammar]. It does not include the artificial start symbols
+   [S']. *)
 
 let nonterminals grammar : nonterminal list =
   StringMap.fold (fun nt _ rules -> nt :: rules) grammar.rules []
+
+(* [is_nonterminal grammar symbol] tests whether the symbol [symbol]
+   is a nonterminal symbol. It is assumed that this symbol exists,
+   that is, it is either a terminal symbol or a nonterminal symbol. *)
+
+let is_nonterminal grammar symbol =
+  StringMap.mem symbol grammar.rules
 
 (* [ocamltype_of_symbol grammar symbol] produces the OCaml type
    of the symbol [symbol] in the grammar [grammar], if it is known. *)
