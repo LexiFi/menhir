@@ -662,6 +662,8 @@ let typerhs typename f = function
       fprintf f " = %a" (list (datadef typename) nl) defs
   | TAbbrev t ->
       fprintf f " = %a" typ t
+  | TAbstract ->
+      ()
 
 let typeconstraint f = function
   | None ->

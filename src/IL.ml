@@ -75,6 +75,7 @@ and typedefrhs =
   | TDefRecord of fielddef list
   | TDefSum of datadef list
   | TAbbrev of typ
+  | TAbstract
 
 and fielddef = {
 
