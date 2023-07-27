@@ -150,13 +150,28 @@ let is_nonterminal grammar symbol =
   StringMap.mem symbol grammar.rules
 
 (* [ocamltype_of_symbol grammar symbol] produces the OCaml type
-   of the symbol [symbol] in the grammar [grammar], if it is known. *)
+   of the nonterminal symbol [symbol] in the grammar [grammar],
+   if it is known. *)
 
 let ocamltype_of_symbol grammar symbol : Stretch.ocamltype option =
   try
     Some (StringMap.find symbol grammar.types)
   with Not_found ->
     None
+
+(* [ocamltype_of_token grammar symbol] produces the OCaml type
+   of the terminal symbol [symbol] in the grammar [grammar].
+   This terminal symbol must exist and must not be a pseudo-token.
+   [None] is returned if and only if this token does not carry a
+   semantic value. *)
+
+let ocamltype_of_token grammar symbol : Stretch.ocamltype option =
+  try
+    let properties = StringMap.find symbol grammar.tokens in
+    assert properties.tk_is_declared;
+    properties.tk_ocamltype
+  with Not_found ->
+    assert false
 
 (* [ocamltype_of_start_symbol grammar symbol] produces the OCaml type
    of the start symbol [symbol] in the grammar [grammar]. *)
