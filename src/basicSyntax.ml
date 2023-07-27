@@ -217,3 +217,18 @@ let names (producers : producers) : StringSet.t =
     assert (not (StringSet.mem id ids));
     StringSet.add id ids
   ) StringSet.empty producers
+
+(* -------------------------------------------------------------------------- *)
+
+(* [print_production nt branch] prints the production whose left-hand side
+   is the nonterminal symbol [nt] and whose right-hand side is [branch]. *)
+
+let rec print_production nt branch =
+  Printf.sprintf "%s ->%s" nt (print_production_rhs branch.producers)
+
+and print_production_rhs producers =
+  let b = Buffer.create 80 in
+  List.iter (fun producer ->
+    Printf.bprintf b " %s" producer.producer_symbol
+  ) producers;
+  Buffer.contents b
