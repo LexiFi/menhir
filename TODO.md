@@ -268,6 +268,17 @@
   automaton). The grammar or the automaton should be explicit parameters
   everywhere. That would be a large change, though.
 
+* `TableBackend` relies on the view of the grammar published by `Grammar`,
+  whereas `Interface` relies on `Front.grammar`. This is strange and can lead
+  to inconsistency or code duplication. Unfortunately, `Interface` cannot
+  depend on `Grammar` because that would create a dependency of `Interface` on
+  `Front`, and `Front` already depends (through `Infer`) on `Interface`. The
+  dependency of `Infer` on `Interface` exists only because `menhir --depend`
+  and `menhir --raw-depend` create an `.mli` file. (See comment at the end of
+  `nonterminalType.mli`.) This dependency could be removed simply by no longer
+  creating this `.mli` file, or by dropping support for `--depend` and
+  `--raw-depend` altogether. We might then also drop support for `--infer`.
+
 ## Standard library
 
 * We currently have only two visibility levels (`%public` means globally
