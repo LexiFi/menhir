@@ -265,8 +265,14 @@
 
 * Grep for `artificial dependency` and remove these artificial dependencies.
   Ideally, there should be no implicit (global) state ("the" grammar, "the"
-  automaton). The grammar or the automaton should be explicit parameters
-  everywhere. That would be a large change, though.
+  automaton). The grammar, the automaton, the settings, etc., should be
+  explicit parameters everywhere, so that most of Menhir's modules can be
+  used as library modules. Only a few modules (those that really implement
+  the Menhir command line tool) should be allowed to have global state.
+
+* Remove the ancient code back-end. Remove support for the `legacy` strategy.
+  Once the OCaml parser abandons the `error` token, remove support for the
+  `error` token.
 
 * `TableBackend` relies on the view of the grammar published by `Grammar`,
   whereas `Interface` relies on `Front.grammar`. This is strange and can lead
