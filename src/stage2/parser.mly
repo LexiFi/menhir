@@ -508,7 +508,7 @@ postlude:
 
 /* A new rule *cannot* be terminated by a semicolon. (This is contrast with a
    traditional rule, which can be followed with any number of semicolons.) We
-   are forced to forbid the use of semicolons are as a rule terminator because
+   are forced to forbid the use of semicolons as a rule terminator because
    they are used already as a sequencing construct. Permitting both uses would
    give rise to a shift/reduce conflict that we would not be able to solve. */
 
