@@ -1055,9 +1055,9 @@ module Production = struct
      side. *)
 
   type internal_production_scan =
-    | PNone
-    | PRightmostToken of Terminal.t
-    | PPrecDecl of symbol
+    | PNone                        (* no terminal symbol; no %prec annotation *)
+    | PRightmostToken of Terminal.t(* a rightmost terminal symbol exists *)
+    | PPrecDecl of symbol          (* a %prec annotation exists *)
 
   let rightmost_terminal prod : internal_production_scan =
     Array.fold_left (fun accu symbol ->
