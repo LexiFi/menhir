@@ -857,7 +857,7 @@ module Production = struct
       actions.(k) <- Some branch.action;
       rhs_attributes.(k) <- Array.map producer_attributes producers;
       production_level.(k) <- branch.branch_production_level;
-      prec_decl.(k) <- branch.branch_prec_annotation;
+      prec_decl.(k) <- branch.prec_annotation;
       positions.(k) <- [ branch.branch_position ];
       if not (MArray.for_all Symbol.non_error rhs) then
         grammar_uses_error_token := true;

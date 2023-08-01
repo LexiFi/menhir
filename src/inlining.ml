@@ -81,7 +81,7 @@ let check_no_producer_attributes producer =
    host production does not already have a %prec annotation. *)
 
 let check_prec_inline caller producer nsuffix callee =
-  callee.branch_prec_annotation |> Option.iter (fun callee_prec ->
+  callee.prec_annotation |> Option.iter (fun callee_prec ->
     (* The callee has a %prec annotation. *)
     (* Check condition 1. *)
     if nsuffix > 0 then begin
@@ -93,7 +93,7 @@ let check_prec_inline caller producer nsuffix callee =
         symbol symbol
     end;
     (* Check condition 2. *)
-    caller.branch_prec_annotation |> Option.iter (fun caller_prec ->
+    caller.prec_annotation |> Option.iter (fun caller_prec ->
       let symbol = producer_symbol producer in
       Error.error [ position callee_prec; position caller_prec ]
         "this production carries a %%prec annotation,\n\
@@ -112,12 +112,12 @@ let check_prec_inline caller producer nsuffix callee =
    remains undocumented. *)
 
 let propagate_prec_annotation caller callee =
-  match callee.branch_prec_annotation with
+  match callee.prec_annotation with
   | (Some _) as annotation ->
-      assert (caller.branch_prec_annotation = None);
+      assert (caller.prec_annotation = None);
       annotation
   | None ->
-      caller.branch_prec_annotation
+      caller.prec_annotation
 
 (* -------------------------------------------------------------------------- *)
 
@@ -321,7 +321,7 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
      between %prec and %inline. Then, (possibly) propagate a %prec
      annotation. *)
   check_prec_inline caller producer nsuffix callee;
-  let branch_prec_annotation = propagate_prec_annotation caller callee in
+  let prec_annotation = propagate_prec_annotation caller callee in
 
   (* Compute the names of the producers in the host branch (the caller), minus
      the one that is being inlined away. Rename the producers of the inlined
@@ -367,7 +367,7 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
     branch_position;
     producers;
     action;
-    branch_prec_annotation;
+    prec_annotation;
     branch_production_level;
   }
 

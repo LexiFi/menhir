@@ -324,7 +324,7 @@ let print_branch f g branch =
   (* Print the %prec annotation, if there is one. *)
   Option.iter (fun x ->
     fprintf f " %%prec %s" x.value
-  ) branch.branch_prec_annotation;
+  ) branch.prec_annotation;
   (* Newline, indentation, semantic action. *)
   fprintf f "\n    {";
   print_semantic_action f g branch;
