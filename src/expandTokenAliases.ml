@@ -98,7 +98,7 @@ and dealias_producers aliasmap producers =
   List.map (dealias_producer aliasmap) producers
 
 and dealias_branch aliasmap (branch : parameterized_branch) =
-  { branch with pr_producers = dealias_producers aliasmap branch.pr_producers }
+  { branch with pb_producers = dealias_producers aliasmap branch.pb_producers }
 
 and dealias_branches aliasmap branches =
   List.map (dealias_branch aliasmap) branches

@@ -341,7 +341,7 @@ let subst_producers env producers =
   List.map (subst_producer env) producers
 
 let subst_branch env branch =
-  { branch with pr_producers = subst_producers env branch.pr_producers }
+  { branch with pb_producers = subst_producers env branch.pb_producers }
 
 let subst_branches env branches =
   List.map (subst_branch env) branches

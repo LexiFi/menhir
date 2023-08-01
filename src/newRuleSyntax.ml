@@ -378,7 +378,7 @@ and production_aux
       (* Build and return a complete production. *)
       {
         pb_position         = context.pos;
-        pr_producers        = producers context;
+        pb_producers        = producers context;
         pr_action           = context.bindings action;
         pb_prec_annotation  = prec;
         pb_production_level = level;

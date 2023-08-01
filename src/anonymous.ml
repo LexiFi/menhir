@@ -32,7 +32,7 @@ let fn_producer accu ((_, p, _) : producer) =
   fn_parameter accu p
 
 let fn_branch accu branch =
-  List.fold_left fn_producer accu branch.pr_producers
+  List.fold_left fn_producer accu branch.pb_producers
 
 let fn_branches accu branches =
   List.fold_left fn_branch accu branches
@@ -123,10 +123,10 @@ and transform_producer parameters ((x, p, attrs) : producer) =
   x, transform_parameter parameters p, attrs
 
 and transform_parameterized_branch parameters branch =
-  let pr_producers =
-    List.map (transform_producer parameters) branch.pr_producers
+  let pb_producers =
+    List.map (transform_producer parameters) branch.pb_producers
   in
-  { branch with pr_producers }
+  { branch with pb_producers }
 
 let transform_parameterized_rule rule =
   let pr_branches =

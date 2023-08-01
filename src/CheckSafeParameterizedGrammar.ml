@@ -74,7 +74,7 @@ let used_in_producer x ((_, param, _) : producer) =
   Parameters.occurs x param
 
 let used_in_branch x (branch : parameterized_branch) =
-  List.exists (used_in_producer x) branch.pr_producers
+  List.exists (used_in_producer x) branch.pb_producers
 
 let used (formal : formal) : bool =
   let rule, x = info formal in
@@ -175,7 +175,7 @@ let successors_producer f x ((_, param, _) : producer) =
   successors_parameter f x param
 
 let successors_branch f x (branch : parameterized_branch) =
-  List.iter (successors_producer f x) branch.pr_producers
+  List.iter (successors_producer f x) branch.pb_producers
 
 let successors f (formal : formal) =
   let rule, x = info formal in

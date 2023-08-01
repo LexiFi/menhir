@@ -156,7 +156,7 @@ let check_producer env (producer : producer) =
   check_parameter env param star
 
 let check_branch env (branch : parameterized_branch) =
-  List.iter (check_producer env) branch.pr_producers
+  List.iter (check_producer env) branch.pb_producers
 
 let enter_rule env (nt : symbol) (rule : parameterized_rule) : env =
 

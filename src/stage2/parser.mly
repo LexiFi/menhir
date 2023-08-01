@@ -376,13 +376,13 @@ production_group:
       (* Then, *)
       List.map (fun (producers, oprec1, level, pos) ->
         (* Replace [$i] with [_i]. *)
-        let pr_producers = ParserAux.normalize_producers producers in
+        let pb_producers = ParserAux.normalize_producers producers in
         (* Distribute the semantic action. Also, check that every [$i]
            is within bounds. *)
         let names = ParserAux.producer_names producers in
         let pr_action = action Settings.dollars names in
         {
-          pr_producers;
+          pb_producers;
           pr_action;
           pb_prec_annotation  = ParserAux.override pos oprec1 oprec2;
           pb_production_level = level;
