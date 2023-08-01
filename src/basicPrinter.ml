@@ -347,7 +347,7 @@ let compare_branch_production_levels bpl bpl' =
       compare_pairs InputFile.compare_input_files Generic.compare (m, l) (m', l')
 
 let compare_branches (b : branch) (b' : branch) =
-  compare_branch_production_levels b.branch_production_level b'.branch_production_level
+  compare_branch_production_levels b.production_level b'.production_level
 
 let compare_rules (_nt, (r : rule)) (_nt', (r' : rule)) =
   match r.branches, r'.branches with

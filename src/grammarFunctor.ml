@@ -856,7 +856,7 @@ module Production = struct
       identifiers.(k) <- Array.map producer_identifier producers;
       actions.(k) <- Some branch.action;
       rhs_attributes.(k) <- Array.map producer_attributes producers;
-      production_level.(k) <- branch.branch_production_level;
+      production_level.(k) <- branch.production_level;
       prec_decl.(k) <- branch.prec_annotation;
       positions.(k) <- [ branch.branch_position ];
       if not (MArray.for_all Symbol.non_error rhs) then

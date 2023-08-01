@@ -362,13 +362,13 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
 
   (* We are done! Build a new branch. *)
 
-  let { branch_position; branch_production_level; _ } = caller in
+  let { branch_position; production_level; _ } = caller in
   {
     branch_position;
     producers;
     action;
     prec_annotation;
-    branch_production_level;
+    production_level;
   }
 
 (* -------------------------------------------------------------------------- *)

@@ -49,11 +49,11 @@ type producers =
 
 type branch =
   {
-    branch_position         : Positions.t;
-    producers               : producers;
-    action                  : action;
-    prec_annotation         : prec_annotation;
-    branch_production_level : production_level;
+    branch_position  : Positions.t;
+    producers        : producers;
+    action           : action;
+    prec_annotation  : prec_annotation;
+    production_level : production_level;
   }
 
 type branches =
