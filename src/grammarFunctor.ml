@@ -1073,14 +1073,14 @@ module Production = struct
 
   let precedence prod : fact * precedence_level =
     let fact1, prec_decl = consult_prec_decl prod in
-    let oterminal =
+    let scan =
       match prec_decl with
       | None ->
           scan prod
       | Some { value = terminal } ->
           PPrecDecl terminal
     in
-    match oterminal with
+    match scan with
     | PNone ->
         fact1, UndefinedPrecedence
     | PRightmostToken tok ->
