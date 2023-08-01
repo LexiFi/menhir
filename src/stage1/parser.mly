@@ -329,10 +329,10 @@ production_group:
         (* Distribute the semantic action. Also, check that every [$i]
            is within bounds. *)
         let names = ParserAux.producer_names producers in
-        let pr_action = action Settings.dollars names in
+        let pb_action = action Settings.dollars names in
         {
           pb_producers;
-          pr_action;
+          pb_action;
           pb_prec_annotation  = ParserAux.override pos oprec1 oprec2;
           pb_production_level = level;
           pb_position         = pos

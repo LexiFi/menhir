@@ -379,7 +379,7 @@ and production_aux
       {
         pb_position         = context.pos;
         pb_producers        = producers context;
-        pr_action           = context.bindings action;
+        pb_action           = context.bindings action;
         pb_prec_annotation  = prec;
         pb_production_level = level;
       }
