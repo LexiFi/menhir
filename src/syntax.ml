@@ -200,7 +200,7 @@ and producer =
 
 and parameterized_branch =
   {
-    pr_branch_position           : Positions.t;
+    pb_position                  : Positions.t;
     pr_producers                 : producer list;
     pr_action                    : action;
     pb_prec_annotation           : prec_annotation;
