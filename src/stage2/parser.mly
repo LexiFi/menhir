@@ -384,7 +384,7 @@ production_group:
         {
           pr_producers;
           pr_action;
-          pr_branch_prec_annotation   = ParserAux.override pos oprec1 oprec2;
+          pb_prec_annotation          = ParserAux.override pos oprec1 oprec2;
           pr_branch_production_level  = level;
           pr_branch_position          = pos
         })

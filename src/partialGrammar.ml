@@ -706,7 +706,7 @@ let check_parameterized_grammar_is_well_defined grammar =
 
          (* Check each branch. *)
          List.iter (fun { pr_producers = producers;
-                pr_branch_prec_annotation;
+                pb_prec_annotation;
               } -> ignore (List.fold_left
 
             (* Check the producers. *)
@@ -733,7 +733,7 @@ let check_parameterized_grammar_is_well_defined grammar =
 
            Option.iter (fun terminal ->
              check_identifier_reference true terminal.value terminal.position
-           ) pr_branch_prec_annotation)
+           ) pb_prec_annotation)
 
          prule.pr_branches;
 

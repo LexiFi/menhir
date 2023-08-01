@@ -40,7 +40,7 @@ let drop_branch (branch : S.parameterized_branch) : T.branch =
     T.branch_position         = branch.S.pr_branch_position;
     T.producers               = List.map drop_producer branch.S.pr_producers;
     T.action                  = branch.S.pr_action;
-    T.branch_prec_annotation  = branch.S.pr_branch_prec_annotation;
+    T.branch_prec_annotation  = branch.S.pb_prec_annotation;
     T.branch_production_level = branch.S.pr_branch_production_level
   }
 

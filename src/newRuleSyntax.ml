@@ -380,7 +380,7 @@ and production_aux
         pr_branch_position         = context.pos;
         pr_producers               = producers context;
         pr_action                  = context.bindings action;
-        pr_branch_prec_annotation  = prec;
+        pb_prec_annotation         = prec;
         pr_branch_production_level = level;
       }
 
