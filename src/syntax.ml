@@ -199,16 +199,25 @@ and parameterized_branch =
 
 (* ------------------------------------------------------------------------ *)
 
-(* A rule has a header and several branches. *)
+(* A rule is the definition of a nonterminal symbol. *)
+
+(* A rule has a header and several branches (productions). *)
 
 type parameterized_rule =
     {
+      (* Is the [%public] keyword present? *)
       pr_public_flag       : bool;
+      (* Is the [%inline] keyword present? *)
       pr_inline_flag       : bool;
+      (* The name of the nonterminal symbol that is being defined. *)
       pr_nt                : nonterminal;
+      (* Positions in the source files. *)
       pr_positions         : Positions.t list;
+      (* Attributes attached with this nonterminal symbol. *)
       pr_attributes        : attributes;
+      (* The parameters of this nonterminal symbol. *)
       pr_parameters        : symbol list;
+      (* The productions. *)
       pr_branches          : parameterized_branch list;
     }
 
