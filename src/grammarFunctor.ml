@@ -1018,10 +1018,10 @@ module Production = struct
     (* assuming that generic hashing and equality on positions are OK *)
     Hashtbl.create 16
 
-  type use =
+  type fact =
     unit Lazy.t
 
-  let consult_prec_decl prod : use * symbol located option =
+  let consult_prec_decl prod : fact * symbol located option =
     let osym = prec_decl.(prod) in
     lazy (
       Option.iter (fun sym ->
@@ -1068,10 +1068,10 @@ module Production = struct
           accu
     ) PNone (rhs prod)
 
-  let combine (u1 : use) (u2 : use) : use =
-    lazy (Lazy.force u1; Lazy.force u2)
+  let combine (fact1 : fact) (fact2 : fact) : fact =
+    lazy (Lazy.force fact1; Lazy.force fact2)
 
-  let precedence prod : use * precedence_level =
+  let precedence prod : fact * precedence_level =
     let fact1, prec_decl = consult_prec_decl prod in
     let oterminal =
       match prec_decl with
