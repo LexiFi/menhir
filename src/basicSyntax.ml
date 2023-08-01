@@ -32,7 +32,8 @@ open Syntax
    syntax, it could be [e = expr], for instance. It carries a number of
    attributes. *)
 
-type producer = {
+type producer =
+  {
     producer_identifier : identifier located;
     producer_symbol     : symbol;
     producer_attributes : attributes;
@@ -46,12 +47,13 @@ type producers =
 (* A branch contains a series of producers and a semantic action. It is the
    same as in the surface syntax; see [Syntax]. *)
 
-type branch = {
+type branch =
+  {
     branch_position         : Positions.t;
     producers               : producers;
     action                  : action;
     branch_prec_annotation  : branch_prec_annotation;
-    branch_production_level : branch_production_level
+    branch_production_level : branch_production_level;
   }
 
 type branches =
@@ -64,7 +66,8 @@ type branches =
 
 (* The [%inline] flag is no longer relevant after [NonTerminalInlining]. *)
 
-type rule = {
+type rule =
+  {
     branches    : branches;
     positions   : Positions.t list;
     inline_flag : bool;
@@ -77,7 +80,8 @@ type rule = {
    The main difference is that [%attribute] declarations, represented by
    the field [p_symbol_attributes] in the surface syntax, have disappeared. *)
 
-type grammar =  {
+type grammar =
+  {
     preludes        : Stretch.t list;
     postludes       : Syntax.postlude list;
     parameters      : Stretch.t list;
