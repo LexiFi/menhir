@@ -204,7 +204,7 @@ and parameterized_branch =
     pr_producers                 : producer list;
     pr_action                    : action;
     pr_branch_prec_annotation    : branch_prec_annotation;
-    pr_branch_production_level   : branch_production_level
+    pr_branch_production_level   : branch_production_level;
   }
 
 (* ------------------------------------------------------------------------ *)
