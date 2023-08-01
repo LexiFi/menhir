@@ -1059,7 +1059,7 @@ module Production = struct
     | PRightmostToken of Terminal.t(* a rightmost terminal symbol exists *)
     | PPrecDecl of symbol          (* a %prec annotation exists *)
 
-  let rightmost_terminal prod : internal_production_scan =
+  let scan prod : internal_production_scan =
     Array.fold_left (fun accu symbol ->
       match symbol with
       | Symbol.T tok ->
@@ -1076,7 +1076,7 @@ module Production = struct
     let oterminal =
       match prec_decl with
       | None ->
-          rightmost_terminal prod
+          scan prod
       | Some { value = terminal } ->
           PPrecDecl terminal
     in
