@@ -377,11 +377,11 @@ and production_aux
       let action = raw_action Settings.DollarsDisallowed (uxs context) in
       (* Build and return a complete production. *)
       {
-        pb_position                = context.pos;
-        pr_producers               = producers context;
-        pr_action                  = context.bindings action;
-        pb_prec_annotation         = prec;
-        pr_branch_production_level = level;
+        pb_position         = context.pos;
+        pr_producers        = producers context;
+        pr_action           = context.bindings action;
+        pb_prec_annotation  = prec;
+        pb_production_level = level;
       }
 
   | EAction (XAPointFree oid, prec) ->

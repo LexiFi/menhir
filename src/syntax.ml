@@ -200,11 +200,11 @@ and producer =
 
 and parameterized_branch =
   {
-    pb_position                  : Positions.t;
-    pr_producers                 : producer list;
-    pr_action                    : action;
-    pb_prec_annotation           : prec_annotation;
-    pr_branch_production_level   : production_level;
+    pb_position         : Positions.t;
+    pr_producers        : producer list;
+    pr_action           : action;
+    pb_prec_annotation  : prec_annotation;
+    pb_production_level : production_level;
   }
 
 (* ------------------------------------------------------------------------ *)
