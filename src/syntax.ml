@@ -145,7 +145,7 @@ type token_properties =
 (* A [%prec] annotation is optional. A production can carry at most one.
    If there is one, it is a symbol name. See [ParserAux]. *)
 
-type branch_prec_annotation =
+type prec_annotation =
   symbol located option
 
 (* ------------------------------------------------------------------------ *)
@@ -203,7 +203,7 @@ and parameterized_branch =
     pr_branch_position           : Positions.t;
     pr_producers                 : producer list;
     pr_action                    : action;
-    pr_branch_prec_annotation    : branch_prec_annotation;
+    pr_branch_prec_annotation    : prec_annotation;
     pr_branch_production_level   : branch_production_level;
   }
 
@@ -273,7 +273,7 @@ and seq_expression =
 and raw_seq_expression =
   | ECons of pattern * symbol_expression * seq_expression
   | ESingleton of symbol_expression
-  | EAction of extended_action * branch_prec_annotation
+  | EAction of extended_action * prec_annotation
   (* A sequence is either a cons [p = e1; e2]
      or a lone symbol expression [e]
      or a semantic action. *)

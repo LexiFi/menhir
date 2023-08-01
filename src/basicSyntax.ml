@@ -52,7 +52,7 @@ type branch =
     branch_position         : Positions.t;
     producers               : producers;
     action                  : action;
-    branch_prec_annotation  : branch_prec_annotation;
+    branch_prec_annotation  : prec_annotation;
     branch_production_level : branch_production_level;
   }
 
