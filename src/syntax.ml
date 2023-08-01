@@ -17,20 +17,20 @@
    well-formedness checks have been performed. *)
 
 type 'a located =
-    'a Positions.located
+  'a Positions.located
 
 (* ------------------------------------------------------------------------ *)
 
 (* Terminals and nonterminal symbols are strings. *)
 
 type terminal =
-    string
+  string
 
 type nonterminal =
-    string
+  string
 
 type symbol =
-    string
+  string
 
 (* In a somewhat fragile convention, in a partial grammar, a reference to a
    terminal symbol either is a normal identifier [LID], in which case it is
@@ -47,32 +47,32 @@ type symbol =
    eliminated up front. *)
 
 type alias =
-    string option
+  string option
 
 (* Identifiers (which are used to refer to a symbol's semantic value) are
    strings. *)
 
 type identifier =
-    string
+  string
 
 (* A file name is a string. *)
 
 type filename =
-    string
+  string
 
 (* ------------------------------------------------------------------------ *)
 
 (* A postlude is a source file fragment. *)
 
 type postlude =
-    Stretch.t
+  Stretch.t
 
 (* ------------------------------------------------------------------------ *)
 
 (* OCaml semantic actions are represented as stretches. *)
 
 type action =
-    Action.t
+  Action.t
 
 (* ------------------------------------------------------------------------ *)
 
@@ -80,10 +80,10 @@ type action =
    payload is an uninterpreted stretch of source text. *)
 
 type attribute =
-    string located * Stretch.t
+  string located * Stretch.t
 
 type attributes =
-    attribute list
+  attribute list
 
 (* Attributes allow the user to annotate the grammar with information that is
    ignored by Menhir, but can be exploited by other tools, via the SDK. *)
@@ -103,8 +103,10 @@ type attributes =
 
 (* Information about tokens. (Only after joining.) *)
 
+(* Associativity. *)
+
 type token_associativity =
-    LeftAssoc
+  | LeftAssoc
   | RightAssoc
   | NonAssoc
   | UndefinedAssoc
@@ -127,16 +129,16 @@ type precedence_level =
       Lexing.position * Lexing.position
 
 type token_properties =
-    {
-               tk_filename      : filename;
-               tk_ocamltype     : Stretch.ocamltype option;
-               tk_position      : Positions.t;
-               tk_alias         : alias;
-               tk_attributes    : attributes;
-      mutable  tk_associativity : token_associativity;
-      mutable  tk_precedence    : precedence_level;
-      mutable  tk_is_declared   : bool;
-    }
+  {
+             tk_filename      : filename;
+             tk_ocamltype     : Stretch.ocamltype option;
+             tk_position      : Positions.t;
+             tk_alias         : alias;
+             tk_attributes    : attributes;
+    mutable  tk_associativity : token_associativity;
+    mutable  tk_precedence    : precedence_level;
+    mutable  tk_is_declared   : bool;
+  }
 
 (* ------------------------------------------------------------------------ *)
 
@@ -144,7 +146,7 @@ type token_properties =
    If there is one, it is a symbol name. See [ParserAux]. *)
 
 type branch_prec_annotation =
-    symbol located option
+  symbol located option
 
 (* ------------------------------------------------------------------------ *)
 
@@ -179,7 +181,7 @@ type parameter =
   | ParameterAnonymous of parameterized_branch list located
 
 and parameters =
-    parameter list
+  parameter list
 
 (* ------------------------------------------------------------------------ *)
 
@@ -190,20 +192,20 @@ and parameters =
    a number of attributes. *)
 
 and producer =
-    identifier located * parameter * attributes
+  identifier located * parameter * attributes
 
 (* ------------------------------------------------------------------------ *)
 
 (* A branch contains a series of producers and a semantic action. *)
 
 and parameterized_branch =
-    {
-      pr_branch_position           : Positions.t;
-      pr_producers                 : producer list;
-      pr_action                    : action;
-      pr_branch_prec_annotation    : branch_prec_annotation;
-      pr_branch_production_level   : branch_production_level
-    }
+  {
+    pr_branch_position           : Positions.t;
+    pr_producers                 : producer list;
+    pr_action                    : action;
+    pr_branch_prec_annotation    : branch_prec_annotation;
+    pr_branch_production_level   : branch_production_level
+  }
 
 (* ------------------------------------------------------------------------ *)
 
@@ -212,22 +214,22 @@ and parameterized_branch =
 (* A rule has a header and several branches (productions). *)
 
 type parameterized_rule =
-    {
-      (* Is the [%public] keyword present? *)
-      pr_public_flag       : bool;
-      (* Is the [%inline] keyword present? *)
-      pr_inline_flag       : bool;
-      (* The name of the nonterminal symbol that is being defined. *)
-      pr_nt                : nonterminal;
-      (* Positions in the source files. *)
-      pr_positions         : Positions.t list;
-      (* Attributes attached with this nonterminal symbol. *)
-      pr_attributes        : attributes;
-      (* The parameters of this nonterminal symbol. *)
-      pr_parameters        : symbol list;
-      (* The productions. *)
-      pr_branches          : parameterized_branch list;
-    }
+  {
+    (* Is the [%public] keyword present? *)
+    pr_public_flag       : bool;
+    (* Is the [%inline] keyword present? *)
+    pr_inline_flag       : bool;
+    (* The name of the nonterminal symbol that is being defined. *)
+    pr_nt                : nonterminal;
+    (* Positions in the source files. *)
+    pr_positions         : Positions.t list;
+    (* Attributes attached with this nonterminal symbol. *)
+    pr_attributes        : attributes;
+    (* The parameters of this nonterminal symbol. *)
+    pr_parameters        : symbol list;
+    (* The productions. *)
+    pr_branches          : parameterized_branch list;
+  }
 
 (* ------------------------------------------------------------------------ *)
 (* ------------------------------------------------------------------------ *)
@@ -346,12 +348,12 @@ type declaration =
 (* A partial grammar. (Only before joining.) *)
 
 type partial_grammar =
-    {
-      pg_filename          : filename;
-      pg_postlude          : postlude option;
-      pg_declarations      : declaration located list;
-      pg_rules             : parameterized_rule list;
-    }
+  {
+    pg_filename          : filename;
+    pg_postlude          : postlude option;
+    pg_declarations      : declaration located list;
+    pg_rules             : parameterized_rule list;
+  }
 
 (* ------------------------------------------------------------------------ *)
 (* ------------------------------------------------------------------------ *)
@@ -367,16 +369,16 @@ type partial_grammar =
    4. rules are stored in a map, indexed by symbol names, instead of a list.
    5. token aliases have been replaced with ordinary named terminal symbols.
  *)
- type grammar =
-    {
-      p_preludes           : Stretch.t list;
-      p_postludes          : postlude list;
-      p_parameters         : Stretch.t list;
-      p_start_symbols      : Positions.t StringMap.t;
-      p_types              : (parameter * Stretch.ocamltype located) list;
-      p_tokens             : token_properties StringMap.t;
-      p_on_error_reduce    : (parameter * on_error_reduce_level) list;
-      p_grammar_attributes : attributes;
-      p_symbol_attributes  : (parameter list * attributes) list;
-      p_rules              : parameterized_rule StringMap.t;
-    }
+type grammar =
+  {
+    p_preludes           : Stretch.t list;
+    p_postludes          : postlude list;
+    p_parameters         : Stretch.t list;
+    p_start_symbols      : Positions.t StringMap.t;
+    p_types              : (parameter * Stretch.ocamltype located) list;
+    p_tokens             : token_properties StringMap.t;
+    p_on_error_reduce    : (parameter * on_error_reduce_level) list;
+    p_grammar_attributes : attributes;
+    p_symbol_attributes  : (parameter list * attributes) list;
+    p_rules              : parameterized_rule StringMap.t;
+  }
