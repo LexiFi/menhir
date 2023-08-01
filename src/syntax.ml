@@ -109,14 +109,22 @@ type token_associativity =
   | NonAssoc
   | UndefinedAssoc
 
+(* Precedence levels. *)
+
+(* The special value [UndefinedPrecedence] is used for the special tokens
+   [error] and [#]. It is also used for pseudo-tokens (which are not declared,
+   but appear in a [%prec] annotation). A normal token receives a precedence
+   level of the form [PrecedenceLevel (file, level, pos1, pos2)], where [file]
+   is an input file and [level] is an integer level. Within each file, later
+   declarations receive greater levels, which represent higher priority. Two
+   declarations that originate in different files are incomparable. The
+   positions [pos1] and [pos2] allow locating certain warnings. *)
+
 type precedence_level =
-    UndefinedPrecedence
-
-  (* Items are incomparable when they originate in different files. A
-     value of type [input_file] is used to record an item's origin. The
-     positions allow locating certain warnings. *)
-
-  | PrecedenceLevel of InputFile.input_file * int * Lexing.position * Lexing.position
+  | UndefinedPrecedence
+  | PrecedenceLevel of
+      InputFile.input_file * int *
+      Lexing.position * Lexing.position
 
 type token_properties =
     {
