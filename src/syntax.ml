@@ -153,7 +153,7 @@ type prec_annotation =
 (* A "production level" is used to solve reduce/reduce conflicts. It reflects
    which production appears first in the grammar. See [ParserAux]. *)
 
-type branch_production_level =
+type production_level =
   | ProductionLevel of InputFile.input_file * int
 
 (* ------------------------------------------------------------------------ *)
@@ -163,7 +163,7 @@ type branch_production_level =
    single state. *)
 
 type on_error_reduce_level =
-  branch_production_level (* we re-use the above type, to save code *)
+  production_level (* we re-use the above type, to save code *)
 
 (* ------------------------------------------------------------------------ *)
 (* ------------------------------------------------------------------------ *)
@@ -204,7 +204,7 @@ and parameterized_branch =
     pr_producers                 : producer list;
     pr_action                    : action;
     pb_prec_annotation           : prec_annotation;
-    pr_branch_production_level   : branch_production_level;
+    pr_branch_production_level   : production_level;
   }
 
 (* ------------------------------------------------------------------------ *)
@@ -263,9 +263,9 @@ and choice_expression =
   (* A choice expression is a list of branches. *)
 
 and branch =
-  | Branch of seq_expression * branch_production_level
+  | Branch of seq_expression * production_level
   (* A branch is a sequence expression,
-     plus an ugly [branch_production_level]. *)
+     plus an ugly [production_level]. *)
 
 and seq_expression =
   raw_seq_expression located

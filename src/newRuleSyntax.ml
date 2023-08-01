@@ -360,7 +360,7 @@ and extend (p : pattern) (e1 : symbol_expression) (context : context) : context 
 and production_aux
   (context : context)
   (e : seq_expression)
-  (level : branch_production_level)
+  (level : production_level)
 : parameterized_branch =
   let e, pos = Positions.decompose e in
   match e with

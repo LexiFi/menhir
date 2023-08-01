@@ -24,7 +24,7 @@ type early_producers =
 type early_production =
   early_producers *
   string located option * (* optional precedence *)
-  branch_production_level *
+  production_level *
   Positions.t
 
 type early_productions =

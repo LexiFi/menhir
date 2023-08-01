@@ -807,7 +807,7 @@ module Production = struct
   let prec_decl : symbol located option array =
     Array.make n None
 
-  let production_level : branch_production_level array =
+  let production_level : production_level array =
     (* The start productions receive a level that pretends that they
        originate in a fictitious "builtin" file. So, a reduce/reduce
        conflict that involves a start production will not be solved. *)

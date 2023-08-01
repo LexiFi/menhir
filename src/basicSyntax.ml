@@ -53,7 +53,7 @@ type branch =
     producers               : producers;
     action                  : action;
     prec_annotation         : prec_annotation;
-    branch_production_level : branch_production_level;
+    branch_production_level : production_level;
   }
 
 type branches =

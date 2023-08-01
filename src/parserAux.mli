@@ -28,7 +28,7 @@ type early_producers =
 type early_production =
   early_producers *
   string located option * (* optional precedence *)
-  branch_production_level *
+  production_level *
   Positions.t
 
 type early_productions =
@@ -53,7 +53,7 @@ val new_precedence_level: Lexing.position * Lexing.position -> precedence_level
    that %prec annotations do not influence this process, but that's how it is,
    at least for the moment. *)
 
-val new_production_level: unit -> branch_production_level
+val new_production_level: unit -> production_level
 
 (* [new_on_error_reduce_level()] creates a new level, which is attached to an
    [%on_error_reduce] declaration. *)
