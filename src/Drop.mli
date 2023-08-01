@@ -8,9 +8,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This function translates a grammar from the [Syntax] format
-   to the [BasicSyntax] format. Naturally, the grammar
-   must not have any parameterized symbols, since these are not
-   allowed by the latter format. *)
+(* This function translates a grammar from the [Syntax] format to the
+   [BasicSyntax] format. Naturally, the grammar must not have any
+   parameterized symbols, since these are not allowed by the latter format. *)
 
 val drop: Syntax.grammar -> BasicSyntax.grammar
