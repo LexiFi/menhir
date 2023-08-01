@@ -1054,12 +1054,12 @@ module Production = struct
      of the rightmost terminal symbol in the production's right-hand
      side. *)
 
-  type internal_production_scan =
+  type scan =
     | PNone                        (* no terminal symbol; no %prec annotation *)
     | PRightmostToken of Terminal.t(* a rightmost terminal symbol exists *)
     | PPrecDecl of symbol          (* a %prec annotation exists *)
 
-  let scan prod : internal_production_scan =
+  let scan prod : scan =
     Array.fold_left (fun accu symbol ->
       match symbol with
       | Symbol.T tok ->
