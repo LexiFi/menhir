@@ -196,14 +196,20 @@ and producer =
 
 (* ------------------------------------------------------------------------ *)
 
-(* A branch contains a series of producers and a semantic action. *)
+(* A branch (a production) is a sequence of producers followed with
+   a semantic action. *)
 
 and parameterized_branch =
   {
+    (* The branch's position in a source file. *)
     pb_position         : Positions.t;
+    (* The producers. *)
     pb_producers        : producer list;
+    (* The semantic action. *)
     pb_action           : action;
+    (* An optional [%prec] annotation. *)
     pb_prec_annotation  : prec_annotation;
+    (* The branch's production level. *)
     pb_production_level : production_level;
   }
 
