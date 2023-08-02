@@ -10,10 +10,10 @@
 
 open Syntax
 
-(* This is the abstract syntax for an unparameterized grammar, that is,
-   a grammar that does not have any parameterized nonterminal symbols.
-   Such a grammar is obtained as the result of an expansion phase, which
-   is implemented in [ParameterizedGrammar]. *)
+(* This is the abstract syntax for an unparameterized grammar, that is, a
+   grammar that does not have any parameterized nonterminal symbols. Such a
+   grammar is obtained as the result of an expansion phase, which takes
+   place in two steps, implemented in [SelectiveExpansion] and [Drop]. *)
 
 (* In an unparameterized grammar, %attribute declarations can be desugared
    away. This is also done during the above-mentioned expansion phase.
