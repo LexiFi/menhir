@@ -2,6 +2,12 @@
 
 ## 2023/XX/XX
 
+* Attributes can now be attached with a production. (In previous versions of
+  Menhir, attributes could be attached only with a symbol, with a specific
+  occurrence of a symbol in the right-hand side of a production, or with the
+  whole grammar.) This is achieved by letting one or more attributes appear
+  immediately after the semantic action.
+
 * Minor additions in `MenhirSdk`:
 
   + The functions `hash`, `equal`, and `compare` appear in the signature
@@ -16,6 +22,14 @@
 
   + The functor `Cmly_read.FromString` appears. This functor allows decoding
     a `.cmly` file whose content is stored in a string.
+
+* Minor changes in `MenhirSdk`:
+
+  + In the signature `GRAMMAR`, the function `Production.attributes` now
+    returns the attributes of the production itself. It used to return the
+    attributes of the nonterminal symbol that forms the left-hand side of the
+    production. The previous behavior of this function can be obtained by
+    writing `Nonterminal.attributes (Production.lhs prod)`.
 
 ## 2023/06/08
 
