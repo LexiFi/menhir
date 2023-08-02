@@ -487,6 +487,11 @@ module Production : sig
   val lhs_attributes: index -> attributes
   val rhs_attributes: index -> attributes array
 
+  (* [attributes prod] is the list of attributes attached with the
+     production [prod]. *)
+
+  val attributes: index -> Syntax.attributes
+
   (* Creation of a table indexed by productions. *)
 
   val init: (index -> 'a) -> 'a array

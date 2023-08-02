@@ -776,7 +776,8 @@ module Production = struct
      side. [rhs_attributes] maps a production to an array of the attributes
      attached to the elements of the right-hand side. [prec_decl] maps a
      production to an optional [%prec] annotation. [production_level] maps
-     a production to a production level (see [ParserAux]). *)
+     a production to a production level (see [ParserAux]). [attributes]
+     maps a production to the list of its attributes. *)
 
   let table : (Nonterminal.t * Symbol.t array) array =
     Array.make n (-1, [||])
@@ -803,6 +804,9 @@ module Production = struct
     let dummy = ProductionLevel (InputFile.builtin_input_file, 0) in
     Array.make n dummy
 
+  let attributes : attributes array =
+    Array.make n []
+
   (* [ntprods] maps a nonterminal symbol to the interval of its productions. *)
 
   let ntprods : (int * int) array =
@@ -827,6 +831,7 @@ module Production = struct
       identifiers.(k) <- [| "_1" |];
       ntprods.(nt') <- (k, k+1);
       positions.(k) <- Nonterminal.positions nt;
+        (* A start production has no attributes. *)
       k+1,
       NonterminalMap.add nt k startprods
     ) grammar.start_symbols (0, NonterminalMap.empty)
@@ -848,6 +853,7 @@ module Production = struct
       production_level.(k) <- branch.production_level;
       prec_decl.(k) <- branch.prec_annotation;
       positions.(k) <- [ branch.branch_position ];
+      attributes.(k) <- branch.br_attributes;
       if not (MArray.for_all Symbol.non_error rhs) then
         grammar_uses_error_token := true;
       k+1
@@ -917,6 +923,9 @@ module Production = struct
 
   let positions prod =
     positions.(prod)
+
+  let attributes prod =
+    attributes.(prod)
 
   let lhs_attributes prod =
     Nonterminal.attributes (nt prod)
