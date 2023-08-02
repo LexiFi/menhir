@@ -89,6 +89,7 @@ open Attribute
    - with the grammar:         %[@bar ...]
    - with a terminal symbol:   %token FOO [@bar ...]
    - with a rule:              foo(X) [@bar ...]: ...
+   - with a production:        e = expr { e } [@bar ...]
    - with a producer:          e = foo(quux) [@bar ...]
    - with an arbitrary symbol: %attribute FOO foo(quux) [@bar ...]
 
@@ -207,6 +208,8 @@ and parameterized_branch =
     pb_prec_annotation  : prec_annotation;
     (* The branch's production level. *)
     pb_production_level : production_level;
+    (* Attributes attached with this branch. *)
+    pb_attributes       : attributes;
   }
 
 (* ------------------------------------------------------------------------ *)
@@ -275,7 +278,7 @@ and seq_expression =
 and raw_seq_expression =
   | ECons of pattern * symbol_expression * seq_expression
   | ESingleton of symbol_expression
-  | EAction of extended_action * prec_annotation
+  | EAction of extended_action * prec_annotation * attributes
   (* A sequence is either a cons [p = e1; e2]
      or a lone symbol expression [e]
      or a semantic action. *)

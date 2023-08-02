@@ -362,13 +362,18 @@ optional_bar:
     { () }
 
 /* ------------------------------------------------------------------------- */
-/* A production group consists of a list of productions, followed by a
-   semantic action and an optional precedence specification. */
+/* A production group is a set of productions that share a semantic action.
+
+   Thus a production group is a list of productions,
+   followed by a semantic action,
+   followed by an optional precedence specification,
+   followed by a possibly empty list of attributes. */
 
 production_group:
   productions = separated_nonempty_list(BAR, production)
-  action = ACTION
+  action = ACTION /* action is lexically delimited by braces */
   oprec2 = ioption(precedence)
+  attrs = ATTRIBUTE*
     {
       (* If multiple productions share a single semantic action, check
          that all of them bind the same names. *)
@@ -377,8 +382,8 @@ production_group:
       List.map (fun (producers, oprec1, level, pos) ->
         (* Replace [$i] with [_i]. *)
         let pb_producers = ParserAux.normalize_producers producers in
-        (* Distribute the semantic action. Also, check that every [$i]
-           is within bounds. *)
+        (* Distribute the semantic action and attributes onto every production.
+           Also, check that every [$i] is within bounds. *)
         let names = ParserAux.producer_names producers in
         let pb_action = action Settings.dollars names in
         {
@@ -386,7 +391,8 @@ production_group:
           pb_action;
           pb_prec_annotation  = ParserAux.override pos oprec1 oprec2;
           pb_production_level = level;
-          pb_position         = pos
+          pb_position         = pos;
+          pb_attributes       = attrs;
         })
       productions
     }
@@ -641,11 +647,14 @@ symbol_expression:
 
 action_expression:
 | action = action
-    { EAction (action, None) }
+  attrs = ATTRIBUTE*
+    { EAction (action, None, attrs) }
 | prec = precedence action = action
-    { EAction (action, Some prec) }
+  attrs = ATTRIBUTE*
+    { EAction (action, Some prec, attrs) }
 | action = action prec = precedence
-    { EAction (action, Some prec) }
+  attrs = ATTRIBUTE*
+    { EAction (action, Some prec, attrs) }
 
 /* A semantic action is either a traditional semantic action (an OCaml
    expression between curly braces) or a point-free semantic action (an

@@ -102,10 +102,18 @@ Another rule is expected at this point.
 
 grammar: PERCENTPERCENT UID COLON ACTION TYPE
 
+# We have just seen a semantic action.
+#
+# Do not mention that a %prec annotation or an attribute
+# would be accepted at this point.
+#
 # Do not mention that %% or EOF would be accepted at this point.
 
-Either another production '|' ...
-or another rule is expected at this point.
+Either another rule
+or another production '|' ...
+is expected at this point.
+Examples of well-formed rules:
+  option(X): { None } | x = X { Some x }
 
 # ----------------------------------------------------------------------------
 
@@ -233,16 +241,12 @@ Examples of well-formed producers:
 # ----------------------------------------------------------------------------
 
 grammar: PERCENTPERCENT UID COLON UID LPAREN ACTION UID
-# In the non-canonical automaton, this is a tricky case where, looking at the
-# description of the state, it seems that only COMMA and RPAREN can follow
-# here. But in fact, other tokens are possible, such as BAR, simply because
-# they will NOT take us into this state. In the canonical automaton, the list
-# of possibilities is explicit in the lookahead sets.
-grammar: PERCENTPERCENT UID COLON UID LPAREN ACTION PREC UID UID
-# In the first case above, we may expect a %prec annotation, whereas in the
-# second case above, we have just seen it. In the error message, we merge
-# these two situations and do not mention the possibility of a %prec
-# annotation.
+# We have just seen a semantic action, and we are inside an opening
+# parenthesis (that is, inside the list of actual arguments of a
+# parameterized nonterminal symbol).
+#
+# Do not mention that a %prec annotation or an attribute
+# would be accepted at this point.
 
 Either another production '|' ...
 or a comma ','
@@ -280,16 +284,6 @@ grammar: PERCENTPERCENT UID LPAREN UID RPAREN BAR
 
 Ill-formed rule.
 A colon ':' is expected at this point.
-Examples of well-formed rules:
-  option(X): { None } | x = X { Some x }
-
-# ----------------------------------------------------------------------------
-
-grammar: PERCENTPERCENT UID COLON ACTION PREC UID TYPE
-
-Either another rule
-or another production '|' ...
-is expected at this point.
 Examples of well-formed rules:
   option(X): { None } | x = X { Some x }
 
