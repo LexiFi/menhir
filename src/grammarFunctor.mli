@@ -131,7 +131,7 @@ module Nonterminal : sig
   (* [attributes nt] is the list of attributes attached with the nonterminal
      symbol [nt]. *)
 
-  val attributes: t -> Syntax.attribute list
+  val attributes: t -> Syntax.attributes
 
 end
 
@@ -237,7 +237,7 @@ module Terminal : sig
   (* [attributes t] is the list of attributes attached with the terminal
      symbol [t]. *)
 
-  val attributes: t -> Syntax.attribute list
+  val attributes: t -> Syntax.attributes
 
   (* [every_token_has_an_alias] is true if a token alias has been defined
      by the user for every token. *)
