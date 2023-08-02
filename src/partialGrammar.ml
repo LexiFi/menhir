@@ -530,7 +530,7 @@ let merge_rules symbols pgs =
   in
 
     (* Merge public nonterminal definitions
-       and copy private nonterminal definitions. Since the clash between
+       and copy private nonterminal definitions. Since the clashes between
        private symbols have already been resolved, these copies are safe. *)
     List.fold_left
       (fun rules rpg -> List.fold_left
