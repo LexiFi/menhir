@@ -363,15 +363,23 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
   in
   let action = Action.compose x callee_action caller_action in
 
+  (* The position and production level of the new branch are those
+     of the caller. *)
+
+  (* The attributes of the new branch are those of the caller.
+     The attributes of the callee (if there are any) are lost. *)
+
+  let { branch_position; production_level; br_attributes; _ } = caller in
+
   (* We are done! Build a new branch. *)
 
-  let { branch_position; production_level; _ } = caller in
   {
     branch_position;
     producers;
     action;
     prec_annotation;
     production_level;
+    br_attributes;
   }
 
 (* -------------------------------------------------------------------------- *)

@@ -25,7 +25,8 @@ open Syntax
    - with the grammar:          field [gr_attributes] of [grammar]
    - with a terminal symbol:    field [tk_attributes] of [token_properties]
    - with a nonterminal symbol: field [attributes] of [rule]
-   - with a producer:           field [producer_attributes] of [producer]   *)
+   - with a producer:           field [producer_attributes] of [producer]
+   - with a branch:             field [br_attributes] of [branch]           *)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -55,6 +56,7 @@ type branch =
     action           : action;
     prec_annotation  : prec_annotation;
     production_level : production_level;
+    br_attributes    : attributes;
   }
 
 type branches =
