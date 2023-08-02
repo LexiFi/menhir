@@ -478,19 +478,15 @@ module Production : sig
 
   val positions: index -> Positions.t list
 
-  (* [lhs_attributes prod] returns the attributes attached with the
-     head symbol of the production [prod]. It is equivalent to
-     [Nonterminal.attributes (nt prod)]. [rhs_attributes prod] returns
-     an array of the attributes attached with each element in the
-     right-hand side of the production [prod]. *)
+  (* [rhs_attributes prod] returns an array of the attributes attached with
+     each element in the right-hand side of the production [prod]. *)
 
-  val lhs_attributes: index -> attributes
   val rhs_attributes: index -> attributes array
 
   (* [attributes prod] is the list of attributes attached with the
      production [prod]. *)
 
-  val attributes: index -> Syntax.attributes
+  val attributes: index -> attributes
 
   (* Creation of a table indexed by productions. *)
 

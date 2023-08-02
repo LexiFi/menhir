@@ -927,9 +927,6 @@ module Production = struct
   let attributes prod =
     attributes.(prod)
 
-  let lhs_attributes prod =
-    Nonterminal.attributes (nt prod)
-
   let rhs_attributes prod =
     rhs_attributes.(prod)
 
