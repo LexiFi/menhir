@@ -81,6 +81,9 @@ type production_def = {
   p_positions: range list;
   p_action: action option;
   p_attributes: attributes;
+    (* Before 2023/08/02, these were the attributes of the left-hand
+       side of the production. Now, these are the attributes of the
+       production itself. *)
 }
 
 type lr0_state_def = {

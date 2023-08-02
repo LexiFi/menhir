@@ -112,7 +112,7 @@ let production (prod : Production.index) : production_def =
     p_positions = ranges (Production.positions prod);
     p_action = if Production.is_start prod then None
                else Some (action (Production.action prod));
-    p_attributes = attributes (Production.lhs_attributes prod);
+    p_attributes = attributes (Production.attributes prod);
   }
 
 let item (i : Item.t) : production * int =

@@ -127,6 +127,9 @@ module type GRAMMAR = sig
     val positions    : t -> Range.t list
     val action       : t -> Action.t option
     val attributes   : t -> Attribute.t list
+        (* Before 2023/08/02, these were the attributes of the left-hand
+           side of the production. Now, these are the attributes of the
+           production itself. *)
   end
 
   module Lr0 : sig
