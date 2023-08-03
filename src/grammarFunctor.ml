@@ -148,25 +148,25 @@ module Nonterminal = struct
   let positions nt =
     (StringMap.find (print false nt) grammar.rules).positions
 
-  let init f =
+  let[@inline] init f =
     Array.init n f
 
-  let iter f =
+  let[@inline] iter f =
     Misc.iteri n f
 
-  let fold f accu =
+  let[@inline] fold f accu =
     Misc.foldi n f accu
 
-  let map f =
+  let[@inline] map f =
     Misc.mapi n f
 
-  let iterx f =
+  let[@inline] iterx f =
     Misc.iterij start n f
 
-  let foldx f accu =
+  let[@inline] foldx f accu =
     Misc.foldij start n f accu
 
-  let mapx f =
+  let[@inline] mapx f =
     Misc.mapij start n f
 
   let ocamltype nt =
@@ -326,29 +326,29 @@ module Terminal = struct
   let init f =
     Array.init n f
 
-  let iter f =
+  let[@inline] iter f =
     Misc.iteri n f
 
-  let fold f accu =
+  let[@inline] fold f accu =
     Misc.foldi n f accu
 
-  let map f =
+  let[@inline] map f =
     Misc.mapi n f
 
   let () =
     assert (sharp = n - 1)
-  let foldx f accu =
+  let[@inline] foldx f accu =
     Misc.foldi sharp f accu
-  let mapx f =
+  let[@inline] mapx f =
     Misc.mapi sharp f
 
   let () =
     assert (error = 0)
-  let iter_real f =
+  let[@inline] iter_real f =
     Misc.iterij 1 sharp f
-  let fold_real f accu =
+  let[@inline] fold_real f accu =
     Misc.foldij 1 sharp f accu
-  let map_real f =
+  let[@inline] map_real f =
     Misc.mapij 1 sharp f
 
   let tokens_without_an_alias =
@@ -863,15 +863,15 @@ module Production = struct
 
   (* Iteration over the productions associated with a specific nonterminal. *)
 
-  let iternt nt f =
+  let[@inline] iternt nt f =
     let k, k' = ntprods.(nt) in
     Misc.iterij k k' f
 
-  let foldnt nt f accu =
+  let[@inline] foldnt nt f accu =
     let k, k' = ntprods.(nt) in
     Misc.foldij k k' f accu
 
-  let mapnt nt f =
+  let[@inline] mapnt nt f =
     let k, k' = ntprods.(nt) in
     Misc.mapij k k' f
 
@@ -943,25 +943,25 @@ module Production = struct
   let init f =
     Array.init n f
 
-  let iter f =
+  let[@inline] iter f =
     Misc.iteri n f
 
-  let fold f accu =
+  let[@inline] fold f accu =
     Misc.foldi n f accu
 
-  let map f =
+  let[@inline] map f =
     Misc.mapi n f
 
-  let amap f =
+  let[@inline] amap f =
     Array.init n f
 
-  let iterx f =
+  let[@inline] iterx f =
     Misc.iterij start n f
 
-  let foldx f accu =
+  let[@inline] foldx f accu =
     Misc.foldij start n f accu
 
-  let mapx f =
+  let[@inline] mapx f =
     Misc.mapij start n f
 
   (* Printing a production. *)
@@ -989,10 +989,10 @@ module Production = struct
 
   (* Tabulation and sum. *)
 
-  let tabulate f =
+  let[@inline] tabulate f =
     Misc.tabulate n f
 
-  let sum f =
+  let[@inline] sum f =
     Misc.sum n f
 
   (* This array allows recording, for each %prec declaration, whether it is
@@ -1096,7 +1096,7 @@ module ProductionMap = struct
 
   (* Iteration over the start productions only. *)
 
-  let start f =
+  let[@inline] start f =
     Misc.foldi Production.start (fun prod m ->
       add prod (f prod) m
     ) empty
