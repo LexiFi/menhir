@@ -1498,12 +1498,12 @@ let () =
           "%s generates the language {epsilon}." (Nonterminal.print false nt)
     ) grammar.start_symbols;
     (* If a nonterminal symbol generates the empty language, issue a warning. *)
-    for nt = Nonterminal.start to Nonterminal.n - 1 do
+    Nonterminal.iterx (fun nt ->
       if not (NONEMPTY.nonterminal nt) then
         Error.grammar_warning
           (Nonterminal.positions nt)
           "%s generates the empty language." (Nonterminal.print false nt);
-    done
+    )
   end
 
 (* ------------------------------------------------------------------------ *)
@@ -1512,26 +1512,26 @@ let () =
 let () =
   if verbose then
     Error.logG 2 (fun f ->
-      for nt = Nonterminal.start to Nonterminal.n - 1 do
+      Nonterminal.iterx (fun nt ->
         Printf.fprintf f "nullable(%s) = %b\n"
           (Nonterminal.print false nt)
           (NULLABLE.nonterminal nt)
-      done;
-      for nt = Nonterminal.start to Nonterminal.n - 1 do
+      );
+      Nonterminal.iterx (fun nt ->
         Printf.fprintf f "first(%s) = %s\n"
           (Nonterminal.print false nt)
           (TerminalSet.print (FIRST.nonterminal nt))
-      done;
-      for nt = Nonterminal.start to Nonterminal.n - 1 do
+      );
+      Nonterminal.iterx (fun nt ->
         Printf.fprintf f "minimal(%s) = %s\n"
           (Nonterminal.print false nt)
           (CompletedNatWitness.print Terminal.print (MINIMAL.nonterminal nt))
-      done;
-      for nt = Nonterminal.start to Nonterminal.n - 1 do
+      );
+      Nonterminal.iterx (fun nt ->
         Printf.fprintf f "maximal(%s) = %s\n"
           (Nonterminal.print false nt)
           (NatInfinityMax.print (MAXIMAL.nonterminal nt))
-      done;
+      );
   )
 
 let () =
@@ -1624,11 +1624,11 @@ let follow : Nonterminal.t -> TerminalSet.t =
 let () =
   if verbose then
     Error.logG 2 (fun f ->
-      for nt = Nonterminal.start to Nonterminal.n - 1 do
+      Nonterminal.iterx (fun nt ->
         Printf.fprintf f "follow(%s) = %s\n"
           (Nonterminal.print false nt)
           (TerminalSet.print (follow nt))
-      done
+      )
     )
 
 (* Compute FOLLOW sets for the terminal symbols as well. Again, unnecessary
@@ -1676,11 +1676,11 @@ let tfollow t =
 let () =
   if verbose then
     Error.logG 3 (fun f ->
-      for t = 0 to Terminal.n - 1 do
+      Terminal.iter (fun t ->
         Printf.fprintf f "follow(%s) = %s\n"
           (Terminal.print t)
           (TerminalSet.print (tfollow t))
-      done
+      )
     )
 
 (* ------------------------------------------------------------------------ *)
@@ -1726,11 +1726,11 @@ let sfollow : Nonterminal.t -> SymbolSet.t =
 let () =
   if verbose then
     Error.logG 3 (fun f ->
-      for nt = Nonterminal.start to Nonterminal.n - 1 do
+      Nonterminal.iterx (fun nt ->
         Printf.fprintf f "sfollow(%s) = %s\n"
           (Nonterminal.print false nt)
           (SymbolSet.print (sfollow nt))
-      done
+      )
     )
 
 (* ------------------------------------------------------------------------ *)
