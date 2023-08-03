@@ -390,6 +390,14 @@ and exprk k f e =
           e1 nl
           (indent 2 (exprk (andNotSeq k)))
           e2
+    | EFun (ps, EAnnot (e, ts)) ->
+        (* A special case for functions whose body carries a type annotation.
+           In this case, the result type can be indicated before the function
+           arrow [->]. This syntax was introduced in OCaml 4.03. *)
+        fprintf f "fun%a : %a ->%a"
+          (list pat0 space) ps
+          scheme ts
+          (indent 2 (exprk k)) e
     | EFun (ps, e) ->
         fprintf f "fun%a ->%a" (list pat0 space) ps (indent 2 (exprk k)) e
     | EApp (EVar op, [ e1; e2 ])

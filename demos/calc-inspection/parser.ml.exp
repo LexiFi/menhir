@@ -500,13 +500,13 @@ module MenhirInterpreter = struct
 end
 
 let main =
-  fun lexer lexbuf ->
-    (Obj.magic (MenhirInterpreter.entry `Legacy 0 lexer lexbuf) : (int))
+  fun lexer lexbuf : (int) ->
+    Obj.magic (MenhirInterpreter.entry `Legacy 0 lexer lexbuf)
 
 module Incremental = struct
   
   let main =
-    fun initial_position ->
-      (Obj.magic (MenhirInterpreter.start 0 initial_position) : (int) MenhirInterpreter.checkpoint)
+    fun initial_position : (int) MenhirInterpreter.checkpoint ->
+      Obj.magic (MenhirInterpreter.start 0 initial_position)
   
 end
