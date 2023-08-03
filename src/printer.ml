@@ -437,7 +437,7 @@ and exprk k f e =
     fprintf f "(%a)" expr e
 
 (* When printing a stretch, the string [content] includes padding (that is,
-   whitespace) to as to preserve the column numbers of the source file,
+   whitespace) so as to preserve the column numbers of the source file,
    whereas the string [raw_content] does not. When [X.locate_stretches]
    is [None], the parameter [raw] controls the choice between them. When
    [X.locate_stretches] is [Some _], we ignore [raw] and force the use of
