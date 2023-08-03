@@ -58,10 +58,8 @@ and typedef = {
     (* Name of the algebraic data type. *)
     typename: string;
 
-    (* Type parameters. This is a list of type variable names,
-       without the leading quote, which will be added by the
-       pretty-printer. Can also be "_". *)
-    typeparams: string list;
+    (* Type parameters. *)
+    typeparams: typeparams;
 
     (* Data constructors. *)
     typerhs: typedefrhs;
@@ -70,6 +68,15 @@ and typedef = {
     typeconstraint: (typ * typ) option
 
   }
+
+and typeparams =
+  typeparam list
+
+(* A type parameter is a type variable name, without the leading quote, which
+   will be added by the pretty-printer. It can also be "_". *)
+
+and typeparam =
+  string
 
 and typedefrhs =
   | TDefRecord of fielddef list
