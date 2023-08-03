@@ -720,6 +720,7 @@ let excdefs in_intf =
   pdefs (excdef in_intf) exc exc
 
 let block format body f b =
+  (* [format] should contain just one [%a] *)
   fprintf f format (fun f b ->
     indent 2 body f b;
     nl f
