@@ -99,11 +99,12 @@ let[@inline] iterij i j f =
 let[@inline] iteri n f =
   iterij 0 n f
 
-let rec foldij i j f accu =
-  if i < j then
-    foldij (i + 1) j f (f i accu)
-  else
-    accu
+let[@inline] foldij i j f accu =
+  let accu = ref accu in
+  for k = i to j-1 do
+    accu := f k !accu
+  done;
+  !accu
 
 let[@inline] foldi n f accu =
   foldij 0 n f accu
