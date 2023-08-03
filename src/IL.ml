@@ -304,6 +304,36 @@ and structure_item =
   | SIComment of string
     (* Toplevel attribute. *)
   | SIAttribute of (* attribute: *) string * (* payload: *) string
+    (* Class. *)
+  | SIClass of
+      (* virtual? *)              virtuality *
+      (* type parameters: *)      typeparams *
+      (* class name: *)           class_name *
+      (* self type annotation: *) typ option *
+      (* content: *)              class_fields
+
+(* Objects. *)
+
+and virtuality =
+  | NonVirtual
+  | Virtual
+
+and class_fields =
+  class_field list
+
+and class_field =
+    (* Method definition. *)
+  | CFMethod of method_name * expr
+    (* Virtual method declaration. *)
+  | CFMethodVirtual of method_name * typescheme
+    (* Comment. *)
+  | CFComment of string
+
+and class_name =
+  string
+
+and method_name =
+  string
 
 (* A type of parameters, with injections both into patterns (formal parameters)
    and into expressions (actual parameters). *)

@@ -169,6 +169,14 @@ let typeparams p0 p1 f = function
   | _ :: _ as params ->
       fprintf f "(%a) " (seplist p1 comma) params
 
+(* OCaml type parameters, for a class. *)
+
+let classtypeparams p f = function
+  | [] ->
+      ()
+  | _ :: _ as params ->
+      fprintf f "[%a] " (seplist p comma) params
+
 (* ------------------------------------------------------------------------- *)
 (* Expression printer. *)
 
@@ -760,6 +768,12 @@ let rec structure_item f item =
     | SIAttribute (attribute, payload) ->
         (* We assume that the payload does not contain newlines. *)
         fprintf f "[@@@%s \"%s\"]" attribute payload
+    | SIClass (v, params, name, oselftyp, cfs) ->
+        fprintf f "class %a%a%s = %a"
+          virtuality v
+          (classtypeparams typevar) params
+          name
+          (objectend oselftyp) cfs
     end;
     nl f
 
@@ -776,6 +790,43 @@ and modexpr f = function
       structend f s
   | MApp (e1, e2) ->
       fprintf f "%a (%a)" modexpr e1 modexpr e2
+
+and virtuality f = function
+  | NonVirtual ->
+      ()
+  | Virtual ->
+      fprintf f "virtual "
+
+and objectend oselftyp f cfs =
+  objectself f oselftyp;
+  indent 2 class_fields f cfs;
+  nl f;
+  fprintf f "end"
+
+and objectself f = function
+  | None ->
+      fprintf f "object (self)"
+  | Some ty ->
+      fprintf f "object (self : %a)" typ ty
+
+and class_fields f cfs =
+  list class_field nothing f cfs
+
+and class_field f cf =
+  nl f;
+  begin match cf with
+  | CFMethod (name, e) ->
+      fprintf f "method %s = %a"
+        name
+        expr e
+  | CFMethodVirtual (name, ts) ->
+      fprintf f "method virtual %s : %a"
+        name
+        scheme ts
+  | CFComment comment ->
+      fprintf f "(* %s *)" comment
+  end;
+  nl f
 
 let valdecl f (x, ts) =
   fprintf f "val %s: %a" x typ ts.body
