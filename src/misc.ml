@@ -91,12 +91,12 @@ let materialize (table : ('a, 'a option) Hashtbl.t) (x : 'a) : 'a list =
 (* [iteri] implements a [for] loop over integers, from 0 to
    [n-1]. *)
 
-let iterij i j f =
+let[@inline] iterij i j f =
   for x = i to j - 1 do
     f x
   done
 
-let iteri n f =
+let[@inline] iteri n f =
   iterij 0 n f
 
 let rec foldij i j f accu =
@@ -105,7 +105,7 @@ let rec foldij i j f accu =
   else
     accu
 
-let foldi n f accu =
+let[@inline] foldi n f accu =
   foldij 0 n f accu
 
 let rec foldij_lazy i j f accu =
@@ -125,7 +125,7 @@ let mapij start n f =
 
 (* [mapi n f] produces the list [ f 0; ... f (n-1) ]. *)
 
-let mapi n f =
+let[@inline] mapi n f =
   mapij 0 n f
 
 (* [qfold f accu q] repeatedly takes an element [x] off the queue [q]
