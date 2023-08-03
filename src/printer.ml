@@ -276,6 +276,7 @@ let rec member e k =
             true
       end
   | EApp (_, _ :: _)
+  | EMethodCall _
   | EData (_, _ :: _)
   | EMagic _
   | ERepr _
@@ -397,6 +398,8 @@ and exprk k f e =
         fprintf f "%a %s %a" app e1 op app e2
     | EApp (e, args) ->
         fprintf f "%a%a" app e (list atom space) args
+    | EMethodCall (e, m) ->
+        fprintf f "%a#%s" atom e m
     | ERaise e ->
         fprintf f "raise %a" atom e
     | EMagic e ->

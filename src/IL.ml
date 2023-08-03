@@ -184,6 +184,9 @@ and expr =
   (* Function call. *)
   | EApp of expr * expr list
 
+  (* Method call. *)
+  | EMethodCall of expr * method_name
+
   (* Local definitions. This is a nested sequence of [let]
      definitions. *)
   | ELet of (pattern * expr) list * expr

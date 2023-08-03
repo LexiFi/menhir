@@ -85,6 +85,8 @@ class virtual ['env] map = object (self)
           self#efun env ps e
       | EApp (e, es) ->
           self#eapp env e es
+      | EMethodCall (e, m) ->
+          self#emethodcall env e m
       | ELet (bs, e) ->
           self#elet env bs e
       | EMatch (e, bs) ->
@@ -153,6 +155,13 @@ class virtual ['env] map = object (self)
       raise NoChange
     else
       EApp (e', es')
+
+  method emethodcall env e m =
+    let e' = self#expr env e in
+    if e == e' then
+      raise NoChange
+    else
+      EMethodCall (e', m)
 
   method elet env bs e =
     let env, bs' = self#bindings env bs in
@@ -375,6 +384,8 @@ class virtual ['env, 'a] fold = object (self)
         self#efun env accu ps e
     | EApp (e, es) ->
         self#eapp env accu e es
+    | EMethodCall (e, m) ->
+        self#emethodcall env accu e m
     | ELet (bs, e) ->
         self#elet env accu bs e
     | EMatch (e, bs) ->
@@ -434,6 +445,10 @@ class virtual ['env, 'a] fold = object (self)
   method eapp (env : 'env) (accu : 'a) e es =
     let accu = self#expr env accu e in
     let accu = self#exprs env accu es in
+    accu
+
+  method emethodcall (env : 'env) (accu : 'a) e _m =
+    let accu = self#expr env accu e in
     accu
 
   method elet (env : 'env) (accu : 'a) bs e =
