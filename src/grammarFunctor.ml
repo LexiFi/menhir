@@ -161,9 +161,7 @@ module Nonterminal = struct
     Misc.mapi n f
 
   let iterx f =
-    for nt = start to n - 1 do
-      f nt
-    done
+    Misc.iterij start n f
 
   let foldx f accu =
     Misc.foldij start n f accu
@@ -347,15 +345,9 @@ module Terminal = struct
   let () =
     assert (error = 0)
   let iter_real f =
-    for i = 1 to n-2 do
-      f i
-    done
+    Misc.iterij 1 sharp f
   let fold_real f accu =
-    let accu = ref accu in
-    for i = 1 to n-2 do
-      accu := f i !accu
-    done;
-    !accu
+    Misc.foldij 1 sharp f accu
   let map_real f =
     Misc.mapij 1 sharp f
 
@@ -964,9 +956,7 @@ module Production = struct
     Array.init n f
 
   let iterx f =
-    for prod = start to n - 1 do
-      f prod
-    done
+    Misc.iterij start n f
 
   let foldx f accu =
     Misc.foldij start n f accu
