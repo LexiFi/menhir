@@ -356,6 +356,8 @@ module Terminal = struct
       accu := f i !accu
     done;
     !accu
+  let map_real f =
+    Misc.mapij 1 sharp f
 
   let tokens_without_an_alias =
     let accu = ref [] in
