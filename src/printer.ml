@@ -839,6 +839,34 @@ and class_field f cf =
   end;
   nl f
 
+and objectendspec oselftyp f cfss =
+  objectselfspec f oselftyp;
+  indent 2 class_field_specs f cfss;
+  nl f;
+  fprintf f "end"
+
+and objectselfspec f = function
+  | None ->
+      fprintf f "object"
+  | Some ty ->
+      fprintf f "object (%a)" typ ty
+
+and class_field_specs f cfss =
+  list class_field_spec nothing f cfss
+
+and class_field_spec f cfs =
+  nl f;
+  begin match cfs with
+  | CFSMethod (v, name, ts) ->
+      fprintf f "method %a%s : %a"
+        virtuality v
+        name
+        scheme ts
+  | CFSComment comment ->
+      fprintf f "(* %s *)" comment
+  end;
+  nl f
+
 let valdecl f (x, ts) =
   fprintf f "val %s: %a" x typ ts.body
 
@@ -887,6 +915,12 @@ and interface_item f item =
         fprintf f "module %s : %a" name module_type mt
     | IIComment comment ->
         fprintf f "(* %s *)" comment
+    | IIClass (v, params, name, oselftyp, cfss) ->
+        fprintf f "class %a%a%s : %a"
+          virtuality v
+          (classtypeparams typevar) params
+          name
+          (objectendspec oselftyp) cfss
     end;
     nl f
 

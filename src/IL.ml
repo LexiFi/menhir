@@ -30,6 +30,13 @@ and interface_item =
   | IIModule of string * module_type
     (* Comment. *)
   | IIComment of string
+    (* Class. *)
+  | IIClass of
+      (* virtual? *)              virtuality *
+      (* type parameters: *)      typeparams *
+      (* class name: *)           class_name *
+      (* self type annotation: *) typ option *
+      (* content: *)              class_field_specs
 
 and module_type =
   | MTNamedModuleType of string
@@ -331,6 +338,15 @@ and class_field =
   | CFMethodVirtual of method_name * typescheme
     (* Comment. *)
   | CFComment of string
+
+and class_field_specs =
+  class_field_spec list
+
+and class_field_spec =
+    (* Method declaration. *)
+  | CFSMethod of virtuality * method_name * typescheme
+    (* Comment. *)
+  | CFSComment of string
 
 and class_name =
   string

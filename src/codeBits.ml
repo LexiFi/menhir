@@ -327,7 +327,8 @@ let rec interface_item_to_structure_item = function
   | IIValDecls _
   | IIInclude _
   | IIModule (_, _)
-  | IIComment _ ->
+  | IIComment _
+  | IIClass _ ->
       []
 
 and interface_to_structure i =
