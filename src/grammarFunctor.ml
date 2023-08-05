@@ -377,14 +377,8 @@ module Terminal = struct
     token_properties.(tok).tk_alias
 
   let unquoted_alias tok =
-    alias tok |> Option.map (fun qid ->
-      assert (qid.[0] = '"');
-      (* Skip the opening quote and decode the remainder using the lexer
-         [decode_string]. *)
-      let qid = String.sub qid 1 (String.length qid - 1) in
-      let lexbuf = Lexing.from_string qid in
-      Misc.with_buffer 8 (fun b -> Lexer.decode_string b lexbuf)
-  )
+    alias tok
+    |> Option.map Misc.unquote
 
   let print_concrete t =
   match unquoted_alias t with

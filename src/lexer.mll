@@ -413,17 +413,6 @@ let directives =
     "on_error_reduce", ON_ERROR_REDUCE;
   ]
 
-(* ------------------------------------------------------------------------ *)
-
-(* Decoding escaped characters. *)
-
-let char_for_backslash = function
-  | 'n' -> '\010'
-  | 'r' -> '\013'
-  | 'b' -> '\008'
-  | 't' -> '\009'
-  | c   -> c
-
 }
 
 (* ------------------------------------------------------------------------ *)
@@ -819,18 +808,6 @@ and record_string openingpos buffer = parse
 | _ as c
     { Buffer.add_char buffer c;
       record_string openingpos buffer lexbuf }
-
-(* Decoding a string that may contain escaped characters. *)
-
-and decode_string buffer = parse
-| '"'
-    { (* The final double quote is skipped. *) }
-| '\\' (['\\' '\'' '"' 'n' 't' 'b' 'r' ' '] as c)
-    { Buffer.add_char buffer (char_for_backslash c);
-      decode_string buffer lexbuf }
-| _ as c
-    { Buffer.add_char buffer c;
-      decode_string buffer lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 

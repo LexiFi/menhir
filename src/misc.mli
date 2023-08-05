@@ -192,3 +192,8 @@ val padded_index: int -> int -> string
 (**[longest_run c s] computes the length of the longest run of consecutive
    characters equal to [c] in the string [s]. *)
 val longest_run: char -> string -> int
+
+(**[unquote s] assumes that the string [s] begins and ends with a quote
+   character ['"']. It removes these quotes and returns the remainder
+   of the string, in which escape sequences have been decoded. *)
+val unquote: string -> string

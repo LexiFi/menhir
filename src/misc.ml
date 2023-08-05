@@ -408,3 +408,13 @@ let rec longest_run c s n i m k =
 
 let longest_run c s =
   longest_run c s (String.length s) 0 0 0
+
+let unquote s =
+  if String.length s = 0 || s.[0] <> '"' then
+    invalid_arg "unescape"
+  else
+    (* Skip the opening quote and decode the remainder using the lexer
+       [DecodeString.unescape], which stops at the closing quote. *)
+    let s = String.sub s 1 (String.length s - 1) in
+    let lexbuf = Lexing.from_string s in
+    with_buffer 8 (fun b -> DecodeString.unescape b lexbuf)
