@@ -69,3 +69,8 @@ val partition_map :
 (** [compare f l1 l2] compares two lists according to the lexicographic
     ordering. Elements are compared using the argument [f]. *)
 val compare : ('a -> 'b -> int) -> 'a list -> 'b list -> int
+
+(**[extract p xs] searches the list [xs] for an element [x] such that [p x] is
+   true. It returns a pair of this element (if it exists) and a list of the
+   remaining elements. *)
+val extract: ('a -> bool) -> 'a list -> 'a option * 'a list

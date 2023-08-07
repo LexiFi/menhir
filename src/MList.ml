@@ -132,3 +132,27 @@ let rec compare cmp l1 l2 =
     match cmp x1 x2 with
     | 0 -> compare cmp xs1 xs2
     | n -> n
+
+(* By writing [extract] in two successive steps, as follows, we avoid
+   rebuilding an identical list when no list element satisfies [p]. *)
+
+let rec extract (p : 'a -> bool) (xs : 'a list) : ('a * 'a list) option =
+  match xs with
+  | [] ->
+      None
+  | x :: xs ->
+      if p x then
+        Some (x, xs)
+      else
+        match extract p xs with
+        | None ->
+            None
+        | Some (w, xs) ->
+            Some (w, x :: xs)
+
+let extract (p : 'a -> bool) (xs : 'a list) : 'a option * 'a list =
+  match extract p xs with
+  | None ->
+      None, xs
+  | Some (x, xs) ->
+      Some x, xs
