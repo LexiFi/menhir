@@ -228,11 +228,10 @@ let print_parameters f g =
 
 (* Printing attributes. *)
 
-let print_attribute f ((name, payload) : attribute) =
+let print_attribute f { key; payload; origin } =
+  ignore origin;
   if attributes_printed then
-    fprintf f " [@%s %s]"
-      (Positions.value name)
-      payload.stretch_raw_content
+    fprintf f " [@%s %s]" key payload
 
 let print_attributes f attrs =
   List.iter (print_attribute f) attrs
@@ -409,11 +408,10 @@ let print_on_error_reduce_declarations f g =
 
 (* Printing %attribute declarations. *)
 
-let print_grammar_attribute f ((name, payload) : attribute) =
+let print_grammar_attribute f { key; payload; origin } =
+  ignore origin;
   if attributes_printed then
-    fprintf f "%%[@%s %s]\n"
-      (Positions.value name)
-      payload.stretch_raw_content
+    fprintf f "%%[@%s %s]\n" key payload
 
 let print_grammar_attributes f g =
   List.iter (print_grammar_attribute f) g.gr_attributes

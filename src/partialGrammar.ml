@@ -593,9 +593,9 @@ let join grammar pgrammar =
 (* If a rule is marked %inline, then it must not carry an attribute. *)
 let check_inline_attribute prule =
   match prule.pr_inline_flag, prule.pr_attributes with
-  | true, (id, _payload) :: _attributes ->
+  | true, attr :: _ ->
       Error.error
-        [Positions.position id]
+        [attr.origin]
         "the nonterminal symbol %s is declared %%inline.\n\
          It cannot carry an attribute."
         prule.pr_nt

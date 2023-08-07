@@ -79,11 +79,15 @@ type action =
 
 (* ------------------------------------------------------------------------ *)
 
-(* An attribute consists of an attribute name and an attribute payload. The
-   payload is an uninterpreted stretch of source text. *)
+(* An attribute consists of a key, a payload, and a position in the
+   source code. The payload string is an uninterpreted piece of text.
+   The position is used only as part of error messages. *)
 
-type attribute =
-  string located * Stretch.t
+type attribute = {
+  key:     string;
+  payload: string;
+  origin:  Positions.t;
+}
 
 type attributes =
   attribute list

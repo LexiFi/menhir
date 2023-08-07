@@ -38,11 +38,12 @@ let range (pos : Positions.t) : range =
 let ranges =
   List.map range
 
-let attribute (label, payload : Syntax.attribute) : attribute =
+let attribute (attr : Syntax.attribute) : attribute =
+  let Syntax.{ key; payload; origin } = attr in
   {
-    a_label    = Positions.value label;
-    a_payload  = raw_content payload;
-    a_position = range (Positions.position label);
+    a_label    = key;
+    a_payload  = payload;
+    a_position = range origin;
   }
 
 let attributes : Syntax.attributes -> attributes =

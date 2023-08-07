@@ -14,6 +14,7 @@ open Lexing
 open Parser
 open Positions
 open Keyword
+open Syntax
 
 (* ------------------------------------------------------------------------ *)
 
@@ -560,18 +561,19 @@ rule main = parse
         )
       )
     }
-| ('%'? as percent) "[@" (attributechar+ as id) whitespace*
+| ('%'? as percent) "[@" (attributechar+ as key) whitespace*
     { let openingpos = lexeme_start_p lexbuf in
       let stretchpos = lexeme_end_p lexbuf in
       let closingpos = attribute openingpos lexbuf in
-      let pos = Positions.import (openingpos, lexeme_end_p lexbuf) in
-      let attr = mk_stretch stretchpos closingpos false [] in
+      let origin = Positions.import (openingpos, lexeme_end_p lexbuf) in
+      let payload = InputFile.chunk (stretchpos, closingpos) in
+      let attr : attribute = { key; payload; origin } in
       if percent = "" then
         (* No [%] sign: this is a normal attribute. *)
-        ATTRIBUTE (Positions.with_pos pos id, attr)
+        ATTRIBUTE attr
       else
         (* A [%] sign is present: this is a grammar-wide attribute. *)
-        GRAMMARATTRIBUTE (Positions.with_pos pos id, attr)
+        GRAMMARATTRIBUTE attr
     }
 | eof
     { EOF }

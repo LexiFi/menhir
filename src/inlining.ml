@@ -67,9 +67,9 @@ let check_no_producer_attributes producer =
   match producer_attributes producer with
   | [] ->
       ()
-  | (id, _payload) :: _attributes ->
+  | attr :: _ ->
       Error.error
-        [position id]
+        [attr.origin]
         "the nonterminal symbol %s is declared %%inline.\n\
          A use of it cannot carry an attribute."
         (producer_symbol producer)
