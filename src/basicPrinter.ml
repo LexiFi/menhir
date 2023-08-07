@@ -328,7 +328,10 @@ let print_branch f g branch =
   (* Newline, indentation, semantic action. *)
   fprintf f "\n    {";
   print_semantic_action f g branch;
-  fprintf f "}\n"
+  fprintf f "}";
+  (* The branch attributes follow the semantic action. *)
+  print_attributes f branch.br_attributes;
+  fprintf f "\n"
 
 (* Because the resolution of reduce/reduce conflicts is implicitly dictated by
    the order in which productions appear in the grammar, the printer should be
