@@ -59,7 +59,8 @@ let find grammar symbol : rule =
 
 (* [check_no_producer_attributes] checks that a producer, which represents a
    use site of an %inline symbol, does not carry any attributes. This ensures
-   that we need not worry about propagating attributes through inlining. *)
+   that we need not worry about propagating producer attributes through
+   inlining. *)
 
 let check_no_producer_attributes producer =
   match producer_attributes producer with
