@@ -75,14 +75,55 @@ let check_no_producer_attributes producer =
          A use of it cannot carry an attribute."
         (producer_symbol producer)
 
+(* [combine_name_attributes] combines the [@name] attributes of the caller and
+   callee, as described below. It produces a list of zero or one attribute. *)
+
+type oattr =
+  attribute option
+
+let combine_name_attributes (caller : oattr) (callee : oattr) : attributes =
+  match caller, callee with
+  | Some caller, Some callee ->
+      let key = caller.key in
+      assert (key = "name");
+      let payload = Printf.sprintf "%s_%s" caller.payload callee.payload in
+      let origin = caller.origin in (* not great! information is lost *)
+      let attr = { key; payload; origin } in
+      [attr]
+  | Some attr, None ->
+      [attr]
+  | None, Some attr ->
+      [attr]
+  | None, None ->
+      []
+
 (* [inline_attributes caller callee] computes the attributes of the new branch
    that is obtained by inlining the branch [callee] into the branch [caller]. *)
 
-(* The attributes of the new branch are those of the caller.
-   The attributes of the callee (if there are any) are lost. *)
+(* Our general policy is as follows:
+   the attributes of the new branch are those of the caller.
+   The attributes of the callee (if there are any) are lost.
+   This policy is not documented and could change in the future. *)
 
-let inline_attributes (caller : branch) (_callee : branch) : attributes =
-  caller.br_attributes
+(* As an exception to this general policy, [@name] attributes are treated
+   in a special way. Our motivation is to preserve the property that no
+   two productions carry the same name. To this end, the [@name] attributes
+   of the caller and callee are combined, as follows:
+   - if both names are present, then they are concatenated,
+     with a '_' character as a separator;
+   - if only one name is present, then this name is retained. *)
+
+let inline_attributes (caller : branch) (callee : branch) : attributes =
+  let caller, callee = caller.br_attributes, callee.br_attributes in
+  (* Isolate the [@name] attributes. *)
+  let ocaller, caller = extract_attribute "name" caller
+  and ocallee, callee = extract_attribute "name" callee in
+  (* Combine the [@name] attributes of the caller and callee. *)
+  let oname = combine_name_attributes ocaller ocallee in
+  (* Apply the default policy to the remaining attributes. *)
+  let attrs = (ignore callee; caller) in
+  (* Put everything together. *)
+  oname @ attrs
 
 (* -------------------------------------------------------------------------- *)
 
