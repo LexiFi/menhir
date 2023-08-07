@@ -95,7 +95,7 @@ let subst_symbol env sym : parameter =
     (* [x] is not a formal parameter. It is a toplevel symbol. *)
     ParameterVar sym
 
-let apply (param : parameter) (params : parameter list) : parameter =
+let apply (param : parameter) (params : parameters) : parameter =
   match param with
   | ParameterVar sym ->
       assert (params <> []);
@@ -295,7 +295,7 @@ let rec recognize (param : parameter) : parameter =
          expanded away, so [sym] cannot be an uninstantiated parameter
          of the current rule. It must be a nonterminal symbol. We can
          therefore look up its sort in the toplevel environment [sorts]. *)
-      let inst, residuals =
+      let (inst : instantiation), (residuals : parameters) =
         match mode with
         | ExpandAll ->
             (* Expansion of all parameters. *)
@@ -319,7 +319,7 @@ let rec recognize (param : parameter) : parameter =
             in
             inst, residuals
       in
-      let label = (x, inst) in
+      let label : label = (x, inst) in
       enqueue label;
       let sym = mangle label in
       Parameters.app (unknown sym) residuals
@@ -362,7 +362,7 @@ let freshen : string -> string =
    returns an environment [env] that can be used to perform specialization and
    a list of residual formal parameters (those that are not specialized). *)
 
-let instantiation_env formals inst : env * symbol list =
+let instantiation_env (formals : symbols) (inst : instantiation) : env * symbols =
   assert (List.length formals = List.length inst);
   let env, residuals =
     List.fold_right2 (fun formal po (env, residuals) ->
