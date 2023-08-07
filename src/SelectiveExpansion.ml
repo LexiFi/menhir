@@ -364,29 +364,26 @@ let freshen : string -> string =
 
 let instantiation_env (formals : symbols) (inst : instantiation) : env * symbols =
   assert (List.length formals = List.length inst);
-  let env, residuals =
-    List.fold_right2 (fun formal po (env, residuals) ->
-      let param, residuals =
-        match po with
-        | Some param ->
-            (* This formal parameter is instantiated. *)
-            param, residuals
-        | None ->
-            (* This formal parameter is not instantiated. *)
-            (* We would like to map it to itself. *)
-            (* However, we must in principle be a bit careful: if a toplevel
-               symbol by the same name as [formal] appears free in the codomain
-               of the environment that we are building, then we will run intro
-               trouble. We avoid this problem by systematically renaming every
-               formal parameter to a fresh unlikely name. *)
-            let formal = freshen formal in
-            ParameterVar (unknown formal),
-            formal :: residuals
-      in
-      Env.add formal param env, residuals
-    ) formals inst (Env.empty, [])
-  in
-  env, residuals
+  List.fold_right2 (fun formal po (env, residuals) ->
+    let param, residuals =
+      match po with
+      | Some param ->
+          (* This formal parameter is instantiated. *)
+          param, residuals
+      | None ->
+          (* This formal parameter is not instantiated. *)
+          (* We would like to map it to itself. *)
+          (* However, we must in principle be a bit careful: if a toplevel
+             symbol by the same name as [formal] appears free in the codomain
+             of the environment that we are building, then we will run intro
+             trouble. We avoid this problem by systematically renaming every
+             formal parameter to a fresh unlikely name. *)
+          let formal = freshen formal in
+          ParameterVar (unknown formal),
+          formal :: residuals
+    in
+    Env.add formal param env, residuals
+  ) formals inst (Env.empty, [])
 
 (* -------------------------------------------------------------------------- *)
 
