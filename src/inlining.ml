@@ -75,6 +75,15 @@ let check_no_producer_attributes producer =
          A use of it cannot carry an attribute."
         (producer_symbol producer)
 
+(* [inline_attributes caller callee] computes the attributes of the new branch
+   that is obtained by inlining the branch [callee] into the branch [caller]. *)
+
+(* The attributes of the new branch are those of the caller.
+   The attributes of the callee (if there are any) are lost. *)
+
+let inline_attributes (caller : branch) (_callee : branch) : attributes =
+  caller.br_attributes
+
 (* -------------------------------------------------------------------------- *)
 
 (* 2015/11/18. The interaction of %prec and %inline is not documented.
@@ -366,10 +375,8 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
   (* The position and production level of the new branch are those
      of the caller. *)
 
-  (* The attributes of the new branch are those of the caller.
-     The attributes of the callee (if there are any) are lost. *)
-
-  let { branch_position; production_level; br_attributes; _ } = caller in
+  let { branch_position; production_level; _ } = caller in
+  let br_attributes = inline_attributes caller callee in
 
   (* We are done! Build a new branch. *)
 
