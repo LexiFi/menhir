@@ -32,6 +32,9 @@ type nonterminal =
 type symbol =
   string
 
+type symbols =
+  symbol list
+
 (* In a somewhat fragile convention, in a partial grammar, a reference to a
    terminal symbol either is a normal identifier [LID], in which case it is
    the name of the terminal symbol, or is a quoted identifier [QID], in which
@@ -232,7 +235,7 @@ type parameterized_rule =
     (* Attributes attached with this nonterminal symbol. *)
     pr_attributes        : attributes;
     (* The parameters of this nonterminal symbol. *)
-    pr_parameters        : symbol list;
+    pr_parameters        : symbols;
     (* The productions. *)
     pr_branches          : parameterized_branch list;
   }
