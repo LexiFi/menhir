@@ -11,6 +11,7 @@
 let position = Positions.position
 open Keyword
 type sw = subject * where
+open Syntax
 open BasicSyntax
 open ListMonad
 let drop = MenhirLib.General.drop
@@ -468,7 +469,7 @@ module Inline (G : sig val grammar: grammar end) = struct
 
   (* Apply [defensive_fix] to obtain a closed function [expand_symbol]. *)
 
-  let expand_symbol : Syntax.symbol -> rule =
+  let expand_symbol : symbol -> rule =
     Fix.Memoize.String.defensive_fix expand_symbol
 
   (* Wrap [expand_symbol] in an exception handler, so that, when a cycle
