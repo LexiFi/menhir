@@ -22,3 +22,11 @@ let find_attribute key attrs =
 
 let extract_attribute key attrs =
   MList.extract (attribute_has_key key) attrs
+
+let transform_attribute key f attrs =
+  let oattr, remainder = extract_attribute key attrs in
+  match oattr with
+  | None ->
+      attrs
+  | Some attr ->
+      { attr with payload = f attr.payload } :: remainder

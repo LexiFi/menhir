@@ -32,3 +32,8 @@ val find_attribute : key -> attributes -> payload
    [key] in the list [attrs] and returns a pair of this attribute (if it
    exists) and the list deprived of this attribute. *)
 val extract_attribute : key -> attributes -> attribute option * attributes
+
+(**[transform_attribute key f attrs] transforms the payload of the attribute
+   that carries the key [key], if there is one, by applying the function [f]
+   to this payload. *)
+val transform_attribute : key -> (payload -> payload) -> attributes -> attributes
