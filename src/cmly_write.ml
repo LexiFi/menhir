@@ -38,15 +38,15 @@ let range (pos : Positions.t) : range =
 let ranges =
   List.map range
 
-let attribute (attr : Syntax.attribute) : attribute =
-  let Syntax.{ key; payload; origin } = attr in
+let attribute (attr : Attribute.attribute) : attribute =
+  let Attribute.{ key; payload; origin } = attr in
   {
     a_label    = key;
     a_payload  = payload;
     a_position = range origin;
   }
 
-let attributes : Syntax.attributes -> attributes =
+let attributes : Attribute.attributes -> attributes =
   List.map attribute
 
 let terminal (t : Terminal.t) : terminal_def =

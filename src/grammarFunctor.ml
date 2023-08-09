@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Attribute
 open BasicSyntax
 open Syntax
 open Positions
@@ -196,7 +197,7 @@ module Nonterminal = struct
   let tabulate f =
     Array.get (Array.init n f)
 
-  let attributes : Syntax.attributes array =
+  let attributes : attributes array =
     Array.make n []
 
   let () =
@@ -789,7 +790,7 @@ module Production = struct
   let positions : Positions.t list array =
     Array.make n []
 
-  let rhs_attributes : Syntax.attributes array array =
+  let rhs_attributes : attributes array array =
     Array.make n [||]
 
   let prec_decl : symbol located option array =

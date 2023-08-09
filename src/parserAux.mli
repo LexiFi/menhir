@@ -12,6 +12,7 @@
    of the parser. *)
 
 open Stretch
+open Attribute
 open Syntax
 
 (* A few types used in the parser. *)

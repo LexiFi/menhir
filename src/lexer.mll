@@ -14,6 +14,7 @@ open Lexing
 open Parser
 open Positions
 open Keyword
+open Attribute
 open Syntax
 
 (* ------------------------------------------------------------------------ *)

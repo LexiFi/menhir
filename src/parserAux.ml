@@ -10,6 +10,7 @@
 
 open Positions
 open Stretch
+open Attribute
 open Syntax
 
 type early_producer =

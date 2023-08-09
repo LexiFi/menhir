@@ -10,6 +10,7 @@
 
 let value    = Positions.value
 let unknown  = Positions.unknown_pos
+open Attribute
 open Syntax
 open GroundSort
 

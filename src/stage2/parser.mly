@@ -116,7 +116,7 @@ let unparenthesize (o : Stretch.t option) : Stretch.t option =
 %token <Syntax.raw_action>
   ACTION           "{}"
 
-%token <Syntax.attribute>
+%token <Attribute.attribute>
   ATTRIBUTE        "[@foo]"
   GRAMMARATTRIBUTE "%[@foo]"
 

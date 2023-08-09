@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Attribute
 open Syntax
 
 (* Because the main function, [NewRuleSyntax.rule], is called by the stage 2

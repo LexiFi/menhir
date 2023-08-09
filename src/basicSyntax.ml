@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Attribute
 open Syntax
 
 (* This is the abstract syntax for an unparameterized grammar, that is, a

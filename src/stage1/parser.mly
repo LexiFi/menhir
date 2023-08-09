@@ -32,7 +32,7 @@ open Positions
 %token <Stretch.ocamltype> OCAMLTYPE
 %token <Stretch.t Lazy.t> PERCENTPERCENT
 %token <Syntax.raw_action> ACTION
-%token <Syntax.attribute> ATTRIBUTE GRAMMARATTRIBUTE
+%token <Attribute.attribute> ATTRIBUTE GRAMMARATTRIBUTE
 /* For the new rule syntax: */
 %token LET TILDE UNDERSCORE COLONEQUAL EQUALEQUAL
 %start grammar

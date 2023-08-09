@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Attribute
 let value = Positions.value
 (* The source. *)
 module S = Syntax
@@ -122,7 +123,7 @@ let add_attributes g (params, attrs) =
     ) g attrs
   ) g params
 
-let add_attributes (decls : (S.parameter list * S.attributes) list) g =
+let add_attributes (decls : (S.parameter list * attributes) list) g =
   List.fold_left add_attributes g decls
 
 (* -------------------------------------------------------------------------- *)

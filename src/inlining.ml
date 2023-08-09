@@ -11,6 +11,7 @@
 let position = Positions.position
 open Keyword
 type sw = subject * where
+open Attribute
 open Syntax
 open BasicSyntax
 open ListMonad

@@ -79,18 +79,7 @@ type action =
 
 (* ------------------------------------------------------------------------ *)
 
-(* An attribute consists of a key, a payload, and a position in the
-   source code. The payload string is an uninterpreted piece of text.
-   The position is used only as part of error messages. *)
-
-type attribute = {
-  key:     string;
-  payload: string;
-  origin:  Positions.t;
-}
-
-type attributes =
-  attribute list
+open Attribute
 
 (* Attributes allow the user to annotate the grammar with information that is
    ignored by Menhir, but can be exploited by other tools, via the SDK. *)

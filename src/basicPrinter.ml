@@ -10,6 +10,7 @@
 
 open Printf
 open Positions
+open Attribute
 open Syntax
 open Stretch
 open BasicSyntax
