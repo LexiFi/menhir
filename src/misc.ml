@@ -57,6 +57,17 @@ let separated_iter_to_string printer separator iter =
 let separated_list_to_string printer separator xs =
   separated_iter_to_string printer separator (fun f -> List.iter f xs)
 
+let preceded_iter_to_string printer del iter =
+  with_buffer 32 (fun b ->
+    iter (fun x ->
+      Buffer.add_string b del;
+      Buffer.add_string b (printer x)
+    )
+  )
+
+let preceded_list_to_string printer del xs =
+  preceded_iter_to_string printer del (fun f -> List.iter f xs)
+
 let inverse (a : 'a array) : 'a -> int =
   let table = Hashtbl.create (Array.length a) in
   Array.iteri (fun i data ->

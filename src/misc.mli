@@ -41,6 +41,12 @@ type 'a iter = ('a -> unit) -> unit
 val separated_list_to_string:  ('a -> string) -> string -> 'a list -> string
 val separated_iter_to_string:  ('a -> string) -> string -> 'a iter -> string
 
+(**[preceded_list_to_string printer del xs] converts the list [xs] into a
+   string by applying [printer] to each element and by preceding each element
+   with the delimiter [del]. *)
+val preceded_list_to_string: ('a -> string) -> string -> 'a list -> string
+val preceded_iter_to_string: ('a -> string) -> string -> 'a iter -> string
+
 (* If [a] is an array, therefore a mapping of integers to elements, then
    [inverse a] computes its inverse, a mapping of elements to integers.
    The type ['a] of elements must support the use of OCaml's generic
