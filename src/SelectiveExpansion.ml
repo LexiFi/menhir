@@ -81,6 +81,24 @@ let mangle ((nt, pos) : label) : nonterminal =
 
 (* -------------------------------------------------------------------------- *)
 
+(* As a general policy, the attributes associated with a branch (that is, a
+   production) are not affected when this production is specialized; they are
+   just transmitted to every specialized copy. *)
+
+(* As an exception to this general policy, the [@name] attribute (if there is
+   one) is specialized, in the hope of maintaining the property that no two
+   productions have the same name. The name is transformed as follows: to the
+   original name, we append the instantiation, where each actual parameter
+   is preceded with an underscore character. *)
+
+let subst_name_attribute inst (name : string) : string =
+  name ^ Misc.preceded_list_to_string mangle_po "_" inst
+
+let subst_attributes inst (attrs : attributes) : attributes =
+  transform_attribute "name" (subst_name_attribute inst) attrs
+
+(* -------------------------------------------------------------------------- *)
+
 (* An environment maps all of the formal parameters of a rule to actual
    parameters, which make sense in the source namespace. *)
 
@@ -331,6 +349,12 @@ let rec recognize (param : parameter) : parameter =
 (* The following functions take arguments in the source namespace and produce
    results in the target namespace. *)
 
+(* The environment [env] alone is normally sufficient to determine the
+   substitution that must be performed. However, [subst_attributes]
+   requires the instantiation [inst] in order to transform [@name]
+   attributes. [inst] contains roughly slightly more information than
+   [env], as it retains the order of the formal parameters. *)
+
 let subst_parameter env param =
   (* [param] must have sort [star], in an appropriate sort environment. *)
   recognize (subst_parameter env param)
@@ -342,11 +366,14 @@ let subst_producer env (id, param, attrs) =
 let subst_producers env producers =
   List.map (subst_producer env) producers
 
-let subst_branch env branch =
-  { branch with pb_producers = subst_producers env branch.pb_producers }
+let subst_branch inst env branch =
+  { branch with
+    pb_producers = subst_producers env branch.pb_producers;
+    pb_attributes = subst_attributes inst branch.pb_attributes;
+  }
 
-let subst_branches env branches =
-  List.map (subst_branch env) branches
+let subst_branches inst env branches =
+  List.map (subst_branch inst env) branches
 
 (* -------------------------------------------------------------------------- *)
 
@@ -414,7 +441,7 @@ let visit label =
       rule with
       pr_nt = mangle label;
       pr_parameters = residuals;
-      pr_branches = subst_branches env rule.pr_branches;
+      pr_branches = subst_branches inst env rule.pr_branches;
       pr_attributes =
         (if formals = [] then [] else global_attributes nt) @
         rule.pr_attributes
