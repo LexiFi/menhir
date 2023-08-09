@@ -162,8 +162,8 @@ let reducecellparams prod i _symbol (next : pattern) : pattern =
   PRecord [
     fstate, (if i = 0 then PVar state else PWildcard);
     fsemv, PVar ids.(i);
-    fstartp, PVar (Printf.sprintf "_startpos_%s_" ids.(i));
-    fendp, PVar (Printf.sprintf "_endpos_%s_" ids.(i));
+    fstartp, PVar (sprintf "_startpos_%s_" ids.(i));
+    fendp, PVar (sprintf "_endpos_%s_" ids.(i));
     fnext, next;
   ]
 
@@ -235,13 +235,13 @@ let reducebody prod =
     ) ::
     ( PVar startp,
       if length > 0 then
-        EVar (Printf.sprintf "_startpos_%s_" ids.(0))
+        EVar (sprintf "_startpos_%s_" ids.(0))
       else
         endpos_of_top_stack_cell
     ) ::
     ( PVar endp,
       if length > 0 then
-        EVar (Printf.sprintf "_endpos_%s_" ids.(length - 1))
+        EVar (sprintf "_endpos_%s_" ids.(length - 1))
       else
         EVar startp
     ) :: []
