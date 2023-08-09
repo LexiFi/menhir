@@ -71,11 +71,12 @@ let mangle_po (po : parameter option) =
   | Some p ->
       Parameters.print false p
 
+let mangle_inst (pos : instantiation) =
+  Misc.separated_list_to_string mangle_po "," pos
+
 let mangle ((nt, pos) : label) : nonterminal =
   if pos = [] then nt else
-    Printf.sprintf "%s(%s)"
-      nt
-      (Misc.separated_list_to_string mangle_po "," pos)
+    Printf.sprintf "%s(%s)" nt (mangle_inst pos)
 
 (* -------------------------------------------------------------------------- *)
 
