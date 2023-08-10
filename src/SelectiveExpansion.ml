@@ -91,8 +91,11 @@ let mangle ((nt, pos) : label) : nonterminal =
    original name, we append the instantiation, where each actual parameter
    is preceded with an underscore character. *)
 
+let normalize_mangle_po po =
+  Misc.normalize (mangle_po po)
+
 let subst_name_attribute inst (name : string) : string =
-  name ^ Misc.preceded_list_to_string mangle_po "_" inst
+  name ^ Misc.preceded_list_to_string normalize_mangle_po "_" inst
 
 let subst_attributes inst (attrs : attributes) : attributes =
   transform_attribute "name" (subst_name_attribute inst) attrs
