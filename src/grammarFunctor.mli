@@ -182,9 +182,9 @@ module Terminal : sig
      by relying on the token alias that has been declared for this symbol. *)
   val print_concrete: t -> string
 
-  (* This is the OCaml type associated with a terminal
-     symbol. It is known only if the %token declaration was
-     accompanied with a type. *)
+  (* [ocamltype t] returns the OCaml type of the semantic value of the
+     terminal symbol [t]. If this terminal symbol carries no semantic
+     value, then it returns [None]. *)
 
   val ocamltype: t -> Stretch.ocamltype option
 
