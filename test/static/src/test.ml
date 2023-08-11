@@ -355,7 +355,6 @@ let process_positive_test basenames : unit =
   (* Run menhir again to compile *.stripped.mly using the new code back-end.
      [--infer] is required. Take this opportunity to pass [--stacklang-test]
      and [--stacklang-dump] and other flags. *)
-  (* We pass [--specialize-token] so as to test this transformation. *)
   let basenames = [ocamlbase ^ ""] in
   let log = ocamlbase ^ ".log"
   and ml = ocamlbase ^ ".ml"
@@ -373,7 +372,6 @@ let process_positive_test basenames : unit =
     "-lg"; "2";
     "-la"; "2";
     "-lc"; "2";
-    "--specialize-token";
     "--timings-to"; timings;
   ] @ flags);
 
