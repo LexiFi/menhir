@@ -103,7 +103,7 @@ let combine_name_attributes (caller : oattr) (callee : oattr) : attributes =
 (* Our general policy is as follows:
    the attributes of the new branch are those of the caller.
    The attributes of the callee (if there are any) are lost.
-   This policy is not documented and could change in the future. *)
+   This policy could change in the future. *)
 
 (* As an exception to this general policy, [@name] attributes are treated
    in a special way. Our motivation is to preserve the property that no
