@@ -4318,6 +4318,7 @@ These facilities are described in \sref{sec:sdk}.
 %
 Furthermore, \menhir allows decorating a grammar with ``attributes'',
 which are ignored by \menhir's back-ends,
+  % TODO note that the printing API uses @name attributes
 yet are written to the \cmly file,
 thus can be exploited by other tools, via \menhirsdk.
 %
@@ -4358,20 +4359,36 @@ They are ignored by \menhir's back-ends,
 but are written to \cmly files,
 thus can be exploited by other tools, via \menhirsdk.
 
-An attribute consists of a name and a payload. An attribute name is an \ocaml
-identifier, such as \texttt{cost}, or a list of \ocaml identifiers, separated
-with dots, such as \texttt{my.name}. An attribute payload is an \ocaml
-expression of arbitrary type, such as \texttt{1} or \verb+"&&"+ or \verb+print_int+.
-Following the syntax of \ocaml's attributes, an attribute's name and payload
-are separated with one or more spaces, and are delimited by \verb+[@+ and
-\verb+]+. Thus, \verb+[@cost 1]+ and \verb+[@printer print_int]+ are examples
-of attributes.
+\subsubsection{Attribute structure}
 
-An attribute can be attached at one of four levels:
+An attribute consists of a label and a payload. An attribute label is an \ocaml
+identifier, such as \texttt{cost}, or a list of \ocaml identifiers, separated
+with dots, such as \texttt{my.label}. An attribute payload is an \ocaml
+expression of arbitrary type, such as \texttt{1} or \verb+"&&"+ or \verb+print_int+.
+%
+(The payload is not parsed or type-checked, but must be well-formed according
+to OCaml's lexical conventions: that is, inside it, braces, parentheses,
+single and double quotes, and comment delimiters must be balanced.)
+%
+Following the syntax of \ocaml's attributes, an attribute's label and payload
+are separated with one or more spaces, and are delimited by \verb+[@+ and
+\verb+]+. Thus,
+\verb+[@name foo]+
+and
+\verb+[@cost 1]+
+and
+\verb+[@printer print_int]+
+are examples of attributes.
+
+\subsubsection{Attribute placement}
+\label{sec:attributes:placement}
+
+An attribute can be attached at one of five levels:
 % grammar-level attributes, %[@foo ...]
 % terminal attribute, %token BAR [@foo ...]
 % nonterminal attribute, bar [@foo ...]: ...
 % producer attribute, e = expr [@foo ...]
+% production attribute, ... { semantic action } [@foo ...]
 \begin{enumerate}
 
 \item An attribute can be attached with the grammar.
@@ -4417,7 +4434,25 @@ An attribute can be attached at one of four levels:
     LPAREN es = expr* [@list true] RPAREN { es }
 \end{verbatim}
 
+\item An attribute can be attached with a production.
+  Such an attribute must appear after the semantic action
+  and after the \dprec annotation, if there is one
+  (\sref{sec:productiongroups}).
+  If a production group contains several productions,
+  then its attributes are shared by all productions.
+  For instance, in the following definition,
+  each of the two productions carries an attribute
+  whose label is \texttt{name}:
+\begin{verbatim}
+  option(X):
+      { None   } [@name none]
+  | x = X
+      { Some x } [@name some]
+\end{verbatim}
+
 \end{enumerate}
+
+\subsubsection{Syntactic sugar}
 
 % %attribute declarations:
 
@@ -4432,13 +4467,17 @@ with each of the symbols
   %attribute INT id [@cost 0] [@precious false]
 \end{verbatim}
 An \dattribute declaration can be considered syntactic sugar: it is desugared
-away in terms of the four forms of attributes presented earlier. (The command
-line switch \oonlypreprocess can be used to see how it is desugared.)
+away in terms of the five forms of attributes presented earlier
+(\sref{sec:attributes:placement}).
+The command line switch \oonlypreprocess can be used to see how it is desugared.
 
-% Interaction of %attribute declarations and parameterized nonterminals:
+\subsubsection{Attribute propagation}
+
+\paragraph{Symbol attributes / parameterized symbol expansion}
 
 If an attribute is attached with a parameterized nonterminal symbol, then,
-when this symbol is expanded away, the attribute is transmitted to every
+when this symbol is expanded away (\sref{sec:templates}),
+the attribute is transmitted to every
 instance. For instance, in an earlier example, the attribute
 \verb+[@default None]+ was attached with the parameterized symbol
 \verb+option+. Then, every instance of \verb+option+, such as
@@ -4448,6 +4487,93 @@ instance only, one can use an \dattribute declaration. For instance,
 the declaration \verb+%attribute option(expr) [@cost 10]+ attaches
 an attribute with the nonterminal symbol \verb+option(expr)+, but
 not with the symbol \verb+option(COMMA)+.
+
+\paragraph{Production attributes / parameterized symbol expansion}
+
+If an attribute is attached with a production for a parameterized nonterminal
+symbol, then, when this symbol is expanded away (\sref{sec:templates}), this
+attribute is transmitted to every instance of this production.
+
+As an exception to this general rule, \dname attributes receive
+special treatment: their payload is specialized. For instance, assuming that
+the parameterized symbol \verb+option(X)+ is defined as follows:
+%
+\begin{verbatim}
+  option(X):
+      { None   } [@name none]
+  | x = X
+      { Some x } [@name some]
+\end{verbatim}
+%
+then instantiating the parameter~\verb+X+ with \verb+expr+ results in the
+following definition:
+%
+\begin{verbatim}
+  option(expr):
+      { None   } [@name none_expr]
+  | x = expr
+      { Some x } [@name some_expr]
+\end{verbatim}
+%
+The payload of each \dname attribute has been extended with
+an underscore character \verb+_+ followed with the actual
+parameter \verb+expr+.
+%
+(If the actual parameter contains parentheses or commas,
+they are replaced with underscore characters.)
+%
+This special behavior is intended to allow each production
+to receive a unique name.
+
+\paragraph{Production attributes / inlining}
+
+When a production whose left-hand side is marked \dinline
+(the \emph{callee})
+is inlined (\sref{sec:inline})
+into another production
+(the \emph{caller}),
+%
+the attributes of the caller are transmitted to the new production,
+while the attributes of the callee are lost.
+(This policy may change in the future.)
+
+As an exception to this general rule,
+\dname attributes receive special treatment:
+the \dname attributes of the callee and caller are combined, as follows.
+%
+If the caller and the callee both carry a \dname attribute,
+then the attribute payloads are concatenated,
+and an underscore character \verb+_+ is
+inserted between them.
+%
+If only the caller or only the callee carries a \dname attribute,
+then this attribute is preserved.
+%
+For example, after inlining, the following definitions:
+%
+\begin{verbatim}
+  expr:
+  | e1 = expr; op = binop; e2 = expr
+      { EBinOp (e1, op, e2) } [@name binop]
+  %inline binop:
+  | ADD { BAdd } [@name add]
+  | SUB { BSub } [@name sub]
+\end{verbatim}
+%
+give rise to the following result:
+%
+\begin{verbatim}
+  expr:
+  | e1 = expr; op = ADD; e2 = expr
+      { let op = BAdd in EBinOp (e1, op, e2) }
+      [@name binop_add]
+  | e1 = expr; op = SUB; e2 = expr
+      { let op = BSub in EBinOp (e1, op, e2) }
+      [@name binop_sub]
+\end{verbatim}
+%
+This special behavior is intended to allow each production
+to receive a unique name.
 
 % ------------------------------------------------------------------------------
 
