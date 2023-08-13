@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Attribute
 open BasicSyntax
 open Grammar
 open Cmly_format
@@ -39,11 +40,10 @@ let ranges =
   List.map range
 
 let attribute (attr : Attribute.attribute) : attribute =
-  let Attribute.{ key; payload; origin } = attr in
   {
-    a_label    = key;
-    a_payload  = payload;
-    a_position = range origin;
+    a_label    = attr.key;
+    a_payload  = attr.payload;
+    a_position = range attr.origin;
   }
 
 let attributes : Attribute.attributes -> attributes =
