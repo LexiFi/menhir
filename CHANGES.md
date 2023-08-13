@@ -8,6 +8,11 @@
   whole grammar.) This is achieved by letting one or more attributes appear
   immediately after the semantic action.
 
+  During the two grammar transformation phases (expansion of parameterized
+  nonterminal symbols and elimination of `%inline` nonterminal symbols), the
+  `[@name]` attributes attached with productions receive special treatment,
+  so as to allow each production to receive a unique name.
+
 * Minor additions in `MenhirSdk`:
 
   + The functions `hash`, `equal`, and `compare` appear in the signature
