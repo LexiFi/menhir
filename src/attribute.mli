@@ -1,3 +1,13 @@
+(******************************************************************************)
+(*                                                                            *)
+(*                                    Menhir                                  *)
+(*                                                                            *)
+(*   Copyright Inria. All rights reserved. This file is distributed under     *)
+(*   the terms of the GNU General Public License version 2, as described in   *)
+(*   the file LICENSE.                                                        *)
+(*                                                                            *)
+(******************************************************************************)
+
 (**Attributes allow the user to annotate the grammar with information that is
    ignored by Menhir, but can be exploited by other tools, via the SDK. *)
 
