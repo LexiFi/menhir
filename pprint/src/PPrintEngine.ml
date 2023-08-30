@@ -1,14 +1,15 @@
-(**************************************************************************)
-(*                                                                        *)
-(*  PPrint                                                                *)
-(*                                                                        *)
-(*  François Pottier, Inria Paris                                         *)
-(*  Nicolas Pouillard                                                     *)
-(*                                                                        *)
-(*  Copyright 2007-2019 Inria. All rights reserved. This file is          *)
-(*  distributed under the terms of the GNU Library General Public         *)
-(*  License, with an exception, as described in the file LICENSE.         *)
-(**************************************************************************)
+(******************************************************************************)
+(*                                                                            *)
+(*                                    PPrint                                  *)
+(*                                                                            *)
+(*                        François Pottier, Inria Paris                       *)
+(*                              Nicolas Pouillard                             *)
+(*                                                                            *)
+(*         Copyright 2007-2022 Inria. All rights reserved. This file is       *)
+(*        distributed under the terms of the GNU Library General Public       *)
+(*        License, with an exception, as described in the file LICENSE.       *)
+(*                                                                            *)
+(******************************************************************************)
 
 (** A point is a pair of a line number and a column number. *)
 type point =
@@ -367,8 +368,9 @@ let rec requirement = function
   | Blank len ->
       len
   | IfFlat (doc1, _) ->
-      (* In flattening mode, the requirement of [ifflat x y] is just the
-         requirement of its flat version, [x]. *)
+      (* The requirement of a document is the space that it needs when it is
+         printed in flattening mode. So, the requirement of [ifflat x y] is
+         just the requirement of its flat version, [x]. *)
       (* The smart constructor [ifflat] ensures that [IfFlat] is never nested
          in the left-hand side of [IfFlat], so this recursive call is not a
          problem; the function [requirement] has constant time complexity. *)
@@ -391,8 +393,15 @@ let rec requirement = function
 (* ------------------------------------------------------------------------- *)
 
 (* The above algebraic data type is not exposed to the user. Instead, we
-   expose the following functions. These functions construct a raw document
-   and compute its requirement, so as to obtain a document. *)
+   expose the following smart constructors. These functions construct a raw
+   document and compute its requirement, so as to obtain a document. *)
+
+(* The smart constructors ensure that [Empty] is the only empty document;
+   that is, there is no other way of constructing a document that behaves
+   (in all contexts) as an empty document. (This claim could be violated
+   by constructing [range hook empty] where [hook] has no effect, or by
+   constructing a [custom] document that behaves like an empty document.
+   These violations seem benign.) *)
 
 let empty =
   Empty
@@ -405,7 +414,10 @@ let space =
   Blank 1
 
 let string s =
-  String s
+  if String.length s = 0 then
+    empty
+  else
+    String s
 
 let fancysubstring s ofs len apparent_length =
   if len = 0 then
@@ -413,10 +425,10 @@ let fancysubstring s ofs len apparent_length =
   else
     FancyString (s, ofs, len, apparent_length)
 
-let substring s ofs len =
+let[@inline] substring s ofs len =
   fancysubstring s ofs len len
 
-let fancystring s apparent_length =
+let[@inline] fancystring s apparent_length =
   fancysubstring s 0 (String.length s) apparent_length
 
 (* The following function was stolen from [Batteries]. *)
@@ -433,10 +445,10 @@ let utf8_length s =
   in
   length_aux s 0 0
 
-let utf8string s =
+let[@inline] utf8string s =
   fancystring s (utf8_length s)
 
-let utf8format f =
+let[@inline] utf8format f =
   Printf.ksprintf utf8string f
 
 let hardline =
@@ -450,21 +462,27 @@ let blank n =
       Blank n
 
 let ifflat doc1 doc2 =
-  (* Avoid nesting [IfFlat] in the left-hand side of [IfFlat], as this
-     is redundant. *)
-  match doc1 with
-  | IfFlat (doc1, _)
-  | doc1 ->
+  match doc1, doc2 with
+  (* If both documents are empty then the result is empty. *)
+  | Empty, Empty ->
+      empty
+  (* We avoid nesting [IfFlat] inside the left-hand side of [IfFlat]. That
+     would be redundant; and the function [requirement] relies on the fact
+     that the left child of [IfFlat] cannot be [IfFlat]. On the right-hand
+     side, a symmetric optimization would be valid as well, but is not
+     useful. *)
+  | IfFlat (doc1, _), doc2
+  | doc1, doc2 ->
       IfFlat (doc1, doc2)
 
-let internal_break i =
-  ifflat (blank i) hardline
+let[@inline] internal_break i =
+  IfFlat (blank i, hardline)
 
 let break0 =
-  internal_break 0
+  IfFlat (Empty, HardLine) (* this is [internal_break 0] *)
 
 let break1 =
-  internal_break 1
+  IfFlat (Blank 1, HardLine) (* this is [internal_break 1] *)
 
 let break i =
   match i with
@@ -486,26 +504,46 @@ let (^^) x y =
 
 let nest i x =
   assert (i >= 0);
-  Nest (requirement x, i, x)
+  match x with
+  | Empty ->
+      Empty
+  | _ ->
+      Nest (requirement x, i, x)
 
 let group x =
-  let req = requirement x in
-  (* Minor optimisation: an infinite requirement dissolves a group. *)
-  if req = infinity then
-    x
-  else
-    Group (req, x)
+  match x with
+  | Empty ->
+      Empty
+  | _ ->
+      let req = requirement x in
+      (* Minor optimisation: an infinite requirement dissolves a group. *)
+      if req = infinity then
+        x
+      else
+        Group (req, x)
 
 let align x =
-  Align (requirement x, x)
+  match x with
+  | Empty ->
+      Empty
+  | _ ->
+      Align (requirement x, x)
 
-let range hook x =
+let[@inline] range hook x =
   Range (requirement x, hook, x)
 
 let custom c =
   (* Sanity check. *)
   assert (c#requirement >= 0);
   Custom c
+
+(* ------------------------------------------------------------------------- *)
+
+(* Because the smart constructors ensure that [Empty] is the only empty
+   document, [is_empty] can be implemented in a simple and efficient way. *)
+
+let is_empty x =
+  match x with Empty -> true | _ -> false
 
 (* ------------------------------------------------------------------------- *)
 
@@ -712,13 +750,21 @@ let compact output doc =
 
 (* This is just boilerplate. *)
 
+module type RENDERER = sig
+  type channel
+  type document
+  val pretty: float -> int -> channel -> document -> unit
+  val compact: channel -> document -> unit
+end
+
 module MakeRenderer (X : sig
   type channel
   val output: channel -> output
-end) = struct
+end)
+: RENDERER with type channel = X.channel and type document = document
+= struct
   type channel = X.channel
-  type dummy = document
-  type document = dummy
+  type nonrec document = document
   let pretty rfrac width channel doc = pretty (X.output channel) (initial rfrac width) 0 false doc
   let compact channel doc = compact (X.output channel) doc
 end

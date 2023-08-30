@@ -1,11 +1,34 @@
 # Changes
 
+## 2023/08/30
+
+* The new function `is_empty` allows testing (in constant time) whether
+  a document is empty.
+
+* Documentation: add a warning about the time and space complexity of
+  a naive use of `ifflat`.
+
+* The library now requires OCaml 4.03 or newer.
+
+* Add a new micro-benchmark, which uses `core_bench` and involves
+  randomly-generated arithmetic expressions.
+
+## 2022/01/03
+
+* Improved documentation. (Initial proposal by Thomas Refis, extended
+  by François Pottier.)
+
+* The internal modules `PPrintEngine`, `PPrintCombinators`, `PPrintRenderer`,
+  and `PPrintOCaml` have been removed. (Their existence was an implementation
+  detail.) Please refer to `PPrint`, `PPrint`, `PPrint`, and `PPrint.OCaml`
+  instead.
+
 ## 2021/11/29
 
 * Trailing blank characters at the end of a line are now suppressed.
   This includes indentation characters (whose production is implicit)
   as well as blank characters that are explicitly produced by the
-  combinators [space] and [blank]. Trailing blank characters are
+  combinators `space` and `blank`. Trailing blank characters are
   suppressed in both rendering modes (pretty and compact).
   (Contributed by Thomas Refis, reviewed and polished by François Pottier.)
 
