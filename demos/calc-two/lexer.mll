@@ -1,1 +1,1 @@
-../calc/lexer.mll
+../calc-param/lexer.mll
