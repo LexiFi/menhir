@@ -1,5 +1,4 @@
-open PPrintCombinators
-open PPrintEngine
+open PPrint
 open ExtPPrint
 open AST
 open Position
