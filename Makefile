@@ -139,6 +139,8 @@ houblix:
 # This requires appropriate opam switches to exist. A missing switch
 # can be created like this:
 #   opam switch create 4.03.0
+#   eval $(opam env)
+#   opam install dune ppx_sexp_conv sexplib
 
 VERSIONS := \
   4.03.0 \
@@ -155,6 +157,7 @@ VERSIONS := \
   4.13.1 \
   4.14.1 \
   5.0.0 \
+  5.1.0 \
 
 .PHONY: versions
 versions:
