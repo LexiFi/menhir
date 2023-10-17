@@ -109,8 +109,10 @@ x = X
 %public option(X):
   /* nothing */
     { None }
+    [@name none]
 | x = X
     { Some x }
+    [@name some]
 
 (* [ioption(X)] is identical to [option(X)], except its definition is
    inlined. This has the effect of duplicating the production that
@@ -119,8 +121,10 @@ x = X
 %public %inline ioption(X):
   /* nothing */
     { None }
+    [@name none]
 | x = X
     { Some x }
+    [@name some]
 
 (* [boption(X)] recognizes either nothing or [X]. It produces a value
    of type [bool]. *)
@@ -128,8 +132,10 @@ x = X
 %public boption(X):
   /* nothing */
     { false }
+    [@name none]
 | X
     { true }
+    [@name some]
 
 (* [loption(X)] recognizes either nothing or [X]. It produces a value
    of type ['a list] if [X] produces a value of type ['a list]. *)
@@ -137,8 +143,10 @@ x = X
 %public loption(X):
   /* nothing */
     { [] }
+    [@name none]
 | x = X
     { x }
+    [@name some]
 
 (* ------------------------------------------------------------------------- *)
 (* Sequences. *)
@@ -206,8 +214,10 @@ x = X
 %public list(X):
   /* nothing */
     { [] }
+    [@name nil]
 | x = X; xs = list(X)
     { x :: xs }
+    [@name cons]
 
 (* [nonempty_list(X)] recognizes a nonempty list of [X]'s. It produces
    a value of type ['a list] if [X] produces a value of type ['a]. The
@@ -216,8 +226,10 @@ x = X
 %public nonempty_list(X):
   x = X
     { [ x ] }
+    [@name one]
 | x = X; xs = nonempty_list(X)
     { x :: xs }
+    [@name more]
 
 (* [separated_list(separator, X)] recognizes a possibly empty list of
    [X]'s, separated with [separator]'s. It produces a value of type
@@ -236,8 +248,10 @@ x = X
 %public separated_nonempty_list(separator, X):
   x = X
     { [ x ] }
+    [@name one]
 | x = X; separator; xs = separated_nonempty_list(separator, X)
     { x :: xs }
+    [@name more]
 
 (* ------------------------------------------------------------------------- *)
 (* List manipulation and transformation. *)
