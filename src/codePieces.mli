@@ -66,6 +66,11 @@ val semvtype : Symbol.t -> typ list
 
 val tokpat: Terminal.t -> pattern -> pattern
 
+(* [tokexpr tok e] is an expression that constructs the token [tok],
+   taking its semantic value (if it needs one) from the expression [e]. *)
+
+val tokexpr: Terminal.t -> expr -> expr
+
 (* [tokspat toks] is a pattern that matches any token in the set [toks],
    without binding its semantic value. *)
 

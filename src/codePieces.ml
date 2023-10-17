@@ -138,6 +138,16 @@ let tokpat tok pat =
     if Terminal.ocamltype tok = None then [] else [ pat ]
   )
 
+(* [tokexpr tok e] is an expression that constructs the token [tok],
+   taking its semantic value (if it needs one) from the expression [e]. *)
+
+let tokexpr tok e =
+  let data = TokenType.tokendata (Terminal.print tok) in
+  EData (
+    data,
+    if Terminal.ocamltype tok = None then [] else [ e ]
+  )
+
 (* [tok_bind_unit tok pat e] binds the pattern [pat] to the unit value
    in the expression [e] if the token [tok] has no semantic value.
    Otherwise, it returns just [e]. *)
