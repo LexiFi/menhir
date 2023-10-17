@@ -36,6 +36,11 @@
     production. The previous behavior of this function can be obtained by
     writing `Nonterminal.attributes (Production.lhs prod)`.
 
+* Internal changes in `MenhirLib`:
+
+  + The functions `lhs`, `maybe_shift_t` and `may_reduce_prod` appear
+    in the signature `EngineTypes.TABLE`.
+
 ## 2023/06/08
 
 * The new command line switch `--dump-menhirLib <directory>` causes the source
