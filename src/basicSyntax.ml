@@ -124,6 +124,8 @@ let transform_branches f rule =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Terminal symbols. *)
+
 (* [tokens grammar] is a list of all (real) tokens in the grammar
    [grammar]. The special tokens "#" and "error" are not included.
    Pseudo-tokens (used in %prec declarations, but never declared
@@ -141,6 +143,40 @@ let typed_tokens grammar =
   StringMap.fold (fun token properties tokens ->
     if properties.tk_is_declared then (token, properties.tk_ocamltype) :: tokens else tokens
   ) grammar.tokens []
+
+(* [ocamltype_of_token grammar symbol] produces the OCaml type
+   of the terminal symbol [symbol] in the grammar [grammar].
+   This terminal symbol must exist and must not be a pseudo-token.
+   [None] is returned if and only if this token does not carry a
+   semantic value. *)
+
+let ocamltype_of_token grammar symbol : Stretch.ocamltype option =
+  try
+    let properties = StringMap.find symbol grammar.tokens in
+    assert properties.tk_is_declared;
+    properties.tk_ocamltype
+  with Not_found ->
+    assert false
+
+(* [alias grammar symbol] returns the token alias of the terminal symbol
+   [symbol], if there is one. This terminal symbol must exist and must not
+   be a pseudo-token. *)
+
+let alias grammar symbol : alias =
+  try
+    let properties = StringMap.find symbol grammar.tokens in
+    assert properties.tk_is_declared;
+    properties.tk_alias
+  with Not_found ->
+    assert false
+
+let unquoted_alias grammar symbol : alias =
+  alias grammar symbol
+  |> Option.map Misc.unquote
+
+(* -------------------------------------------------------------------------- *)
+
+(* Nonterminal symbols. *)
 
 (* [nonterminals grammar] is a list of all nonterminal symbols in the
    grammar [grammar]. It does not include the artificial start symbols
@@ -165,20 +201,6 @@ let ocamltype_of_symbol grammar symbol : Stretch.ocamltype option =
     Some (StringMap.find symbol grammar.types)
   with Not_found ->
     None
-
-(* [ocamltype_of_token grammar symbol] produces the OCaml type
-   of the terminal symbol [symbol] in the grammar [grammar].
-   This terminal symbol must exist and must not be a pseudo-token.
-   [None] is returned if and only if this token does not carry a
-   semantic value. *)
-
-let ocamltype_of_token grammar symbol : Stretch.ocamltype option =
-  try
-    let properties = StringMap.find symbol grammar.tokens in
-    assert properties.tk_is_declared;
-    properties.tk_ocamltype
-  with Not_found ->
-    assert false
 
 (* [ocamltype_of_start_symbol grammar symbol] produces the OCaml type
    of the start symbol [symbol] in the grammar [grammar]. *)
@@ -227,6 +249,8 @@ let names (producers : producers) : StringSet.t =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Productions. *)
+
 (* [print_production nt branch] prints the production whose left-hand side
    is the nonterminal symbol [nt] and whose right-hand side is [branch]. *)
 
@@ -239,3 +263,12 @@ and print_production_rhs producers =
     Printf.bprintf b " %s" producer.producer_symbol
   ) producers;
   Buffer.contents b
+
+(* [error_free branch] determines whether the branch [branch] does *not*
+   contain the [error] token. *)
+
+let rec error_free branch =
+  List.for_all error_free_producer branch.producers
+
+and error_free_producer producer =
+  producer.producer_symbol <> "error"
