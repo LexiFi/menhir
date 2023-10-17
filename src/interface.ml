@@ -72,7 +72,7 @@ let incremental =
 
 let entrytypescheme_incremental grammar symbol =
   let t = TypTextual (ocamltype_of_start_symbol grammar symbol) in
-  type2scheme (marrow [ tposition ] (checkpoint t))
+  type2scheme (arrow tposition (checkpoint t))
 
 (* -------------------------------------------------------------------------- *)
 
@@ -175,12 +175,21 @@ let incremental_api grammar () : interface =
 
 (* -------------------------------------------------------------------------- *)
 
+(* The unparsing API. *)
+
+let unparsing_api grammar () : interface =
+  UnparsingAPI.unparsing_API grammar
+
+(* -------------------------------------------------------------------------- *)
+
 (* The complete interface of the generated parser. *)
 
 let interface grammar = [
   IIFunctor (grammar.parameters,
     monolithic_api grammar @
-    MList.ifnlazy (Settings.backend = `TableBackend) (incremental_api grammar)
+    MList.ifnlazy (Settings.backend = `TableBackend) (incremental_api grammar) @
+    MList.ifnlazy Settings.unparsing (unparsing_api grammar) @
+    []
   )
 ]
 

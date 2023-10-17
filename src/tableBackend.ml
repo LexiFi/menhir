@@ -16,6 +16,7 @@ open Printf
 open TokenType
 open NonterminalType
 open CodePieces
+open BasicSyntax
 
 module Run () = struct
 
@@ -986,10 +987,87 @@ let versiondef = {
 
 (* Let's put everything together. *)
 
-open BasicSyntax
-
 let grammar =
   Front.grammar
+
+(* ------------------------------------------------------------------------ *)
+
+(* Generated code for the inspection API. *)
+
+let inspection_API () =
+
+  (* Define the internal sub-module [symbols], which contains type
+     definitions. Then, include this sub-module. This sub-module is used
+     again below, as part of the application of the functor
+     [TableInterpreter.MakeInspection]. *)
+
+  SIModuleDef (symbols, MStruct (
+    interface_to_structure (
+      tokengadtdef grammar @
+      nonterminalgadtdef grammar
+    )
+  )) ::
+
+  SIInclude (MVar symbols) ::
+
+  (* Apply the functor [InspectionTableInterpreter.Make], which expects
+     four arguments. *)
+  SIInclude (mapp (MVar make_inspection) [
+    (* Argument 1, of type [TableFormat.TABLES]. *)
+    MVar tables;
+    (* Argument 2, of type [InspectionTableFormat.TABLES]. *)
+    MStruct (
+      (* [lr1state] *)
+      SIInclude (MVar ti) ::
+      (* [terminal], [nonterminal]. *)
+      SIInclude (MVar symbols) ::
+      (* This functor application builds the types [symbol] and [xsymbol]
+         in terms of the types [terminal] and [nonterminal]. This saves
+         us the trouble of generating these definitions. *)
+      SIInclude (MApp (MVar make_symbol, MVar symbols)) ::
+      SIValDefs (false,
+        terminal() ::
+        nonterminal() ::
+        lr0_incoming() ::
+        rhs() ::
+        lr0_core() ::
+        lr0_items() ::
+        nullable() ::
+        first() ::
+        []
+      ) ::
+      []
+    );
+    (* Argument 3, of type [EngineTypes.TABLE]. *)
+    MVar et;
+    (* Argument 4, of type [EngineTypes.ENGINE with ...]. *)
+    MVar ti;
+  ]) ::
+
+  []
+
+(* ------------------------------------------------------------------------ *)
+
+(* The (optional) unparsing API. *)
+
+let unparsing_API () : structure =
+  let module A = struct
+    (* A list of the start symbols and start states. *)
+    let entry =
+      Lr1.fold_entry (fun _prod state nt _ty accu ->
+        (nt, Lr1.number state) :: accu
+      ) []
+  end in
+  let module N = struct
+    (* The internal name of the module that contains the parse tables. *)
+    let tables = interpreter ^ "." ^ et
+  end in
+  let module C = UnparsingAPI.Code(Grammar)(A)(N) in
+  C.unparsing_API()
+
+(* ------------------------------------------------------------------------ *)
+
+(* All of the generated code (the parser, plus the optional APIs). *)
 
 let program =
 
@@ -1002,7 +1080,7 @@ let program =
        version mismatch could cause a crash. *)
 
     SIComment "This generated code requires the following version of MenhirLib:" ::
-    SIValDefs (false, [ versiondef ]) ::
+    valdef versiondef ::
 
     (* Define the internal sub-module [basics], which contains the definitions
        of the exception [Error] and of the type [token]. Then, include this
@@ -1053,60 +1131,10 @@ let program =
       SIModuleDef (ti, MApp (MVar make_engine, MVar et)) ::
       SIInclude (MVar ti) ::
 
-      MList.ifnlazy Settings.inspection (fun () ->
+      (* Optionally generate the inspection API. *)
+      MList.ifnlazy Settings.inspection inspection_API @
 
-        (* Define the internal sub-module [symbols], which contains type
-           definitions. Then, include this sub-module. This sub-module is used
-           again below, as part of the application of the functor
-           [TableInterpreter.MakeInspection]. *)
-
-        SIModuleDef (symbols, MStruct (
-          interface_to_structure (
-            tokengadtdef grammar @
-            nonterminalgadtdef grammar
-          )
-        )) ::
-
-        SIInclude (MVar symbols) ::
-
-        (* Apply the functor [InspectionTableInterpreter.Make], which expects
-           four arguments. *)
-        SIInclude (mapp (MVar make_inspection) [
-          (* Argument 1, of type [TableFormat.TABLES]. *)
-          MVar tables;
-          (* Argument 2, of type [InspectionTableFormat.TABLES]. *)
-          MStruct (
-            (* [lr1state] *)
-            SIInclude (MVar ti) ::
-            (* [terminal], [nonterminal]. *)
-            SIInclude (MVar symbols) ::
-            (* This functor application builds the types [symbol] and [xsymbol]
-               in terms of the types [terminal] and [nonterminal]. This saves
-               us the trouble of generating these definitions. *)
-            SIInclude (MApp (MVar make_symbol, MVar symbols)) ::
-            SIValDefs (false,
-              terminal() ::
-              nonterminal() ::
-              lr0_incoming() ::
-              rhs() ::
-              lr0_core() ::
-              lr0_items() ::
-              nullable() ::
-              first() ::
-              []
-            ) ::
-            []
-          );
-          (* Argument 3, of type [EngineTypes.TABLE]. *)
-          MVar et;
-          (* Argument 4, of type [EngineTypes.ENGINE with ...]. *)
-          MVar ti;
-        ]) ::
-
-        []
-
-      )
-
+      []
     )) ::
 
     SIValDefs (false, monolithic_api) ::
@@ -1114,6 +1142,9 @@ let program =
     SIModuleDef (incremental, MStruct [
       SIValDefs (false, incremental_api)
     ]) ::
+
+    (* Optionally generate the unparsing API. *)
+    MList.ifnlazy Settings.unparsing unparsing_API @
 
     SIStretch grammar.postludes ::
 

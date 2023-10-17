@@ -162,6 +162,10 @@ val interpret :
    requires producing more tables). *)
 val inspection : bool
 
+(** Whether to generate the unparsing API (which offers facilities for
+    constructing and displaying concrete syntax trees). *)
+val unparsing : bool
+
 (** Whether the standard menhir library should be used. *)
 val no_stdlib : bool
 

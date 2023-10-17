@@ -229,6 +229,9 @@ let optimization_level =
 let inspection =
   ref false
 
+let unparsing =
+  ref false
+
 let coq_no_version_check =
   ref false
 
@@ -450,6 +453,7 @@ let options = Arg.align [
   "--only-preprocess-uu", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess (PrintUnitActions true)),
                           " Print grammar with unit actions & tokens";
   "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
+  "--unparsing", Arg.Set unparsing, " Generate the unparsing API";
   "--random-seed", Arg.Int Random.init, "<seed> Set the random seed";
   "--random-self-init", Arg.Unit Random.self_init, " Pick a random seed in a system-dependent way";
   "--random-sentence-length", Arg.Set_int random_sentence_goal, "<length> Set the goal length for a random sentence";
@@ -746,6 +750,15 @@ let inspection =
 let () =
   if inspection && backend <> `TableBackend then begin
     fprintf stderr "Error: --inspection requires --table.\n";
+    exit 1
+  end
+
+let unparsing =
+  !unparsing
+
+let () =
+  if unparsing && backend <> `TableBackend then begin
+    fprintf stderr "Error: --unparsing requires --table.\n";
     exit 1
   end
 
