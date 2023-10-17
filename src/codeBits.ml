@@ -97,6 +97,11 @@ let tlexbuf =
 let tobj =
   tname "Obj.t"
 
+(* The option type. *)
+
+let toption ty =
+  TypApp ("option", [ty])
+
 (* Building a type variable. *)
 
 let tvar x : typ =

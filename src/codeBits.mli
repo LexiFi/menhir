@@ -35,7 +35,8 @@ val texn: typ
 val tposition: typ
 val tlocation: typ
 val tlexbuf: typ
-val tobj : typ
+val tobj: typ
+val toption: typ -> typ
 
 (** Building a type variable. *)
 val tvar: string -> typ
