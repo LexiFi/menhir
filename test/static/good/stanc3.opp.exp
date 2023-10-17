@@ -131,25 +131,25 @@ let nest_unsized_array basic_type n =
 
 option_DATABLOCK_:
   
-    {    ( None )}
+    {    ( None )} [@name none_DATABLOCK]
 | x = DATABLOCK
-    {    ( Some x )}
+    {    ( Some x )} [@name some_DATABLOCK]
 
 option_data_block_:
   
-    {    ( None )}
+    {    ( None )} [@name none_data_block]
 | x = data_block
-    {    ( Some x )}
+    {    ( Some x )} [@name some_data_block]
 
 option_expression_:
   
-    {    ( None )}
+    {    ( None )} [@name none_expression]
 | l = lhs
     {let x =     (
       grammar_logger "lhs_expression" ;
       l
     ) in
-    ( Some x )}
+    ( Some x )} [@name some_expression]
 | e = non_lhs
     {let x =
   let _endpos = _endpos_e_ in
@@ -159,29 +159,29 @@ option_expression_:
       {expr=e;
        emeta={loc= Location_span.of_positions_exn _loc}})
 in
-    ( Some x )}
+    ( Some x )} [@name some_expression]
 
 option_function_block_:
   
-    {    ( None )}
+    {    ( None )} [@name none_function_block]
 | x = function_block
-    {    ( Some x )}
+    {    ( Some x )} [@name some_function_block]
 
 option_generated_quantities_block_:
   
-    {    ( None )}
+    {    ( None )} [@name none_generated_quantities_block]
 | x = generated_quantities_block
-    {    ( Some x )}
+    {    ( Some x )} [@name some_generated_quantities_block]
 
 option_model_block_:
   
-    {    ( None )}
+    {    ( None )} [@name none_model_block]
 | x = model_block
-    {    ( Some x )}
+    {    ( Some x )} [@name some_model_block]
 
 option_pair_ASSIGN_expression__:
   
-    {    ( None )}
+    {    ( None )} [@name none_pair_ASSIGN_expression_]
 | x = ASSIGN l = lhs
     {let x =
   let y =     (
@@ -190,7 +190,7 @@ option_pair_ASSIGN_expression__:
     ) in
       ( (x, y) )
 in
-    ( Some x )}
+    ( Some x )} [@name some_pair_ASSIGN_expression_]
 | x = ASSIGN e = non_lhs
     {let x =
   let y =
@@ -203,18 +203,18 @@ in
   in
       ( (x, y) )
 in
-    ( Some x )}
+    ( Some x )} [@name some_pair_ASSIGN_expression_]
 
 option_pair_ASSIGN_no_assign__:
   
-    {    ( None )}
+    {    ( None )} [@name none_pair_ASSIGN_no_assign_]
 | x = ASSIGN y = no_assign
     {let x =     ( (x, y) ) in
-    ( Some x )}
+    ( Some x )} [@name some_pair_ASSIGN_no_assign_]
 
 option_pair_COMMA_expression__:
   
-    {    ( None )}
+    {    ( None )} [@name none_pair_COMMA_expression_]
 | x = COMMA l = lhs
     {let x =
   let y =     (
@@ -223,7 +223,7 @@ option_pair_COMMA_expression__:
     ) in
       ( (x, y) )
 in
-    ( Some x )}
+    ( Some x )} [@name some_pair_COMMA_expression_]
 | x = COMMA e = non_lhs
     {let x =
   let y =
@@ -236,85 +236,85 @@ in
   in
       ( (x, y) )
 in
-    ( Some x )}
+    ( Some x )} [@name some_pair_COMMA_expression_]
 
 option_parameters_block_:
   
-    {    ( None )}
+    {    ( None )} [@name none_parameters_block]
 | x = parameters_block
-    {    ( Some x )}
+    {    ( Some x )} [@name some_parameters_block]
 
 option_transformed_data_block_:
   
-    {    ( None )}
+    {    ( None )} [@name none_transformed_data_block]
 | x = transformed_data_block
-    {    ( Some x )}
+    {    ( Some x )} [@name some_transformed_data_block]
 
 option_transformed_parameters_block_:
   
-    {    ( None )}
+    {    ( None )} [@name none_transformed_parameters_block]
 | x = transformed_parameters_block
-    {    ( Some x )}
+    {    ( Some x )} [@name some_transformed_parameters_block]
 
 option_truncation_:
   
-    {    ( None )}
+    {    ( None )} [@name none_truncation]
 | x = truncation
-    {    ( Some x )}
+    {    ( Some x )} [@name some_truncation]
 
 option_unsized_dims_:
   
-    {    ( None )}
+    {    ( None )} [@name none_unsized_dims]
 | x = unsized_dims
-    {    ( Some x )}
+    {    ( Some x )} [@name some_unsized_dims]
 
 loption_separated_nonempty_list_COMMA_arg_decl__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_arg_decl_]
 | x = separated_nonempty_list_COMMA_arg_decl_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_arg_decl_]
 
 loption_separated_nonempty_list_COMMA_expression__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_expression_]
 | x = separated_nonempty_list_COMMA_expression_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_expression_]
 
 list_COMMA_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_COMMA]
 | x = COMMA xs = list_COMMA_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_COMMA]
 
 list_function_def_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_function_def]
 | x = function_def xs = list_function_def_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_function_def]
 
 list_top_var_decl_no_assign_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_top_var_decl_no_assign]
 | x = top_var_decl_no_assign xs = list_top_var_decl_no_assign_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_top_var_decl_no_assign]
 
 list_top_vardecl_or_statement_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_top_vardecl_or_statement]
 | x = top_vardecl_or_statement xs = list_top_vardecl_or_statement_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_top_vardecl_or_statement]
 
 list_vardecl_or_statement_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_vardecl_or_statement]
 | x = vardecl_or_statement xs = list_vardecl_or_statement_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_vardecl_or_statement]
 
 separated_nonempty_list_COMMA_arg_decl_:
   x = arg_decl
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_arg_decl]
 | x = arg_decl _2 = COMMA xs = separated_nonempty_list_COMMA_arg_decl_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_arg_decl]
 
 separated_nonempty_list_COMMA_expression_:
   l = lhs
@@ -322,7 +322,7 @@ separated_nonempty_list_COMMA_expression_:
       grammar_logger "lhs_expression" ;
       l
     ) in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_expression]
 | e = non_lhs
     {let x =
   let _endpos = _endpos_e_ in
@@ -332,13 +332,13 @@ separated_nonempty_list_COMMA_expression_:
       {expr=e;
        emeta={loc= Location_span.of_positions_exn _loc}})
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_expression]
 | l = lhs _2 = COMMA xs = separated_nonempty_list_COMMA_expression_
     {let x =     (
       grammar_logger "lhs_expression" ;
       l
     ) in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_expression]
 | e = non_lhs _2 = COMMA xs = separated_nonempty_list_COMMA_expression_
     {let x =
   let _endpos = _endpos_e_ in
@@ -348,19 +348,19 @@ in
       {expr=e;
        emeta={loc= Location_span.of_positions_exn _loc}})
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_expression]
 
 separated_nonempty_list_COMMA_id_and_optional_assignment_expression__:
   x = id_and_optional_assignment_expression_
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_id_and_optional_assignment_expression_]
 | x = id_and_optional_assignment_expression_ _2 = COMMA xs = separated_nonempty_list_COMMA_id_and_optional_assignment_expression__
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_id_and_optional_assignment_expression_]
 
 separated_nonempty_list_COMMA_id_and_optional_assignment_no_assign__:
   x = id_and_optional_assignment_no_assign_
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_id_and_optional_assignment_no_assign_]
 | x = id_and_optional_assignment_no_assign_ _2 = COMMA xs = separated_nonempty_list_COMMA_id_and_optional_assignment_no_assign__
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_id_and_optional_assignment_no_assign_]
 
 program:
   ofb = option_function_block_ odb = option_data_block_ otdb = option_transformed_data_block_ opb = option_parameters_block_ otpb = option_transformed_parameters_block_ omb = option_model_block_ ogb = option_generated_quantities_block_ _8 = EOF
@@ -807,7 +807,7 @@ let _loc_dims_opt_ = (_startpos_dims_opt_, _endpos_dims_opt_) in
                 Location_span.of_positions_exn (startpos, _endpos)
             }
           })
-    ))}
+    ))} [@name none_lhs]
 | x = lhs ty = sized_basic_type vs = separated_nonempty_list_COMMA_id_and_optional_assignment_expression__ _4 = SEMICOLON
     {let dims_opt =     ( Some x ) in
 let (_endpos_dims_opt_, _startpos_dims_opt_) = (_endpos_x_, _startpos_x_) in
@@ -873,7 +873,7 @@ let _loc_dims_opt_ = (_startpos_dims_opt_, _endpos_dims_opt_) in
                 Location_span.of_positions_exn (startpos, _endpos)
             }
           })
-    ))}
+    ))} [@name some_lhs]
 
 decl_top_var_type_expression_:
   ty = top_var_type id = decl_identifier dims = dims rhs_opt = optional_assignment_expression_ _5 = SEMICOLON
@@ -959,7 +959,7 @@ let _loc_dims_opt_ = (_startpos_dims_opt_, _endpos_dims_opt_) in
                 Location_span.of_positions_exn (startpos, _endpos)
             }
           })
-    ))}
+    ))} [@name none_lhs]
 | x = lhs ty = top_var_type vs = separated_nonempty_list_COMMA_id_and_optional_assignment_expression__ _4 = SEMICOLON
     {let dims_opt =     ( Some x ) in
 let (_endpos_dims_opt_, _startpos_dims_opt_) = (_endpos_x_, _startpos_x_) in
@@ -1025,7 +1025,7 @@ let _loc_dims_opt_ = (_startpos_dims_opt_, _endpos_dims_opt_) in
                 Location_span.of_positions_exn (startpos, _endpos)
             }
           })
-    ))}
+    ))} [@name some_lhs]
 
 decl_top_var_type_no_assign_:
   ty = top_var_type id = decl_identifier dims = dims rhs_opt = optional_assignment_no_assign_ _5 = SEMICOLON
@@ -1111,7 +1111,7 @@ let _loc_dims_opt_ = (_startpos_dims_opt_, _endpos_dims_opt_) in
                 Location_span.of_positions_exn (startpos, _endpos)
             }
           })
-    ))}
+    ))} [@name none_lhs]
 | x = lhs ty = top_var_type vs = separated_nonempty_list_COMMA_id_and_optional_assignment_no_assign__ _4 = SEMICOLON
     {let dims_opt =     ( Some x ) in
 let (_endpos_dims_opt_, _startpos_dims_opt_) = (_endpos_x_, _startpos_x_) in
@@ -1177,7 +1177,7 @@ let _loc_dims_opt_ = (_startpos_dims_opt_, _endpos_dims_opt_) in
                 Location_span.of_positions_exn (startpos, _endpos)
             }
           })
-    ))}
+    ))} [@name some_lhs]
 
 var_decl:
   d_fn = decl_sized_basic_type_expression_

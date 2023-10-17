@@ -65,66 +65,66 @@
 
 loption_preceded_VAR_terminated_bindings__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_preceded_VAR_terminated_bindings_]
 | _1 = VAR x = terminated_bindings
     {let x =     ( x ) in
-    ( x )}
+    ( x )} [@name some_preceded_VAR_terminated_bindings_]
 
 loption_separated_nonempty_list_COMMA_expression__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_expression_]
 | x = separated_nonempty_list_COMMA_expression_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_expression_]
 
 loption_separated_nonempty_list_SEMICOLON_binding__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_SEMICOLON_binding_]
 | x = separated_nonempty_list_SEMICOLON_binding_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_SEMICOLON_binding_]
 
 loption_separated_nonempty_list_SEMICOLON_instruction__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_SEMICOLON_instruction_]
 | x = separated_nonempty_list_SEMICOLON_instruction_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_SEMICOLON_instruction_]
 
 list_procedure_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_procedure]
 | x = procedure xs = list_procedure_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_procedure]
 
 nonempty_list_terminated_binding_SEMICOLON__:
   x = binding _2 = SEMICOLON
     {let x =     ( x ) in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_terminated_binding_SEMICOLON_]
 | x = binding _2 = SEMICOLON xs = nonempty_list_terminated_binding_SEMICOLON__
     {let x =     ( x ) in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_terminated_binding_SEMICOLON_]
 
 separated_nonempty_list_COMMA_ID_:
   x = ID
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_ID]
 | x = ID _2 = COMMA xs = separated_nonempty_list_COMMA_ID_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_ID]
 
 separated_nonempty_list_COMMA_expression_:
   x = expression
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_expression]
 | x = expression _2 = COMMA xs = separated_nonempty_list_COMMA_expression_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_expression]
 
 separated_nonempty_list_SEMICOLON_binding_:
   x = binding
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_SEMICOLON_binding]
 | x = binding _2 = SEMICOLON xs = separated_nonempty_list_SEMICOLON_binding_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_SEMICOLON_binding]
 
 separated_nonempty_list_SEMICOLON_instruction_:
   x = instruction
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_SEMICOLON_instruction]
 | x = instruction _2 = SEMICOLON xs = separated_nonempty_list_SEMICOLON_instruction_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_SEMICOLON_instruction]
 
 typ:
   _1 = INTEGER

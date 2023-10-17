@@ -56,33 +56,33 @@ module L = ParseLocation
 
 loption_separated_nonempty_list_COMMA_env_decl__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_env_decl_]
 | x = separated_nonempty_list_COMMA_env_decl_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_env_decl_]
 
 list_type_simple_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_type_simple]
 | x = type_simple xs = list_type_simple_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_type_simple]
 
 nonempty_list_compact_arg_:
   x = compact_arg
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_compact_arg]
 | x = compact_arg xs = nonempty_list_compact_arg_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_compact_arg]
 
 nonempty_list_term_simple_:
   x = term_simple
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_term_simple]
 | x = term_simple xs = nonempty_list_term_simple_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_term_simple]
 
 separated_nonempty_list_COMMA_env_decl_:
   x = env_decl
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_env_decl]
 | x = env_decl _2 = COMMA xs = separated_nonempty_list_COMMA_env_decl_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_env_decl]
 
 file:
   b = body _2 = EOF

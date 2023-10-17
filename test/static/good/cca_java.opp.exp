@@ -140,45 +140,45 @@ open Stat
 
 loption_block_statements_:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_block_statements]
 | l = nonempty_list_block_statement_
     {let x =                                    ( l ) in
-    ( x )}
+    ( x )} [@name some_block_statements]
 
 list_annotation_type_member_declaration_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_annotation_type_member_declaration]
 | x = annotation_type_member_declaration xs = list_annotation_type_member_declaration_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_annotation_type_member_declaration]
 
 list_class_body_declaration_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_class_body_declaration]
 | x = class_body_declaration xs = list_class_body_declaration_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_class_body_declaration]
 
 list_interface_member_declaration_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_interface_member_declaration]
 | x = interface_member_declaration xs = list_interface_member_declaration_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_interface_member_declaration]
 
 nonempty_list_additional_bound_:
   x = additional_bound
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_additional_bound]
 | x = additional_bound xs = nonempty_list_additional_bound_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_additional_bound]
 
 nonempty_list_annotation_:
   x = annotation
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_annotation]
 | x = annotation xs = nonempty_list_annotation_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_annotation]
 
 nonempty_list_annotation_or_modifier_:
   a = annotation
     {let x =                    ( annot_to_mod a ) in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_annotation_or_modifier]
 | m = adhoc_modifier
     {let x =
   let _endpos = _endpos_m_ in
@@ -187,10 +187,10 @@ nonempty_list_annotation_or_modifier_:
   let _startofs = _startpos.Lexing.pos_cnum in
                      ( mkmod _startofs _endofs m )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_annotation_or_modifier]
 | a = annotation xs = nonempty_list_annotation_or_modifier_
     {let x =                    ( annot_to_mod a ) in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_annotation_or_modifier]
 | m = adhoc_modifier xs = nonempty_list_annotation_or_modifier_
     {let x =
   let _endpos = _endpos_m_ in
@@ -199,51 +199,51 @@ in
   let _startofs = _startpos.Lexing.pos_cnum in
                      ( mkmod _startofs _endofs m )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_annotation_or_modifier]
 
 nonempty_list_block_statement_:
   x = block_statement
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_block_statement]
 | x = block_statement xs = nonempty_list_block_statement_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_block_statement]
 
 nonempty_list_catch_clause_:
   x = catch_clause
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_catch_clause]
 | x = catch_clause xs = nonempty_list_catch_clause_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_catch_clause]
 
 nonempty_list_element_value_comma_:
   e = element_value _2 = COMMA
     {let x =                         ( e ) in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_element_value_comma]
 | e = element_value _2 = COMMA xs = nonempty_list_element_value_comma_
     {let x =                         ( e ) in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_element_value_comma]
 
 nonempty_list_import_declaration_:
   x = import_declaration
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_import_declaration]
 | x = import_declaration xs = nonempty_list_import_declaration_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_import_declaration]
 
 nonempty_list_switch_label_:
   x = switch_label
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_switch_label]
 | x = switch_label xs = nonempty_list_switch_label_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_switch_label]
 
 nonempty_list_type_declaration_:
   x = type_declaration
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_type_declaration]
 | x = type_declaration xs = nonempty_list_type_declaration_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_type_declaration]
 
 nonempty_list_variable_modifier_:
   x = variable_modifier
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_variable_modifier]
 | x = variable_modifier xs = nonempty_list_variable_modifier_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_variable_modifier]
 
 separated_nonempty_list_COMMA_class_type_:
   u = unann_class_or_interface_type
@@ -251,7 +251,7 @@ separated_nonempty_list_COMMA_class_type_:
   let c =                                                 ( u ) in
                               ( c )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_class_type]
 | a = annotations u = unann_class_or_interface_type
     {let x =
   let c =
@@ -266,13 +266,13 @@ in
   in
                               ( c )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_class_type]
 | u = unann_class_or_interface_type _2 = COMMA xs = separated_nonempty_list_COMMA_class_type_
     {let x =
   let c =                                                 ( u ) in
                               ( c )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_class_type]
 | a = annotations u = unann_class_or_interface_type _2 = COMMA xs = separated_nonempty_list_COMMA_class_type_
     {let x =
   let c =
@@ -287,24 +287,24 @@ in
   in
                               ( c )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_class_type]
 
 separated_nonempty_list_COMMA_element_value_:
   x = element_value
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_element_value]
 | x = element_value _2 = COMMA xs = separated_nonempty_list_COMMA_element_value_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_element_value]
 
 separated_nonempty_list_COMMA_element_value_pair_:
   x = element_value_pair
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_element_value_pair]
 | x = element_value_pair _2 = COMMA xs = separated_nonempty_list_COMMA_element_value_pair_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_element_value_pair]
 
 separated_nonempty_list_COMMA_expr_or_err_:
   e = expression
     {let x =                ( e ) in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_expr_or_err]
 | s = ERROR
     {let x =
   let _endpos = _endpos_s_ in
@@ -313,10 +313,10 @@ separated_nonempty_list_COMMA_expr_or_err_:
   let _startofs = _startpos.Lexing.pos_cnum in
             ( mkerrexpr _startofs _endofs s )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_expr_or_err]
 | e = expression _2 = COMMA xs = separated_nonempty_list_COMMA_expr_or_err_
     {let x =                ( e ) in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_expr_or_err]
 | s = ERROR _2 = COMMA xs = separated_nonempty_list_COMMA_expr_or_err_
     {let x =
   let _endpos = _endpos_s_ in
@@ -325,19 +325,19 @@ in
   let _startofs = _startpos.Lexing.pos_cnum in
             ( mkerrexpr _startofs _endofs s )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_expr_or_err]
 
 separated_nonempty_list_COMMA_formal_parameter_:
   x = formal_parameter
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_formal_parameter]
 | x = formal_parameter _2 = COMMA xs = separated_nonempty_list_COMMA_formal_parameter_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_formal_parameter]
 
 separated_nonempty_list_COMMA_identifier_:
   x = identifier
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_identifier]
 | x = identifier _2 = COMMA xs = separated_nonempty_list_COMMA_identifier_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_identifier]
 
 separated_nonempty_list_COMMA_interface_type_:
   u = unann_class_or_interface_type
@@ -345,7 +345,7 @@ separated_nonempty_list_COMMA_interface_type_:
   let c =                                                 ( u ) in
                               ( c )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_interface_type]
 | a = annotations u = unann_class_or_interface_type
     {let x =
   let c =
@@ -360,13 +360,13 @@ in
   in
                               ( c )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_interface_type]
 | u = unann_class_or_interface_type _2 = COMMA xs = separated_nonempty_list_COMMA_interface_type_
     {let x =
   let c =                                                 ( u ) in
                               ( c )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_interface_type]
 | a = annotations u = unann_class_or_interface_type _2 = COMMA xs = separated_nonempty_list_COMMA_interface_type_
     {let x =
   let c =
@@ -381,19 +381,19 @@ in
   in
                               ( c )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_interface_type]
 
 separated_nonempty_list_COMMA_statement_expression_:
   x = statement_expression
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_statement_expression]
 | x = statement_expression _2 = COMMA xs = separated_nonempty_list_COMMA_statement_expression_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_statement_expression]
 
 separated_nonempty_list_COMMA_variable_declarator_:
   x = variable_declarator
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_variable_declarator]
 | x = variable_declarator _2 = COMMA xs = separated_nonempty_list_COMMA_variable_declarator_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_variable_declarator]
 
 reserved:
   _1 = GOTO
@@ -1569,7 +1569,7 @@ normal_annotation_body:
   in
                                  ( l )
 in
-                                              ( Anormal(n, e) )}
+                                              ( Anormal(n, e) )} [@name none_separated_nonempty_list_COMMA_element_value_pair_]
 | n = name _2 = LPAREN x = separated_nonempty_list_COMMA_element_value_pair_ _4 = RPAREN
     {let e =
   let l =
@@ -1578,7 +1578,7 @@ in
   in
                                  ( l )
 in
-                                              ( Anormal(n, e) )}
+                                              ( Anormal(n, e) )} [@name some_separated_nonempty_list_COMMA_element_value_pair_]
 
 marker_annotation_body:
   n = name
@@ -1627,7 +1627,7 @@ element_value_array_initializer:
   in
                             ( l )
 in
-                                        ( e )}
+                                        ( e )} [@name none_separated_nonempty_list_COMMA_element_value_]
 | _1 = LBRACE x = separated_nonempty_list_COMMA_element_value_ _3 = RBRACE
     {let e =
   let l =
@@ -1636,7 +1636,7 @@ in
   in
                             ( l )
 in
-                                        ( e )}
+                                        ( e )} [@name some_separated_nonempty_list_COMMA_element_value_]
 | _1 = LBRACE l = nonempty_list_element_value_comma_ _3 = RBRACE
     {let e =                                        ( l ) in
                                         ( e )}
@@ -1652,7 +1652,7 @@ in
       register_identifier_as_class (mkfqn_cls id) id;
       begin_scope ~kind:(FKclass id) ();
       m_opt, id
-    )}
+    )} [@name none_modifiers]
 | x = modifiers _2 = CLASS i = identifier
     {let m_opt =
   let o =     ( Some x ) in
@@ -1663,7 +1663,7 @@ in
       register_identifier_as_class (mkfqn_cls id) id;
       begin_scope ~kind:(FKclass id) ();
       m_opt, id
-    )}
+    )} [@name some_modifiers]
 
 class_declaration_head1:
   ch = class_declaration_head0
@@ -1671,13 +1671,13 @@ class_declaration_head1:
   let o =     ( None ) in
                                ( o )
 in
-                                                        ( ch, ts_opt )}
+                                                        ( ch, ts_opt )} [@name none_type_parameters]
 | ch = class_declaration_head0 x = type_parameters
     {let ts_opt =
   let o =     ( Some x ) in
                                ( o )
 in
-                                                        ( ch, ts_opt )}
+                                                        ( ch, ts_opt )} [@name some_type_parameters]
 
 class_declaration_head:
   ch1 = class_declaration_head1
@@ -1699,7 +1699,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       end_typeparameter_scope ts_opt;
       let ms, id = ch0 in
       mkch _startofs _endofs ms id ts_opt s_opt i_opt
-    )}
+    )} [@name none_super_ext_none_interfaces]
 | ch1 = class_declaration_head1 x = interfaces
     {let i_opt =
   let o =     ( Some x ) in
@@ -1719,7 +1719,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       end_typeparameter_scope ts_opt;
       let ms, id = ch0 in
       mkch _startofs _endofs ms id ts_opt s_opt i_opt
-    )}
+    )} [@name none_super_ext_some_interfaces]
 | ch1 = class_declaration_head1 x = super_ext
     {let i_opt =
   let o =     ( None ) in
@@ -1739,7 +1739,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       end_typeparameter_scope ts_opt;
       let ms, id = ch0 in
       mkch _startofs _endofs ms id ts_opt s_opt i_opt
-    )}
+    )} [@name some_super_ext_none_interfaces]
 | ch1 = class_declaration_head1 x = super_ext x_inlined1 = interfaces
     {let i_opt =
   let x = x_inlined1 in
@@ -1760,7 +1760,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       end_typeparameter_scope ts_opt;
       let ms, id = ch0 in
       mkch _startofs _endofs ms id ts_opt s_opt i_opt
-    )}
+    )} [@name some_super_ext_some_interfaces]
 
 class_declaration:
   ch = class_declaration_head b = class_body
@@ -1905,7 +1905,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	  m_opt, id
       | Common.JLS2 ->
 	  parse_error _symbolstartofs _endofs "'enum' declaration is not available in JLS2"
-    )}
+    )} [@name none_modifiers]
 | x = modifiers _2 = ENUM i = IDENTIFIER
     {let m_opt =
   let o =     ( Some x ) in
@@ -1929,7 +1929,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	  m_opt, id
       | Common.JLS2 ->
 	  parse_error _symbolstartofs _endofs "'enum' declaration is not available in JLS2"
-    )}
+    )} [@name some_modifiers]
 
 enum_declaration_head:
   eh0 = enum_declaration_head0
@@ -1945,7 +1945,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let ms, id = eh0 in
       mkch _startofs _endofs ms id None None i_opt
-    )}
+    )} [@name none_interfaces]
 | eh0 = enum_declaration_head0 x = interfaces
     {let i_opt =
   let o =     ( Some x ) in
@@ -1959,7 +1959,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let ms, id = eh0 in
       mkch _startofs _endofs ms id None None i_opt
-    )}
+    )} [@name some_interfaces]
 
 enum_declaration:
   eh = enum_declaration_head b_opt = enum_body
@@ -1981,7 +1981,7 @@ let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( end_scope(); mkeb _startofs _endofs [] b )}
+    ( end_scope(); mkeb _startofs _endofs [] b )} [@name none_COMMA]
 | _1 = LBRACE x = COMMA b = enum_body_declarations0 _4 = RBRACE
     {let _2 =
   let _1 =     ( Some x ) in
@@ -1991,7 +1991,7 @@ let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( end_scope(); mkeb _startofs _endofs [] b )}
+    ( end_scope(); mkeb _startofs _endofs [] b )} [@name some_COMMA]
 | _1 = LBRACE e = enum_constants b = enum_body_declarations0 _5 = RBRACE
     {let _3 =
   let _1 =     ( None ) in
@@ -2001,7 +2001,7 @@ let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( end_scope(); mkeb _startofs _endofs e b )}
+    ( end_scope(); mkeb _startofs _endofs e b )} [@name none_COMMA]
 | _1 = LBRACE e = enum_constants x = COMMA b = enum_body_declarations0 _5 = RBRACE
     {let _3 =
   let _1 =     ( Some x ) in
@@ -2011,7 +2011,7 @@ let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( end_scope(); mkeb _startofs _endofs e b )}
+    ( end_scope(); mkeb _startofs _endofs e b )} [@name some_COMMA]
 
 enum_constants:
   e = enum_constant
@@ -2072,7 +2072,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       in
       begin_scope();
       (loc, a, id, e)
-    )}
+    )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | i = identifier _1 = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ _3 = RPAREN
     {let e =
   let a =
@@ -2105,7 +2105,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       in
       begin_scope();
       (loc, a, id, e)
-    )}
+    )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | a = annotations i = identifier
     {let e =                                  ( None ) in
 let _endpos_e_ = _endpos_i_ in
@@ -2156,7 +2156,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       in
       begin_scope();
       (loc, a, id, e)
-    )}
+    )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | a = annotations i = identifier _1 = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ _3 = RPAREN
     {let e =
   let a =
@@ -2188,7 +2188,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       in
       begin_scope();
       (loc, a, id, e)
-    )}
+    )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 
 enum_constant:
   x = enum_constant_head
@@ -2247,7 +2247,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	) v;
       Ast.proc_type (register_qname_as_typename ~skip:1) t;
       mkfd loc m_opt t v
-    )}
+    )} [@name none_modifiers]
 | x = modifiers t = unann_type l = separated_nonempty_list_COMMA_variable_declarator_ _4 = SEMICOLON
     {let v =
   let l =                                       ( l ) in
@@ -2278,7 +2278,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	) v;
       Ast.proc_type (register_qname_as_typename ~skip:1) t;
       mkfd loc m_opt t v
-    )}
+    )} [@name some_modifiers]
 
 variable_declarator:
   v = variable_declarator_id
@@ -2386,7 +2386,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name none_modifiers_none_type_parameters_none_throws]
 | j = unann_type md = method_declarator x = throws
     {let t_opt =
   let o =     ( Some x ) in
@@ -2428,7 +2428,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name none_modifiers_none_type_parameters_some_throws]
 | v = void md = method_declarator
     {let t_opt =
   let o =     ( None ) in
@@ -2470,7 +2470,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name none_modifiers_none_type_parameters_none_throws]
 | v = void md = method_declarator x = throws
     {let t_opt =
   let o =     ( Some x ) in
@@ -2512,7 +2512,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name none_modifiers_none_type_parameters_some_throws]
 | x = type_parameters j = unann_type md = method_declarator
     {let t_opt =
   let o =     ( None ) in
@@ -2554,7 +2554,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name none_modifiers_some_type_parameters_none_throws]
 | x = type_parameters j = unann_type md = method_declarator x_inlined1 = throws
     {let t_opt =
   let x = x_inlined1 in
@@ -2597,7 +2597,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name none_modifiers_some_type_parameters_some_throws]
 | x = type_parameters v = void md = method_declarator
     {let t_opt =
   let o =     ( None ) in
@@ -2639,7 +2639,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name none_modifiers_some_type_parameters_none_throws]
 | x = type_parameters v = void md = method_declarator x_inlined1 = throws
     {let t_opt =
   let x = x_inlined1 in
@@ -2682,7 +2682,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name none_modifiers_some_type_parameters_some_throws]
 | x = modifiers j = unann_type md = method_declarator
     {let t_opt =
   let o =     ( None ) in
@@ -2724,7 +2724,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name some_modifiers_none_type_parameters_none_throws]
 | x = modifiers j = unann_type md = method_declarator x_inlined1 = throws
     {let t_opt =
   let x = x_inlined1 in
@@ -2767,7 +2767,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name some_modifiers_none_type_parameters_some_throws]
 | x = modifiers v = void md = method_declarator
     {let t_opt =
   let o =     ( None ) in
@@ -2809,7 +2809,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name some_modifiers_none_type_parameters_none_throws]
 | x = modifiers v = void md = method_declarator x_inlined1 = throws
     {let t_opt =
   let x = x_inlined1 in
@@ -2852,7 +2852,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name some_modifiers_none_type_parameters_some_throws]
 | x = modifiers x_inlined1 = type_parameters j = unann_type md = method_declarator
     {let t_opt =
   let o =     ( None ) in
@@ -2895,7 +2895,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name some_modifiers_some_type_parameters_none_throws]
 | x = modifiers x_inlined1 = type_parameters j = unann_type md = method_declarator x_inlined2 = throws
     {let t_opt =
   let x = x_inlined2 in
@@ -2939,7 +2939,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name some_modifiers_some_type_parameters_some_throws]
 | x = modifiers x_inlined1 = type_parameters v = void md = method_declarator
     {let t_opt =
   let o =     ( None ) in
@@ -2982,7 +2982,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name some_modifiers_some_type_parameters_none_throws]
 | x = modifiers x_inlined1 = type_parameters v = void md = method_declarator x_inlined2 = throws
     {let t_opt =
   let x = x_inlined2 in
@@ -3026,7 +3026,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       Ast.proc_type (register_qname_as_typename ~skip:1) tv;
       mkmh loc m_opt ts_opt tv id params_loc params dim t_opt
-    )}
+    )} [@name some_modifiers_some_type_parameters_some_throws]
 
 method_declarator_head:
   i = identifier lp = LPAREN
@@ -3050,7 +3050,7 @@ in
 	 let id, lparen_loc = m in
 	 let params_loc = Loc.merge lparen_loc rp in
 	 (id, params_loc, f), 0 
-       )}
+       )} [@name none_separated_nonempty_list_COMMA_formal_parameter_]
 | m = method_declarator_head x = separated_nonempty_list_COMMA_formal_parameter_ rp = RPAREN
     {let f =
   let l =
@@ -3063,7 +3063,7 @@ in
 	 let id, lparen_loc = m in
 	 let params_loc = Loc.merge lparen_loc rp in
 	 (id, params_loc, f), 0 
-       )}
+       )} [@name some_separated_nonempty_list_COMMA_formal_parameter_]
 | m = method_declarator _2 = LBRACKET _3 = RBRACKET
     {                                        ( let md, dim = m in md, dim + 1 )}
 
@@ -3253,7 +3253,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	| Some _ -> get_loc _symbolstartofs _endofs
       in
       mkcnd loc m_opt ts_opt sn params_loc params t_opt cb
-    )}
+    )} [@name none_modifiers_none_type_parameters_none_throws]
 | c = constructor_declarator x = throws cb = constructor_body
     {let t_opt =
   let o =     ( Some x ) in
@@ -3292,7 +3292,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	| Some _ -> get_loc _symbolstartofs _endofs
       in
       mkcnd loc m_opt ts_opt sn params_loc params t_opt cb
-    )}
+    )} [@name none_modifiers_none_type_parameters_some_throws]
 | x = type_parameters c = constructor_declarator cb = constructor_body
     {let t_opt =
   let o =     ( None ) in
@@ -3331,7 +3331,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	| Some _ -> get_loc _symbolstartofs _endofs
       in
       mkcnd loc m_opt ts_opt sn params_loc params t_opt cb
-    )}
+    )} [@name none_modifiers_some_type_parameters_none_throws]
 | x = type_parameters c = constructor_declarator x_inlined1 = throws cb = constructor_body
     {let t_opt =
   let x = x_inlined1 in
@@ -3371,7 +3371,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	| Some _ -> get_loc _symbolstartofs _endofs
       in
       mkcnd loc m_opt ts_opt sn params_loc params t_opt cb
-    )}
+    )} [@name none_modifiers_some_type_parameters_some_throws]
 | x = modifiers c = constructor_declarator cb = constructor_body
     {let t_opt =
   let o =     ( None ) in
@@ -3410,7 +3410,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	| Some _ -> get_loc _symbolstartofs _endofs
       in
       mkcnd loc m_opt ts_opt sn params_loc params t_opt cb
-    )}
+    )} [@name some_modifiers_none_type_parameters_none_throws]
 | x = modifiers c = constructor_declarator x_inlined1 = throws cb = constructor_body
     {let t_opt =
   let x = x_inlined1 in
@@ -3450,7 +3450,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	| Some _ -> get_loc _symbolstartofs _endofs
       in
       mkcnd loc m_opt ts_opt sn params_loc params t_opt cb
-    )}
+    )} [@name some_modifiers_none_type_parameters_some_throws]
 | x = modifiers x_inlined1 = type_parameters c = constructor_declarator cb = constructor_body
     {let t_opt =
   let o =     ( None ) in
@@ -3490,7 +3490,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	| Some _ -> get_loc _symbolstartofs _endofs
       in
       mkcnd loc m_opt ts_opt sn params_loc params t_opt cb
-    )}
+    )} [@name some_modifiers_some_type_parameters_none_throws]
 | x = modifiers x_inlined1 = type_parameters c = constructor_declarator x_inlined2 = throws cb = constructor_body
     {let t_opt =
   let x = x_inlined2 in
@@ -3531,7 +3531,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	| Some _ -> get_loc _symbolstartofs _endofs
       in
       mkcnd loc m_opt ts_opt sn params_loc params t_opt cb
-    )}
+    )} [@name some_modifiers_some_type_parameters_some_throws]
 
 constructor_declarator_head:
   s = simple_name lp = LPAREN
@@ -3558,7 +3558,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       let n, lparen_loc = c in
       let params_loc = Loc.merge lparen_loc rp in
       get_loc _startofs _endofs, n, params_loc, f 
-    )}
+    )} [@name none_separated_nonempty_list_COMMA_formal_parameter_]
 | c = constructor_declarator_head x = separated_nonempty_list_COMMA_formal_parameter_ rp = RPAREN
     {let f =
   let l =
@@ -3575,7 +3575,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       let n, lparen_loc = c in
       let params_loc = Loc.merge lparen_loc rp in
       get_loc _startofs _endofs, n, params_loc, f 
-    )}
+    )} [@name some_separated_nonempty_list_COMMA_formal_parameter_]
 
 constructor_body:
   _1 = LBRACE b = loption_block_statements_ _4 = RBRACE
@@ -3587,7 +3587,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       end_scope(); 
       mkcnb _startofs _endofs e_opt b 
-    )}
+    )} [@name none_explicit_constructor_invocation]
 | _1 = LBRACE x = explicit_constructor_invocation b = loption_block_statements_ _4 = RBRACE
     {let e_opt =     ( Some x ) in
 let _endpos = _endpos__4_ in
@@ -3597,7 +3597,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       end_scope(); 
       mkcnb _startofs _endofs e_opt b 
-    )}
+    )} [@name some_explicit_constructor_invocation]
 
 this:
   _1 = THIS
@@ -3631,7 +3631,7 @@ let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIthis(None, a)) )}
+    ( mkeci _startofs _endofs (ECIthis(None, a)) )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | _1 = this lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN _3 = SEMICOLON
     {let a =
   let a =
@@ -3647,7 +3647,7 @@ let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIthis(None, a)) )}
+    ( mkeci _startofs _endofs (ECIthis(None, a)) )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | t = type_arguments _2 = this lp = LPAREN rp = RPAREN _4 = SEMICOLON
     {let a =
   let a =
@@ -3663,7 +3663,7 @@ let _endpos = _endpos__4_ in
 let _startpos = _startpos_t_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIthis(Some t, a)) )}
+    ( mkeci _startofs _endofs (ECIthis(Some t, a)) )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | t = type_arguments _2 = this lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN _4 = SEMICOLON
     {let a =
   let a =
@@ -3679,7 +3679,7 @@ let _endpos = _endpos__4_ in
 let _startpos = _startpos_t_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIthis(Some t, a)) )}
+    ( mkeci _startofs _endofs (ECIthis(Some t, a)) )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | _1 = super lp = LPAREN rp = RPAREN _3 = SEMICOLON
     {let a =
   let a =
@@ -3695,7 +3695,7 @@ let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIsuper(None, a)) )}
+    ( mkeci _startofs _endofs (ECIsuper(None, a)) )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | _1 = super lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN _3 = SEMICOLON
     {let a =
   let a =
@@ -3711,7 +3711,7 @@ let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIsuper(None, a)) )}
+    ( mkeci _startofs _endofs (ECIsuper(None, a)) )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | t = type_arguments _2 = super lp = LPAREN rp = RPAREN _4 = SEMICOLON
     {let a =
   let a =
@@ -3727,7 +3727,7 @@ let _endpos = _endpos__4_ in
 let _startpos = _startpos_t_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIsuper(Some t, a)) )}
+    ( mkeci _startofs _endofs (ECIsuper(Some t, a)) )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | t = type_arguments _2 = super lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN _4 = SEMICOLON
     {let a =
   let a =
@@ -3743,7 +3743,7 @@ let _endpos = _endpos__4_ in
 let _startpos = _startpos_t_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIsuper(Some t, a)) )}
+    ( mkeci _startofs _endofs (ECIsuper(Some t, a)) )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | p = primary _2 = DOT _3 = super lp = LPAREN rp = RPAREN _5 = SEMICOLON
     {let a =
   let a =
@@ -3759,7 +3759,7 @@ let _endpos = _endpos__5_ in
 let _startpos = _startpos_p_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIprimary(p, None, a)) )}
+    ( mkeci _startofs _endofs (ECIprimary(p, None, a)) )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | p = primary _2 = DOT _3 = super lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN _5 = SEMICOLON
     {let a =
   let a =
@@ -3775,7 +3775,7 @@ let _endpos = _endpos__5_ in
 let _startpos = _startpos_p_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIprimary(p, None, a)) )}
+    ( mkeci _startofs _endofs (ECIprimary(p, None, a)) )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | p = primary _2 = DOT t = type_arguments _4 = super lp = LPAREN rp = RPAREN _6 = SEMICOLON
     {let a =
   let a =
@@ -3791,7 +3791,7 @@ let _endpos = _endpos__6_ in
 let _startpos = _startpos_p_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIprimary(p, Some t, a)) )}
+    ( mkeci _startofs _endofs (ECIprimary(p, Some t, a)) )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | p = primary _2 = DOT t = type_arguments _4 = super lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN _6 = SEMICOLON
     {let a =
   let a =
@@ -3807,7 +3807,7 @@ let _endpos = _endpos__6_ in
 let _startpos = _startpos_p_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIprimary(p, Some t, a)) )}
+    ( mkeci _startofs _endofs (ECIprimary(p, Some t, a)) )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | n = name _2 = DOT _3 = super lp = LPAREN rp = RPAREN _5 = SEMICOLON
     {let a =
   let a =
@@ -3823,7 +3823,7 @@ let _endpos = _endpos__5_ in
 let _startpos = _startpos_n_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIname(n, None, a)) )}
+    ( mkeci _startofs _endofs (ECIname(n, None, a)) )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | n = name _2 = DOT _3 = super lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN _5 = SEMICOLON
     {let a =
   let a =
@@ -3839,7 +3839,7 @@ let _endpos = _endpos__5_ in
 let _startpos = _startpos_n_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIname(n, None, a)) )}
+    ( mkeci _startofs _endofs (ECIname(n, None, a)) )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | n = name _2 = DOT t = type_arguments _4 = super lp = LPAREN rp = RPAREN _6 = SEMICOLON
     {let a =
   let a =
@@ -3855,7 +3855,7 @@ let _endpos = _endpos__6_ in
 let _startpos = _startpos_n_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIname(n, Some t, a)) )}
+    ( mkeci _startofs _endofs (ECIname(n, Some t, a)) )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | n = name _2 = DOT t = type_arguments _4 = super lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN _6 = SEMICOLON
     {let a =
   let a =
@@ -3871,7 +3871,7 @@ let _endpos = _endpos__6_ in
 let _startpos = _startpos_n_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkeci _startofs _endofs (ECIname(n, Some t, a)) )}
+    ( mkeci _startofs _endofs (ECIname(n, Some t, a)) )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 
 interface_declaration:
   n = normal_interface_declaration
@@ -3890,7 +3890,7 @@ in
       register_identifier_as_interface (mkfqn_cls id) id; 
       begin_scope ~kind:(FKclass id) ();
       m_opt, id
-    )}
+    )} [@name none_modifiers]
 | x = modifiers _2 = INTERFACE i = identifier
     {let m_opt =
   let o =     ( Some x ) in
@@ -3901,7 +3901,7 @@ in
       register_identifier_as_interface (mkfqn_cls id) id; 
       begin_scope ~kind:(FKclass id) ();
       m_opt, id
-    )}
+    )} [@name some_modifiers]
 
 normal_interface_declaration_head1:
   h0 = normal_interface_declaration_head0
@@ -3909,13 +3909,13 @@ normal_interface_declaration_head1:
   let o =     ( None ) in
                                ( o )
 in
-                                                                   ( h0, ts_opt )}
+                                                                   ( h0, ts_opt )} [@name none_type_parameters]
 | h0 = normal_interface_declaration_head0 x = type_parameters
     {let ts_opt =
   let o =     ( Some x ) in
                                ( o )
 in
-                                                                   ( h0, ts_opt )}
+                                                                   ( h0, ts_opt )} [@name some_type_parameters]
 
 normal_interface_declaration_head:
   h1 = normal_interface_declaration_head1 e_opt = extends_interfaces_opt
@@ -3956,7 +3956,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       register_identifier_as_interface (mkfqn_cls id) id;
       begin_scope ~kind:(FKclass id) ();
       mkifh _startofs _endofs m_opt id None None
-    )}
+    )} [@name none_modifiers]
 | x = modifiers _2 = AT__INTERFACE _3 = INTERFACE i = identifier
     {let m_opt =
   let o =     ( Some x ) in
@@ -3972,7 +3972,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       register_identifier_as_interface (mkfqn_cls id) id;
       begin_scope ~kind:(FKclass id) ();
       mkifh _startofs _endofs m_opt id None None
-    )}
+    )} [@name some_modifiers]
 
 annotation_type_declaration:
   h = annotation_type_declaration_head b = annotation_type_body
@@ -4024,7 +4024,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       let _, id = i in
       _mkatmd loc (ATMDelement(m_opt, j, id, a, d))
-    )}
+    )} [@name none_modifiers]
 | j = unann_type i = identifier _4 = LPAREN _5 = RPAREN a = ann_dims d = default_value_opt _8 = SEMICOLON
     {let a =              ( a ) in
 let m_opt =
@@ -4047,7 +4047,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       let _, id = i in
       _mkatmd loc (ATMDelement(m_opt, j, id, a, d))
-    )}
+    )} [@name none_modifiers]
 | x = modifiers j = unann_type i = identifier _4 = LPAREN _5 = RPAREN d = default_value_opt _8 = SEMICOLON
     {let a =              ( [] ) in
 let m_opt =
@@ -4070,7 +4070,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       let _, id = i in
       _mkatmd loc (ATMDelement(m_opt, j, id, a, d))
-    )}
+    )} [@name some_modifiers]
 | x = modifiers j = unann_type i = identifier _4 = LPAREN _5 = RPAREN a = ann_dims d = default_value_opt _8 = SEMICOLON
     {let a =              ( a ) in
 let m_opt =
@@ -4093,7 +4093,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       in
       let _, id = i in
       _mkatmd loc (ATMDelement(m_opt, j, id, a, d))
-    )}
+    )} [@name some_modifiers]
 | c = class_declaration
     {                          ( _mkatmd c.cd_loc (ATMDclass c)  )}
 | e = enum_declaration
@@ -4110,10 +4110,10 @@ let _startofs = _startpos.Lexing.pos_cnum in
 default_value_opt:
   
     {let d_opt =     ( None ) in
-                               ( d_opt )}
+                               ( d_opt )} [@name none_default_value]
 | x = default_value
     {let d_opt =     ( Some x ) in
-                               ( d_opt )}
+                               ( d_opt )} [@name some_default_value]
 
 default_value:
   _1 = DEFAULT e = element_value
@@ -4200,28 +4200,28 @@ let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                                       ( mkvi _startofs _endofs (VIarray []) )}
+                                                       ( mkvi _startofs _endofs (VIarray []) )} [@name none_COMMA]
 | _1 = LBRACE x = COMMA _3 = RBRACE
     {let _2 =     ( Some x ) in
 let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                                       ( mkvi _startofs _endofs (VIarray []) )}
+                                                       ( mkvi _startofs _endofs (VIarray []) )} [@name some_COMMA]
 | _1 = LBRACE v = variable_initializers _4 = RBRACE
     {let _3 =     ( None ) in
 let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkvi _startofs _endofs (VIarray (List.rev v)) )}
+    ( mkvi _startofs _endofs (VIarray (List.rev v)) )} [@name none_COMMA]
 | _1 = LBRACE v = variable_initializers x = COMMA _4 = RBRACE
     {let _3 =     ( Some x ) in
 let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( mkvi _startofs _endofs (VIarray (List.rev v)) )}
+    ( mkvi _startofs _endofs (VIarray (List.rev v)) )} [@name some_COMMA]
 
 variable_initializers:
   v = variable_initializer
@@ -4318,7 +4318,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	 vd.vd_is_local := true;
        ) v;
       mklvd _symbolstartofs _endofs m_opt t v
-    )}
+    )} [@name none_modifiers]
 | x = modifiers t = unann_type l = separated_nonempty_list_COMMA_variable_declarator_
     {let v =
   let l =                                       ( l ) in
@@ -4344,7 +4344,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 	 vd.vd_is_local := true;
        ) v;
       mklvd _symbolstartofs _endofs m_opt t v
-    )}
+    )} [@name some_modifiers]
 
 statement:
   s = statement_without_trailing_substatement
@@ -4851,10 +4851,10 @@ let _startofs = _startpos.Lexing.pos_cnum in
 for_init_opt:
   
     {let o =     ( None ) in
-                      ( o )}
+                      ( o )} [@name none_for_init]
 | x = for_init
     {let o =     ( Some x ) in
-                      ( o )}
+                      ( o )} [@name some_for_init]
 
 for_init:
   l = separated_nonempty_list_COMMA_statement_expression_
@@ -4985,7 +4985,7 @@ let _endpos = _endpos_c_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, Some c, None)) )}
+                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, Some c, None)) )} [@name none_resource_spec]
 | _1 = TRY x = resource_spec b = block l = nonempty_list_catch_clause_
     {let c =                                 ( l ) in
 let _endpos_c_ = _endpos_l_ in
@@ -4997,7 +4997,7 @@ let _endpos = _endpos_c_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, Some c, None)) )}
+                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, Some c, None)) )} [@name some_resource_spec]
 | _1 = TRY b = block f = finally
     {let r_opt =
   let r_opt =     ( None ) in
@@ -5007,7 +5007,7 @@ let _endpos = _endpos_f_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, None, Some f)) )}
+                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, None, Some f)) )} [@name none_resource_spec]
 | _1 = TRY x = resource_spec b = block f = finally
     {let r_opt =
   let r_opt =     ( Some x ) in
@@ -5017,7 +5017,7 @@ let _endpos = _endpos_f_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, None, Some f)) )}
+                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, None, Some f)) )} [@name some_resource_spec]
 | _1 = TRY b = block l = nonempty_list_catch_clause_ f = finally
     {let c =                                 ( l ) in
 let r_opt =
@@ -5028,7 +5028,7 @@ let _endpos = _endpos_f_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, Some c, Some f)) )}
+                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, Some c, Some f)) )} [@name none_resource_spec]
 | _1 = TRY x = resource_spec b = block l = nonempty_list_catch_clause_ f = finally
     {let c =                                 ( l ) in
 let r_opt =
@@ -5039,7 +5039,7 @@ let _endpos = _endpos_f_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, Some c, Some f)) )}
+                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, Some c, Some f)) )} [@name some_resource_spec]
 | _1 = TRY b = block
     {let r_opt =
   let r_opt =     ( None ) in
@@ -5049,7 +5049,7 @@ let _endpos = _endpos_b_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, None, None)) )}
+                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, None, None)) )} [@name none_resource_spec]
 | _1 = TRY x = resource_spec b = block
     {let r_opt =
   let r_opt =     ( Some x ) in
@@ -5059,7 +5059,7 @@ let _endpos = _endpos_b_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, None, None)) )}
+                                                          ( mkstmt _startofs _endofs (Stry(r_opt, b, None, None)) )} [@name some_resource_spec]
 
 resource_spec:
   _1 = LPAREN rl = resource_list _4 = RPAREN
@@ -5068,14 +5068,14 @@ let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-                                                    ( mkresspec _symbolstartofs _endofs rl )}
+                                                    ( mkresspec _symbolstartofs _endofs rl )} [@name none_SEMICOLON]
 | _1 = LPAREN rl = resource_list x = SEMICOLON _4 = RPAREN
     {let _3 =     ( Some x ) in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-                                                    ( mkresspec _symbolstartofs _endofs rl )}
+                                                    ( mkresspec _symbolstartofs _endofs rl )} [@name some_SEMICOLON]
 
 resource_list:
   r = resource
@@ -5244,7 +5244,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	  mkstmt _startofs _endofs lab
       | Common.JLS2 -> 
           parse_error _startofs _endofs "assert statement is not available in JLS2"
-    )}
+    )} [@name none_colon__expr]
 | _1 = ASSERT b = expression _1_inlined1 = COLON e = expression _4 = SEMICOLON
     {let e_opt =
   let x =
@@ -5269,7 +5269,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	  mkstmt _startofs _endofs lab
       | Common.JLS2 -> 
           parse_error _startofs _endofs "assert statement is not available in JLS2"
-    )}
+    )} [@name some_colon__expr]
 | _1 = ASSERT b = expression _1_inlined1 = COLON s = ERROR _4 = SEMICOLON
     {let e_opt =
   let x =
@@ -5300,7 +5300,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	  mkstmt _startofs _endofs lab
       | Common.JLS2 -> 
           parse_error _startofs _endofs "assert statement is not available in JLS2"
-    )}
+    )} [@name some_colon__expr]
 
 primary:
   p = primary_no_new_array
@@ -5431,7 +5431,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       env#reclassify_identifier(leftmost_of_name n);
       let _, id = i in
       mkmr _startofs _endofs (MRname(n, tas_opt, id))
-    )}
+    )} [@name none_type_arguments]
 | n = name _2 = COLON_COLON x = type_arguments i = identifier
     {let tas_opt =
   let ts_opt =     ( Some x ) in
@@ -5445,7 +5445,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       env#reclassify_identifier(leftmost_of_name n);
       let _, id = i in
       mkmr _startofs _endofs (MRname(n, tas_opt, id))
-    )}
+    )} [@name some_type_arguments]
 | p = primary _2 = COLON_COLON i = identifier
     {let tas_opt =
   let ts_opt =     ( None ) in
@@ -5458,7 +5458,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let _, id = i in
       mkmr _startofs _endofs (MRprimary(p, tas_opt, id))
-    )}
+    )} [@name none_type_arguments]
 | p = primary _2 = COLON_COLON x = type_arguments i = identifier
     {let tas_opt =
   let ts_opt =     ( Some x ) in
@@ -5471,7 +5471,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let _, id = i in
       mkmr _startofs _endofs (MRprimary(p, tas_opt, id))
-    )}
+    )} [@name some_type_arguments]
 | _1 = SUPER _2 = COLON_COLON i = identifier
     {let tas_opt =
   let ts_opt =     ( None ) in
@@ -5484,7 +5484,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let _, id = i in
       mkmr _startofs _endofs (MRsuper(tas_opt, id))
-    )}
+    )} [@name none_type_arguments]
 | _1 = SUPER _2 = COLON_COLON x = type_arguments i = identifier
     {let tas_opt =
   let ts_opt =     ( Some x ) in
@@ -5497,7 +5497,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let _, id = i in
       mkmr _startofs _endofs (MRsuper(tas_opt, id))
-    )}
+    )} [@name some_type_arguments]
 | n = name _2 = DOT _3 = SUPER _4 = COLON_COLON i = identifier
     {let tas_opt =
   let ts_opt =     ( None ) in
@@ -5511,7 +5511,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       register_qname_as_typename n;
       let _, id = i in
       mkmr _startofs _endofs (MRtypeSuper(n, tas_opt, id))
-    )}
+    )} [@name none_type_arguments]
 | n = name _2 = DOT _3 = SUPER _4 = COLON_COLON x = type_arguments i = identifier
     {let tas_opt =
   let ts_opt =     ( Some x ) in
@@ -5525,7 +5525,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       register_qname_as_typename n;
       let _, id = i in
       mkmr _startofs _endofs (MRtypeSuper(n, tas_opt, id))
-    )}
+    )} [@name some_type_arguments]
 | p = unann_primitive_type _3 = COLON_COLON _5 = NEW
     {let tas_opt =
   let ts_opt =     ( None ) in
@@ -5543,7 +5543,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| l -> _mkty (Loc.merge p.ty_loc (Xlist.last l).Ast.ad_loc) (Tarray(p, List.length d))
       in
       mkmr _startofs _endofs (MRtypeNew(ty, tas_opt))
-    )}
+    )} [@name none_type_arguments]
 | p = unann_primitive_type _3 = COLON_COLON x = type_arguments _5 = NEW
     {let tas_opt =
   let ts_opt =     ( Some x ) in
@@ -5561,7 +5561,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| l -> _mkty (Loc.merge p.ty_loc (Xlist.last l).Ast.ad_loc) (Tarray(p, List.length d))
       in
       mkmr _startofs _endofs (MRtypeNew(ty, tas_opt))
-    )}
+    )} [@name some_type_arguments]
 | p = unann_primitive_type a = ann_dims _3 = COLON_COLON _5 = NEW
     {let tas_opt =
   let ts_opt =     ( None ) in
@@ -5579,7 +5579,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| l -> _mkty (Loc.merge p.ty_loc (Xlist.last l).Ast.ad_loc) (Tarray(p, List.length d))
       in
       mkmr _startofs _endofs (MRtypeNew(ty, tas_opt))
-    )}
+    )} [@name none_type_arguments]
 | p = unann_primitive_type a = ann_dims _3 = COLON_COLON x = type_arguments _5 = NEW
     {let tas_opt =
   let ts_opt =     ( Some x ) in
@@ -5597,7 +5597,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| l -> _mkty (Loc.merge p.ty_loc (Xlist.last l).Ast.ad_loc) (Tarray(p, List.length d))
       in
       mkmr _startofs _endofs (MRtypeNew(ty, tas_opt))
-    )}
+    )} [@name some_type_arguments]
 | n = name _3 = COLON_COLON _5 = NEW
     {let tas_opt =
   let ts_opt =     ( None ) in
@@ -5616,7 +5616,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       in
       register_qname_as_typename n;
       mkmr _startofs _endofs (MRtypeNew(ty, tas_opt))
-    )}
+    )} [@name none_type_arguments]
 | n = name _3 = COLON_COLON x = type_arguments _5 = NEW
     {let tas_opt =
   let ts_opt =     ( Some x ) in
@@ -5635,7 +5635,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       in
       register_qname_as_typename n;
       mkmr _startofs _endofs (MRtypeNew(ty, tas_opt))
-    )}
+    )} [@name some_type_arguments]
 | n = name a = ann_dims _3 = COLON_COLON _5 = NEW
     {let tas_opt =
   let ts_opt =     ( None ) in
@@ -5654,7 +5654,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       in
       register_qname_as_typename n;
       mkmr _startofs _endofs (MRtypeNew(ty, tas_opt))
-    )}
+    )} [@name none_type_arguments]
 | n = name a = ann_dims _3 = COLON_COLON x = type_arguments _5 = NEW
     {let tas_opt =
   let ts_opt =     ( Some x ) in
@@ -5673,7 +5673,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       in
       register_qname_as_typename n;
       mkmr _startofs _endofs (MRtypeNew(ty, tas_opt))
-    )}
+    )} [@name some_type_arguments]
 
 class_instance_creation_head:
   _1 = NEW u = unann_class_or_interface_type
@@ -5713,25 +5713,25 @@ class_instance_creation_head_qualified:
   let ts_opt =     ( None ) in
                                    ( ts_opt )
 in
-                                         ( begin_scope(); Some p, None, t )}
+                                         ( begin_scope(); Some p, None, t )} [@name none_type_arguments]
 | p = primary _2 = DOT _3 = NEW x = type_arguments
     {let t =
   let ts_opt =     ( Some x ) in
                                    ( ts_opt )
 in
-                                         ( begin_scope(); Some p, None, t )}
+                                         ( begin_scope(); Some p, None, t )} [@name some_type_arguments]
 | n = name _2 = DOT _3 = NEW
     {let t =
   let ts_opt =     ( None ) in
                                    ( ts_opt )
 in
-                                         ( begin_scope(); None, Some n, t )}
+                                         ( begin_scope(); None, Some n, t )} [@name none_type_arguments]
 | n = name _2 = DOT _3 = NEW x = type_arguments
     {let t =
   let ts_opt =     ( Some x ) in
                                    ( ts_opt )
 in
-                                         ( begin_scope(); None, Some n, t )}
+                                         ( begin_scope(); None, Some n, t )} [@name some_type_arguments]
 
 class_instance_creation_expression:
   c = class_instance_creation_head lp = LPAREN rp = RPAREN
@@ -5762,7 +5762,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| _ -> () 
       end;
       mkcic _startofs _endofs (CICunqualified(tyargs, ty, a, cb))
-    )}
+    )} [@name none_separated_nonempty_list_COMMA_expr_or_err__none_class_body]
 | c = class_instance_creation_head lp = LPAREN rp = RPAREN x = class_body
     {let cb =
   let o =     ( Some x ) in
@@ -5791,7 +5791,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| _ -> () 
       end;
       mkcic _startofs _endofs (CICunqualified(tyargs, ty, a, cb))
-    )}
+    )} [@name none_separated_nonempty_list_COMMA_expr_or_err__some_class_body]
 | c = class_instance_creation_head lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN
     {let cb =
   let o =     ( None ) in
@@ -5820,7 +5820,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| _ -> () 
       end;
       mkcic _startofs _endofs (CICunqualified(tyargs, ty, a, cb))
-    )}
+    )} [@name some_separated_nonempty_list_COMMA_expr_or_err__none_class_body]
 | c = class_instance_creation_head lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN x_inlined1 = class_body
     {let cb =
   let x = x_inlined1 in
@@ -5850,7 +5850,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| _ -> () 
       end;
       mkcic _startofs _endofs (CICunqualified(tyargs, ty, a, cb))
-    )}
+    )} [@name some_separated_nonempty_list_COMMA_expr_or_err__some_class_body]
 | c = class_instance_creation_head_qualified i = identifier lp = LPAREN rp = RPAREN
     {let cb =
   let o =     ( None ) in
@@ -5892,7 +5892,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| _ -> () 
       end;
       mkcic _startofs _endofs cic
-    )}
+    )} [@name none_type_arguments_none_separated_nonempty_list_COMMA_expr_or_err__none_class_body]
 | c = class_instance_creation_head_qualified i = identifier lp = LPAREN rp = RPAREN x = class_body
     {let cb =
   let o =     ( Some x ) in
@@ -5934,7 +5934,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| _ -> () 
       end;
       mkcic _startofs _endofs cic
-    )}
+    )} [@name none_type_arguments_none_separated_nonempty_list_COMMA_expr_or_err__some_class_body]
 | c = class_instance_creation_head_qualified i = identifier lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN
     {let cb =
   let o =     ( None ) in
@@ -5976,7 +5976,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| _ -> () 
       end;
       mkcic _startofs _endofs cic
-    )}
+    )} [@name none_type_arguments_some_separated_nonempty_list_COMMA_expr_or_err__none_class_body]
 | c = class_instance_creation_head_qualified i = identifier lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN x_inlined1 = class_body
     {let cb =
   let x = x_inlined1 in
@@ -6019,7 +6019,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| _ -> () 
       end;
       mkcic _startofs _endofs cic
-    )}
+    )} [@name none_type_arguments_some_separated_nonempty_list_COMMA_expr_or_err__some_class_body]
 | c = class_instance_creation_head_qualified i = identifier x = type_arguments lp = LPAREN rp = RPAREN
     {let cb =
   let o =     ( None ) in
@@ -6061,7 +6061,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| _ -> () 
       end;
       mkcic _startofs _endofs cic
-    )}
+    )} [@name some_type_arguments_none_separated_nonempty_list_COMMA_expr_or_err__none_class_body]
 | c = class_instance_creation_head_qualified i = identifier x = type_arguments lp = LPAREN rp = RPAREN x_inlined1 = class_body
     {let cb =
   let x = x_inlined1 in
@@ -6104,7 +6104,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| _ -> () 
       end;
       mkcic _startofs _endofs cic
-    )}
+    )} [@name some_type_arguments_none_separated_nonempty_list_COMMA_expr_or_err__some_class_body]
 | c = class_instance_creation_head_qualified i = identifier x = type_arguments lp = LPAREN x_inlined1 = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN
     {let cb =
   let o =     ( None ) in
@@ -6147,7 +6147,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| _ -> () 
       end;
       mkcic _startofs _endofs cic
-    )}
+    )} [@name some_type_arguments_some_separated_nonempty_list_COMMA_expr_or_err__none_class_body]
 | c = class_instance_creation_head_qualified i = identifier x = type_arguments lp = LPAREN x_inlined1 = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN x_inlined2 = class_body
     {let cb =
   let x = x_inlined2 in
@@ -6191,7 +6191,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	| _ -> () 
       end;
       mkcic _startofs _endofs cic
-    )}
+    )} [@name some_type_arguments_some_separated_nonempty_list_COMMA_expr_or_err__some_class_body]
 
 array_creation_noinit:
   _1 = NEW u = unann_primitive_type d = dim_exprs
@@ -6388,7 +6388,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	with
 	| Not_found -> mkmi _startofs _endofs (MImethodName(n, a))
       end
-    )}
+    )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | n = name lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN
     {let a =
   let a =
@@ -6448,7 +6448,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 	with
 	| Not_found -> mkmi _startofs _endofs (MImethodName(n, a))
       end
-    )}
+    )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | p = primary _2 = DOT i = identifier lp = LPAREN rp = RPAREN
     {let a =
   let a =
@@ -6468,7 +6468,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let _, id = i in
       mkmi _startofs _endofs (MIprimary(p, None, id, a)) 
-    )}
+    )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | p = primary _2 = DOT i = identifier lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN
     {let a =
   let a =
@@ -6488,7 +6488,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let _, id = i in
       mkmi _startofs _endofs (MIprimary(p, None, id, a)) 
-    )}
+    )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | p = primary _2 = DOT t = type_arguments i = identifier lp = LPAREN rp = RPAREN
     {let a =
   let a =
@@ -6508,7 +6508,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let _, id = i in
       mkmi _startofs _endofs (MIprimary(p, Some t, id, a)) 
-    )}
+    )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | p = primary _2 = DOT t = type_arguments i = identifier lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN
     {let a =
   let a =
@@ -6528,7 +6528,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let _, id = i in
       mkmi _startofs _endofs (MIprimary(p, Some t, id, a)) 
-    )}
+    )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | q = name _2 = DOT t = type_arguments i = identifier lp = LPAREN rp = RPAREN
     {let a =
   let a =
@@ -6576,7 +6576,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
           mkmi _startofs _endofs (MIprimary(_name_to_prim q.n_loc q, Some t, id, a))
         end
       end
-    )}
+    )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | q = name _2 = DOT t = type_arguments i = identifier lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN
     {let a =
   let a =
@@ -6624,7 +6624,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
           mkmi _startofs _endofs (MIprimary(_name_to_prim q.n_loc q, Some t, id, a))
         end
       end
-    )}
+    )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | s = super _2 = DOT i = identifier lp = LPAREN rp = RPAREN
     {let a =
   let a =
@@ -6644,7 +6644,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let _, id = i in
       mkmi _startofs _endofs (MIsuper(s, None, id, a)) 
-    )}
+    )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | s = super _2 = DOT i = identifier lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN
     {let a =
   let a =
@@ -6664,7 +6664,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let _, id = i in
       mkmi _startofs _endofs (MIsuper(s, None, id, a)) 
-    )}
+    )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | s = super _2 = DOT t = type_arguments i = identifier lp = LPAREN rp = RPAREN
     {let a =
   let a =
@@ -6684,7 +6684,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let _, id = i in
       mkmi _startofs _endofs (MIsuper(s, Some t, id, a)) 
-    )}
+    )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | s = super _2 = DOT t = type_arguments i = identifier lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN
     {let a =
   let a =
@@ -6704,7 +6704,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
     ( 
       let _, id = i in
       mkmi _startofs _endofs (MIsuper(s, Some t, id, a)) 
-    )}
+    )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | n = name _2 = DOT s = super _4 = DOT i = identifier lp = LPAREN rp = RPAREN
     {let a =
   let a =
@@ -6726,7 +6726,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       set_attribute_PT_T (env#resolve n) n;
       register_qname_as_typename n;
       mkmi _startofs _endofs (MIclassSuper(n.n_loc, s, n, None, id, a)) 
-    )}
+    )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | n = name _2 = DOT s = super _4 = DOT i = identifier lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN
     {let a =
   let a =
@@ -6748,7 +6748,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       set_attribute_PT_T (env#resolve n) n;
       register_qname_as_typename n;
       mkmi _startofs _endofs (MIclassSuper(n.n_loc, s, n, None, id, a)) 
-    )}
+    )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 | n = name _2 = DOT s = super _4 = DOT t = type_arguments i = identifier lp = LPAREN rp = RPAREN
     {let a =
   let a =
@@ -6770,7 +6770,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       set_attribute_PT_T (env#resolve n) n;
       register_qname_as_typename n;
       mkmi _startofs _endofs (MIclassSuper(n.n_loc, s, n, Some t, id, a)) 
-    )}
+    )} [@name none_separated_nonempty_list_COMMA_expr_or_err_]
 | n = name _2 = DOT s = super _4 = DOT t = type_arguments i = identifier lp = LPAREN x = separated_nonempty_list_COMMA_expr_or_err_ rp = RPAREN
     {let a =
   let a =
@@ -6792,7 +6792,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
       set_attribute_PT_T (env#resolve n) n;
       register_qname_as_typename n;
       mkmi _startofs _endofs (MIclassSuper(n.n_loc, s, n, Some t, id, a)) 
-    )}
+    )} [@name some_separated_nonempty_list_COMMA_expr_or_err_]
 
 array_access:
   n = name _2 = LBRACKET e = expression _4 = RBRACKET
@@ -7946,10 +7946,10 @@ let _startofs = _startpos.Lexing.pos_cnum in
 expression_opt:
   
     {let o =     ( None ) in
-                        ( o )}
+                        ( o )} [@name none_expression]
 | x = expression
     {let o =     ( Some x ) in
-                        ( o )}
+                        ( o )} [@name some_expression]
 
 expression:
   a = assignment_expression
@@ -7986,7 +7986,7 @@ let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                                 ( mklp _startofs _endofs (LPformal l) )}
+                                                 ( mklp _startofs _endofs (LPformal l) )} [@name none_separated_nonempty_list_COMMA_formal_parameter_]
 | _1 = LPAREN__LAMBDA x = separated_nonempty_list_COMMA_formal_parameter_ _3 = RPAREN
     {let l =
   let l =
@@ -7999,7 +7999,7 @@ let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                                 ( mklp _startofs _endofs (LPformal l) )}
+                                                 ( mklp _startofs _endofs (LPformal l) )} [@name some_separated_nonempty_list_COMMA_formal_parameter_]
 | _1 = LPAREN__LAMBDA l = separated_nonempty_list_COMMA_identifier_ _3 = RPAREN
     {let l =                                       ( l ) in
 let _endpos = _endpos__3_ in
@@ -8063,7 +8063,7 @@ let _endpos = _endpos_tb_ in
 let _symbolstartpos = _startpos_tv_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-                                     ( mktyparam _symbolstartofs _endofs tv tb )}
+                                     ( mktyparam _symbolstartofs _endofs tv tb )} [@name none_type_bound]
 | tv = type_variable x = type_bound
     {let tb =
   let o =     ( Some x ) in
@@ -8074,7 +8074,7 @@ let _endpos = _endpos_tb_ in
 let _symbolstartpos = _startpos_tv_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-                                     ( mktyparam _symbolstartofs _endofs tv tb )}
+                                     ( mktyparam _symbolstartofs _endofs tv tb )} [@name some_type_bound]
 
 type_parameter_1:
   tv = type_variable _2 = GT

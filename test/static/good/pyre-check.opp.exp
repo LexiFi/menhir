@@ -336,38 +336,38 @@
 
 option_ANNOTATION_COMMENT_:
   
-    {    ( None )}
+    {    ( None )} [@name none_ANNOTATION_COMMENT]
 | x = ANNOTATION_COMMENT
-    {    ( Some x )}
+    {    ( Some x )} [@name some_ANNOTATION_COMMENT]
 
 option_COMMA_:
   
-    {    ( None )}
+    {    ( None )} [@name none_COMMA]
 | x = COMMA
-    {    ( Some x )}
+    {    ( Some x )} [@name some_COMMA]
 
 option_FROM_:
   
-    {    ( None )}
+    {    ( None )} [@name none_FROM]
 | x = FROM
-    {    ( Some x )}
+    {    ( Some x )} [@name some_FROM]
 
 option_SIGNATURE_COMMENT_:
   
-    {    ( None )}
+    {    ( None )} [@name none_SIGNATURE_COMMENT]
 | x = SIGNATURE_COMMENT
-    {    ( Some x )}
+    {    ( Some x )} [@name some_SIGNATURE_COMMENT]
 
 option_annotation_:
   
-    {    ( None )}
+    {    ( None )} [@name none_annotation]
 | _1 = COLON expression = expression
     {let x =                                    ( expression ) in
-    ( Some x )}
+    ( Some x )} [@name some_annotation]
 
 option_comment_annotation_:
   
-    {    ( None )}
+    {    ( None )} [@name none_comment_annotation]
 | annotation = ANNOTATION_COMMENT
     {let x =                                     (
       let (start, stop), annotation = annotation in
@@ -377,86 +377,86 @@ option_comment_annotation_:
       |> fun string -> Expression.String string
       |> Node.create ~location:(Location.create ~start ~stop)
     ) in
-    ( Some x )}
+    ( Some x )} [@name some_comment_annotation]
 
 option_raise_from_:
   
-    {    ( None )}
+    {    ( None )} [@name none_raise_from]
 | x = raise_from
-    {    ( Some x )}
+    {    ( Some x )} [@name some_raise_from]
 
 option_return_annotation_:
   
-    {    ( None )}
+    {    ( None )} [@name none_return_annotation]
 | _1 = MINUS _2 = RIGHTANGLE expression = expression
     {let x =                                                ( expression ) in
-    ( Some x )}
+    ( Some x )} [@name some_return_annotation]
 
 option_test_:
   
-    {    ( None )}
+    {    ( None )} [@name none_test]
 | x = test
-    {    ( Some x )}
+    {    ( Some x )} [@name some_test]
 
 option_test_list_:
   
-    {    ( None )}
+    {    ( None )} [@name none_test_list]
 | x = test_list
-    {    ( Some x )}
+    {    ( Some x )} [@name some_test_list]
 
 list_NEWLINE_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_NEWLINE]
 | x = NEWLINE xs = list_NEWLINE_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_NEWLINE]
 
 list_condition_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_condition]
 | x = condition xs = list_condition_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_condition]
 
 list_handler_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_handler]
 | x = handler xs = list_handler_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_handler]
 
 nonempty_list_BYTES_:
   x = BYTES
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_BYTES]
 | x = BYTES xs = nonempty_list_BYTES_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_BYTES]
 
 nonempty_list_NEWLINE_:
   x = NEWLINE
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_NEWLINE]
 | x = NEWLINE xs = nonempty_list_NEWLINE_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_NEWLINE]
 
 nonempty_list_comparison_operator_:
   x = comparison_operator
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_comparison_operator]
 | x = comparison_operator xs = nonempty_list_comparison_operator_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_comparison_operator]
 
 nonempty_list_comprehension_:
   x = comprehension
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_comprehension]
 | x = comprehension xs = nonempty_list_comprehension_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_comprehension]
 
 nonempty_list_decorator_:
   x = decorator
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_decorator]
 | x = decorator xs = nonempty_list_decorator_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_decorator]
 
 nonempty_list_ellipsis_or_dot_:
   x = ellipsis_or_dot
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_ellipsis_or_dot]
 | x = ellipsis_or_dot xs = nonempty_list_ellipsis_or_dot_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_ellipsis_or_dot]
 
 parse:
   statements = statements _2 = EOF

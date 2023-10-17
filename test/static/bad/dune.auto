@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 172 distinct tests.
+;; 174 distinct tests.
 
 (rule (target a-rule-is-expected.out) (deps a-rule-is-expected.mly)
   (action
@@ -1007,6 +1007,23 @@
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
 (rule (alias test) (action (diff production-group.exp production-group.out)))
+
+(rule (target production_name_clashes.out) (deps production_name_clashes.mly)
+  (action
+    (with-outputs-to production_name_clashes.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir %{read-lines:production_name_clashes.flags} %{deps})))))
+
+(rule (alias test)
+  (action (diff production_name_clashes.exp production_name_clashes.out)))
+
+(rule (target production_name_invalid.out) (deps production_name_invalid.mly)
+  (action
+    (with-outputs-to production_name_invalid.out
+      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
+
+(rule (alias test)
+  (action (diff production_name_invalid.exp production_name_invalid.out)))
 
 (rule (target recursive-recognize.out) (deps recursive-recognize.mly)
   (action

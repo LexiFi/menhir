@@ -27,41 +27,41 @@
 
 loption_separated_nonempty_list_COMMA_pat__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_pat_]
 | x = separated_nonempty_list_COMMA_pat_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_pat_]
 
 loption_separated_nonempty_list_DOT_uident__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_DOT_uident_]
 | x = separated_nonempty_list_DOT_uident_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_DOT_uident_]
 
 nonempty_list_warn_error_:
   x = warn_error
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_warn_error]
 | x = warn_error xs = nonempty_list_warn_error_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_warn_error]
 
 separated_nonempty_list_COMMA_pat_:
   x = pat
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_pat]
 | x = pat _2 = COMMA xs = separated_nonempty_list_COMMA_pat_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_pat]
 
 separated_nonempty_list_DOT_uident_:
   u = UIDENT
     {let x =   ( u ) in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_DOT_uident]
 | u = UIDENT _2 = DOT xs = separated_nonempty_list_DOT_uident_
     {let x =   ( u ) in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_DOT_uident]
 
 separated_nonempty_list_PLUS_api_:
   x = api
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_PLUS_api]
 | x = api _2 = PLUS xs = separated_nonempty_list_PLUS_api_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_PLUS_api]
 
 warn_error_list:
   ws = nonempty_list_warn_error_ _2 = EOF

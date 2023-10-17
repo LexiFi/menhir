@@ -117,63 +117,63 @@
 
 option_NEWLINE_:
   
-    {    ( None )}
+    {    ( None )} [@name none_NEWLINE]
 | x = NEWLINE
-    {    ( Some x )}
+    {    ( Some x )} [@name some_NEWLINE]
 
 loption_separated_nonempty_list_COMMA_expr__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_expr_]
 | x = separated_nonempty_list_COMMA_expr_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_expr_]
 
 loption_separated_nonempty_list_COMMA_ident__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_ident_]
 | x = separated_nonempty_list_COMMA_ident_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_ident_]
 
 loption_separated_nonempty_list_COMMA_term__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_term_]
 | x = separated_nonempty_list_COMMA_term_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_term_]
 
 list_NEWLINE_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_NEWLINE]
 | x = NEWLINE xs = list_NEWLINE_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_NEWLINE]
 
 nonempty_list_decl_:
   x = decl
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_decl]
 | x = decl xs = nonempty_list_decl_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_decl]
 
 nonempty_list_stmt_:
   x = stmt
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_stmt]
 | x = stmt xs = nonempty_list_stmt_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_stmt]
 
 separated_nonempty_list_COMMA_expr_:
   x = expr
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_expr]
 | x = expr _2 = COMMA xs = separated_nonempty_list_COMMA_expr_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_expr]
 
 separated_nonempty_list_COMMA_ident_:
   x = ident
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_ident]
 | x = ident _2 = COMMA xs = separated_nonempty_list_COMMA_ident_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_ident]
 
 separated_nonempty_list_COMMA_term_:
   x = term
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_term]
 | x = term _2 = COMMA xs = separated_nonempty_list_COMMA_term_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_term]
 
 file:
   _1 = list_NEWLINE_ _2 = EOF

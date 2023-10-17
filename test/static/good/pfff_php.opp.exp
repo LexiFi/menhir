@@ -325,139 +325,139 @@ let mk_Toplevel x =
 
 option_TAND_:
   
-    {    ( None )}
+    {    ( None )} [@name none_TAND]
 | x = TAND
-    {    ( Some x )}
+    {    ( Some x )} [@name some_TAND]
 
 option_TANTISLASH_:
   
-    {    ( None )}
+    {    ( None )} [@name none_TANTISLASH]
 | x = TANTISLASH
-    {    ( Some x )}
+    {    ( Some x )} [@name some_TANTISLASH]
 
 option_arguments_:
   
-    {    ( None )}
+    {    ( None )} [@name none_arguments]
 | x = arguments
-    {    ( Some x )}
+    {    ( Some x )} [@name some_arguments]
 
 option_attributes_:
   
-    {    ( None )}
+    {    ( None )} [@name none_attributes]
 | x = attributes
-    {    ( Some x )}
+    {    ( Some x )} [@name some_attributes]
 
 option_ctor_modifier_:
   
-    {    ( None )}
+    {    ( None )} [@name none_ctor_modifier]
 | x = ctor_modifier
-    {    ( Some x )}
+    {    ( Some x )} [@name some_ctor_modifier]
 
 option_expr_:
   
-    {    ( None )}
+    {    ( None )} [@name none_expr]
 | x = expr
-    {    ( Some x )}
+    {    ( Some x )} [@name some_expr]
 
 option_expr_or_dots_:
   
-    {    ( None )}
+    {    ( None )} [@name none_expr_or_dots]
 | _1 = expr
     {let x =          ( _1 ) in
-    ( Some x )}
+    ( Some x )} [@name some_expr_or_dots]
 | _1 = T_ELLIPSIS
     {let x =          ( Flag_parsing.sgrep_guard (Ellipsis _1) ) in
-    ( Some x )}
+    ( Some x )} [@name some_expr_or_dots]
 
 option_finally_clause_:
   
-    {    ( None )}
+    {    ( None )} [@name none_finally_clause]
 | x = finally_clause
-    {    ( Some x )}
+    {    ( Some x )} [@name some_finally_clause]
 
 option_namespace_aliasing_clause_:
   
-    {    ( None )}
+    {    ( None )} [@name none_namespace_aliasing_clause]
 | x = namespace_aliasing_clause
-    {    ( Some x )}
+    {    ( Some x )} [@name some_namespace_aliasing_clause]
 
 option_return_type_:
   
-    {    ( None )}
+    {    ( None )} [@name none_return_type]
 | x = return_type
-    {    ( Some x )}
+    {    ( Some x )} [@name some_return_type]
 
 option_use_keyword_:
   
-    {    ( None )}
+    {    ( None )} [@name none_use_keyword]
 | x = use_keyword
-    {    ( Some x )}
+    {    ( Some x )} [@name some_use_keyword]
 
 option_visibility_modifier_:
   
-    {    ( None )}
+    {    ( None )} [@name none_visibility_modifier]
 | x = visibility_modifier
-    {    ( Some x )}
+    {    ( Some x )} [@name some_visibility_modifier]
 
 list_additional_catch_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_additional_catch]
 | x = additional_catch xs = list_additional_catch_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_additional_catch]
 
 list_encaps_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_encaps]
 | x = encaps xs = list_encaps_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_encaps]
 
 list_enum_statement_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_enum_statement]
 | x = enum_statement xs = list_enum_statement_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_enum_statement]
 
 list_inner_statement_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_inner_statement]
 | x = inner_statement xs = list_inner_statement_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_inner_statement]
 
 list_member_declaration_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_member_declaration]
 | x = member_declaration xs = list_member_declaration_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_member_declaration]
 
 list_member_modifier_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_member_modifier]
 | x = member_modifier xs = list_member_modifier_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_member_modifier]
 
 list_top_statement_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_top_statement]
 | x = top_statement xs = list_top_statement_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_top_statement]
 
 list_trait_rule_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_trait_rule]
 | x = trait_rule xs = list_trait_rule_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_trait_rule]
 
 nonempty_list_member_modifier_:
   x = member_modifier
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_member_modifier]
 | x = member_modifier xs = nonempty_list_member_modifier_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_member_modifier]
 
 nonempty_list_top_statement_:
   x = top_statement
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_top_statement]
 | x = top_statement xs = nonempty_list_top_statement_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_top_statement]
 
 list_sep_assignment_list_element_TCOMMA_:
   _1 = assignment_list_element
@@ -792,10 +792,10 @@ for_expr:
 foreach_variable:
   _2 = expr
     {let _1 =     ( None ) in
-                                      ( _1, _2 )}
+                                      ( _1, _2 )} [@name none_TAND]
 | x = TAND _2 = expr
     {let _1 =     ( Some x ) in
-                                      ( _1, _2 )}
+                                      ( _1, _2 )} [@name some_TAND]
 
 foreach_pattern:
   _1 = foreach_variable
@@ -972,18 +972,18 @@ use_filename:
 constant_declaration:
   _1 = T_CONST _3 = ident_constant_name _4 = TEQ _5 = static_scalar _6 = TSEMICOLON
     {let _2 =     ( None ) in
-   ( { cst_toks = (_1,_4,_6); cst_name = Name _3; cst_val = _5; cst_type = _2})}
+   ( { cst_toks = (_1,_4,_6); cst_name = Name _3; cst_val = _5; cst_type = _2})} [@name none_type_php]
 | _1 = T_CONST x = type_php _3 = ident_constant_name _4 = TEQ _5 = static_scalar _6 = TSEMICOLON
     {let _2 =     ( Some x ) in
-   ( { cst_toks = (_1,_4,_6); cst_name = Name _3; cst_val = _5; cst_type = _2})}
+   ( { cst_toks = (_1,_4,_6); cst_name = Name _3; cst_val = _5; cst_type = _2})} [@name some_type_php]
 
 function_declaration:
   _2 = unticked_function_declaration
     {let _1 =     ( None ) in
-   ( { _2 with f_attrs = _1 } )}
+   ( { _2 with f_attrs = _1 } )} [@name none_attributes]
 | x = attributes _2 = unticked_function_declaration
     {let _1 =     ( Some x ) in
-   ( { _2 with f_attrs = _1 } )}
+   ( { _2 with f_attrs = _1 } )} [@name some_attributes]
 
 unticked_function_declaration:
   _2 = T_FUNCTION _3 = is_reference _4 = ident _5 = type_params_opt _6 = TOPAR _7 = parameter_list _8 = TCPAR _9 = option_return_type_ _10 = function_body
@@ -1041,7 +1041,7 @@ parameter:
       | _ -> match (_1, _2, _3) with
              | (None, None, None) -> _4
              | _ -> raise Parsing.Parse_error
-      )}
+      )} [@name none_type_php]
 | _1 = option_attributes_ _2 = option_ctor_modifier_ x = type_php _4 = parameter_bis
     {let _3 =     ( Some x ) in
    ( match _4 with
@@ -1054,7 +1054,7 @@ parameter:
       | _ -> match (_1, _2, _3) with
              | (None, None, None) -> _4
              | _ -> raise Parsing.Parse_error
-      )}
+      )} [@name some_type_php]
 
 parameter_bis:
   _1 = T_VARIABLE
@@ -1147,10 +1147,10 @@ in
 class_declaration:
   _2 = unticked_class_declaration
     {let _1 =     ( None ) in
-     ( { _2 with c_attrs = _1 } )}
+     ( { _2 with c_attrs = _1 } )} [@name none_attributes]
 | x = attributes _2 = unticked_class_declaration
     {let _1 =     ( Some x ) in
-     ( { _2 with c_attrs = _1 } )}
+     ( { _2 with c_attrs = _1 } )} [@name some_attributes]
 
 unticked_class_declaration:
   _1 = class_entry_type _2 = ident_class_name _3 = type_params_opt _4 = extends_from _5 = implements_list _6 = TOBRACE _7 = list_member_declaration_ _8 = TCBRACE
@@ -1248,34 +1248,34 @@ member_declaration:
                              ( _1 )
 in
 let _3 =     ( None ) in
-     ( ClassConstants(o2l _1, _2, _3, _4, _5) )}
+     ( ClassConstants(o2l _1, _2, _3, _4, _5) )} [@name none_type_php]
 | _1 = option_visibility_modifier_ _2 = T_CONST x = type_php _1_inlined1 = list_sep_class_constant_declaration_TCOMMA_ _5 = TSEMICOLON
     {let _4 =
   let _1 = _1_inlined1 in
                              ( _1 )
 in
 let _3 =     ( Some x ) in
-     ( ClassConstants(o2l _1, _2, _3, _4, _5) )}
+     ( ClassConstants(o2l _1, _2, _3, _4, _5) )} [@name some_type_php]
 | _1 = variable_modifiers _1_inlined1 = list_sep_class_variable_TCOMMA_ _4 = TSEMICOLON
     {let _3 =
   let _1 = _1_inlined1 in
                              ( _1 )
 in
 let _2 =     ( None ) in
-     ( ClassVariables(_1, _2, _3, _4)  )}
+     ( ClassVariables(_1, _2, _3, _4)  )} [@name none_type_php]
 | _1 = variable_modifiers x = type_php _1_inlined1 = list_sep_class_variable_TCOMMA_ _4 = TSEMICOLON
     {let _3 =
   let _1 = _1_inlined1 in
                              ( _1 )
 in
 let _2 =     ( Some x ) in
-     ( ClassVariables(_1, _2, _3, _4)  )}
+     ( ClassVariables(_1, _2, _3, _4)  )} [@name some_type_php]
 | _2 = method_declaration
     {let _1 =     ( None ) in
-                                          ( Method { _2 with f_attrs = _1 } )}
+                                          ( Method { _2 with f_attrs = _1 } )} [@name none_attributes]
 | x = attributes _2 = method_declaration
     {let _1 =     ( Some x ) in
-                                          ( Method { _2 with f_attrs = _1 } )}
+                                          ( Method { _2 with f_attrs = _1 } )} [@name some_attributes]
 | _1 = T_USE _2 = class_name_list _3 = TSEMICOLON
     {     ( UseTrait (_1, _2, Left _3) )}
 | _1 = T_USE _2 = class_name_list _3 = TOBRACE _4 = list_trait_rule_ _5 = TCBRACE

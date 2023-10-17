@@ -72,52 +72,52 @@ let boolpat b =
 
 list_data_constructor_declaration_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_data_constructor_declaration]
 | x = data_constructor_declaration xs = list_data_constructor_declaration_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_data_constructor_declaration]
 
 list_definition_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_definition]
 | x = definition xs = list_definition_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_definition]
 
 list_preceded_WHERE_contrainte__:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_preceded_WHERE_contrainte_]
 | _1 = WHERE x = contrainte xs = list_preceded_WHERE_contrainte__
     {let x =     ( x ) in
-    ( x :: xs )}
+    ( x :: xs )} [@name cons_preceded_WHERE_contrainte_]
 
 nonempty_list_branch_:
   x = branch
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_branch]
 | x = branch xs = nonempty_list_branch_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_branch]
 
 separated_nonempty_list_COMMA_ID_:
   x = ID
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_ID]
 | x = ID _2 = COMMA xs = separated_nonempty_list_COMMA_ID_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_ID]
 
 separated_nonempty_list_COMMA_atomic_expression_:
   x = atomic_expression
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_atomic_expression]
 | x = atomic_expression _2 = COMMA xs = separated_nonempty_list_COMMA_atomic_expression_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_atomic_expression]
 
 separated_nonempty_list_COMMA_pattern_:
   x = pattern
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_pattern]
 | x = pattern _2 = COMMA xs = separated_nonempty_list_COMMA_pattern_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_pattern]
 
 separated_nonempty_list_STAR_located_atomic_layout__:
   x = located_atomic_layout_
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_STAR_located_atomic_layout_]
 | x = located_atomic_layout_ _2 = STAR xs = separated_nonempty_list_STAR_located_atomic_layout__
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_STAR_located_atomic_layout_]
 
 located_atomic_layout_:
   x = atomic_layout
@@ -348,13 +348,13 @@ typ:
 atomic_layout:
   t = typ
     {let x =     ( None ) in
-    ( LComponent (x, t) )}
+    ( LComponent (x, t) )} [@name none_terminated_ID_COLON_]
 | x = ID _2 = COLON t = typ
     {let x =
   let x =     ( x ) in
       ( Some x )
 in
-    ( LComponent (x, t) )}
+    ( LComponent (x, t) )} [@name some_terminated_ID_COLON_]
 | _1 = INNER layout = located_atomic_layout_
     {    ( LInner layout )}
 | _1 = OUTER layout = located_atomic_layout_

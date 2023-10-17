@@ -84,45 +84,45 @@ let mk_config loc id1 id2_opt =
 
 list_param_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_param]
 | x = param xs = list_param_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_param]
 
 list_pattern_wp_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_pattern_wp]
 | x = pattern_wp xs = list_pattern_wp_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_pattern_wp]
 
 list_sterm_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_sterm]
 | x = sterm xs = list_sterm_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_sterm]
 
 nonempty_list_param_:
   x = param
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_param]
 | x = param xs = nonempty_list_param_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_param]
 
 nonempty_list_pattern_wp_:
   x = pattern_wp
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_pattern_wp]
 | x = pattern_wp xs = nonempty_list_pattern_wp_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_pattern_wp]
 
 nonempty_list_rule_:
   x = rule
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_rule]
 | x = rule xs = nonempty_list_rule_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_rule]
 
 separated_nonempty_list_COMMA_decl_:
   x = decl
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_decl]
 | x = decl _2 = COMMA xs = separated_nonempty_list_COMMA_decl_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_decl]
 
 line:
   id = ID ps = list_param_ _3 = COLON ty = term _5 = DOT

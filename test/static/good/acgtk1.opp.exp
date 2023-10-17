@@ -191,27 +191,27 @@
 
 option_SEMICOLON_:
   
-    {    ( None )}
+    {    ( None )} [@name none_SEMICOLON]
 | x = SEMICOLON
-    {    ( Some x )}
+    {    ( Some x )} [@name some_SEMICOLON]
 
 nonempty_list_sig_or_lex_:
   x = sig_or_lex
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_sig_or_lex]
 | x = sig_or_lex xs = nonempty_list_sig_or_lex_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_sig_or_lex]
 
 separated_nonempty_list_COMMA_IDENT_:
   x = IDENT
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_IDENT]
 | x = IDENT _2 = COMMA xs = separated_nonempty_list_COMMA_IDENT_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_IDENT]
 
 separated_nonempty_list_COMMA_id_or_sym_:
   x = id_or_sym
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_id_or_sym]
 | x = id_or_sym _2 = COMMA xs = separated_nonempty_list_COMMA_id_or_sym_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_id_or_sym]
 
 separated_nonempty_list_COMMA_infix_option_value_:
   sym = SYMBOL id = SYMBOL
@@ -227,7 +227,7 @@ separated_nonempty_list_COMMA_infix_option_value_:
                                   else
                                     raise Error.(Error (Parse_error (Syntax_error ("The less than symbol '<' is expected in a precedence specification."),sym_loc)))
                                 ) in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_infix_option_value]
 | id = IDENT
     {let x =               (
                      fun spec _sg ->
@@ -245,7 +245,7 @@ separated_nonempty_list_COMMA_infix_option_value_:
                      else
                        raise Error.(Error (Parse_error (Syntax_error ("An associativity specification (one of the keywords 'Left', 'Right', or 'NonAssoc') is expected."),assoc_loc)))
                    ) in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_infix_option_value]
 | sym = SYMBOL id = SYMBOL _2 = COMMA xs = separated_nonempty_list_COMMA_infix_option_value_
     {let x =                            (
                                   fun spec sg ->
@@ -259,7 +259,7 @@ separated_nonempty_list_COMMA_infix_option_value_:
                                   else
                                     raise Error.(Error (Parse_error (Syntax_error ("The less than symbol '<' is expected in a precedence specification."),sym_loc)))
                                 ) in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_infix_option_value]
 | id = IDENT _2 = COMMA xs = separated_nonempty_list_COMMA_infix_option_value_
     {let x =               (
                      fun spec _sg ->
@@ -277,7 +277,7 @@ separated_nonempty_list_COMMA_infix_option_value_:
                      else
                        raise Error.(Error (Parse_error (Syntax_error ("An associativity specification (one of the keywords 'Left', 'Right', or 'NonAssoc') is expected."),assoc_loc)))
                    ) in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_infix_option_value]
 
 main:
   dec = nonempty_list_sig_or_lex_ _2 = EOI

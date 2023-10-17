@@ -112,7 +112,7 @@ open ParserUtils
 
 option_preceded_ADOPTS_arbitrary_type__:
   
-    {    ( None )}
+    {    ( None )} [@name none_preceded_ADOPTS_arbitrary_type_]
 | _1 = ADOPTS x = raw_fat_type
     {let x =
   let x =
@@ -127,47 +127,47 @@ option_preceded_ADOPTS_arbitrary_type__:
   in
       ( x )
 in
-    ( Some x )}
+    ( Some x )} [@name some_preceded_ADOPTS_arbitrary_type_]
 
 loption_separated_nonempty_list_AND_definition__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_AND_definition_]
 | x = separated_nonempty_list_AND_definition_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_AND_definition_]
 
 loption_type_parameters_:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_type_parameters]
 | x = type_parameters
-    {    ( x )}
+    {    ( x )} [@name some_type_parameters]
 
 list_atomic_type_binding_with_variance_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_atomic_type_binding_with_variance]
 | x = atomic_type_binding_with_variance xs = list_atomic_type_binding_with_variance_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_atomic_type_binding_with_variance]
 
 list_fact_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_fact]
 | x = fact xs = list_fact_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_fact]
 
 list_implementation_item_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_implementation_item]
 | x = implementation_item xs = list_implementation_item_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_implementation_item]
 
 list_interface_item_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_interface_item]
 | x = interface_item xs = list_interface_item_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_interface_item]
 
 list_terminated_mode_constraint_DBLARROW__:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_terminated_mode_constraint_DBLARROW_]
 | m = mode x = raw_atomic_type _2 = DBLARROW xs = list_terminated_mode_constraint_DBLARROW__
     {let x =
   let x =
@@ -182,25 +182,25 @@ list_terminated_mode_constraint_DBLARROW__:
   in
       ( x )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name cons_terminated_mode_constraint_DBLARROW_]
 
 nonempty_list_warn_error_:
   x = warn_error
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_warn_error]
 | x = warn_error xs = nonempty_list_warn_error_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_warn_error]
 
 separated_nonempty_list_AND_concrete_data_type_def_:
   x = concrete_data_type_def
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_AND_concrete_data_type_def]
 | x = concrete_data_type_def _2 = AND xs = separated_nonempty_list_AND_concrete_data_type_def_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_AND_concrete_data_type_def]
 
 separated_nonempty_list_AND_definition_:
   x = definition
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_AND_definition]
 | x = definition _2 = AND xs = separated_nonempty_list_AND_definition_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_AND_definition]
 
 separated_nonempty_list_COMMA_algebraic_expression_:
   x = raw_algebraic_expression
@@ -208,13 +208,13 @@ separated_nonempty_list_COMMA_algebraic_expression_:
   let e =     ( ELocated (x, (_startpos_x_, _endpos_x_)) ) in
       ( e )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_algebraic_expression]
 | x = raw_algebraic_expression _2 = COMMA xs = separated_nonempty_list_COMMA_algebraic_expression_
     {let x =
   let e =     ( ELocated (x, (_startpos_x_, _endpos_x_)) ) in
       ( e )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_algebraic_expression]
 
 separated_nonempty_list_COMMA_atomic_pattern_:
   x = raw_atomic_pattern
@@ -225,7 +225,7 @@ separated_nonempty_list_COMMA_atomic_pattern_:
   in
       ( p )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_atomic_pattern]
 | x = raw_atomic_pattern _2 = COMMA xs = separated_nonempty_list_COMMA_atomic_pattern_
     {let x =
   let p =
@@ -234,7 +234,7 @@ in
   in
       ( p )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_atomic_pattern]
 
 separated_nonempty_list_COMMA_consumes_type_:
   x = raw_consumes_type
@@ -245,7 +245,7 @@ separated_nonempty_list_COMMA_consumes_type_:
   in
       ( ty )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_consumes_type]
 | x = raw_consumes_type _2 = COMMA xs = separated_nonempty_list_COMMA_consumes_type_
     {let x =
   let ty =
@@ -254,19 +254,19 @@ in
   in
       ( ty )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_consumes_type]
 
 separated_nonempty_list_COMMA_type_application_component_:
   x = type_application_component
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_type_application_component]
 | x = type_application_component _2 = COMMA xs = separated_nonempty_list_COMMA_type_application_component_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_type_application_component]
 
 separated_nonempty_list_COMMA_variable_:
   x = variable
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_variable]
 | x = variable _2 = COMMA xs = separated_nonempty_list_COMMA_variable_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_variable]
 
 separated_nonempty_list_DBLARROW_mode_constraint_:
   m = mode x = raw_atomic_type
@@ -280,7 +280,7 @@ separated_nonempty_list_DBLARROW_mode_constraint_:
   in
       ( m, t )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_DBLARROW_mode_constraint]
 | m = mode x = raw_atomic_type _2 = DBLARROW xs = separated_nonempty_list_DBLARROW_mode_constraint_
     {let x =
   let t =
@@ -292,7 +292,7 @@ in
   in
       ( m, t )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_DBLARROW_mode_constraint]
 
 variable:
   x = LIDENT

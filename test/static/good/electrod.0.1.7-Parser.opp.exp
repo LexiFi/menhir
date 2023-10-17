@@ -110,87 +110,87 @@ let exp_no_arity = G.exp (Some 0)
 
 option_SEMI_:
   
-    {    ( None )}
+    {    ( None )} [@name none_SEMI]
 | x = SEMI
-    {    ( Some x )}
+    {    ( Some x )} [@name some_SEMI]
 
 option_boundmult_:
   
-    {    ( None )}
+    {    ( None )} [@name none_boundmult]
 | x = boundmult
-    {    ( Some x )}
+    {    ( Some x )} [@name some_boundmult]
 
 option_next_scope_:
   
-    {    ( None )}
+    {    ( None )} [@name none_next_scope]
 | x = next_scope
-    {    ( Some x )}
+    {    ( Some x )} [@name some_next_scope]
 
 list_declaration_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_declaration]
 | x = declaration xs = list_declaration_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_declaration]
 
 list_element_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_element]
 | x = element xs = list_element_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_element]
 
 list_formula_semi_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_formula_semi]
 | x = formula_semi xs = list_formula_semi_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_formula_semi]
 
 list_tuple_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_tuple]
 | x = tuple xs = list_tuple_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_tuple]
 
 list_urelements_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_urelements]
 | x = urelements xs = list_urelements_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_urelements]
 
 nonempty_list_atom_:
   x = atom
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_atom]
 | x = atom xs = nonempty_list_atom_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_atom]
 
 nonempty_list_bracketed_symmetry_:
   x = bracketed_symmetry
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_bracketed_symmetry]
 | x = bracketed_symmetry xs = nonempty_list_bracketed_symmetry_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_bracketed_symmetry]
 
 nonempty_list_formula_semi_:
   x = formula_semi
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_formula_semi]
 | x = formula_semi xs = nonempty_list_formula_semi_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_formula_semi]
 
 nonempty_list_inst_:
   x = inst
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_inst]
 | x = inst xs = nonempty_list_inst_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_inst]
 
 nonempty_list_paragraph_:
   x = paragraph
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_paragraph]
 | x = paragraph xs = nonempty_list_paragraph_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_paragraph]
 
 nonempty_list_sym_element_:
   x = sym_element
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_sym_element]
 | x = sym_element xs = nonempty_list_sym_element_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_sym_element]
 
 separated_nonempty_list_COMMA_ae_decl_:
   xs = separated_nonempty_list_COMMA_plain_id_ _3 = COLON range = expr
@@ -199,14 +199,14 @@ separated_nonempty_list_COMMA_ae_decl_:
   let disj =  ( false ) in
    ( (disj, ids, range) )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_ae_decl]
 | _1 = DISJ xs = separated_nonempty_list_COMMA_plain_id_ _3 = COLON range = expr
     {let x =
   let ids =     ( xs ) in
   let disj =  ( true ) in
    ( (disj, ids, range) )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_ae_decl]
 | xs_inlined1 = separated_nonempty_list_COMMA_plain_id_ _3 = COLON range = expr _2 = COMMA xs = separated_nonempty_list_COMMA_ae_decl_
     {let x =
   let xs = xs_inlined1 in
@@ -214,7 +214,7 @@ in
   let disj =  ( false ) in
    ( (disj, ids, range) )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_ae_decl]
 | _1 = DISJ xs_inlined1 = separated_nonempty_list_COMMA_plain_id_ _3 = COLON range = expr _2 = COMMA xs = separated_nonempty_list_COMMA_ae_decl_
     {let x =
   let xs = xs_inlined1 in
@@ -222,29 +222,29 @@ in
   let disj =  ( true ) in
    ( (disj, ids, range) )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_ae_decl]
 
 separated_nonempty_list_COMMA_expr_:
   x = expr
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_expr]
 | x = expr _2 = COMMA xs = separated_nonempty_list_COMMA_expr_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_expr]
 
 separated_nonempty_list_COMMA_let_decl_:
   id = PLAIN_ID _2 = EQ e = expr
     {let x =  ( (Raw_ident.ident id _startpos_id_ _endpos_id_, e) ) in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_let_decl]
 | id = PLAIN_ID _2_inlined1 = EQ e = expr _2 = COMMA xs = separated_nonempty_list_COMMA_let_decl_
     {let x =  ( (Raw_ident.ident id _startpos_id_ _endpos_id_, e) ) in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_let_decl]
 
 separated_nonempty_list_COMMA_plain_id_:
   id = PLAIN_ID
     {let x =   ( Raw_ident.ident id _startpos_id_ _endpos_id_ ) in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_COMMA_plain_id]
 | id = PLAIN_ID _2 = COMMA xs = separated_nonempty_list_COMMA_plain_id_
     {let x =   ( Raw_ident.ident id _startpos_id_ _endpos_id_ ) in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_COMMA_plain_id]
 
 parse_problem:
   urelts_list = universe decls = list_declaration_ pars = nonempty_list_paragraph_ _4 = EOF
@@ -269,7 +269,7 @@ let urelts_list =
   let x =     ( x ) in
       ( x )
 in
- ( urelts_list )}
+ ( urelts_list )} [@name none_SEMI]
 | _1 = UNIV _2 = COLON _1_inlined1 = LBRACE x = list_urelements_ _3 = RBRACE x_inlined1 = SEMI
     {let _4 =
   let x = x_inlined1 in
@@ -279,7 +279,7 @@ let urelts_list =
   let x =     ( x ) in
       ( x )
 in
- ( urelts_list )}
+ ( urelts_list )} [@name some_SEMI]
 
 urelements:
   i = interval
@@ -301,35 +301,35 @@ declaration:
   _1 = CONST id = PLAIN_ID ar = colon_w_or_wo_arity b = bound
     {let _5 =     ( None ) in
 let sc =  ( R.sexact b ) in
- ( R.dconst (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc )}
+ ( R.dconst (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc )} [@name none_SEMI]
 | _1 = CONST id = PLAIN_ID ar = colon_w_or_wo_arity b = bound x = SEMI
     {let _5 =     ( Some x ) in
 let sc =  ( R.sexact b ) in
- ( R.dconst (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc )}
+ ( R.dconst (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc )} [@name some_SEMI]
 | _1 = CONST id = PLAIN_ID ar = colon_w_or_wo_arity b1 = bound mult = option_boundmult_ b2 = bound
     {let _5 =     ( None ) in
 let sc =  ( R.sinexact b1 mult b2 ) in
- ( R.dconst (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc )}
+ ( R.dconst (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc )} [@name none_SEMI]
 | _1 = CONST id = PLAIN_ID ar = colon_w_or_wo_arity b1 = bound mult = option_boundmult_ b2 = bound x = SEMI
     {let _5 =     ( Some x ) in
 let sc =  ( R.sinexact b1 mult b2 ) in
- ( R.dconst (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc )}
+ ( R.dconst (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc )} [@name some_SEMI]
 | _1 = VAR id = PLAIN_ID ar = colon_w_or_wo_arity b = bound fby = option_next_scope_
     {let _6 =     ( None ) in
 let sc =  ( R.sexact b ) in
- ( R.dvar (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc fby )}
+ ( R.dvar (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc fby )} [@name none_SEMI]
 | _1 = VAR id = PLAIN_ID ar = colon_w_or_wo_arity b = bound fby = option_next_scope_ x = SEMI
     {let _6 =     ( Some x ) in
 let sc =  ( R.sexact b ) in
- ( R.dvar (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc fby )}
+ ( R.dvar (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc fby )} [@name some_SEMI]
 | _1 = VAR id = PLAIN_ID ar = colon_w_or_wo_arity b1 = bound mult = option_boundmult_ b2 = bound fby = option_next_scope_
     {let _6 =     ( None ) in
 let sc =  ( R.sinexact b1 mult b2 ) in
- ( R.dvar (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc fby )}
+ ( R.dvar (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc fby )} [@name none_SEMI]
 | _1 = VAR id = PLAIN_ID ar = colon_w_or_wo_arity b1 = bound mult = option_boundmult_ b2 = bound fby = option_next_scope_ x = SEMI
     {let _6 =     ( Some x ) in
 let sc =  ( R.sinexact b1 mult b2 ) in
- ( R.dvar (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc fby )}
+ ( R.dvar (Raw_ident.ident id _startpos_id_ _endpos_id_) ar sc fby )} [@name some_SEMI]
 
 colon_w_or_wo_arity:
   _1 = COLON
@@ -421,7 +421,7 @@ let tuples =
   let x =     ( x ) in
       ( x )
 in
- ( (Raw_ident.ident id _startpos_id_ _endpos_id_, tuples) )}
+ ( (Raw_ident.ident id _startpos_id_ _endpos_id_, tuples) )} [@name none_SEMI]
 | id = PLAIN_ID _2 = EQ _1 = LBRACE x = list_tuple_ _3 = RBRACE x_inlined1 = SEMI
     {let _4 =
   let x = x_inlined1 in
@@ -431,7 +431,7 @@ let tuples =
   let x =     ( x ) in
       ( x )
 in
- ( (Raw_ident.ident id _startpos_id_ _endpos_id_, tuples) )}
+ ( (Raw_ident.ident id _startpos_id_ _endpos_id_, tuples) )} [@name some_SEMI]
 
 syms:
   _1 = SYM sy = nonempty_list_bracketed_symmetry_
@@ -464,10 +464,10 @@ specification:
 formula_semi:
   f = formula
     {let _2 =     ( None ) in
-  ( f )}
+  ( f )} [@name none_SEMI]
 | f = formula x = SEMI
     {let _2 =     ( Some x ) in
-  ( f )}
+  ( f )} [@name some_SEMI]
 
 formula:
   _1 = TRUE

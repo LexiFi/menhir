@@ -72,9 +72,9 @@
 
 list_declaration_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_declaration]
 | x = declaration xs = list_declaration_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_declaration]
 
 nonempty_list_loc_term_variable__:
   x = term_variable
@@ -83,14 +83,14 @@ nonempty_list_loc_term_variable__:
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_loc_term_variable_]
 | x = term_variable xs = nonempty_list_loc_term_variable__
     {let x =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_loc_term_variable_]
 
 nonempty_list_loc_type_variable__:
   x = type_variable
@@ -99,14 +99,14 @@ nonempty_list_loc_type_variable__:
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
-    ( [ x ] )}
+    ( [ x ] )} [@name one_loc_type_variable_]
 | x = type_variable xs = nonempty_list_loc_type_variable__
     {let x =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
-    ( x :: xs )}
+    ( x :: xs )} [@name more_loc_type_variable_]
 
 kind_variable:
   id = IDENTIFIER

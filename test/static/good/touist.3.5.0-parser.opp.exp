@@ -100,41 +100,41 @@ Warning: symbol comma_list(expr_smt) is unreachable from any of the start symbol
 
 option_DATA_:
   
-    {    ( None )}
+    {    ( None )} [@name none_DATA]
 | x = DATA
-    {    ( Some x )}
+    {    ( Some x )} [@name some_DATA]
 
 option_for_statement_:
   
-    {    ( None )}
+    {    ( None )} [@name none_for_statement]
 | _1 = FOR v = var _3 = IN content = expr
     {let x =                                                  ( (v,content) ) in
-    ( Some x )}
+    ( Some x )} [@name some_for_statement]
 
 option_when_cond_:
   
-    {    ( None )}
+    {    ( None )} [@name none_when_cond]
 | _1 = WHEN x = expr
     {let x =                                ( x ) in
-    ( Some x )}
+    ( Some x )} [@name some_when_cond]
 
 nonempty_list_affect_or_formula_qbf__:
   x = affect_or_formula_qbf_
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_affect_or_formula_qbf_]
 | x = affect_or_formula_qbf_ xs = nonempty_list_affect_or_formula_qbf__
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_affect_or_formula_qbf_]
 
 nonempty_list_affect_or_formula_simple__:
   x = affect_or_formula_simple_
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_affect_or_formula_simple_]
 | x = affect_or_formula_simple_ xs = nonempty_list_affect_or_formula_simple__
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_affect_or_formula_simple_]
 
 nonempty_list_affect_or_formula_smt__:
   x = affect_or_formula_smt_
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_affect_or_formula_smt_]
 | x = affect_or_formula_smt_ xs = nonempty_list_affect_or_formula_smt__
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_affect_or_formula_smt_]
 
 comma_list_expr_:
   x = expr

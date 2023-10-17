@@ -50,51 +50,51 @@
 
 loption_separated_nonempty_list_COMMA_ID__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_ID_]
 | x = separated_nonempty_list_COMMA_ID_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_ID_]
 
 loption_separated_nonempty_list_COMMA_argument__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_argument_]
 | x = separated_nonempty_list_COMMA_argument_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_argument_]
 
 loption_separated_nonempty_list_COMMA_exp__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_exp_]
 | x = separated_nonempty_list_COMMA_exp_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_exp_]
 
 list_statement_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_statement]
 | x = statement xs = list_statement_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_statement]
 
 list_uop_or_barrier_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_uop_or_barrier]
 | x = uop_or_barrier xs = list_uop_or_barrier_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_uop_or_barrier]
 
 separated_nonempty_list_COMMA_ID_:
   x = ID
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_ID]
 | x = ID _2 = COMMA xs = separated_nonempty_list_COMMA_ID_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_ID]
 
 separated_nonempty_list_COMMA_argument_:
   x = argument
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_argument]
 | x = argument _2 = COMMA xs = separated_nonempty_list_COMMA_argument_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_argument]
 
 separated_nonempty_list_COMMA_exp_:
   x = exp
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_exp]
 | x = exp _2 = COMMA xs = separated_nonempty_list_COMMA_exp_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_exp]
 
 mainprogram:
   _1 = OPENQASM _2 = REAL _3 = SEMICOLON p = program _5 = EOF

@@ -31,33 +31,33 @@ open Parser_utils
 
 loption_separated_nonempty_list_COMMA_key_value_pair__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_key_value_pair_]
 | x = separated_nonempty_list_COMMA_key_value_pair_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_key_value_pair_]
 
 list_NEWLINE_:
   
-    {    ( [] )}
+    {    ( [] )} [@name nil_NEWLINE]
 | x = NEWLINE xs = list_NEWLINE_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name cons_NEWLINE]
 
 nonempty_list_NEWLINE_:
   x = NEWLINE
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_NEWLINE]
 | x = NEWLINE xs = nonempty_list_NEWLINE_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_NEWLINE]
 
 separated_nonempty_list_COMMA_key_value_pair_:
   x = key_value_pair
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_key_value_pair]
 | x = key_value_pair _2 = COMMA xs = separated_nonempty_list_COMMA_key_value_pair_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_key_value_pair]
 
 separated_nonempty_list_DOT_key_:
   x = key
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_DOT_key]
 | x = key _2 = DOT xs = separated_nonempty_list_DOT_key_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_DOT_key]
 
 key:
   s = KEY

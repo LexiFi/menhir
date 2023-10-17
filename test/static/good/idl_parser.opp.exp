@@ -137,37 +137,37 @@ let noQualifiers = {static=false;getter=false;setter=false;
 
 option_INHERIT_:
   
-    {    ( None )}
+    {    ( None )} [@name none_INHERIT]
 | x = INHERIT
-    {    ( Some x )}
+    {    ( Some x )} [@name some_INHERIT]
 
 option_default_:
   
-    {    ( None )}
+    {    ( None )} [@name none_default]
 | x = default
-    {    ( Some x )}
+    {    ( Some x )} [@name some_default]
 
 option_identOrKeyword_:
   
-    {    ( None )}
+    {    ( None )} [@name none_identOrKeyword]
 | _1 = CONSTRUCTOR
     {let x =                 ( Id.id_of_string "Constructor" ) in
-    ( Some x )}
+    ( Some x )} [@name some_identOrKeyword]
 | _1 = NOTXPCOM
     {let x =              ( Id.id_of_string "notxpcom" ) in
-    ( Some x )}
+    ( Some x )} [@name some_identOrKeyword]
 | _1 = RETVAL
     {let x =            ( Id.id_of_string "retval" ) in
-    ( Some x )}
+    ( Some x )} [@name some_identOrKeyword]
 | _1 = UNSAFE
     {let x =            ( Id.id_of_string "unsafe" ) in
-    ( Some x )}
+    ( Some x )} [@name some_identOrKeyword]
 | _1 = PRIVATEBROWSINGCHECK
     {let x =                          ( Id.id_of_string "PrivateBrowsingCheck" ) in
-    ( Some x )}
+    ( Some x )} [@name some_identOrKeyword]
 | _1 = QUERYINTERFACETYPE
     {let x =                        ( Id.id_of_string "QueryInterfaceType" ) in
-    ( Some x )}
+    ( Some x )} [@name some_identOrKeyword]
 | _1 = CREATOR
     {let x =
   let id =
@@ -176,7 +176,7 @@ option_identOrKeyword_:
   in
                                       ( id )
 in
-    ( Some x )}
+    ( Some x )} [@name some_identOrKeyword]
 | _1 = GETTER
     {let x =
   let id =
@@ -185,7 +185,7 @@ in
   in
                                       ( id )
 in
-    ( Some x )}
+    ( Some x )} [@name some_identOrKeyword]
 | _1 = SETTER
     {let x =
   let id =
@@ -194,7 +194,7 @@ in
   in
                                       ( id )
 in
-    ( Some x )}
+    ( Some x )} [@name some_identOrKeyword]
 | id = ID
     {let x =
   let id =
@@ -203,7 +203,7 @@ in
   in
                                       ( id )
 in
-    ( Some x )}
+    ( Some x )} [@name some_identOrKeyword]
 | _1 = DICTIONARY
     {let x =
   let id =
@@ -212,7 +212,7 @@ in
   in
                                       ( id )
 in
-    ( Some x )}
+    ( Some x )} [@name some_identOrKeyword]
 | _1 = PARTIAL
     {let x =
   let id =
@@ -221,49 +221,49 @@ in
   in
                                       ( id )
 in
-    ( Some x )}
+    ( Some x )} [@name some_identOrKeyword]
 
 option_raisesClause_:
   
-    {    ( None )}
+    {    ( None )} [@name none_raisesClause]
 | x = raisesClause
-    {    ( Some x )}
+    {    ( Some x )} [@name some_raisesClause]
 
 loption_separated_nonempty_list_COMMA_ID__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_ID_]
 | x = separated_nonempty_list_COMMA_ID_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_ID_]
 
 loption_separated_nonempty_list_COMMA_argument__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_argument_]
 | x = separated_nonempty_list_COMMA_argument_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_argument_]
 
 loption_separated_nonempty_list_COMMA_expr__:
   
-    {    ( [] )}
+    {    ( [] )} [@name none_separated_nonempty_list_COMMA_expr_]
 | x = separated_nonempty_list_COMMA_expr_
-    {    ( x )}
+    {    ( x )} [@name some_separated_nonempty_list_COMMA_expr_]
 
 separated_nonempty_list_COMMA_ID_:
   x = ID
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_ID]
 | x = ID _2 = COMMA xs = separated_nonempty_list_COMMA_ID_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_ID]
 
 separated_nonempty_list_COMMA_argument_:
   x = argument
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_argument]
 | x = argument _2 = COMMA xs = separated_nonempty_list_COMMA_argument_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_argument]
 
 separated_nonempty_list_COMMA_expr_:
   x = expr
-    {    ( [ x ] )}
+    {    ( [ x ] )} [@name one_COMMA_expr]
 | x = expr _2 = COMMA xs = separated_nonempty_list_COMMA_expr_
-    {    ( x :: xs )}
+    {    ( x :: xs )} [@name more_COMMA_expr]
 
 ilist_definition_:
   
@@ -524,62 +524,62 @@ dictionaryMember:
     {let _3 =     ( None ) in
 let name =                 ( Id.id_of_string "Constructor" ) in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name none_default]
 | ty = typeDecl _1 = CONSTRUCTOR x = default _4 = SEMI
     {let _3 =     ( Some x ) in
 let name =                 ( Id.id_of_string "Constructor" ) in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name some_default]
 | ty = typeDecl _1 = NOTXPCOM _4 = SEMI
     {let _3 =     ( None ) in
 let name =              ( Id.id_of_string "notxpcom" ) in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name none_default]
 | ty = typeDecl _1 = NOTXPCOM x = default _4 = SEMI
     {let _3 =     ( Some x ) in
 let name =              ( Id.id_of_string "notxpcom" ) in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name some_default]
 | ty = typeDecl _1 = RETVAL _4 = SEMI
     {let _3 =     ( None ) in
 let name =            ( Id.id_of_string "retval" ) in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name none_default]
 | ty = typeDecl _1 = RETVAL x = default _4 = SEMI
     {let _3 =     ( Some x ) in
 let name =            ( Id.id_of_string "retval" ) in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name some_default]
 | ty = typeDecl _1 = UNSAFE _4 = SEMI
     {let _3 =     ( None ) in
 let name =            ( Id.id_of_string "unsafe" ) in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name none_default]
 | ty = typeDecl _1 = UNSAFE x = default _4 = SEMI
     {let _3 =     ( Some x ) in
 let name =            ( Id.id_of_string "unsafe" ) in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name some_default]
 | ty = typeDecl _1 = PRIVATEBROWSINGCHECK _4 = SEMI
     {let _3 =     ( None ) in
 let name =                          ( Id.id_of_string "PrivateBrowsingCheck" ) in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name none_default]
 | ty = typeDecl _1 = PRIVATEBROWSINGCHECK x = default _4 = SEMI
     {let _3 =     ( Some x ) in
 let name =                          ( Id.id_of_string "PrivateBrowsingCheck" ) in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name some_default]
 | ty = typeDecl _1 = QUERYINTERFACETYPE _4 = SEMI
     {let _3 =     ( None ) in
 let name =                        ( Id.id_of_string "QueryInterfaceType" ) in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name none_default]
 | ty = typeDecl _1 = QUERYINTERFACETYPE x = default _4 = SEMI
     {let _3 =     ( Some x ) in
 let name =                        ( Id.id_of_string "QueryInterfaceType" ) in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name some_default]
 | ty = typeDecl _1 = CREATOR _4 = SEMI
     {let _3 =     ( None ) in
 let name =
@@ -590,7 +590,7 @@ let name =
                                       ( id )
 in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name none_default]
 | ty = typeDecl _1 = CREATOR x = default _4 = SEMI
     {let _3 =     ( Some x ) in
 let name =
@@ -601,7 +601,7 @@ let name =
                                       ( id )
 in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name some_default]
 | ty = typeDecl _1 = GETTER _4 = SEMI
     {let _3 =     ( None ) in
 let name =
@@ -612,7 +612,7 @@ let name =
                                       ( id )
 in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name none_default]
 | ty = typeDecl _1 = GETTER x = default _4 = SEMI
     {let _3 =     ( Some x ) in
 let name =
@@ -623,7 +623,7 @@ let name =
                                       ( id )
 in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name some_default]
 | ty = typeDecl _1 = SETTER _4 = SEMI
     {let _3 =     ( None ) in
 let name =
@@ -634,7 +634,7 @@ let name =
                                       ( id )
 in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name none_default]
 | ty = typeDecl _1 = SETTER x = default _4 = SEMI
     {let _3 =     ( Some x ) in
 let name =
@@ -645,7 +645,7 @@ let name =
                                       ( id )
 in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name some_default]
 | ty = typeDecl id = ID _4 = SEMI
     {let _3 =     ( None ) in
 let name =
@@ -656,7 +656,7 @@ let name =
                                       ( id )
 in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name none_default]
 | ty = typeDecl id = ID x = default _4 = SEMI
     {let _3 =     ( Some x ) in
 let name =
@@ -667,7 +667,7 @@ let name =
                                       ( id )
 in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name some_default]
 | ty = typeDecl _1 = DICTIONARY _4 = SEMI
     {let _3 =     ( None ) in
 let name =
@@ -678,7 +678,7 @@ let name =
                                       ( id )
 in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name none_default]
 | ty = typeDecl _1 = DICTIONARY x = default _4 = SEMI
     {let _3 =     ( Some x ) in
 let name =
@@ -689,7 +689,7 @@ let name =
                                       ( id )
 in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name some_default]
 | ty = typeDecl _1 = PARTIAL _4 = SEMI
     {let _3 =     ( None ) in
 let name =
@@ -700,7 +700,7 @@ let name =
                                       ( id )
 in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name none_default]
 | ty = typeDecl _1 = PARTIAL x = default _4 = SEMI
     {let _3 =     ( Some x ) in
 let name =
@@ -711,7 +711,7 @@ let name =
                                       ( id )
 in
 let _startpos = _startpos_ty_ in
-      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
+      ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )} [@name some_default]
 
 default:
   _1 = EQUALS _2 = constValue
