@@ -1,5 +1,37 @@
 # TODO
 
+## WIP
+
+* Allow a start symbol to be an application of a parameterized symbol?
+
+* AST2DCST: avoid `maybe_paren` at atomic nodes, and benchmark.
+
+* For terminal symbols without a semantic value,
+  arrange to build the DCST once or at most once.
+  Generate these constants in the generated DCST submodule,
+  and use them in the code that follows.
+
+* Try to explain how the user can convince herself that backtracking is never
+  needed. Try to provide means for her to debug the problem when a tree cannot
+  be rendered. E.g., the algorithm that does not backtrack could report what
+  production it was unable to print and in what context (state, lookahead
+  symbol). Could it also somehow describe the stack of choice nodes that exist
+  above the point of failure?
+
+* Extend the demo with keywords (`if`, `let`, `where`, ...)
+  so as to exercise fragility.
+
+* Allow DCST `Info` nodes that carry user information?
+
+* Change the terminology "valid" into "acceptable" or "viable" regarding CSTs.
+  Change the terminology "solve" to "render".
+
+* Document that if a nonterminal symbol is marked `%inline` then it cannot
+  carry an attribute, and a use of it cannot carry an attribute.
+
+* Document `--unparsing` in the manual and in `CHANGES`.
+  It requires linking with `MenhirCST`, and requires OCaml 4.08.
+
 ## Licensing
 
 * Put the demos under an MIT license.
