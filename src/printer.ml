@@ -808,6 +808,12 @@ and virtuality f = function
   | Virtual ->
       fprintf f "virtual "
 
+and privacy f = function
+  | Public ->
+      ()
+  | Private ->
+      fprintf f "private "
+
 and objectend oselftyp f cfs =
   objectself f oselftyp;
   indent 2 class_fields f cfs;
@@ -826,8 +832,9 @@ and class_fields f cfs =
 and class_field f cf =
   nl f;
   begin match cf with
-  | CFMethod (name, e) ->
-      fprintf f "method %s = %a"
+  | CFMethod (p, name, e) ->
+      fprintf f "method %a%s = %a"
+        privacy p
         name
         expr e
   | CFMethodVirtual (name, ts) ->

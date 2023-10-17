@@ -328,12 +328,16 @@ and virtuality =
   | NonVirtual
   | Virtual
 
+and privacy =
+  | Public
+  | Private
+
 and class_fields =
   class_field list
 
 and class_field =
     (* Method definition. *)
-  | CFMethod of method_name * expr
+  | CFMethod of privacy * method_name * expr
     (* Virtual method declaration. *)
   | CFMethodVirtual of method_name * typescheme
     (* Comment. *)
