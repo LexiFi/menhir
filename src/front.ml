@@ -94,6 +94,13 @@ let sorts =
 
 (* ------------------------------------------------------------------------- *)
 
+(* Perform other pre-expansion checks. *)
+
+let () =
+  CheckPreExpansion.check grammar
+
+(* ------------------------------------------------------------------------- *)
+
 (* Expand away all applications of parameterized nonterminal symbols, so as
    to obtain a grammar without parameterized nonterminal symbols. *)
 
