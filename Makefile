@@ -142,12 +142,17 @@ houblix:
 #   eval $(opam env)
 #   opam install dune ppx_sexp_conv sexplib
 
-VERSIONS := \
+# Because MenhirCST requires OCaml 4.08, we split the version check
+# in two parts.
+
+OLD_VERSIONS := \
   4.03.0 \
   4.04.2 \
   4.05.0 \
   4.06.1 \
   4.07.1 \
+
+NEW_VERSIONS := \
   4.08.1 \
   4.09.1 \
   4.09.0+bytecode-only \
@@ -159,13 +164,22 @@ VERSIONS := \
   5.0.0 \
   5.1.0 \
 
-.PHONY: versions
-versions:
+.PHONY: old_versions new_versions versions
+old_versions:
 	@(echo "(lang dune 2.0)" && \
-	  for v in $(VERSIONS) ; do \
+	  for v in $(NEW_VERSIONS) ; do \
+	    echo "(context (opam (switch $$v)))" ; \
+	  done) > dune-workspace.versions
+	@ dune build --workspace dune-workspace.versions lib sdk src
+
+new_versions:
+	@(echo "(lang dune 2.0)" && \
+	  for v in $(NEW_VERSIONS) ; do \
 	    echo "(context (opam (switch $$v)))" ; \
 	  done) > dune-workspace.versions
 	@ dune build --workspace dune-workspace.versions @install # or: @all
+
+versions: old_versions new_versions
 
 .PHONY: handiwork
 handiwork:
@@ -252,7 +266,7 @@ MENHIRLIB_FILES   := \
 # it easier to understand the line numbers that we sometimes receive as
 # part of bug reports.
 
-# The source files in lib/ carry the "library" header & license.
+# The source files in lib/ and cst/ carry the "library" header & license.
 # Those in coq-menhirlib/ carry the "Coq library" header & license.
 # Every other file carries the "regular" header & license.
 
@@ -269,7 +283,10 @@ headache:
 	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
 	@ cd sdk && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
 	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
-	@ for file in $(MENHIRLIB_FILES) ; do \
+	@ for file in $(MENHIRCST_FILES) ; do \
+	    $(HEADACHE) -h $(LIBHEAD) $$file ; \
+	  done
+	@ for file in cst/*.{ml,mli} ; do \
 	    $(HEADACHE) -h $(LIBHEAD) $$file ; \
 	  done
 	@ for file in coq-menhirlib/src/*.v ; do \
@@ -465,8 +482,8 @@ COQ_MENHIRLIB_PUBLISH_OPTIONS := \
 
 .PHONY: opam
 opam:
-# Publish opam descriptions for menhirLib, menhirSdk, menhir.
-	@ opam publish -v $(DATE) menhirLib.opam menhirSdk.opam menhir.opam $(ARCHIVE)
+# Publish opam descriptions for menhirCST, menhirLib, menhirSdk, menhir.
+	@ opam publish -v $(DATE) menhirCST.opam menhirLib.opam menhirSdk.opam menhir.opam $(ARCHIVE)
 # Patch coq-menhirlib.opam.
 # We replace the string DATEDASH with $(DATEDASH).
 # We replace the string DATE with $(DATE).
@@ -485,13 +502,14 @@ opam:
 
 .PHONY: pin
 pin:
+	opam pin --yes add menhirCST.dev . && \
 	opam pin --yes add menhirLib.dev . && \
 	opam pin --yes add menhirSdk.dev . && \
 	opam pin --yes add menhir.dev .
 
 .PHONY: unpin
 unpin:
-	opam pin --yes remove menhirLib menhirSdk menhir
+	opam pin --yes remove menhirCST menhirLib menhirSdk menhir
 
 # -------------------------------------------------------------------------
 

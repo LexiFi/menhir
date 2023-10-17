@@ -8,6 +8,10 @@
 )
 
 (package
+  (name menhirCST)
+)
+
+(package
   (name menhirSdk)
 )
 
