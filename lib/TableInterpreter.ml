@@ -78,9 +78,12 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
   let default_reduction state defred nodefred env =
     let code = PackedIntArray.get T.default_reduction state in
     if code = 0 then
+      (* no default reduction *)
       nodefred env
     else
-      defred env (code - 1)
+      (* default reduction *)
+      let prod = code - 1 in
+      defred env prod
 
   let is_start prod =
     prod < T.start
@@ -114,13 +117,59 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
         assert (c = 0);
         fail env
 
+  let maybe_shift_t state terminal =
+    match PackedIntArray.unflatten1 T.error state terminal with
+    | 1 ->
+        let action = unmarshal2 T.action state terminal in
+        let opcode = action land 0b11 in
+        if opcode >= 0b10 then
+          (* 0b10 : shift/discard *)
+          (* 0b11 : shift/nodiscard *)
+          let state' = action lsr 2 in
+          Some state'
+        else
+          (* 0b01 : reduce *)
+          (* 0b00 : cannot happen *)
+          None
+    | c ->
+        assert (c = 0);
+        None
+
+  let may_reduce_prod state terminal prod =
+    let code = PackedIntArray.get T.default_reduction state in
+    if code = 0 then
+      (* no default reduction *)
+      match PackedIntArray.unflatten1 T.error state terminal with
+      | 1 ->
+          let action = unmarshal2 T.action state terminal in
+          let opcode = action land 0b11 in
+          if opcode >= 0b10 then
+            (* 0b10 : shift/discard *)
+            (* 0b11 : shift/nodiscard *)
+            false
+          else
+            (* 0b01 : reduce *)
+            (* 0b00 : cannot happen *)
+            let prod' = action lsr 2 in
+            prod = prod'
+      | c ->
+          assert (c = 0);
+          false
+    else
+      (* default reduction *)
+      let prod' = code - 1 in
+      prod = prod'
+
   let goto_nt state nt =
     let code = unmarshal2 T.goto state nt in
     (* code = 1 + state *)
     code - 1
 
+  let[@inline] lhs prod =
+    PackedIntArray.get T.lhs prod
+
   let goto_prod state prod =
-    goto_nt state (PackedIntArray.get T.lhs prod)
+    goto_nt state (lhs prod)
 
   let maybe_goto_nt state nt =
     let code = unmarshal2 T.goto state nt in

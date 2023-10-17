@@ -253,6 +253,16 @@ module type TABLE = sig
     ('env -> 'answer) ->
     'env -> 'answer
 
+  (**[maybe_shift_t s t] determines whether there exists a transition out of
+     the state [s], labeled with the terminal symbol [t], to some state
+     [s']. If so, it returns [Some s']. Otherwise, it returns [None]. *)
+  val maybe_shift_t : state -> terminal -> state option
+
+  (**[may_reduce_prod s t prod] determines whether in the state [s], with
+     lookahead symbol [t], the automaton reduces production [prod]. This test
+     accounts for the possible existence of a default reduction. *)
+  val may_reduce_prod : state -> terminal -> production -> bool
+
   (* This is the automaton's goto table. This table maps a pair of a state
      and a nonterminal symbol to a new state. By extension, it also maps a
      pair of a state and a production to a new state. *)
@@ -267,6 +277,11 @@ module type TABLE = sig
   val       goto_nt  : state -> nonterminal -> state
   val       goto_prod: state -> production  -> state
   val maybe_goto_nt:   state -> nonterminal -> state option
+
+  (* [lhs prod] returns the left-hand side of production [prod],
+     a nonterminal symbol. *)
+
+  val lhs: production -> nonterminal
 
   (* [is_start prod] tells whether the production [prod] is a start production. *)
 

@@ -96,6 +96,24 @@ module T = struct
       with Not_found ->
         fail env
 
+  let maybe_shift_t (s : state) (tok : terminal) : state option =
+    try
+      let s' : state = SymbolMap.find (Symbol.T tok) (Lr1.transitions s) in
+      Some s'
+    with Not_found ->
+      None
+
+  let may_reduce_prod (s : state) (tok : terminal) (prod : production) =
+    match Default.has_default_reduction s with
+    | Some (prod', _) ->
+        prod = prod'
+    | None ->
+        try
+          let prod' = Misc.single (TerminalMap.find tok (Lr1.reductions s)) in
+          prod = prod'
+        with Not_found ->
+          false
+
   let goto_nt (s : state) (nt : nonterminal) : state =
     try
       SymbolMap.find (Symbol.N nt) (Lr1.transitions s)
@@ -118,6 +136,9 @@ module T = struct
 
   (* By convention, a semantic action returns a new stack. It does not
      affect [env]. *)
+
+  let lhs =
+    Production.nt
 
   let is_start =
     Production.is_start
