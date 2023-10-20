@@ -73,7 +73,7 @@ rewrite Nat.compare_eq_iff in *; destruct H; assumption.
 rewrite <- nat_compare_lt in *.
 apply (Nat.lt_trans _ _ _ H H0).
 rewrite <- nat_compare_gt in *.
-apply (gt_trans _ _ _ H H0).
+apply (Nat.lt_trans _ _ _ H0 H).
 Qed.
 
 (** A pair of comparable is comparable. **)
