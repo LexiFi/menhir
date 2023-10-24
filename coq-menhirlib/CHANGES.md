@@ -1,5 +1,10 @@
 # Changes
 
+## 2023/XX/XX
+
+* Change certain proofs to avoid deprecation warnings with Coq 8.16.
+  (Contributed by Pierre Rousselin.)
+
 ## 2022/02/10
 
 * Remove `Makefile.coq` and use `coq_makefile` instead. The `.coq-native`
