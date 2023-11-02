@@ -606,6 +606,13 @@ let strategy =
 
 let () =
   if !exn_carries_state
+  && backend = `TableBackend then
+    error
+      "Error: --exn-carries-state is supported only by the code back-end.\n\
+       It is not compatible with --table.\n"
+
+let () =
+  if !exn_carries_state
   && backend <> `NewCodeBackend then
     error
       "Error: --exn-carries-state is supported only by the code back-end.\n"
