@@ -2,6 +2,10 @@
 
 ## WIP
 
+* Suggestion by Léo Andrès: in the point-free syntax <A>, if a constructor
+  is applied to an empty tuple, then omit this tuple entirely; that is,
+  generate `A` instead of `A ()`.
+
 * Allow a start symbol to be an application of a parameterized symbol?
 
 * AST2DCST: avoid `maybe_paren` at atomic nodes, and benchmark.
