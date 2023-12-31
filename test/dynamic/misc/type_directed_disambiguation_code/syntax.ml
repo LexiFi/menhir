@@ -1,3 +1,0 @@
-type ast =
-  | Foo
-  | Bar
