@@ -1,6 +1,18 @@
 # Changes
 
-## 2023/XX/XX
+## 2023/12/31
+
+* The new command line switch `--unparsing` (which must be used in conjunction
+  with `--table`) causes Menhir to generate an unparsing API. In short,
+  unparsing is the process of transforming abstract syntax trees back into
+  text. The unparsing API is intended to help users write correct unparsers,
+  but does not automate the whole process.
+
+  For more details, please see the paper [Correct, Fast LR(1)
+  Unparsing](http://cambium.inria.fr/~fpottier/publis/pottier-unparsing-2024.pdf).
+
+  The unparsing API requires linking with the library `MenhirCST`, and
+  requires OCaml 4.08.
 
 * Attributes can now be attached with a production. (In previous versions of
   Menhir, attributes could be attached only with a symbol, with a specific
