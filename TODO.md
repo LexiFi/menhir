@@ -1,19 +1,6 @@
 # TODO
 
-## WIP
-
-* Suggestion by Léo Andrès: in the point-free syntax <A>, if a constructor
-  is applied to an empty tuple, then omit this tuple entirely; that is,
-  generate `A` instead of `A ()`.
-
-* Allow a start symbol to be an application of a parameterized symbol?
-
-* AST2DCST: avoid `maybe_paren` at atomic nodes, and benchmark.
-
-* For terminal symbols without a semantic value,
-  arrange to build the DCST once or at most once.
-  Generate these constants in the generated DCST submodule,
-  and use them in the code that follows.
+## Unparsing API
 
 * Try to explain how the user can convince herself that backtracking is never
   needed. Try to provide means for her to debug the problem when a tree cannot
@@ -26,15 +13,6 @@
   so as to exercise fragility.
 
 * Allow DCST `Info` nodes that carry user information?
-
-* Change the terminology "valid" into "acceptable" or "viable" regarding CSTs.
-  Change the terminology "solve" to "render".
-
-* Document that if a nonterminal symbol is marked `%inline` then it cannot
-  carry an attribute, and a use of it cannot carry an attribute.
-
-* Document `--unparsing` in the manual and in `CHANGES`.
-  It requires linking with `MenhirCST`, and requires OCaml 4.08.
 
 ## Licensing
 
@@ -78,6 +56,12 @@
   Frédéric Bour.)
 
 ## Enhancements
+
+* Suggestion by Léo Andrès: in the point-free syntax <A>, if a constructor
+  is applied to an empty tuple, then omit this tuple entirely; that is,
+  generate `A` instead of `A ()`.
+
+* Allow a start symbol to be an application of a parameterized symbol?
 
 * If the type of a symbol is underconstrained, then type inference produces
   a type that contains a type variable, which causes problems. It would be
