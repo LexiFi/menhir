@@ -427,6 +427,11 @@ logged to the standard error channel. This is analogous to \texttt{ocamlrun}'s
 \texttt{p=1} parameter, except this switch must be enabled at compile time:
 one cannot selectively enable or disable tracing at runtime.
 
+\docswitch{\ounparsing} This switch requires \otable. It causes \menhir to
+generate the unparsing API (\sref{sec:unparsing}). When this switch is
+enabled, the generated parser must be linked with the libraries
+\texttt{menhirLib} and \texttt{menhirCST}.
+
 \docswitch{\oignoreprec} This switch suppresses all warnings about
 useless \dleft, \dright, \dnonassoc and \dprec declarations.
 
@@ -3392,6 +3397,13 @@ state (as determined by \verb+env+) has an outgoing transition labeled with
 
 % ------------------------------------------------------------------------------
 
+\subsection{Unparsing API}
+\label{sec:unparsing}
+
+\input{unparsing}
+
+% ------------------------------------------------------------------------------
+
 \section{Error handling: the traditional way}
 \label{sec:errors}
 
@@ -4981,6 +4993,10 @@ your code requires, as in the following example:
 )
 \end{verbatim}
 %
+If the flags \otable and \ounparsing switch are listed as part of the
+\texttt{flags} line, then the libraries \texttt{menhirLib} and
+\texttt{menhirCST} is required.
+
 The directory \distrib{demos}
 % (and others like it)
 offers several examples.
