@@ -210,17 +210,28 @@ let disjoint s1 s2 =
 let quick_subset s1 s2 =
   inter s1 s2 <> 0
 
+(* [lsb x] keeps only the smallest set bit of [x]. E.g 0110 maps to 0010.
+   0 is mapped to 0.
+   When interpreting [x] as an AtomicBitSet, this returns a singleton made of
+   the smallest element of [x]. *)
 let lsb x = (x land -x)
 
-let compare_lsb x y = lsb x - lsb y
-
 let compare_minimum ss1 ss2 =
-  match compare_lsb ss1 ss2 with
-  | 0 ->
-    let ss1' = ss1 land lnot ss2 in
-    let ss2' = ss2 land lnot ss1 in
-    compare_lsb ss1' ss2'
-  | n -> n
+  (* Order sets by their smallest element.
+     The empty set is smaller than any other set.
+     This is a total pre-order. *)
+  Int.compare (lsb ss1 - 1) (lsb ss2 - 1)
+  (* With lsb we get a set with only the smallest element.
+     If we had an unsigned integer comparisong, we could directly do it
+     but Int.compare is signed. It would return the wrong result if one of the
+     input is min_int: a singleton set with the most significant bit set.
+
+     By subtracting one, we fix this corner-case:
+     - [min_int - 1] = [max_int], larger than anything
+     - [0 - 1] = [-1], smaller than anything
+     - for everything in-between, order is preserved
+       (these are singleton sets, so only one bit is set)
+  *)
 
 let sorted_union xs = List.fold_left union empty xs
 
@@ -228,7 +239,7 @@ let extract_unique_prefix ss1 ss2 =
   if ss1 = 0 then
     0, 0
   else
-  if compare_lsb ss1 ss2 >= 0 then
+  if compare_minimum ss1 ss2 >= 0 then
     empty, ss1
   else
     let prefix_mask = (lsb ss2) - 1 in
