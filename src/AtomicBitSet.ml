@@ -222,7 +222,7 @@ let compare_minimum ss1 ss2 =
      This is a total pre-order. *)
   Int.compare (lsb ss1 - 1) (lsb ss2 - 1)
   (* With lsb we get a set with only the smallest element.
-     If we had an unsigned integer comparisong, we could directly do it
+     If we had an unsigned integer comparison, we could directly do it
      but Int.compare is signed. It would return the wrong result if one of the
      input is min_int: a singleton set with the most significant bit set.
 
