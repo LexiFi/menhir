@@ -1,5 +1,11 @@
 # Changes
 
+## 2024/MM/DD
+
+* Fix a bug that could in principle cause `menhir --list-errors` to produce
+  incorrect output in some cases. This bug was never observed in real life.
+  (Contributed by Frédéric Bour.)
+
 ## 2023/12/31
 
 * The new command line switch `--unparsing` (which must be used in conjunction
