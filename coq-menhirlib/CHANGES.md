@@ -1,6 +1,11 @@
 # Changes
 
-## 2023/XX/XX
+## 2024/02/XX
+
+* Avoid the `future-coercion-class-field` warning.
+  (Contributed by Pierre Roux.)
+
+## 2023/12/31
 
 * Change certain proofs to avoid deprecation warnings with Coq 8.16.
   (Contributed by Pierre Rousselin.)
