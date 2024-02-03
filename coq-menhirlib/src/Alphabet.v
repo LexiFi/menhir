@@ -156,10 +156,13 @@ Class Finite (A:Type) := {
 
 (** An alphabet is both [ComparableLeibnizEq] and [Finite]. **)
 Class Alphabet (A:Type) := {
-  AlphabetComparable :> Comparable A;
-  AlphabetComparableLeibnizEq :> ComparableLeibnizEq AlphabetComparable;
-  AlphabetFinite :> Finite A
+  AlphabetComparable : Comparable A;
+  AlphabetComparableLeibnizEq : ComparableLeibnizEq AlphabetComparable;
+  AlphabetFinite : Finite A
 }.
+#[global] Existing Instance AlphabetComparable.
+#[global] Existing Instance AlphabetComparableLeibnizEq.
+#[global] Existing Instance AlphabetFinite.
 
 (** The [Numbered] class provides a conveniant way to build [Alphabet] instances,
    with a good computationnal complexity. It is mainly a injection from it to
