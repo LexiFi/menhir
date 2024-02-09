@@ -146,7 +146,7 @@ module type GRAMMAR = sig
     val default_reduction : t -> production option
 
     val reductions   : t -> (terminal * production list) list
-    [@@@ocaml.deprecated "Please use [get_reductions]"]
+    [@@ocaml.deprecated "Please use [get_reductions]"]
   end
 
   module Print : sig
