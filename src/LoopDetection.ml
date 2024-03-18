@@ -21,7 +21,7 @@ module Run () = struct
 (* According to Aho and Ullman ("The Theory of Parsing, Translation, and
    Compiling -- Volume I: Parsing", page 150), a grammar is cycle-free if
    there is no derivation of the form A =>+ A. In other words, there is a
-   cycle when a nonterminal symbol A expands, in one more steps, to itself. *)
+   cycle when a nonterminal symbol A expands in one or more steps to itself. *)
 
 (* Under the assumption that every nonterminal symbol is reachable and
    generates a nonempty language, the presence of a cycle implies that the
